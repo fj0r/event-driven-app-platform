@@ -17,7 +17,7 @@ pub enum Content {
     empty,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Layout {
     pub kind: String,
     pub data: Option<String>,
