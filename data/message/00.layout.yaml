@@ -1,0 +1,11 @@
+action: layout
+kind: Container
+children:
+    - kind: Text
+      title: test
+    - kind: Container
+      data: chat
+      item:
+          - kind: Card
+    - kind: Input
+      data: message
