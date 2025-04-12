@@ -8,6 +8,7 @@ const MAIN_CSS: Asset = asset!("/assets/main.css");
 const HEADER_SVG: Asset = asset!("/assets/header.svg");
 
 fn main() {
+    tracing_wasm::set_as_global_default();
     dioxus::launch(App);
 }
 
@@ -31,7 +32,7 @@ fn App() -> Element {
             "{count}"
         }
         button {
-            onclick: move |_| count += 2,
+            onclick: move |_| count += 1,
             "Count"
         }
     }

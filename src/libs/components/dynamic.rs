@@ -6,11 +6,11 @@ use dioxus::prelude::*;
 pub fn Dynamic(kind: String, children: Element) -> Element {
     let c = {
         match kind.as_str() {
-            "Container" => rsx!( Container { children } ),
-            "Input" => rsx! ( Input { children } ),
-            "Text" => rsx! ( Text { children } ),
-            "Card" => rsx! ( Card { children } ),
-            "Button" => rsx! ( Button { children } ),
+            "Container" => rsx!( Container { {children} } ),
+            "Input" => rsx! ( Input { {children} } ),
+            "Text" => rsx! ( Text { {children} } ),
+            "Card" => rsx! ( Card { {children } } ),
+            "Button" => rsx! ( Button { {children} } ),
             _ => {
                 let t = format!("{} unimplemented!", &kind);
                 rsx! { div { "{t}" } }
@@ -18,6 +18,6 @@ pub fn Dynamic(kind: String, children: Element) -> Element {
         }
     };
     rsx! {
-        p { {c} }
+        {c}
     }
 }

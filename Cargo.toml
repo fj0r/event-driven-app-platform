@@ -8,7 +8,9 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.97"
-dioxus = { version = "0.6.0", features = [] }
+tracing-wasm = "0.2.1"
+dioxus-logger = "0.5.1"
+dioxus = { version = "0.6.0", features = ["macro", "web"] }
 futures = "0.3.31"
 gloo-net = "0.6.0"
 js-sys = "0.3.77"

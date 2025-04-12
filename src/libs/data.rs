@@ -21,8 +21,8 @@ pub enum Content {
 pub struct Layout {
     pub kind: String,
     pub data: Option<String>,
-    pub item: Option<Vec<Box<Layout>>>,
-    pub children: Option<Vec<Box<Layout>>>
+    pub item: Option<Vec<Layout>>,
+    pub children: Option<Vec<Layout>>
 }
 
 #[derive(Clone, Serialize, Deserialize)]
