@@ -3,7 +3,7 @@ kind: Container
 children:
     - kind: Text
       title: test
-    - kind: Container
+    - kind: List
       data: chat
       item:
           - kind: Card
