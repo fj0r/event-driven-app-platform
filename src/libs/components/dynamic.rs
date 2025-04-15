@@ -19,6 +19,9 @@ pub fn Dynamic(kind: String, children: Element) -> Element {
         }
     };
     rsx! {
-        {c}
+        div {
+            class: "dynamic",
+            {c}
+        }
     }
 }

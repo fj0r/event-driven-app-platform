@@ -3,14 +3,20 @@ use dioxus::prelude::*;
 #[component]
 pub fn Input(children: Element) -> Element {
     rsx!{
-        {children}
+        div {
+            class: "input",
+            {children}
+        }
     }
 }
 
 #[component]
 pub fn Text(children: Element) -> Element {
     rsx!{
-        {children}
+        div {
+            class: "text",
+            {children}
+        }
     }
 }
 
@@ -18,7 +24,10 @@ pub fn Text(children: Element) -> Element {
 #[component]
 pub fn Card(children: Element) -> Element {
     rsx!{
-        {children}
+        div {
+            class: "card",
+            {children}
+        }
     }
 }
 
@@ -26,6 +35,9 @@ pub fn Card(children: Element) -> Element {
 #[component]
 pub fn Button(children: Element) -> Element {
     rsx!{
-        {children}
+        div {
+            class: "button",
+            {children}
+        }
     }
 }

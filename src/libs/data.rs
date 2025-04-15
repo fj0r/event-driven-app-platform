@@ -1,4 +1,6 @@
 use serde::{Serialize, Deserialize};
+use serde_json::Value;
+use dioxus::prelude::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Message {
@@ -17,11 +19,12 @@ pub enum Content {
     empty,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
 pub struct Layout {
     pub kind: String,
     pub data: Option<String>,
     pub item: Option<Vec<Layout>>,
+    pub value: Option<Value>,
     pub children: Option<Vec<Layout>>
 }
 

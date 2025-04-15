@@ -4,15 +4,20 @@ use dioxus_logger::tracing;
 #[component]
 pub fn Container(children: Element) -> Element {
     rsx!{
-        {children}
+        div {
+            class: "container",
+            {children}
+        }
     }
 }
 
 
 #[component]
 pub fn List(children: Element) -> Element {
-    tracing::info!("{children:?}");
     rsx!{
-        {children}
+        div {
+            class: "list",
+            {children}
+        }
     }
 }
