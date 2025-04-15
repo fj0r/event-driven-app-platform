@@ -1,7 +1,9 @@
 use dioxus::prelude::*;
+use super::super::data::Layout;
+use serde_json::to_value;
 
 #[component]
-pub fn Input(children: Element) -> Element {
+pub fn Input(layout: Layout, children: Element) -> Element {
     rsx!{
         div {
             class: "input",
@@ -11,18 +13,22 @@ pub fn Input(children: Element) -> Element {
 }
 
 #[component]
-pub fn Text(children: Element) -> Element {
+pub fn Text(layout: Layout, children: Element) -> Element {
+    let t = layout
+        .value
+        .unwrap_or_else(|| to_value("").unwrap())
+        .to_string();
     rsx!{
         div {
             class: "text",
-            {children}
+            "{t}"
         }
     }
 }
 
 
 #[component]
-pub fn Card(children: Element) -> Element {
+pub fn Card(layout: Layout, children: Element) -> Element {
     rsx!{
         div {
             class: "card",
@@ -33,7 +39,7 @@ pub fn Card(children: Element) -> Element {
 
 
 #[component]
-pub fn Button(children: Element) -> Element {
+pub fn Button(layout: Layout, children: Element) -> Element {
     rsx!{
         div {
             class: "button",

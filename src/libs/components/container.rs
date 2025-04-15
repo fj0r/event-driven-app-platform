@@ -1,8 +1,9 @@
 use dioxus::prelude::*;
 use dioxus_logger::tracing;
+use super::super::data::Layout;
 
 #[component]
-pub fn Container(children: Element) -> Element {
+pub fn Container(layout:Layout, children: Element) -> Element {
     rsx!{
         div {
             class: "container",
@@ -13,7 +14,7 @@ pub fn Container(children: Element) -> Element {
 
 
 #[component]
-pub fn List(children: Element) -> Element {
+pub fn List(layout: Layout, children: Element) -> Element {
     rsx!{
         div {
             class: "list",

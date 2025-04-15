@@ -22,9 +22,10 @@ pub enum Content {
 #[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
 pub struct Layout {
     pub kind: String,
+    pub attrs: Option<Value>,
     pub data: Option<String>,
-    pub item: Option<Vec<Layout>>,
     pub value: Option<Value>,
+    pub item: Option<Vec<Layout>>,
     pub children: Option<Vec<Layout>>
 }
 

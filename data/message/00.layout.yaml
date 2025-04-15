@@ -2,10 +2,24 @@ action: layout
 kind: Container
 children:
     - kind: Text
-      title: test
+      value: 123
     - kind: List
       data: chat
       item:
           - kind: Card
     - kind: Input
       data: message
+    - kind: Container
+      children:
+        - kind: Text
+          value: lv 1
+        - kind: Container
+          children:
+            - kind: Text
+              value: lv 2
+            - kind: Container
+              children:
+                - kind: Container
+                  children:
+                - kind: Text
+                  value: lv 3

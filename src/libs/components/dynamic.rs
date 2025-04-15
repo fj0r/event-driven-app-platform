@@ -1,27 +1,25 @@
 use super::container::*;
 use super::widgets::*;
 use dioxus::prelude::*;
+use super::super::data::Layout;
 
 #[component]
-pub fn Dynamic(kind: String, children: Element) -> Element {
+pub fn Dynamic(layout: Layout, children: Element) -> Element {
     let c = {
-        match kind.as_str() {
-            "Container" => rsx!( Container { {children} } ),
-            "List" => rsx!( List { {children} } ),
-            "Input" => rsx! ( Input { {children} } ),
-            "Text" => rsx! ( Text { {children} } ),
-            "Card" => rsx! ( Card { {children } } ),
-            "Button" => rsx! ( Button { {children} } ),
+        match layout.kind.as_str() {
+            "Container" => rsx!( Container { layout: layout, {children} } ),
+            "List" => rsx!( List { layout: layout, {children} } ),
+            "Input" => rsx! ( Input { layout: layout, {children} } ),
+            "Text" => rsx! ( Text { layout: layout, {children} } ),
+            "Card" => rsx! ( Card { layout: layout, {children } } ),
+            "Button" => rsx! ( Button { layout: layout, {children} } ),
             _ => {
-                let t = format!("{} unimplemented!", &kind);
+                let t = format!("{} unimplemented!", layout.kind);
                 rsx! { div { "{t}" } }
             }
         }
     };
     rsx! {
-        div {
-            class: "dynamic",
-            {c}
-        }
+        {c}
     }
 }

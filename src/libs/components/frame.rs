@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 
 #[component]
 pub fn Frame(layout: Layout) -> Element {
-    let children = layout.children.unwrap_or_else(|| vec![]);
+    let children = layout.clone().children.unwrap_or_else(|| vec![]);
     let children = children.iter().map(|c| {
         rsx! {
             Frame{ layout: c.clone() }
@@ -13,7 +13,7 @@ pub fn Frame(layout: Layout) -> Element {
 
     rsx! {
         Dynamic {
-            kind: layout.kind,
+            layout: layout,
             {children}
         }
     }
