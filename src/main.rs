@@ -20,6 +20,9 @@ fn App() -> Element {
     let r = use_store(url).expect("connecting failed");
     let x = r.layout;
 
+    dioxus_logger::tracing::info!("{:?}", r.data);
+    dioxus_logger::tracing::info!("{:?}", r.list);
+
     let mut count = use_signal(|| 1);
     rsx! {
         document::Link { rel: "icon", href: FAVICON }

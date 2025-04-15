@@ -14,10 +14,24 @@ pub enum Content {
     #[warn(non_camel_case_types)]
     layout(Layout),
 
+
+    #[warn(non_camel_case_types)]
+    data(Data),
+
+    #[warn(non_camel_case_types)]
+    append(Data),
+
     #[warn(non_camel_case_types)]
     #[default]
     empty,
 }
+
+#[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
+pub struct Data {
+    pub event: String,
+    pub data: Layout,
+}
+
 
 #[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
 pub struct Layout {
