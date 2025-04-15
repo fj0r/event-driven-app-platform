@@ -49,7 +49,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
                     .push(d);
             }
             Message {
-                user: _,
+                sender: _,
                 content: Content::empty,
             } => (),
         };

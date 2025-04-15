@@ -16,10 +16,8 @@ export def 'send message' [file:string@cmpl-data] {
     let host = $"http://($c.host)/admin/message"
     let data = {
         receiver: [],
-        message: {
-            user: "test",
-            content: $d
-        }
+        sender: "test",
+        content: $d
     }
     http post --content-type application/json $host $data
 }

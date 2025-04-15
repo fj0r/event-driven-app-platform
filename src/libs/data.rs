@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Message {
-    pub user: String,
+    pub sender: String,
     pub content: Content,
 }
 
