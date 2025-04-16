@@ -2,6 +2,7 @@ action: layout
 kind: Container
 attrs:
     horizontal: true
+    class: box
 children:
     - kind: Container
       children:
