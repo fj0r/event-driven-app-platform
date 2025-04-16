@@ -1,9 +1,14 @@
 action: layout
 kind: Container
+attrs:
+    horizontal: true
 children:
     - kind: Container
       children:
         - kind: Card
+          children:
+            - kind: Text
+              value: child of card
         - kind: Text
           value: 123
           data:
