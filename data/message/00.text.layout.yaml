@@ -33,3 +33,8 @@ children:
       data:
           upload: true
           event: message
+    - kind: Button
+      data:
+          upload: true
+          event: ok
+      value: "Count"

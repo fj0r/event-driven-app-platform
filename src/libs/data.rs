@@ -36,6 +36,8 @@ pub struct Action {
 pub struct Bind {
     #[serde(default)]
     pub upload: bool,
+    #[serde(default)]
+    pub list: bool,
     pub event: String,
 }
 

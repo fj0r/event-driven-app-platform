@@ -21,7 +21,6 @@ fn App() -> Element {
     let x = r.layout;
     use_context_provider(|| r);
 
-    dioxus_logger::tracing::info!("{:?}", r.list);
 
     let mut count = use_signal(|| 1);
     rsx! {

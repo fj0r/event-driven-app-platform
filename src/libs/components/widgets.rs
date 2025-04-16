@@ -5,16 +5,16 @@ use dioxus::prelude::*;
 use serde_json::to_value;
 
 #[component]
-pub fn Input(layout: Layout, children: Element) -> Element {
+pub fn Input(layout: Layout) -> Element {
     rsx! {
         input {
-            {children}
+            class: "Input",
         }
     }
 }
 
 #[component]
-pub fn Text(layout: Layout, children: Element) -> Element {
+pub fn Text(layout: Layout) -> Element {
     let s = use_context::<Store>();
 
     let v = use_memo(move || {
@@ -34,7 +34,7 @@ pub fn Text(layout: Layout, children: Element) -> Element {
             }
         };
         if let Some(j) = t.value {
-            j.to_string()
+            j.as_str().unwrap().to_owned()
         } else {
             "".to_string()
         }
@@ -42,17 +42,24 @@ pub fn Text(layout: Layout, children: Element) -> Element {
 
     rsx! {
         div {
+            class: "Text",
             {v}
         }
     }
 }
 
-
 #[component]
-pub fn Button(layout: Layout, children: Element) -> Element {
+pub fn Button(layout: Layout) -> Element {
+    let t = layout
+        .value
+        .unwrap_or(to_value("Ok").unwrap())
+        .as_str()
+        .unwrap()
+        .to_owned();
     rsx! {
         button {
-            {children}
+            class: "Button",
+            {t}
         }
     }
 }
