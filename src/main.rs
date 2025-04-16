@@ -1,12 +1,18 @@
 use dioxus::prelude::*;
 mod libs;
-use libs::store::use_store;
+use libs::store::{use_store, Store};
 use libs::components::*;
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 const DEBUG_CSS: Asset = asset!("/assets/debug.css");
 const HEADER_SVG: Asset = asset!("/assets/header.svg");
+
+static STORE: GlobalSignal<Store> = Global::new(|| {
+    let url = "ws://localhost:3000/channel";
+    let r = use_store(url).expect("connecting failed");
+    r
+});
 
 fn main() {
     tracing_wasm::set_as_global_default();
@@ -15,11 +21,8 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-
-    let url = "ws://localhost:3000/channel";
-    let r = use_store(url).expect("connecting failed");
-    let x = r.layout;
-    use_context_provider(|| r);
+    use_context_provider(|| STORE());
+    let layout = STORE().layout;
 
 
     let mut count = use_signal(|| 1);
@@ -29,7 +32,7 @@ fn App() -> Element {
         document::Link { rel: "stylesheet", href: DEBUG_CSS }
         document::Link { rel: "svg", href: HEADER_SVG }
         Frame {
-            layout: x()
+            layout: layout()
         }
 
         div {
