@@ -7,8 +7,7 @@ use serde_json::to_value;
 #[component]
 pub fn Input(layout: Layout, children: Element) -> Element {
     rsx! {
-        div {
-            class: "input",
+        input {
             {children}
         }
     }
@@ -43,31 +42,16 @@ pub fn Text(layout: Layout, children: Element) -> Element {
 
     rsx! {
         div {
-            class: "text",
             {v}
         }
     }
 }
 
-#[component]
-pub fn Card(layout: Layout, children: Element) -> Element {
-    let value = layout
-        .value
-        .unwrap_or_else(|| to_value("").unwrap())
-        .to_string();
-    rsx! {
-        div {
-            class: "card",
-            {value}
-        }
-    }
-}
 
 #[component]
 pub fn Button(layout: Layout, children: Element) -> Element {
     rsx! {
-        div {
-            class: "button",
+        button {
             {children}
         }
     }

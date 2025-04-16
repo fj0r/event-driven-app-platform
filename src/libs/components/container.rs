@@ -6,7 +6,7 @@ use super::super::data::Layout;
 pub fn Container(layout:Layout, children: Element) -> Element {
     rsx!{
         div {
-            class: "container",
+            class: "f v",
             {children}
         }
     }
@@ -17,7 +17,17 @@ pub fn Container(layout:Layout, children: Element) -> Element {
 pub fn List(layout: Layout, children: Element) -> Element {
     rsx!{
         div {
-            class: "list",
+            class: "f v",
+            {children}
+        }
+    }
+}
+
+#[component]
+pub fn Card(layout: Layout, children: Element) -> Element {
+    rsx! {
+        div {
+            class: "f v box border shadow",
             {children}
         }
     }

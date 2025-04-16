@@ -1,19 +1,18 @@
 action: layout
 kind: Container
 children:
-    - kind: Text
-      value: 123
-      data:
-          event: test-data
+    - kind: Container
+      children:
+        - kind: Card
+        - kind: Text
+          value: 123
+          data:
+              event: test-data
     - kind: List
       data:
           event: chat
       item:
           - kind: Card
-    - kind: Input
-      data:
-          upload: true
-          event: message
     - kind: Container
       children:
         - kind: Text
@@ -30,3 +29,7 @@ children:
                   children:
                 - kind: Text
                   value: lv 3
+    - kind: Input
+      data:
+          upload: true
+          event: message
