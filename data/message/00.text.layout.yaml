@@ -4,6 +4,7 @@ attrs:
     horizontal: true
     class: box
 children:
+    - kind: Test
     - kind: Container
       children:
         - kind: Card

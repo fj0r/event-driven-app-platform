@@ -24,8 +24,6 @@ fn App() -> Element {
     use_context_provider(|| STORE());
     let layout = STORE().layout;
 
-
-    let mut count = use_signal(|| 1);
     rsx! {
         document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
@@ -33,14 +31,6 @@ fn App() -> Element {
         document::Link { rel: "svg", href: HEADER_SVG }
         Frame {
             layout: layout()
-        }
-
-        div {
-            "{count}"
-        }
-        button {
-            onclick: move |_| count += 1,
-            "Count"
         }
     }
 }

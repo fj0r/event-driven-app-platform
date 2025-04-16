@@ -13,6 +13,7 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
             "Input" => rsx! ( Input { layout: layout } ),
             "Text" => rsx! ( Text { layout: layout } ),
             "Button" => rsx! ( Button { layout: layout } ),
+            "Test" => rsx! ( Test { layout: layout } ),
             _ => {
                 let t = format!("{} unimplemented!", layout.kind);
                 rsx! { div { "{t}" } }

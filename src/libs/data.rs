@@ -39,6 +39,8 @@ pub struct Bind {
     #[serde(default)]
     pub list: bool,
     pub event: String,
+    // TODO: local event when upload
+    pub local: Option<String>,
 }
 
 #[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]

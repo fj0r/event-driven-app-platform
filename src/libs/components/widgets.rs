@@ -56,10 +56,26 @@ pub fn Button(layout: Layout) -> Element {
         .as_str()
         .unwrap()
         .to_owned();
+
     rsx! {
         button {
             class: "Button",
             {t}
+        }
+    }
+}
+
+
+#[component]
+pub fn Test(layout: Layout) -> Element {
+    let mut count = use_signal(|| 1);
+    rsx! {
+        div {
+            "{count}"
+        }
+        button {
+            onclick: move |_| count += 1,
+            "Count"
         }
     }
 }
