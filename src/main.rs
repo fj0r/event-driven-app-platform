@@ -19,8 +19,8 @@ fn App() -> Element {
     let url = "ws://localhost:3000/channel";
     let r = use_store(url).expect("connecting failed");
     let x = r.layout;
+    use_context_provider(|| r);
 
-    dioxus_logger::tracing::info!("{:?}", r.data);
     dioxus_logger::tracing::info!("{:?}", r.list);
 
     let mut count = use_signal(|| 1);

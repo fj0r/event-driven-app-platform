@@ -10,21 +10,23 @@ def cmpl-data [] {
     ls | get name
 }
 
-export def 'send message' [file:string@cmpl-data] {
+export def 'send message' [
+    file:string@cmpl-data
+    --patch(-p): record = {}
+] {
     let d = open ([$WORKDIR data message $file] | path join)
     let c = open ([$WORKDIR __.toml] | path join) | get server
     let host = $"http://($c.host)/admin/message"
     let data = {
         receiver: [],
         sender: "test",
-        content: $d
+        content: ($d | merge deep $patch)
     }
     http post --content-type application/json $host $data
 }
 
 export def 'ui init' [] {
     send message 00.layout.yaml
-    #send message 01.layout.yaml
     send message 02.data.yaml
     send message 03.list.yaml
 }

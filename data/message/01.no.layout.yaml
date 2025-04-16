@@ -1,0 +1,7 @@
+action: layout
+kind: Container
+children:
+    - kind: Card
+      value: 123
+      data:
+          event: test-data

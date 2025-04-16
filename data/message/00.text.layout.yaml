@@ -1,0 +1,32 @@
+action: layout
+kind: Container
+children:
+    - kind: Text
+      value: 123
+      data:
+          event: test-data
+    - kind: List
+      data:
+          event: chat
+      item:
+          - kind: Card
+    - kind: Input
+      data:
+          upload: true
+          event: message
+    - kind: Container
+      children:
+        - kind: Text
+          value: lv 1
+          data:
+              event: test-data
+        - kind: Container
+          children:
+            - kind: Text
+              value: lv 2
+            - kind: Container
+              children:
+                - kind: Container
+                  children:
+                - kind: Text
+                  value: lv 3

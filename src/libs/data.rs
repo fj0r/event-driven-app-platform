@@ -16,10 +16,10 @@ pub enum Content {
 
 
     #[warn(non_camel_case_types)]
-    data(Data),
+    data(Action),
 
     #[warn(non_camel_case_types)]
-    append(Data),
+    append(Action),
 
     #[warn(non_camel_case_types)]
     #[default]
@@ -27,20 +27,35 @@ pub enum Content {
 }
 
 #[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
-pub struct Data {
+pub struct Action {
     pub event: String,
     pub data: Layout,
 }
 
+#[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
+pub struct Bind {
+    #[serde(default)]
+    pub upload: bool,
+    pub event: String,
+}
 
 #[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
 pub struct Layout {
     pub kind: String,
     pub attrs: Option<Value>,
-    pub data: Option<String>,
+    pub data: Option<Bind>,
     pub value: Option<Value>,
     pub item: Option<Vec<Layout>>,
     pub children: Option<Vec<Layout>>
+}
+
+impl Layout {
+    pub fn new(kind: impl AsRef<str>) -> Self {
+        Layout {
+            kind: kind.as_ref().to_string(),
+            ..Layout::default()
+        }
+    }
 }
 
 #[derive(Clone, Serialize, Deserialize)]

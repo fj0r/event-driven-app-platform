@@ -2,4 +2,7 @@ action: data
 event: test-data
 data:
     kind: Text
+    data:
+        upload: true
+        event: user-message
     value: Guide
