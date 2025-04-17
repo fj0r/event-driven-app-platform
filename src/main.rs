@@ -1,7 +1,9 @@
 use dioxus::prelude::*;
 mod libs;
-use libs::store::{use_store, Store};
+use dioxus_logger::tracing;
 use libs::components::*;
+use libs::store::{use_store, Store};
+use tracing_wasm::WASMLayerConfigBuilder;
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
 const MAIN_CSS: Asset = asset!("/assets/main.css");
@@ -15,7 +17,11 @@ static STORE: GlobalSignal<Store> = Global::new(|| {
 });
 
 fn main() {
-    tracing_wasm::set_as_global_default();
+    tracing_wasm::set_as_global_default_with_config(
+        WASMLayerConfigBuilder::new()
+            .set_max_level(tracing::Level::INFO)
+            .build(),
+    );
     dioxus::launch(App);
 }
 
@@ -34,4 +40,3 @@ fn App() -> Element {
         }
     }
 }
-

@@ -1,17 +1,26 @@
 use std::str;
 
 use super::data::*;
-use super::ws::use_web_socket;
+use super::ws::{use_web_socket, WebSocketHandle};
 use anyhow::Result;
 use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;
+use serde_json::{to_string, Value};
 use std::collections::HashMap;
 
 #[derive(Clone, Copy)]
 pub struct Store {
+    pub ws: WebSocketHandle,
     pub layout: Signal<Layout>,
     pub data: Signal<HashMap<String, Layout>>,
     pub list: Signal<HashMap<String, Vec<Layout>>>,
+}
+
+impl Store {
+    pub async fn send(&mut self, msg: String) {
+        let msg = gloo_net::websocket::Message::Text(msg);
+        let _ = self.ws.send(msg).await;
+    }
 }
 
 pub fn use_store(url: &str) -> Result<Store, JsError> {
@@ -43,10 +52,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
             } => {
                 let e = x.event;
                 let d = x.data;
-                list.write()
-                    .entry(e)
-                    .or_insert(vec![d.clone()])
-                    .push(d);
+                list.write().entry(e).or_insert(vec![d.clone()]).push(d);
             }
             Message {
                 sender: _,
@@ -55,5 +61,10 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
         };
     });
 
-    Ok(Store { layout, data, list })
+    Ok(Store {
+        ws,
+        layout,
+        data,
+        list,
+    })
 }
