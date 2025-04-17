@@ -6,13 +6,12 @@ use serde_json::to_value;
 
 #[component]
 pub fn Input(layout: Layout) -> Element {
-    let mut s = use_context::<Store>();
     let mut x = use_signal(|| "".to_string());
     let r = use_resource(move || async move {
         let x = x.read();
-        let _ = s.send(x.to_string());
+        let mut s = use_context::<Store>();
+        let _ = s.send("x", to_value(x.to_string()).unwrap()).await;
     });
-        dioxus_logger::tracing::info!("==={r:?}");
     rsx! {
         input {
             class: "Input",
@@ -76,7 +75,6 @@ pub fn Button(layout: Layout) -> Element {
         }
     }
 }
-
 
 #[component]
 pub fn Test(layout: Layout) -> Element {
