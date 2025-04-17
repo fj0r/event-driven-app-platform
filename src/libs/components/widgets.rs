@@ -34,7 +34,11 @@ pub fn Text(layout: Layout) -> Element {
             }
         };
         if let Some(j) = t.value {
-            j.as_str().unwrap().to_owned()
+            if j.is_string() {
+                j.as_str().unwrap().to_owned()
+            } else {
+                j.to_string()
+            }
         } else {
             "".to_string()
         }
