@@ -1,5 +1,5 @@
 action: append
 event: chat
 data:
-    kind: Text
+    type: Text
     value: Who are you?

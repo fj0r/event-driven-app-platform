@@ -1,46 +1,46 @@
 action: layout
-kind: Container
+type: Container
 attrs:
     horizontal: true
     class: box
 children:
-    - kind: Test
-    - kind: Container
+    - type: Test
+    - type: Container
       children:
-        - kind: Card
+        - type: Card
           children:
-            - kind: Text
+            - type: Text
               value: child of card
-        - kind: Text
+        - type: Text
           value: 123
           data:
               event: test-data
-    - kind: List
+    - type: List
       data:
           event: chat
       item:
-          - kind: Card
-    - kind: Container
+          - type: Card
+    - type: Container
       children:
-        - kind: Text
+        - type: Text
           value: lv 1
           data:
               event: test-data
-        - kind: Container
+        - type: Container
           children:
-            - kind: Text
+            - type: Text
               value: lv 2
-            - kind: Container
+            - type: Container
               children:
-                - kind: Container
+                - type: Container
                   children:
-                - kind: Text
+                - type: Text
                   value: lv 3
-    - kind: Input
+    - type: Input
       data:
           upload: true
           event: message
-    - kind: Button
+    - type: Button
       data:
           upload: true
           event: ok

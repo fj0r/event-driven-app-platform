@@ -57,6 +57,7 @@ pub struct Bind {
 
 #[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
 pub struct Layout {
+    #[serde(rename = "type")]
     pub kind: String,
     pub attrs: Option<Value>,
     pub data: Option<Bind>,

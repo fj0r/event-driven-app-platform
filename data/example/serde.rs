@@ -8,6 +8,7 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Layout {
+    #[serde(rename = "type")]
     pub kind: String,
     pub data: Option<String>,
     pub item: Option<Vec<Box<Layout>>>,
@@ -32,28 +33,30 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let s = r#"
 {
   "action": "layout",
-  "kind": "box",
+  "type": "box",
   "children": [
     {
-      "kind": "header",
+      "type": "header",
       "title": "test"
     },
     {
-      "kind": "scroll",
+      "type": "scroll",
       "data": "chat",
       "item": [
         {
-          "kind": "card"
+          "type": "card"
         }
       ]
     },
     {
-      "kind": "input",
+      "type": "input",
       "data": "message"
     }
   ]
 }
     "#;
-    println!("{:?}", serde_json::from_str::<Message>(&s)?);
+    let a = serde_json::from_str::<Message>(&s)?;
+    println!("{:?}", a);
+    println!("{}", serde_json::to_string::<Message>(&a)?);
     Ok(())
 }

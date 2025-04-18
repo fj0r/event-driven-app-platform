@@ -20,9 +20,8 @@ pub struct Store {
 impl Store {
     pub async fn send(&mut self, event: impl AsRef<str>, content: Value) {
         let x: Content = (event.as_ref().to_string(), content).into();
-        let msg = to_value(x);
 
-        if let Ok(msg) = msg.and_then(|x| to_string(&x)) {
+        if let Ok(msg) = to_string::<Content>(&x) {
             let msg = gloo_net::websocket::Message::Text(msg);
             let _ = self.ws.send(msg).await;
         }
