@@ -13,6 +13,8 @@ children:
               value: child of card
         - type: Text
           value: 123
+          attrs:
+              format: md
           data:
               event: test-data
     - type: List

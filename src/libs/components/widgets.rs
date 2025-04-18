@@ -1,8 +1,10 @@
 use super::super::data::Layout;
 use super::super::store::Store;
-use super::Dynamic;
 use dioxus::prelude::*;
 use serde_json::to_value;
+use comrak::{markdown_to_html, Options};
+use super::utils::get_attrs;
+use std::sync::LazyLock;
 
 #[component]
 pub fn Input(layout: Layout) -> Element {
@@ -40,7 +42,7 @@ pub fn Text(layout: Layout) -> Element {
                 ..Layout::default()
             }
         };
-        if let Some(j) = t.value {
+        let v = if let Some(j) = t.value {
             if j.is_string() {
                 j.as_str().unwrap().to_owned()
             } else {
@@ -48,6 +50,17 @@ pub fn Text(layout: Layout) -> Element {
             }
         } else {
             "".to_string()
+        };
+
+        static MDFMT: LazyLock<Vec<&str>> = LazyLock::new(|| vec!["markdown", "md"]);
+        if let Some(a) = get_attrs(layout.clone(), "format") {
+            if a.is_string() && (*MDFMT).contains(&a.as_str().unwrap())  {
+                markdown_to_html(&v, &Options::default())
+            } else {
+                v
+            }
+        } else {
+            v
         }
     });
 
