@@ -1,0 +1,39 @@
+action: layout
+type: Container
+attrs:
+    class: box
+children:
+    - type: Container
+      children:
+        - type: Card
+          children:
+            - type: Text
+              value: child of card
+        - type: Text
+          value: 123
+          attrs:
+              format: md
+          data:
+              event: test-data
+    - type: List
+      data:
+          event: chat
+      item:
+          - type: Card
+    - type: Container
+      children:
+        - type: Container
+          attrs:
+            horizontal: true
+          children:
+            - type: Input
+              data:
+                  upload: true
+                  event: message
+
+            - type: Button
+              data:
+                  upload: true
+                  event: ok
+              value: "Count"
+        - type: Test

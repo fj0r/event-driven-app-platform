@@ -7,7 +7,7 @@ pub fn Frame(layout: Layout) -> Element {
     let children = layout.clone().children.unwrap_or_else(|| vec![]);
     let children = children.iter().map(|c| {
         rsx! {
-            Frame{ layout: c.clone() }
+            Frame { layout: c.clone() }
         }
     });
 

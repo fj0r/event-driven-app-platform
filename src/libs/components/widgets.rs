@@ -98,7 +98,7 @@ pub fn Test(layout: Layout) -> Element {
         }
         button {
             onclick: move |_| count += 1,
-            "Count"
+            "test"
         }
     }
 }

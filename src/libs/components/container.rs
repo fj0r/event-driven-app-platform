@@ -1,8 +1,8 @@
 use super::super::data::Layout;
+use super::super::store::Store;
 use dioxus::prelude::*;
-use dioxus_logger::tracing;
-use serde_json::{from_str, to_value};
 use super::utils::unwrap_or_object;
+use super::Dynamic;
 
 #[component]
 pub fn Container(layout: Layout, children: Element) -> Element {
@@ -21,9 +21,42 @@ pub fn Container(layout: Layout, children: Element) -> Element {
         css.push(cc);
     };
 
+
     rsx! {
         div {
             class: css.join(" "),
+            {children}
+        }
+    }
+}
+
+#[component]
+pub fn List(layout: Layout, children: Element) -> Element {
+    let c = if let Some(i) = layout.item {
+        let x = i[0].clone();
+
+        let s = use_context::<Store>();
+        let v = use_memo(move || {
+            let t = if let Some(b) = &layout.data {
+                if !b.upload {
+                    let x = s.list.read().get(&b.event).cloned();
+
+                }
+
+            };
+        });
+        rsx! {
+            Dynamic {
+                layout: x,
+                {children}
+            }
+        }
+    } else {
+        children
+    };
+    rsx! {
+        div {
+            class: "List f v",
             {children}
         }
     }
@@ -39,12 +72,3 @@ pub fn Card(layout: Layout, children: Element) -> Element {
     }
 }
 
-#[component]
-pub fn List(layout: Layout, children: Element) -> Element {
-    rsx! {
-        div {
-            class: "List f v",
-            {children}
-        }
-    }
-}
