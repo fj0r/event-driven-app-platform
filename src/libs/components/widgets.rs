@@ -9,7 +9,7 @@ use std::sync::LazyLock;
 #[component]
 pub fn Input(layout: Layout) -> Element {
     let mut x = use_signal(|| "".to_string());
-    let r = use_resource(move || async move {
+    let _r = use_resource(move || async move {
         let x = x.read();
         let mut s = use_context::<Store>();
         let _ = s.send("x", to_value(x.to_string()).unwrap()).await;
