@@ -1,4 +1,4 @@
-action: append
+action: join
 event: chat
 data:
     type: Text

@@ -10,7 +10,7 @@ pub struct Message {
 
 impl From<(String, Value)> for Content {
     fn from(value: (String, Value)) -> Self {
-        Content::data(Action {
+        Content::merge(Action {
             event: value.0,
             data: Layout {
                 kind: "Text".to_string(),
@@ -28,10 +28,10 @@ pub enum Content {
     layout(Layout),
 
     #[warn(non_camel_case_types)]
-    data(Action),
+    merge(Action),
 
     #[warn(non_camel_case_types)]
-    append(Action),
+    join(Action),
 
     #[warn(non_camel_case_types)]
     #[default]

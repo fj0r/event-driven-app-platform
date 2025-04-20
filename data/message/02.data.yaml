@@ -1,4 +1,4 @@
-action: data
+action: merge
 event: test-data
 data:
     type: Text

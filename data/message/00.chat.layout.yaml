@@ -30,7 +30,6 @@ children:
               data:
                   upload: true
                   event: message
-
             - type: Button
               data:
                   upload: true

@@ -57,6 +57,26 @@ pub fn List(layout: Layout, children: Element) -> Element {
     rsx! {
         div {
             class: "List f v",
+            {c}
+        }
+    }
+}
+
+#[component]
+pub fn Tab(layout: Layout, children: Element) -> Element {
+    rsx! {
+        div {
+            class: "Card f v box border shadow",
+            {children}
+        }
+    }
+}
+
+#[component]
+pub fn Menu(layout: Layout, children: Element) -> Element {
+    rsx! {
+        div {
+            class: "Card f v box border shadow",
             {children}
         }
     }

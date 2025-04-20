@@ -44,7 +44,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
                 ..
             } => layout.set(x),
             Message {
-                content: Content::data(x),
+                content: Content::merge(x),
                 ..
             } => {
                 let e = x.event;
@@ -52,7 +52,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
                 data.write().insert(e, d);
             }
             Message {
-                content: Content::append(x),
+                content: Content::join(x),
                 ..
             } => {
                 let e = x.event;
