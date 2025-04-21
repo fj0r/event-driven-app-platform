@@ -15,7 +15,9 @@ children:
               format: md
           data:
               event: test-data
-    - type: x
+    - type: list
+      attrs:
+          #class: scrolly
       data:
           event: chat
       item:
