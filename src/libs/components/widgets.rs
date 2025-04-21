@@ -9,15 +9,22 @@ use std::sync::LazyLock;
 #[component]
 pub fn Input(layout: Layout) -> Element {
     let mut x = use_signal(|| "".to_string());
-    let _r = use_resource(move || async move {
-        let x = x.read();
-        let mut s = use_context::<Store>();
-        let _ = s.send("x", to_value(x.to_string()).unwrap()).await;
-    });
+    let mut s = use_context::<Store>();
     rsx! {
         input {
             class: "Input",
-            oninput: move |event| x.set(event.value())
+            value: x,
+            oninput: move |event| {
+                x.set(event.value())
+            },
+            onkeydown: move |event| async move {
+                if event.data.key() == Key::Enter {
+                    s.send("x", to_value(x.read().to_string()).unwrap()).await;
+                    // x.set("".to_string())
+                    *x.write() = "".to_string()
+                }
+
+            }
         }
     }
 }
