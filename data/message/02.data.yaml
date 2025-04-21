@@ -1,8 +1,8 @@
 action: merge
 event: test-data
 data:
-    type: Text
+    type: text
     data:
         upload: true
         event: user-message
-    value: Guide
+    value: guide

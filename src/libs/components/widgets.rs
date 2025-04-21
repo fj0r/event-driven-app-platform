@@ -96,16 +96,3 @@ pub fn Button(layout: Layout) -> Element {
     }
 }
 
-#[component]
-pub fn Test(layout: Layout) -> Element {
-    let mut count = use_signal(|| 1);
-    rsx! {
-        div {
-            "{count}"
-        }
-        button {
-            onclick: move |_| count += 1,
-            "test"
-        }
-    }
-}

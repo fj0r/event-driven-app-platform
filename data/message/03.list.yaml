@@ -1,5 +1,5 @@
 action: join
 event: chat
 data:
-    type: Text
-    value: Who are you?
+    type: text
+    value: who are you?

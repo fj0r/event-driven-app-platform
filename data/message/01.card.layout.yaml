@@ -1,30 +1,30 @@
 action: layout
-type: Container
+type: container
 children:
-    - type: Card
+    - type: card
       value: 123
       data:
           event: test-data
-    - type: List
+    - type: list
       data:
           event: chat
       item:
-          - type: Card
-    - type: Input
+          - type: card
+    - type: input
       data:
           upload: true
           event: message
-    - type: Container
+    - type: container
       children:
-        - type: Card
+        - type: card
           value: lv 1
-        - type: Container
+        - type: container
           children:
-            - type: Card
+            - type: card
               value: lv 2
-            - type: Container
+            - type: container
               children:
-                - type: Container
+                - type: container
                   children:
-                - type: Card
+                - type: card
                   value: lv 3
