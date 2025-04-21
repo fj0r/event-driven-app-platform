@@ -12,7 +12,7 @@ pub fn Input(layout: Layout) -> Element {
     let mut s = use_context::<Store>();
     rsx! {
         input {
-            class: "Input",
+            class: "input f",
             value: x,
             oninput: move |event| {
                 x.set(event.value())
@@ -73,7 +73,7 @@ pub fn Text(layout: Layout) -> Element {
 
     rsx! {
         div {
-            class: "Text",
+            class: "text f",
             {v}
         }
     }
@@ -90,7 +90,7 @@ pub fn Button(layout: Layout) -> Element {
 
     rsx! {
         button {
-            class: "Button",
+            class: "button",
             {t}
         }
     }

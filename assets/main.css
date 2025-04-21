@@ -2,13 +2,13 @@
 :root {
   --fg: #111;
   --bg: #fff;
-  --round: 0rem;
+  --round: 10px;
   --accent: #754f44;
   --primary: #ec7357;
-  --secondary: #fdd692;
+  --secondary: #e8e8e8;
   --disabled: #808080;
-  --border-width: 2px;
-  --border: var(--border-width) solid var(--fg);
+  --border-width: 1px;
+  --border: var(--border-width) solid var(--secondary);
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -60,6 +60,11 @@ body {
     padding-bottom: 8rem;
     font-size: 1.2em;
   }
+}
+
+.maximize {
+    width: 100vw;
+    height: 100vh;
 }
 
 /*** LAYOUT ***/
@@ -151,11 +156,11 @@ body {
   & >._yl {
     align-self: baseline;
   }
-  &.__nogrow,
+  &.nogrow,
   & >._nogrow {
     flex-grow: 0;
   }
-  &.__shrink,
+  &.shrink,
   & >._shrink {
     flex-shrink: 1;
   }
@@ -261,9 +266,17 @@ body {
 
 .shadow {
   box-shadow:
-    0 2px 2px 0 rgba(0,0,0,0.14),
-    0 3px 1px -2px rgba(0,0,0,0.12),
-    0 1px 5px 0 rgba(0,0,0,0.2);
+    --csstools-color-scheme--light: initial;
+    --csstools-light-dark-toggle--18: var(--csstools-color-scheme--light) rgba(92,92,92,.6);
+    --base-shadow: var(--csstools-light-dark-toggle--18,hsla(0,0%,85%,.4));
+    --tw-shadow: 2px 2px 0px 0px var(--base-shadow-darker),0px 0px 2px 0px hsla(0,0%,50%,.2);
+    --tw-shadow-colored: 2px 2px 0px 0px var(--tw-shadow-color),0px 0px 2px 0px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow);
+    --tw-shadow-color: var(--base-shadow);
+    --tw-shadow: var(--tw-shadow-colored);
+  &:hover {
+    --tw-shadow-colored: 4px 4px 0px 0px var(--tw-shadow-color),0px 0px 2px 0px var(--tw-shadow-color);
+  }
 }
 
 .glass {

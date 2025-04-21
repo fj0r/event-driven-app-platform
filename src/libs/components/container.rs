@@ -6,7 +6,7 @@ use super::Dynamic;
 
 #[component]
 pub fn Container(layout: Layout, children: Element) -> Element {
-    let mut css = vec!["Container", "f"];
+    let mut css = vec!["container", "f"];
 
     let a = unwrap_or_object(layout.attrs);
     if let Some(a) = a.as_object() {
@@ -32,7 +32,7 @@ pub fn Container(layout: Layout, children: Element) -> Element {
 
 #[component]
 pub fn List(layout: Layout, children: Element) -> Element {
-    let mut css = vec!["List", "f"];
+    let mut css = vec!["list", "f"];
     let l = layout.clone();
     let a = unwrap_or_object(l.attrs);
     if let Some(a) = a.as_object() {
@@ -78,7 +78,7 @@ pub fn List(layout: Layout, children: Element) -> Element {
 pub fn Tab(layout: Layout, children: Element) -> Element {
     rsx! {
         div {
-            class: "Card f v box border shadow",
+            class: "card f v box border shadow",
             {children}
         }
     }
@@ -88,7 +88,7 @@ pub fn Tab(layout: Layout, children: Element) -> Element {
 pub fn Menu(layout: Layout, children: Element) -> Element {
     rsx! {
         div {
-            class: "Card f v box border shadow",
+            class: "card f v box border shadow",
             {children}
         }
     }
@@ -98,7 +98,7 @@ pub fn Menu(layout: Layout, children: Element) -> Element {
 pub fn Card(layout: Layout, children: Element) -> Element {
     rsx! {
         div {
-            class: "Card f v box border shadow",
+            class: "card f v box border shadow",
             {children}
         }
     }

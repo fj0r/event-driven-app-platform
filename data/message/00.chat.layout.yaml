@@ -1,28 +1,26 @@
 action: layout
-type: container
 attrs:
-    class: box
+    class: maximize
+type: container
 children:
-    - type: container
-      children:
-        - type: card
-          children:
-            - type: text
-              value: child of card
-        - type: text
-          value: 123
-          attrs:
-              format: md
-          data:
-              event: test-data
+    - type: text
+      value: chat with AI
+      attrs:
+          class: nogrow
+          format: md
+      # data:
+      #     event: test-data
     - type: list
       attrs:
-          #class: scrolly
+          class: box xs gap scrolly
       data:
           event: chat
       item:
           - type: card
     - type: container
+      attrs:
+          class: nogrow box
+          horizontal: true
       children:
         - type: container
           attrs:
@@ -32,9 +30,3 @@ children:
               data:
                   upload: true
                   event: message
-            - type: button
-              data:
-                  upload: true
-                  event: ok
-              value: "Count"
-        - type: test

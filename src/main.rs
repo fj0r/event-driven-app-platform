@@ -7,7 +7,6 @@ use tracing_wasm::WASMLayerConfigBuilder;
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
 const MAIN_CSS: Asset = asset!("/assets/main.css");
-const DEBUG_CSS: Asset = asset!("/assets/debug.css");
 const HEADER_SVG: Asset = asset!("/assets/header.svg");
 
 static STORE: GlobalSignal<Store> = Global::new(|| {
@@ -33,7 +32,6 @@ fn App() -> Element {
     rsx! {
         document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
-        document::Link { rel: "stylesheet", href: DEBUG_CSS }
         document::Link { rel: "svg", href: HEADER_SVG }
         Frame {
             layout: layout()

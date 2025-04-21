@@ -9,7 +9,7 @@ use dioxus_logger::tracing::info;
 
 #[component]
 pub fn X(layout: Layout, children: Element) -> Element {
-    let mut css = vec!["List", "f"];
+    let mut css = vec!["list", "f"];
     let l = layout.clone();
     let a = unwrap_or_object(l.attrs);
     if let Some(a) = a.as_object() {
