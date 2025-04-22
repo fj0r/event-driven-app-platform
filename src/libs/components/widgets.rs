@@ -3,16 +3,18 @@ use super::super::store::Store;
 use dioxus::prelude::*;
 use serde_json::to_value;
 use comrak::{markdown_to_html, Options};
-use super::utils::get_attrs;
+use super::utils::{get_attrs, merge_css_class};
 use std::sync::LazyLock;
 
 #[component]
 pub fn Input(layout: Layout) -> Element {
     let mut x = use_signal(|| "".to_string());
     let mut s = use_context::<Store>();
+    let mut css = vec!["input", "f"];
+    let css = merge_css_class(&mut css, &layout);
     rsx! {
         input {
-            class: "input f",
+            class: css.join(" "),
             value: x,
             oninput: move |event| {
                 x.set(event.value())
@@ -31,6 +33,10 @@ pub fn Input(layout: Layout) -> Element {
 
 #[component]
 pub fn Text(layout: Layout) -> Element {
+    let mut css = vec!["text", "f"];
+    let l = layout.clone();
+    let css = merge_css_class(&mut css, &l);
+
     let s = use_context::<Store>();
 
     let v = use_memo(move || {
@@ -73,7 +79,7 @@ pub fn Text(layout: Layout) -> Element {
 
     rsx! {
         div {
-            class: "text f nogrow",
+            class: css.join(" "),
             {v}
         }
     }

@@ -4,5 +4,9 @@
 - [x] User input (listen to input events)
     - [x] Listen for enter key press
 - [ ] Try to clarify data format definitions
-- [ ] List component, needed for chat
+- [x] List component, needed for chat
+    - [ ] keyed list
 - [ ] Logic for merging list unit(based on ID), used for AI's dynamic output
+- [ ] Component Interactivity
+- [ ] Subpath
+- [ ] Form widget
