@@ -17,6 +17,8 @@ children:
           event: chat
       item:
           - type: card
+            attrs:
+                class: nogrow
     - type: container
       attrs:
           class: nogrow box

@@ -7,7 +7,6 @@ use super::Dynamic;
 #[component]
 pub fn Container(layout: Layout, children: Element) -> Element {
     let mut css = vec!["container", "f"];
-
     let css = merge_css_class(&mut css, &layout);
 
     rsx! {
@@ -28,6 +27,7 @@ pub fn List(layout: Layout, children: Element) -> Element {
     let b = layout.data.clone().context("data")?;
     let c = s.list.read();
     let c = c.get(&b.event).cloned().unwrap_or_else(|| Vec::new());
+    dioxus_logger::tracing::info!("{c:?}");
     let r = c.iter().enumerate().map(|(idx, child)| {
         let x = rsx! {
             Dynamic {
@@ -52,9 +52,11 @@ pub fn List(layout: Layout, children: Element) -> Element {
 
 #[component]
 pub fn Tab(layout: Layout, children: Element) -> Element {
+    let mut css = vec!["card", "f", "v", "box", "border", "shadow"];
+    let css = merge_css_class(&mut css, &layout);
     rsx! {
         div {
-            class: "card f v box border shadow",
+            class: css.join(" "),
             {children}
         }
     }
@@ -62,9 +64,11 @@ pub fn Tab(layout: Layout, children: Element) -> Element {
 
 #[component]
 pub fn Menu(layout: Layout, children: Element) -> Element {
+    let mut css = vec!["card", "f", "v", "box", "border", "shadow"];
+    let css = merge_css_class(&mut css, &layout);
     rsx! {
         div {
-            class: "card f v box border shadow",
+            class: css.join(" "),
             {children}
         }
     }
@@ -72,9 +76,11 @@ pub fn Menu(layout: Layout, children: Element) -> Element {
 
 #[component]
 pub fn Card(layout: Layout, children: Element) -> Element {
+    let mut css = vec!["card", "f", "v", "box", "border", "shadow"];
+    let css = merge_css_class(&mut css, &layout);
     rsx! {
         div {
-            class: "card f v box border shadow",
+            class: css.join(" "),
             {children}
         }
     }

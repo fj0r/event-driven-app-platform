@@ -62,7 +62,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
                     let list = l.entry(e).or_insert(vec![d.clone()]);
                     let mut m = false;
                     for i in list.iter_mut() {
-                        if *i == *d {
+                        if i.cmp_id(d) {
                             m = true;
                             *i += d.clone()
                         }

@@ -58,7 +58,7 @@ pub struct Bind {
     pub local: Option<String>,
 }
 
-#[derive(Debug, Clone, Props, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Props, Serialize, Deserialize, Default)]
 pub struct Layout {
     #[serde(rename = "type")]
     pub kind: String,
@@ -68,19 +68,6 @@ pub struct Layout {
     pub value: Option<Value>,
     pub item: Option<Vec<Layout>>,
     pub children: Option<Vec<Layout>>,
-}
-
-impl PartialEq for Layout {
-    fn eq(&self, other: &Self) -> bool {
-        if let Some(id) = &self.id {
-            if let Some(oid) = &other.id {
-                if id == oid {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }
 
 impl AddAssign for Layout {
@@ -126,6 +113,16 @@ impl Layout {
             kind: kind.as_ref().to_string(),
             ..Layout::default()
         }
+    }
+    pub fn cmp_id(&self, other: &Self) -> bool {
+        if let Some(id) = &self.id {
+            if let Some(oid) = &other.id {
+                if id == oid {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
 
