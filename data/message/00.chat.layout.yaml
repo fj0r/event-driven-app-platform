@@ -6,7 +6,7 @@ children:
     - type: text
       value: chat with AI
       attrs:
-          class: nogrow
+          class: nogrow shadow
           format: md
       # data:
       #     event: test-data

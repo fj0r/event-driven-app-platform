@@ -73,7 +73,7 @@ pub fn Text(layout: Layout) -> Element {
 
     rsx! {
         div {
-            class: "text f",
+            class: "text f nogrow",
             {v}
         }
     }

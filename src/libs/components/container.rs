@@ -1,26 +1,14 @@
 use super::super::data::Layout;
 use super::super::store::Store;
 use dioxus::prelude::*;
-use super::utils::unwrap_or_object;
+use super::utils::merge_css_class;
 use super::Dynamic;
 
 #[component]
 pub fn Container(layout: Layout, children: Element) -> Element {
     let mut css = vec!["container", "f"];
 
-    let a = unwrap_or_object(layout.attrs);
-    if let Some(a) = a.as_object() {
-        let h = a
-            .get("horizontal")
-            .and_then(|x| x.as_bool())
-            .unwrap_or(false);
-        if !h {
-            css.push("v");
-        }
-        let cc = a.get("class").and_then(|x| x.as_str()).unwrap_or("");
-        css.push(cc);
-    };
-
+    let css = merge_css_class(&mut css, &layout);
 
     rsx! {
         div {
@@ -33,19 +21,7 @@ pub fn Container(layout: Layout, children: Element) -> Element {
 #[component]
 pub fn List(layout: Layout, children: Element) -> Element {
     let mut css = vec!["list", "f"];
-    let l = layout.clone();
-    let a = unwrap_or_object(l.attrs);
-    if let Some(a) = a.as_object() {
-        let h = a
-            .get("horizontal")
-            .and_then(|x| x.as_bool())
-            .unwrap_or(false);
-        if !h {
-            css.push("v");
-        }
-        let cc = a.get("class").and_then(|x| x.as_str()).unwrap_or("");
-        css.push(cc);
-    };
+    let css = merge_css_class(&mut css, &layout);
 
     let s = use_context::<Store>();
     let i = &layout.clone().item.context("item")?[0];
