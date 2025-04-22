@@ -1,4 +1,4 @@
-action: layout
+action: create
 type: container
 children:
     - type: card

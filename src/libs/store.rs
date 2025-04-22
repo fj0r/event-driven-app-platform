@@ -18,8 +18,8 @@ pub struct Store {
 }
 
 impl Store {
-    pub async fn send(&mut self, event: impl AsRef<str>, content: Value) {
-        let x: Content = (event.as_ref().to_string(), content).into();
+    pub async fn send(&mut self, event: impl AsRef<str>, id: Option<String>, content: Value) {
+        let x: Content = (event.as_ref().to_string(), id, content).into();
 
         if let Ok(msg) = to_string::<Content>(&x) {
             let msg = gloo_net::websocket::Message::Text(msg);
@@ -40,7 +40,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
         let act = serde_json::from_str::<Message>(&x()).unwrap_or_else(|_| Message::default());
         match act {
             Message {
-                content: Content::layout(x),
+                content: Content::create(x),
                 ..
             } => layout.set(x),
             Message {
@@ -57,7 +57,13 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
             } => {
                 let e = x.event;
                 let d = x.data;
-                list.write().entry(e).or_insert(vec![d.clone()]).push(d);
+                if let Some(_id) = &d.id {
+                    let mut l = list.write();
+                    let l = l.entry(e).or_insert(vec![d.clone()]);
+                    l.push(d);
+                } else {
+                    list.write().entry(e).or_insert(vec![d.clone()]).push(d);
+                }
             }
             Message {
                 sender: _,

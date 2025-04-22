@@ -1,4 +1,4 @@
-action: layout
+action: create
 attrs:
     class: maximize
 type: container

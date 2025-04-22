@@ -21,7 +21,7 @@ pub fn Input(layout: Layout) -> Element {
             },
             onkeydown: move |event| async move {
                 if event.data.key() == Key::Enter {
-                    s.send("x", to_value(x.read().to_string()).unwrap()).await;
+                    s.send("x", None, to_value(x.read().to_string()).unwrap()).await;
                     // x.set("".to_string())
                     *x.write() = "".to_string()
                 }

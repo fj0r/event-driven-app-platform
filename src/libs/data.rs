@@ -8,13 +8,14 @@ pub struct Message {
     pub content: Content,
 }
 
-impl From<(String, Value)> for Content {
-    fn from(value: (String, Value)) -> Self {
+impl From<(String, Option<String>, Value)> for Content {
+    fn from(value: (String, Option<String>, Value)) -> Self {
         Content::merge(Action {
             event: value.0,
             data: Layout {
                 kind: "Text".to_string(),
-                value: Some(value.1),
+                id: value.1,
+                value: Some(value.2),
                 ..Default::default()
             },
         })
@@ -25,7 +26,7 @@ impl From<(String, Value)> for Content {
 #[serde(tag = "action")]
 pub enum Content {
     #[warn(non_camel_case_types)]
-    layout(Layout),
+    create(Layout),
 
     #[warn(non_camel_case_types)]
     merge(Action),
@@ -59,6 +60,7 @@ pub struct Bind {
 pub struct Layout {
     #[serde(rename = "type")]
     pub kind: String,
+    pub id: Option<String>,
     pub attrs: Option<Value>,
     pub data: Option<Bind>,
     pub value: Option<Value>,
