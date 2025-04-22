@@ -9,7 +9,7 @@ use js_sys::wasm_bindgen::JsError;
 use serde_json::{to_string, Value};
 use std::collections::HashMap;
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct Store {
     pub ws: WebSocketHandle,
     pub layout: Signal<Layout>,

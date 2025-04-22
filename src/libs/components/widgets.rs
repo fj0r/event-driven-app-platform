@@ -1,9 +1,9 @@
 use super::super::data::Layout;
 use super::super::store::Store;
+use super::utils::{get_attrs, merge_css_class};
+use comrak::{markdown_to_html, Options};
 use dioxus::prelude::*;
 use serde_json::to_value;
-use comrak::{markdown_to_html, Options};
-use super::utils::{get_attrs, merge_css_class};
 use std::sync::LazyLock;
 
 #[component]
@@ -19,13 +19,15 @@ pub fn Input(layout: Layout) -> Element {
             oninput: move |event| {
                 x.set(event.value())
             },
-            onkeydown: move |event| async move {
-                if event.data.key() == Key::Enter {
-                    s.send("x", None, to_value(x.read().to_string()).unwrap()).await;
-                    // x.set("".to_string())
-                    *x.write() = "".to_string()
+            onkeydown: move |event| {
+                let mut s = s.clone();
+                async move {
+                    if event.data.key() == Key::Enter {
+                        s.send("x", None, to_value(x.read().to_string()).unwrap()).await;
+                        // x.set("".to_string())
+                        *x.write() = "".to_string()
+                    }
                 }
-
             }
         }
     }
@@ -67,7 +69,7 @@ pub fn Text(layout: Layout) -> Element {
 
         static MDFMT: LazyLock<Vec<&str>> = LazyLock::new(|| vec!["markdown", "md"]);
         if let Some(a) = get_attrs(layout.clone(), "format") {
-            if a.is_string() && (*MDFMT).contains(&a.as_str().unwrap())  {
+            if a.is_string() && (*MDFMT).contains(&a.as_str().unwrap()) {
                 markdown_to_html(&v, &Options::default())
             } else {
                 v
@@ -101,4 +103,3 @@ pub fn Button(layout: Layout) -> Element {
         }
     }
 }
-
