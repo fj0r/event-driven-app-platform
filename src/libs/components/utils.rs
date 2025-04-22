@@ -38,3 +38,4 @@ pub fn merge_css_class<'a>(
     }
     css
 }
+

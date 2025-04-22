@@ -6,7 +6,7 @@ use super::ws::{use_web_socket, WebSocketHandle};
 use anyhow::Result;
 use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;
-use serde_json::{to_string, to_value, Value};
+use serde_json::{to_string, Value};
 use std::collections::HashMap;
 
 #[derive(Clone, Copy)]
@@ -56,13 +56,22 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
                 ..
             } => {
                 let e = x.event;
-                let d = x.data;
+                let d = &x.data;
                 if let Some(_id) = &d.id {
                     let mut l = list.write();
-                    let l = l.entry(e).or_insert(vec![d.clone()]);
-                    l.push(d);
+                    let list = l.entry(e).or_insert(vec![d.clone()]);
+                    let mut m = false;
+                    for i in list.iter_mut() {
+                        if *i == *d {
+                            m = true;
+                            *i += d.clone()
+                        }
+                    }
+                    if !m {
+                        list.push(d.clone());
+                    }
                 } else {
-                    list.write().entry(e).or_insert(vec![d.clone()]).push(d);
+                    list.write().entry(e).or_insert(vec![d.clone()]).push(d.clone());
                 }
             }
             Message {

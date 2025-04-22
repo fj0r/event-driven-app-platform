@@ -36,7 +36,7 @@ pub fn List(layout: Layout, children: Element) -> Element {
         };
         rsx! {
             Dynamic {
-                key: idx,
+                key: child.id.unwrap_or(idx.to_string()),
                 layout: i.clone(),
                 {x}
             }
