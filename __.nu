@@ -19,7 +19,7 @@ export def 'send message' [
     let host = $"http://($c.host)/admin/message"
     let data = {
         receiver: [],
-        sender: "test",
+        sender: "",
         content: ($d | merge deep $patch)
     }
     http post --content-type application/json $host $data

@@ -4,9 +4,11 @@ use dioxus::prelude::*;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
+type Session = String;
+
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Message {
-    pub sender: String,
+    pub sender: Session,
     pub content: Content,
 }
 
