@@ -10,7 +10,7 @@ use std::sync::LazyLock;
 pub fn Input(layout: Layout) -> Element {
     let mut x = use_signal(|| "".to_string());
     let mut s = use_context::<Store>();
-    let mut css = vec!["input", "f"];
+    let mut css = vec!["input", "f", "shadow"];
     let css = merge_css_class(&mut css, &layout);
     rsx! {
         input {

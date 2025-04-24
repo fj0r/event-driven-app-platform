@@ -10,3 +10,4 @@
 - [ ] Component Interactivity
 - [ ] Subpath
 - [ ] Form widget
+- [ ] Channel Support (Tabpage)

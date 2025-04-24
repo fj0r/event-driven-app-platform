@@ -423,7 +423,8 @@ select,
 textarea {
   margin: 0 0 0 0;
   border: none;
-  border-bottom: var(--border-width) solid var(--disabled);
+  border: var(--border-width) solid var(--secondary);
+  border-radius: 4px;
   outline: none;
   background-color: transparent;
   padding: 5px;
@@ -433,7 +434,7 @@ textarea {
     opacity: 1;
   }
   &:focus {
-    border-bottom: var(--border-width) solid var(--fg);
+    border: var(--border-width) solid var(--disabled);
     /*transform: scaleX(1);*/
     transition: all 0.5s ease-in-out 0s;
   }

@@ -71,7 +71,10 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
                         list.push(d.clone());
                     }
                 } else {
-                    list.write().entry(e).or_insert(vec![d.clone()]).push(d.clone());
+                    list.write()
+                        .entry(e)
+                        .or_insert(vec![d.clone()])
+                        .push(d.clone());
                 }
             }
             Message {
