@@ -2,7 +2,7 @@ const WORKDIR = path self .
 
 export def 'dev start' [] {
     let t = open ([$WORKDIR __.toml] | path join) | get dx
-    dx serve --port $t.port
+    ^dx serve --port $t.port
 }
 
 def cmpl-data [] {
