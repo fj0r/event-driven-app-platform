@@ -186,6 +186,7 @@ body {
 .txt {
   line-height: 1.2;
   color: var(--fg);
+  word-break: break-all;
   &.sm {
     font-size: 0.6rem;
   }

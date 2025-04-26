@@ -36,7 +36,7 @@ pub fn Input(layout: Layout) -> Element {
 
 #[component]
 pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
-    let mut css = vec!["text", "f"];
+    let mut css = vec!["text", "f", "txt"];
 
     let layout_cloned = layout();
     let css = merge_css_class(&mut css, &layout_cloned);
