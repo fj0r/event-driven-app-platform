@@ -64,7 +64,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
                     for i in list.iter_mut() {
                         if i.cmp_id(d) {
                             m = true;
-                            *i += d.clone()
+                            *i += d.clone();
                         }
                     }
                     if !m {
@@ -73,7 +73,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
                 } else {
                     list.write()
                         .entry(e)
-                        .or_insert(vec![d.clone()])
+                        .or_insert(vec![])
                         .push(d.clone());
                 }
             }
