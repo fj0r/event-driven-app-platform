@@ -1,0 +1,6 @@
+
+action: merge
+event: title
+data:
+    type: text
+    value: "**hello**"

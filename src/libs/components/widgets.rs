@@ -44,19 +44,20 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
     let s = use_context::<Store>();
 
     let v = use_memo(move || {
-        let t = if let Some(b) = &layout.read().data {
-            if !b.upload {
-                let x = s.data.read().get(&b.event).cloned();
-                x.unwrap_or_else(|| Layout::new("Text"))
-            } else {
-                Layout::new("Text")
-            }
-        } else {
+        let mut t = {
             let value = layout.read().value.clone();
             Layout {
                 kind: "Text".to_string(),
                 value,
                 ..Layout::default()
+            }
+        };
+        if let Some(b) = &layout.read().data {
+            if !b.upload {
+                let x = s.data.read().get(&b.event).cloned();
+                if let Some(t1) = x {
+                    t = t1
+                }
             }
         };
         let v = if let Some(j) = t.value {
