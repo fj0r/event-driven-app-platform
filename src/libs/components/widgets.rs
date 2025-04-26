@@ -12,6 +12,9 @@ pub fn Input(layout: Layout) -> Element {
     let mut s = use_context::<Store>();
     let mut css = vec!["input", "f", "shadow"];
     let css = merge_css_class(&mut css, &layout);
+
+    let ev = layout.clone().data.map(|x| x.event);
+
     rsx! {
         input {
             class: css.join(" "),
@@ -21,12 +24,14 @@ pub fn Input(layout: Layout) -> Element {
             },
             onkeydown: move |event| {
                 let mut s = s.clone();
+                let ev = ev.clone();
                 async move {
                     if event.data.key() == Key::Enter {
-                        // TODO: event
-                        s.send("x", None, "text".to_owned(), to_value(x.read().to_string()).unwrap()).await;
-                        // x.set("".to_string())
-                        *x.write() = "".to_string()
+                        if let Some(e) = ev {
+                            s.send(e, None, "text".to_owned(), to_value(x.read().to_string()).unwrap()).await;
+                            // x.set("".to_string())
+                            *x.write() = "".to_string()
+                        }
                     }
                 }
             }
