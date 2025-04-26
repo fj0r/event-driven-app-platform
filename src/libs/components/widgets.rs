@@ -35,15 +35,16 @@ pub fn Input(layout: Layout) -> Element {
 }
 
 #[component]
-pub fn Text(layout: Layout) -> Element {
+pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
     let mut css = vec!["text", "f"];
-    let l = layout.clone();
-    let css = merge_css_class(&mut css, &l);
+
+    let layout_cloned = layout();
+    let css = merge_css_class(&mut css, &layout_cloned);
 
     let s = use_context::<Store>();
 
     let v = use_memo(move || {
-        let t = if let Some(b) = &layout.data {
+        let t = if let Some(b) = &layout.read().data {
             if !b.upload {
                 let x = s.data.read().get(&b.event).cloned();
                 x.unwrap_or_else(|| Layout::new("Text"))
@@ -51,7 +52,7 @@ pub fn Text(layout: Layout) -> Element {
                 Layout::new("Text")
             }
         } else {
-            let value = layout.value.clone();
+            let value = layout.read().value.clone();
             Layout {
                 kind: "Text".to_string(),
                 value,
@@ -69,7 +70,7 @@ pub fn Text(layout: Layout) -> Element {
         };
 
         static MDFMT: LazyLock<Vec<&str>> = LazyLock::new(|| vec!["markdown", "md"]);
-        if let Some(a) = get_attrs(layout.clone(), "format") {
+        if let Some(a) = get_attrs(layout.read().clone(), "format") {
             if a.is_string() && (*MDFMT).contains(&a.as_str().unwrap()) {
                 markdown_to_html(&v, &Options::default())
             } else {

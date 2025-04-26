@@ -59,12 +59,12 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
                 let d = &x.data;
                 if let Some(_id) = &d.id {
                     let mut l = list.write();
-                    let list = l.entry(e).or_insert(vec![d.clone()]);
+                    let list = l.entry(e).or_insert(vec![]);
                     let mut m = false;
                     for i in list.iter_mut() {
                         if i.cmp_id(d) {
                             m = true;
-                            *i += d.clone();
+                            i.merge(d.clone());
                         }
                     }
                     if !m {

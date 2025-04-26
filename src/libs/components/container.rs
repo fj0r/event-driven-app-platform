@@ -42,7 +42,6 @@ pub fn List(layout: Layout, children: Element) -> Element {
             }
         }
     });
-    dioxus_logger::tracing::info!("{r:?}");
     rsx! {
         div {
             class: css.join(" "),

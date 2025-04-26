@@ -72,8 +72,24 @@ pub struct Layout {
     pub children: Option<Vec<Layout>>,
 }
 
-impl AddAssign for Layout {
-    fn add_assign(&mut self, rhs: Self) {
+impl Layout {
+    pub fn new(kind: impl AsRef<str>) -> Self {
+        Layout {
+            kind: kind.as_ref().to_string(),
+            ..Layout::default()
+        }
+    }
+    pub fn cmp_id(&self, other: &Self) -> bool {
+        if let Some(id) = &self.id {
+            if let Some(oid) = &other.id {
+                if id == oid {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    pub fn merge(&mut self, rhs: Self) {
         let value = match &self.value {
             Some(x) => {
                 if let Some(r) = rhs.value {
@@ -102,29 +118,10 @@ impl AddAssign for Layout {
         if let Some(children) = &mut self.children {
             if let Some(rchildren) = rhs.children {
                 for (l, r) in children.into_iter().zip(rchildren) {
-                    *l += r
+                    l.merge(r);
                 }
             }
         }
-    }
-}
-
-impl Layout {
-    pub fn new(kind: impl AsRef<str>) -> Self {
-        Layout {
-            kind: kind.as_ref().to_string(),
-            ..Layout::default()
-        }
-    }
-    pub fn cmp_id(&self, other: &Self) -> bool {
-        if let Some(id) = &self.id {
-            if let Some(oid) = &other.id {
-                if id == oid {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }
 
