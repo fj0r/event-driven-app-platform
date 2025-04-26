@@ -8,6 +8,7 @@ use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;
 use serde_json::{to_string, Value};
 use std::collections::HashMap;
+use std::borrow::Cow;
 
 #[derive(Clone)]
 pub struct Store {
@@ -18,8 +19,8 @@ pub struct Store {
 }
 
 impl Store {
-    pub async fn send(&mut self, event: impl AsRef<str>, id: Option<String>, content: Value) {
-        let x: Content = (event.as_ref().to_string(), id, content).into();
+    pub async fn send(&mut self, event: impl AsRef<str>, id: Option<String>, kind: String, content: Value) {
+        let x: Content = (event.as_ref().to_string(), kind, id, content).into();
 
         if let Ok(msg) = to_string::<Content>(&x) {
             let msg = gloo_net::websocket::Message::Text(msg);

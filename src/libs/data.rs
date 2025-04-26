@@ -12,14 +12,14 @@ pub struct Message {
     pub content: Content,
 }
 
-impl From<(String, Option<String>, Value)> for Content {
-    fn from(value: (String, Option<String>, Value)) -> Self {
+impl From<(String, String, Option<String>, Value)> for Content {
+    fn from(value: (String, String, Option<String>, Value)) -> Self {
         Content::merge(Action {
             event: value.0,
             data: Layout {
-                kind: "Text".to_string(),
-                id: value.1,
-                value: Some(value.2),
+                kind: value.1,
+                id: value.2,
+                value: Some(value.3),
                 ..Default::default()
             },
         })
