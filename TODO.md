@@ -5,9 +5,9 @@
     - [x] Listen for enter key press
 - [ ] Try to clarify data format definitions
 - [x] List component, needed for chat
-    - [ ] keyed list
-- [ ] Logic for merging list unit(based on ID), used for AI's dynamic output
+    - [x] keyed list
+- [x] Logic for merging list unit(based on ID), used for AI's dynamic output
 - [ ] Component Interactivity
 - [ ] Subpath
-- [ ] Form widget
+- [ ] Form defined by jsonschema
 - [ ] Channel Support (Tabpage)

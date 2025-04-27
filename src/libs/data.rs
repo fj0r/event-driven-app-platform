@@ -12,18 +12,11 @@ pub struct Message {
     pub content: Content,
 }
 
-impl From<(String, String, Option<String>, Value)> for Content {
-    fn from(value: (String, String, Option<String>, Value)) -> Self {
-        Content::merge(Action {
-            event: value.0,
-            data: Layout {
-                kind: value.1,
-                id: value.2,
-                value: Some(value.3),
-                ..Default::default()
-            },
-        })
-    }
+#[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
+pub struct Outflow {
+    pub event: String,
+    pub id: Option<String>,
+    pub data: Value,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -33,10 +26,10 @@ pub enum Content {
     create(Layout),
 
     #[warn(non_camel_case_types)]
-    merge(Action),
+    merge(Influx),
 
     #[warn(non_camel_case_types)]
-    join(Action),
+    join(Influx),
 
     #[warn(non_camel_case_types)]
     #[default]
@@ -44,7 +37,7 @@ pub enum Content {
 }
 
 #[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
-pub struct Action {
+pub struct Influx {
     pub event: String,
     pub data: Layout,
 }

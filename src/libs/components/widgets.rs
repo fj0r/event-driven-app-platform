@@ -26,7 +26,7 @@ pub fn Input(layout: Layout) -> Element {
                 async move {
                     if event.data.key() == Key::Enter {
                         if let Some(e) = ev {
-                            s.send(e, None, "text".to_owned(), to_value(x.read().to_string()).unwrap()).await;
+                            s.send(e, None, to_value(x.read().to_string()).unwrap()).await;
                             // x.set("".to_string())
                             *x.write() = "".to_string()
                         }
@@ -36,7 +36,6 @@ pub fn Input(layout: Layout) -> Element {
         }
     }
 }
-
 
 #[component]
 pub fn Button(layout: Layout) -> Element {

@@ -7,8 +7,8 @@ use anyhow::Result;
 use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;
 use serde_json::{to_string, Value};
-use std::collections::HashMap;
 use std::borrow::Cow;
+use std::collections::HashMap;
 
 #[derive(Clone)]
 pub struct Store {
@@ -19,10 +19,14 @@ pub struct Store {
 }
 
 impl Store {
-    pub async fn send(&mut self, event: impl AsRef<str>, id: Option<String>, kind: String, content: Value) {
-        let x: Content = (event.as_ref().to_string(), kind, id, content).into();
+    pub async fn send(&mut self, event: impl AsRef<str>, id: Option<String>, content: Value) {
+        let x = Outflow {
+            event: event.as_ref().to_string(),
+            id,
+            data: content,
+        };
 
-        if let Ok(msg) = to_string::<Content>(&x) {
+        if let Ok(msg) = to_string::<Outflow>(&x) {
             let msg = gloo_net::websocket::Message::Text(msg);
             let _ = self.ws.send(msg).await;
         }
@@ -72,10 +76,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
                         list.push(d.clone());
                     }
                 } else {
-                    list.write()
-                        .entry(e)
-                        .or_insert(vec![])
-                        .push(d.clone());
+                    list.write().entry(e).or_insert(vec![]).push(d.clone());
                 }
             }
             Message {
