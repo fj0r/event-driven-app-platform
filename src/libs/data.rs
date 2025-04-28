@@ -23,7 +23,7 @@ pub struct Outflow {
 #[serde(tag = "action")]
 pub enum Content {
     #[warn(non_camel_case_types)]
-    create(Layout),
+    create(Influx),
 
     #[warn(non_camel_case_types)]
     merge(Influx),

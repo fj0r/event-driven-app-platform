@@ -47,7 +47,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
             Message {
                 content: Content::create(x),
                 ..
-            } => layout.set(x),
+            } => layout.set(x.data),
             Message {
                 content: Content::merge(x),
                 ..

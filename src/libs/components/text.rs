@@ -1,4 +1,4 @@
-use super::super::data::Layout;
+use super::{super::data::Layout, utils::get_attrs};
 use super::super::store::Store;
 use super::utils::merge_css_class;
 use comrak::{markdown_to_html, Options};
@@ -47,20 +47,22 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
 
     static MDFMT: LazyLock<Vec<&str>> = LazyLock::new(|| vec!["markdown", "md"]);
 
-    /*
-    let vc = v.clone();
-    let idc = id.clone();
-    use_effect(move || {
-        if let Some(a) = get_attrs(layout.read().clone(), "format") {
-            if a.is_string() && (*MDFMT).contains(&a.as_str().unwrap()) {
-                let md = markdown_to_html(&vc, &Options::default());
+    if let Some(a) = get_attrs(layout.read().clone(), "format") {
+        if a.is_string() && (*MDFMT).contains(&a.as_str().unwrap()) {
+            let v = v.clone();
+            let id = id.clone();
+            use_effect(move || {
+                let md = markdown_to_html(&v, &Options::default());
+            dioxus_logger::tracing::info!("{md:?}");
+            /*
                 document::eval(&format!(r#"
-                    document.getElementById("{}").innerHTML = "{}";
-                "#, &idc, &md));
-            };
-        };
-    });
-    */
+                    // document.getElementById("{}").innerHTML = "{}";
+                    console.log("hello");
+                "#, &id, &md));
+            */
+            });
+        }
+    };
 
     rsx! {
         div {
