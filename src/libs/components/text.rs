@@ -1,6 +1,6 @@
-use super::{super::data::Layout, utils::get_attrs};
 use super::super::store::Store;
 use super::utils::merge_css_class;
+use super::{super::data::Layout, utils::get_attrs};
 use comrak::{markdown_to_html, Options};
 use dioxus::prelude::*;
 use std::sync::{LazyLock, Mutex};
@@ -51,16 +51,14 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
         if a.is_string() && (*MDFMT).contains(&a.as_str().unwrap()) {
             let v = v.clone();
             let id = id.clone();
-            use_effect(move || {
-                let md = markdown_to_html(&v, &Options::default());
-            dioxus_logger::tracing::info!("{md:?}");
-            /*
-                document::eval(&format!(r#"
-                    // document.getElementById("{}").innerHTML = "{}";
-                    console.log("hello");
-                "#, &id, &md));
-            */
-            });
+            let md = markdown_to_html(&v, &Options::default());
+            return rsx! {
+                div {
+                    id: id,
+                    class: css.join(" "),
+                    dangerous_inner_html: md
+                }
+            };
         }
     };
 
