@@ -1,8 +1,9 @@
 use super::super::data::Layout;
 use super::container::*;
+use super::list::List;
+use super::text::Text;
 use super::widgets::*;
 use super::x::*;
-use super::text::Text;
 use dioxus::prelude::*;
 
 #[component]

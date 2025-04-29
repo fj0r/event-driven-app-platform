@@ -7,10 +7,12 @@ use std::sync::{LazyLock, Mutex};
 
 #[component]
 pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
+    /*
     static TEXT_COUNT: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
     let mut tc = TEXT_COUNT.lock().unwrap();
     *tc += 1;
     let id = format!("text-{}", *tc);
+    */
 
     let mut css = vec!["text", "f", "txt"];
 
@@ -50,11 +52,9 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
     if let Some(a) = get_attrs(layout.read().clone(), "format") {
         if a.is_string() && (*MDFMT).contains(&a.as_str().unwrap()) {
             let v = v.clone();
-            let id = id.clone();
             let md = markdown_to_html(&v, &Options::default());
             return rsx! {
                 div {
-                    id: id,
                     class: css.join(" "),
                     dangerous_inner_html: md
                 }
@@ -64,7 +64,6 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
 
     rsx! {
         div {
-            id: id,
             class: css.join(" "),
             {v}
         }
