@@ -5,6 +5,7 @@ pub use dynamic::Dynamic;
 pub mod container;
 pub mod list;
 pub mod text;
+pub mod types;
 pub mod utils;
 pub mod widgets;
 pub mod x;
