@@ -6,10 +6,13 @@ use dioxus::prelude::*;
 use dioxus::web::WebEventExt;
 use dioxus_logger::tracing;
 use std::rc::Rc;
+use super::types::ListState;
+
 
 #[component]
 pub fn List(layout: Layout, children: Element) -> Element {
-    let mut tail: Signal<Option<Rc<MountedData>>> = use_signal(|| None);
+    let state = use_context_provider(|| ListState { last: Signal::new(None)});
+
     let mut css = vec!["list", "f"];
     let css = merge_css_class(&mut css, &layout);
 
@@ -23,25 +26,29 @@ pub fn List(layout: Layout, children: Element) -> Element {
         .cloned()
         .unwrap_or_else(|| Vec::new());
     let r = c.iter().enumerate().map(|(idx, child)| {
-        let x = if c.len() - 1 == idx {
+        let x = rsx! {
+            Dynamic {
+                layout: child.clone()
+            }
+        };
+        let key = child.id.clone().unwrap_or(idx.to_string());
+        let layout = item0.clone();
+        if c.len() - 1 == idx {
             // last element
             rsx! {
                 Dynamic {
-                    layout: child.clone()
+                    key: "{key}",
+                    layout: layout,
+                    {x}
                 }
             }
         } else {
             rsx! {
                 Dynamic {
-                    layout: child.clone()
+                    key: "{key}",
+                    layout: layout,
+                    {x}
                 }
-            }
-        };
-        rsx! {
-            Dynamic {
-                key: child.id.unwrap_or(idx.to_string()),
-                layout: item0.clone(),
-                {x}
             }
         }
     });
@@ -52,8 +59,9 @@ pub fn List(layout: Layout, children: Element) -> Element {
             {r}
         }
         button {
+            class: "_nogrow",
             onclick: move |_e| {
-                if let Some(x) = tail().as_ref() {
+                if let Some(x) = state.last.as_ref() {
                     let _ = x.scroll_to(ScrollBehavior::Smooth);
                 }
             },

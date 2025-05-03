@@ -3,9 +3,14 @@
 - [x] Data binding (for some components)
 - [x] User input (listen to input events)
     - [x] Listen for enter key press
+    - [ ] local data update
 - [ ] Try to clarify data format definitions
 - [x] List component, needed for chat
     - [x] keyed list
+    - [ ] auto scroll to bottom
+        - [ ] text scroll to self on data reception
+    - [ ] multiple type items
+        - [ ] item filter
 - [x] Logic for merging list unit(based on ID), used for AI's dynamic output
 - [ ] Component Interactivity
 - [ ] Subpath

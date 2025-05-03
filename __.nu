@@ -5,6 +5,10 @@ export def 'dev start' [] {
     ^dx serve --port $t.port
 }
 
+export def 'dev build' [] {
+    ^dx build --platform web --release
+}
+
 def cmpl-data [] {
     cd ([$WORKDIR data message] | path join)
     ls | get name
@@ -25,8 +29,3 @@ export def 'send message' [
     http post --content-type application/json $host $data
 }
 
-export def 'ui init' [] {
-    send message 00.layout.yaml
-    send message 02.data.yaml
-    send message 03.list.yaml
-}
