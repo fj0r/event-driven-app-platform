@@ -1,21 +1,24 @@
 use super::super::data::Layout;
 use super::super::store::Store;
+use super::types::Ele;
 use super::utils::merge_css_class;
 use super::Dynamic;
-use dioxus::prelude::*;
+use dioxus::{prelude::*, CapturedError};
 use dioxus::web::WebEventExt;
-use super::types::Ele;
-
+use std::sync::{LazyLock, Mutex};
 
 #[component]
 pub fn List(layout: Layout, children: Element) -> Element {
-    let mut el : Ele = use_signal(|| None );
+    static LIST_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
+    let mut tc = LIST_ID.lock().unwrap();
+    *tc += 1;
+    let id = format!("list-{}", *tc);
 
     let mut css = vec!["list", "f"];
     let css = merge_css_class(&mut css, &layout);
 
-    let item0 = &layout.clone().item.context("item")?[0];
-    let data_bind = layout.data.clone().context("data")?;
+    let item0 = &layout.item.as_ref().context("item")?[0];
+    let data_bind = layout.data.as_ref().context("data")?;
 
     let s = use_context::<Store>();
     let c = s.list.read();
@@ -51,17 +54,20 @@ pub fn List(layout: Layout, children: Element) -> Element {
         }
     });
 
-
+    let sl = s.list.clone();
+    let eid = id.clone();
     use_effect(move || {
-        if let Some(e) = el() {
-        dioxus_logger::tracing::info!("{e:?}");
-        };
+        let _ = sl.read();
+        document::eval(&format!(r#"
+            var e = document.getElementById("{eid}");
+            e.scrollTop = e.scrollHeight;
+        "#));
     });
 
     rsx! {
         div {
+            id: id,
             class: css.join(" "),
-            onmounted: move |e| el.set(Some(e.data())),
             {r}
         }
     }
