@@ -49,7 +49,7 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
 
     static MDFMT: LazyLock<Vec<&str>> = LazyLock::new(|| vec!["markdown", "md"]);
 
-    if let Some(a) = get_attrs(layout.read().clone(), "format") {
+    if let Some(a) = get_attrs(&layout.read(), "format") {
         if a.is_string() && (*MDFMT).contains(&a.as_str().unwrap()) {
             let v = v.clone();
             let md = markdown_to_html(&v, &Options::default());
