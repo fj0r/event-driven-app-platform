@@ -1,12 +1,8 @@
-use crate::libs::components::utils::get_attrs;
-
 use super::super::data::Layout;
 use super::super::store::Store;
-use super::types::Ele;
 use super::utils::merge_css_class;
 use super::Dynamic;
-use dioxus::web::WebEventExt;
-use dioxus::{prelude::*, CapturedError};
+use dioxus::prelude::*;
 use std::sync::{LazyLock, Mutex};
 
 #[component]
