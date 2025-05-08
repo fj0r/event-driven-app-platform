@@ -4,11 +4,10 @@ use std::sync::LazyLock;
 
 pub fn get_attrs(layout: Layout, key: &str) -> Option<Value> {
     let a = layout.attrs.unwrap_or(from_str("{}").unwrap());
-    if let Some(h) = a.as_object() {
-        h.get(key).cloned()
-    } else {
-        None
-    }
+    let Some(h) = a.as_object() else {
+        return None;
+    };
+    h.get(key).cloned()
 }
 
 pub fn unwrap_or_object(value: Option<Value>) -> Value {

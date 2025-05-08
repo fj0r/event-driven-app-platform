@@ -4,14 +4,12 @@ use super::utils::merge_css_class;
 use super::Dynamic;
 use dioxus::prelude::*;
 use dioxus::web::WebEventExt;
-use dioxus_logger::tracing;
-use std::rc::Rc;
-use super::types::ListState;
+use super::types::Ele;
 
 
 #[component]
 pub fn List(layout: Layout, children: Element) -> Element {
-    let state = use_context_provider(|| ListState { last: Signal::new(None)});
+    let mut el : Ele = use_signal(|| None );
 
     let mut css = vec!["list", "f"];
     let css = merge_css_class(&mut css, &layout);
@@ -53,19 +51,18 @@ pub fn List(layout: Layout, children: Element) -> Element {
         }
     });
 
+
+    use_effect(move || {
+        if let Some(e) = el() {
+        dioxus_logger::tracing::info!("{e:?}");
+        };
+    });
+
     rsx! {
         div {
             class: css.join(" "),
+            onmounted: move |e| el.set(Some(e.data())),
             {r}
-        }
-        button {
-            class: "_nogrow",
-            onclick: move |_e| {
-                if let Some(x) = state.last.as_ref() {
-                    let _ = x.scroll_to(ScrollBehavior::Smooth);
-                }
-            },
-            "scroll"
         }
     }
 }
