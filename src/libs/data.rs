@@ -1,6 +1,8 @@
-use std::ops::AddAssign;
-
 use dioxus::prelude::*;
+use itertools::{
+    EitherOrBoth::{Both, Left},
+    Itertools,
+};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
@@ -83,7 +85,7 @@ impl Layout {
         }
         return false;
     }
-    pub fn merge(&mut self, rhs: Self) {
+    pub fn join(&mut self, rhs: Self) {
         let value = match &self.value {
             Some(x) => {
                 if let Some(r) = rhs.value {
@@ -111,8 +113,13 @@ impl Layout {
         self.value = value;
         if let Some(children) = &mut self.children {
             if let Some(rchildren) = rhs.children {
-                for (l, r) in children.into_iter().zip(rchildren) {
-                    l.merge(r);
+                for x in children.into_iter().zip_longest(rchildren.into_iter()) {
+                    match x {
+                        Both(l, r) => {
+                            l.join(r);
+                        }
+                        _ => {}
+                    }
                 }
             }
         }

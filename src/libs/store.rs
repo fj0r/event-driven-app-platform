@@ -69,7 +69,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
                     for i in list.iter_mut() {
                         if i.cmp_id(d) {
                             m = true;
-                            i.merge(d.clone());
+                            i.join(d.clone());
                         }
                     }
                     if !m {
