@@ -22,16 +22,16 @@ pub struct Outflow {
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[serde(tag = "action")]
 pub enum Content {
-    #[warn(non_camel_case_types)]
+    #[allow(non_camel_case_types)]
     create(Influx),
 
-    #[warn(non_camel_case_types)]
+    #[allow(non_camel_case_types)]
     merge(Influx),
 
-    #[warn(non_camel_case_types)]
+    #[allow(non_camel_case_types)]
     join(Influx),
 
-    #[warn(non_camel_case_types)]
+    #[allow(non_camel_case_types)]
     #[default]
     empty,
 }
