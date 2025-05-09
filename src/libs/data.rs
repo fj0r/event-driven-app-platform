@@ -66,6 +66,7 @@ pub struct Layout {
 }
 
 impl Layout {
+    #[allow(dead_code)]
     pub fn new(kind: impl AsRef<str>) -> Self {
         Layout {
             kind: kind.as_ref().to_string(),

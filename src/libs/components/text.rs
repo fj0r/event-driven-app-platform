@@ -3,17 +3,10 @@ use super::utils::merge_css_class;
 use super::{super::data::Layout, utils::get_attrs};
 use comrak::{markdown_to_html, Options};
 use dioxus::prelude::*;
-use std::sync::{LazyLock, Mutex};
+use std::sync::LazyLock;
 
 #[component]
 pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
-    /*
-    static TEXT_COUNT: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
-    let mut tc = TEXT_COUNT.lock().unwrap();
-    *tc += 1;
-    let id = format!("text-{}", *tc);
-    */
-
     let mut css = vec!["text", "f", "txt"];
 
     let layout_cloned = layout();

@@ -33,7 +33,7 @@ impl From<Vec<Layout>> for ItemContainer {
 }
 
 impl ItemContainer {
-    fn wrap(&self, child: &Layout) -> Layout {
+    fn select(&self, child: &Layout) -> Layout {
         let default = self.default.clone().unwrap();
         if let Some(s) = child
             .attrs
@@ -52,6 +52,7 @@ impl ItemContainer {
 #[component]
 pub fn List(layout: Layout, children: Element) -> Element {
     static LIST_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
+
     let mut tc = LIST_ID.lock().unwrap();
     *tc += 1;
     let id = format!("list-{}", *tc);
@@ -76,7 +77,7 @@ pub fn List(layout: Layout, children: Element) -> Element {
             }
         };
         let key = child.id.clone().unwrap_or(idx.to_string());
-        let layout = item.wrap(child);
+        let layout = item.select(child);
         if c.len() - 1 == idx {
             // last element
             rsx! {
