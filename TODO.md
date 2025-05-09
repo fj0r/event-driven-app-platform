@@ -8,9 +8,9 @@
 - [x] List component, needed for chat
     - [x] keyed list
     - [ ] auto scroll to bottom
-        - [ ] text scroll to self on data reception
-    - [ ] multiple type items
-        - [ ] item filter
+        - [x] text scroll to self on data reception
+    - [x] multiple type items
+        - [x] item filter
 - [x] Logic for merging list unit(based on ID), used for AI's dynamic output
 - [ ] Component Interactivity
 - [ ] Subpath

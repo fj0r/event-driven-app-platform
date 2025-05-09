@@ -3,7 +3,51 @@ use super::super::store::Store;
 use super::utils::merge_css_class;
 use super::Dynamic;
 use dioxus::prelude::*;
+use std::collections::hash_map::HashMap;
 use std::sync::{LazyLock, Mutex};
+
+struct ItemContainer {
+    index: HashMap<String, Layout>,
+    default: Option<Layout>,
+}
+
+impl From<Vec<Layout>> for ItemContainer {
+    fn from(value: Vec<Layout>) -> Self {
+        let mut default = None;
+        let mut index = HashMap::new();
+        for l in &value {
+            if let Some(x) = l
+                .attrs
+                .as_ref()
+                .and_then(|x| x.as_object())
+                .and_then(|x| x.get("selector"))
+                .and_then(|x| x.as_str())
+            {
+                index.insert(x.to_string(), l.clone());
+            } else {
+                default = Some(l.clone());
+            };
+        }
+        ItemContainer { index, default }
+    }
+}
+
+impl ItemContainer {
+    fn wrap(&self, child: &Layout) -> Layout {
+        let default = self.default.clone().unwrap();
+        if let Some(s) = child
+            .attrs
+            .as_ref()
+            .and_then(|x| x.as_object())
+            .and_then(|x| x.get("type"))
+            .and_then(|x| x.as_str())
+        {
+            self.index.get(s).unwrap_or_else(|| &default).clone()
+        } else {
+            default
+        }
+    }
+}
 
 #[component]
 pub fn List(layout: Layout, children: Element) -> Element {
@@ -15,7 +59,7 @@ pub fn List(layout: Layout, children: Element) -> Element {
     let mut css = vec!["list", "f"];
     let css = merge_css_class(&mut css, &layout);
 
-    let item = layout.item.as_ref().context("item")?;
+    let item: ItemContainer = layout.item.clone().context("item")?.into();
     let data_bind = layout.data.as_ref().context("data")?;
     let attrs = layout.attrs.as_ref().context("attrs")?;
 
@@ -32,7 +76,7 @@ pub fn List(layout: Layout, children: Element) -> Element {
             }
         };
         let key = child.id.clone().unwrap_or(idx.to_string());
-        let layout = item[0].clone();
+        let layout = item.wrap(child);
         if c.len() - 1 == idx {
             // last element
             rsx! {

@@ -8,7 +8,8 @@
   --secondary: #e8e8e8;
   --disabled: #808080;
   --border-width: 1px;
-  --border: var(--border-width) solid var(--secondary);
+  --border-style: solid;
+  --border: var(--border-width) var(--border-style) var(--secondary);
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -171,9 +172,18 @@ body {
   padding: 0.5rem;
   color: var(--fg);
   background-color: var(--bg);
-  border-radius: var(--round);
   &.border {
     border: var(--border);
+    border-radius: var(--round);
+    &.accent {
+        border: var(--border-width) var(--border-style) var(--accent);
+    }
+    &.primary {
+        border: var(--border-width) var(--border-style) var(--primary);
+    }
+    &.disabled {
+        border: var(--border-width) var(--border-style) var(--disabled);
+    }
   }
   &.bottom {
     border-bottom: var(--border);
