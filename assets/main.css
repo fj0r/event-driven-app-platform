@@ -278,15 +278,27 @@ body {
 .shadow {
   box-shadow:
     --csstools-color-scheme--light: initial;
-    --csstools-light-dark-toggle--18: var(--csstools-color-scheme--light) rgba(92,92,92,.6);
-    --base-shadow: var(--csstools-light-dark-toggle--18,hsla(0,0%,85%,.4));
+    --base-shadow: var(--disabled);
     --tw-shadow: 2px 2px 0px 0px var(--base-shadow-darker),0px 0px 2px 0px hsla(0,0%,50%,.2);
-    --tw-shadow-colored: 2px 2px 0px 0px var(--tw-shadow-color),0px 0px 2px 0px var(--tw-shadow-color);
-    box-shadow: var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow);
     --tw-shadow-color: var(--base-shadow);
     --tw-shadow: var(--tw-shadow-colored);
+    --tw-shadow-colored: 2px 2px 0px 0px var(--tw-shadow-color),0px 0px 2px 0px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow);
+    transition: all 0.1s ease-in-out 0s;
   &:hover {
     --tw-shadow-colored: 4px 4px 0px 0px var(--tw-shadow-color),0px 0px 2px 0px var(--tw-shadow-color);
+  }
+  &.primary {
+    --base-shadow: var(--primary);
+  }
+  &.accent {
+    --base-shadow: var(--accent);
+  }
+  &.secondary {
+    --base-shadow: var(--secondary);
+  }
+  &.disabled {
+    --base-shadow: var(--disabled);
   }
 }
 
@@ -310,6 +322,9 @@ body {
 }
 
 /*** ELEMENTS ***/
+p {
+    margin: 0.2rem;
+}
 a {
   color: var(--fg);
   &.plain {

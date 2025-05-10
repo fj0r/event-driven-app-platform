@@ -8,4 +8,5 @@ pub mod text;
 pub mod types;
 pub mod utils;
 pub mod widgets;
+pub mod form;
 pub mod x;
