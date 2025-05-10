@@ -1,7 +1,7 @@
 use super::super::data::Layout;
 use super::super::store::Store;
 use super::utils::merge_css_class;
-use super::Dynamic;
+use super::{Dynamic, Frame};
 use dioxus::prelude::*;
 use std::collections::hash_map::HashMap;
 use std::sync::{LazyLock, Mutex};
@@ -72,7 +72,7 @@ pub fn List(layout: Layout, children: Element) -> Element {
         .unwrap_or_else(|| Vec::new());
     let r = c.iter().enumerate().map(|(idx, child)| {
         let x = rsx! {
-            Dynamic {
+            Frame {
                 layout: child.clone()
             }
         };

@@ -1,5 +1,7 @@
 action: join
 event: chat
 data:
-    type: text
-    value: who are you?
+    type: container
+    children:
+      - type: text
+        value: who are you?
