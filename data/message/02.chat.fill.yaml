@@ -1,8 +1,7 @@
 action: fill
-name: chat
+name: ai-response
 data:
-    sender: "ai"
     reason: ""
     content: "hello"
-    id: "123"
+    id: ''
 

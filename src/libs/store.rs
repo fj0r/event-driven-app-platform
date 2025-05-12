@@ -38,13 +38,11 @@ impl Store {
 }
 
 fn dispatch(
-    act: &str,
+    act: Message,
     layout: &mut Signal<Layout>,
     data: &mut Signal<HashMap<String, Layout>>,
-    list: &mut Signal<HashMap<String, Vec<Layout>>>
+    list: &mut Signal<HashMap<String, Vec<Layout>>>,
 ) {
-
-   let act = serde_json::from_str::<Message>(act).unwrap_or_else(|_| Message::default());
     match act {
         Message {
             content: Content::create(x),
@@ -62,19 +60,23 @@ fn dispatch(
                 .add_template_owned(n, d);
         }
         Message {
+            sender,
             content: Content::fill(x),
             ..
         } => {
             let n = x.name;
-            let d = x.data;
+            let cx = x.data;
             let d = TMPL
                 .read()
                 .expect("read TMPL failed")
                 .get_template(&n)
                 .expect("not found TMPL")
-                .render(d)
+                .render(cx)
                 .unwrap();
-            dispatch(&d, layout, data, list);
+            let content =
+                serde_json::from_str::<Content>(&d).unwrap_or_else(|_| Content::default());
+            let m = Message { sender, content };
+            dispatch(m, layout, data, list);
         }
         Message {
             content: Content::merge(x),
@@ -123,7 +125,8 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
     let mut list = use_signal::<HashMap<String, Vec<Layout>>>(|| HashMap::new());
 
     use_memo(move || {
-        dispatch(&x(), &mut layout, &mut data, &mut list);
+        let act = serde_json::from_str::<Message>(&x()).unwrap_or_else(|_| Message::default());
+        dispatch(act, &mut layout, &mut data, &mut list);
     });
 
     Ok(Store {

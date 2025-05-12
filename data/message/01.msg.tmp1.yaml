@@ -12,17 +12,17 @@ data: |-
             "format": "md"
           },
           "type": "text",
-          "value": "{{reason}}"
+          "value": "{{'{{reason}}'}}"
         },
         {
           "attrs": {
             "format": "md"
           },
           "type": "text",
-          "value": "{{content}}"
+          "value": "{{'{{content}}'}}"
         }
       ],
-      "id": "{{id}}",
+      "id": "{{'{{id}}'}}",
       "type": "container"
     }
   }
