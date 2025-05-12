@@ -17,8 +17,8 @@ js-sys = "0.3.77"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 comrak = "0.38.0"
-serde_json_path = "0.7.2"
 itertools = "0.14.0"
+minijinja = { version = "2.10.2", features = ["loader"] }
 
 [features]
 default = ["web"]

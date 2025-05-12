@@ -31,11 +31,20 @@ pub enum Content {
     merge(Influx),
 
     #[allow(non_camel_case_types)]
+    tmpl(InfluxTmpl),
+
+    #[allow(non_camel_case_types)]
     join(Influx),
 
     #[allow(non_camel_case_types)]
     #[default]
     empty,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct InfluxTmpl {
+    pub name: String,
+    pub data: String,
 }
 
 #[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]

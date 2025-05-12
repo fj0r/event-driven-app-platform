@@ -9,12 +9,15 @@ use js_sys::wasm_bindgen::JsError;
 use serde_json::{to_string, Value};
 use std::borrow::Cow;
 use std::collections::HashMap;
+use minijinja::Environment;
+use std::sync::{LazyLock, RwLock};
+
+static TMPL: LazyLock<RwLock<Environment>> = LazyLock::new(|| RwLock::new(Environment::new()));
 
 #[derive(Clone)]
 pub struct Store {
     pub ws: WebSocketHandle,
     pub layout: Signal<Layout>,
-    pub tmpl: Signal<HashMap<String, Layout>>,
     pub data: Signal<HashMap<String, Layout>>,
     pub list: Signal<HashMap<String, Vec<Layout>>>,
 }
@@ -39,7 +42,6 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
     let x = ws.message_texts();
 
     let mut layout = use_signal::<Layout>(|| Layout::default());
-    let mut tmpl = use_signal::<HashMap<String, Layout>>(|| HashMap::new());
     let mut data = use_signal::<HashMap<String, Layout>>(|| HashMap::new());
     let mut list = use_signal::<HashMap<String, Vec<Layout>>>(|| HashMap::new());
 
@@ -57,6 +59,15 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
                 let e = x.event;
                 let d = x.data;
                 data.write().insert(e, d);
+            }
+            Message {
+                content: Content::tmpl(x),
+                ..
+            } => {
+                let e = x.name;
+                let d = x.data;
+                let _ = TMPL.write().expect("write TMPL failed").add_template_owned(e, d);
+                dioxus_logger::tracing::info!("{TMPL:?}");
             }
             Message {
                 content: Content::join(x),
@@ -91,7 +102,6 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
     Ok(Store {
         ws,
         layout,
-        tmpl,
         data,
         list,
     })
