@@ -19,6 +19,6 @@
 - [ ] Channel Support (Tabpage)
 - [ ] Better markdown support (js)
 - [ ] Chart support (js/Plotlars)
-- [ ] json template
-    - [ ] defined on server side
-    - [ ] optimization
+- [x] json template
+    - [x] defined on server side
+    - [x] optimization
