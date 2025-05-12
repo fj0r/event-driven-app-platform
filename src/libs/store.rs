@@ -6,10 +6,10 @@ use super::ws::{use_web_socket, WebSocketHandle};
 use anyhow::Result;
 use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;
+use minijinja::{context, Environment};
 use serde_json::{to_string, Value};
 use std::borrow::Cow;
 use std::collections::HashMap;
-use minijinja::{Environment, context};
 use std::sync::{LazyLock, RwLock};
 
 static TMPL: LazyLock<RwLock<Environment>> = LazyLock::new(|| RwLock::new(Environment::new()));
@@ -37,6 +37,83 @@ impl Store {
     }
 }
 
+fn dispatch(
+    act: &str,
+    layout: &mut Signal<Layout>,
+    data: &mut Signal<HashMap<String, Layout>>,
+    list: &mut Signal<HashMap<String, Vec<Layout>>>
+) {
+
+   let act = serde_json::from_str::<Message>(act).unwrap_or_else(|_| Message::default());
+    match act {
+        Message {
+            content: Content::create(x),
+            ..
+        } => layout.set(x.data),
+        Message {
+            content: Content::tmpl(x),
+            ..
+        } => {
+            let n = x.name;
+            let d = x.data;
+            let _ = TMPL
+                .write()
+                .expect("write TMPL failed")
+                .add_template_owned(n, d);
+        }
+        Message {
+            content: Content::fill(x),
+            ..
+        } => {
+            let n = x.name;
+            let d = x.data;
+            let d = TMPL
+                .read()
+                .expect("read TMPL failed")
+                .get_template(&n)
+                .expect("not found TMPL")
+                .render(d)
+                .unwrap();
+            dispatch(&d, layout, data, list);
+        }
+        Message {
+            content: Content::merge(x),
+            ..
+        } => {
+            let e = x.event;
+            let d = x.data;
+            data.write().insert(e, d);
+        }
+        Message {
+            content: Content::join(x),
+            ..
+        } => {
+            let e = x.event;
+            let d = &x.data;
+            if let Some(_id) = &d.id {
+                let mut l = list.write();
+                let list = l.entry(e).or_insert(vec![]);
+                let mut m = false;
+                for i in list.iter_mut() {
+                    if i.cmp_id(d) {
+                        m = true;
+                        i.join(d.clone());
+                    }
+                }
+                if !m {
+                    list.push(d.clone());
+                }
+            } else {
+                list.write().entry(e).or_insert(vec![]).push(d.clone());
+            }
+        }
+        Message {
+            sender: _,
+            content: Content::empty,
+        } => {}
+    }
+}
+
 pub fn use_store(url: &str) -> Result<Store, JsError> {
     let ws = use_web_socket(url)?;
     let x = ws.message_texts();
@@ -46,65 +123,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
     let mut list = use_signal::<HashMap<String, Vec<Layout>>>(|| HashMap::new());
 
     use_memo(move || {
-        let act = serde_json::from_str::<Message>(&x()).unwrap_or_else(|_| Message::default());
-        match act {
-            Message {
-                content: Content::create(x),
-                ..
-            } => layout.set(x.data),
-            Message {
-                content: Content::tmpl(x),
-                ..
-            } => {
-                let n = x.name;
-                let d = x.data;
-                let _ = TMPL.write().expect("write TMPL failed").add_template_owned(n, d);
-            }
-            Message {
-                content: Content::fill(x),
-                ..
-            } => {
-                let n = x.name;
-                let d = x.data;
-                let d = TMPL.read().expect("read TMPL failed").get_template(&n).expect("not found TMPL").render(d);
-                dioxus_logger::tracing::info!("{d:?}");
-            }
-            Message {
-                content: Content::merge(x),
-                ..
-            } => {
-                let e = x.event;
-                let d = x.data;
-                data.write().insert(e, d);
-            }
-            Message {
-                content: Content::join(x),
-                ..
-            } => {
-                let e = x.event;
-                let d = &x.data;
-                if let Some(_id) = &d.id {
-                    let mut l = list.write();
-                    let list = l.entry(e).or_insert(vec![]);
-                    let mut m = false;
-                    for i in list.iter_mut() {
-                        if i.cmp_id(d) {
-                            m = true;
-                            i.join(d.clone());
-                        }
-                    }
-                    if !m {
-                        list.push(d.clone());
-                    }
-                } else {
-                    list.write().entry(e).or_insert(vec![]).push(d.clone());
-                }
-            }
-            Message {
-                sender: _,
-                content: Content::empty,
-            } => (),
-        };
+        dispatch(&x(), &mut layout, &mut data, &mut list);
     });
 
     Ok(Store {
