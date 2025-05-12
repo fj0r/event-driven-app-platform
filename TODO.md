@@ -14,11 +14,11 @@
         - [x] item filter
 - [x] Logic for merging list unit(based on ID), used for AI's dynamic output
 - [ ] Form defined by jsonschema
-- [ ] Better markdown support (js)
-- [ ] Chart support (js)
 - [x] ~Component Interactivity~
 - [x] ~Subpath~
 - [ ] Channel Support (Tabpage)
+- [ ] Better markdown support (js)
+- [ ] Chart support (js/Plotlars)
 - [ ] json template
     - [ ] defined on server side
     - [ ] optimization

@@ -278,27 +278,24 @@ body {
 .shadow {
   box-shadow:
     --csstools-color-scheme--light: initial;
-    --base-shadow: var(--disabled);
-    --tw-shadow: 2px 2px 0px 0px var(--base-shadow-darker),0px 0px 2px 0px hsla(0,0%,50%,.2);
-    --tw-shadow-color: var(--base-shadow);
-    --tw-shadow: var(--tw-shadow-colored);
-    --tw-shadow-colored: 2px 2px 0px 0px var(--tw-shadow-color),0px 0px 2px 0px var(--tw-shadow-color);
-    box-shadow: var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow);
+    --shadow-base: var(--disabled);
+    --shadow-color: rgb(from var(--shadow-base) r g b / calc(alpha - .2));
+    box-shadow: 2px 2px 0px 0px var(--shadow-color),0px 0px 2px 0px var(--shadow-color);
     transition: all 0.1s ease-in-out 0s;
   &:hover {
-    --tw-shadow-colored: 4px 4px 0px 0px var(--tw-shadow-color),0px 0px 2px 0px var(--tw-shadow-color);
+    box-shadow: 4px 4px 0px 0px var(--shadow-color),0px 0px 2px 0px var(--shadow-color);
   }
   &.primary {
-    --base-shadow: var(--primary);
+    --shadow-base: var(--primary);
   }
   &.accent {
-    --base-shadow: var(--accent);
+    --shadow-base: var(--accent);
   }
   &.secondary {
-    --base-shadow: var(--secondary);
+    --shadow-base: var(--secondary);
   }
   &.disabled {
-    --base-shadow: var(--disabled);
+    --shadow-base: var(--disabled);
   }
 }
 
