@@ -6,13 +6,17 @@ use super::ws::{use_web_socket, WebSocketHandle};
 use anyhow::Result;
 use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;
-use minijinja::{context, Environment};
+use minijinja::{AutoEscape, Environment};
 use serde_json::{to_string, Value};
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::sync::{LazyLock, RwLock};
 
-static TMPL: LazyLock<RwLock<Environment>> = LazyLock::new(|| RwLock::new(Environment::new()));
+static TMPL: LazyLock<RwLock<Environment>> = LazyLock::new(|| {
+    let mut env = Environment::new();
+    env.set_auto_escape_callback(|_| AutoEscape::Json);
+    RwLock::new(env)
+});
 
 #[derive(Clone)]
 pub struct Store {
@@ -66,17 +70,19 @@ fn dispatch(
         } => {
             let n = x.name;
             let cx = x.data;
-            let d = TMPL
-                .read()
-                .expect("read TMPL failed")
-                .get_template(&n)
-                .expect("not found TMPL")
-                .render(cx)
-                .unwrap();
-            let content =
-                serde_json::from_str::<Content>(&d).unwrap_or_else(|_| Content::default());
-            let m = Message { sender, content };
-            dispatch(m, layout, data, list);
+            let t = TMPL.read().expect("read TMPL failed");
+            let t = t.get_template(&n).expect("not found TMPL");
+            let d = t.render(cx).unwrap();
+            match serde_json::from_str::<Content>(&d) {
+                Ok(content) => {
+                    let m = Message { sender, content };
+                    dispatch(m, layout, data, list);
+                }
+                Err(x) => {
+                    dioxus_logger::tracing::info!("{x:?}");
+                    dioxus_logger::tracing::info!("{d:?}");
+                }
+            }
         }
         Message {
             content: Content::merge(x),

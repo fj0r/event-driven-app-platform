@@ -29,3 +29,14 @@ export def 'send message' [
     http post --content-type application/json $host $data
 }
 
+
+export def 'update tmpl' [
+    src: string = "data/message/01.msg.tmp1.yaml"
+    dest: string = "../flange/assets/ai.tmpl.json"
+] {
+    cat $src
+    | from yaml
+    | update data {|x| $x.data | to json -r }
+    | to json
+    | save -f $dest
+}

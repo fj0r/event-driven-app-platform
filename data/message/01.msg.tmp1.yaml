@@ -1,28 +1,18 @@
 action: tmpl
 name: ai-response
-data: |-
-  {
-    "action": "join",
-    "event": "chat",
-    "data": {
-      "children": [
-        {
-          "attrs": {
-            "class": "txt md hint",
-            "format": "md"
-          },
-          "type": "text",
-          "value": "{{'{{reason}}'}}"
-        },
-        {
-          "attrs": {
-            "format": "md"
-          },
-          "type": "text",
-          "value": "{{'{{content}}'}}"
-        }
-      ],
-      "id": "{{'{{id}}'}}",
-      "type": "container"
-    }
-  }
+data:
+    action: join
+    event: chat
+    data:
+      children:
+      - attrs:
+          class: txt md hint
+          format: md
+        type: text
+        value: '{{''{{reason|tojson}}''}}'
+      - attrs:
+          format: md
+        type: text
+        value: '{{''{{content|tojson}}''}}'
+      id: '{{''{{id}}''}}'
+      type: container

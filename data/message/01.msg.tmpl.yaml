@@ -12,17 +12,17 @@ data: |-
             "format": "md"
           },
           "type": "text",
-          "value": "{{reason}}"
+          "value": "{{reason|tojson}}"
         },
         {
           "attrs": {
             "format": "md"
           },
           "type": "text",
-          "value": "{{content}}"
+          "value": "{{content|tojson}}"
         }
       ],
-      "id": "{{id}}",
+      "id": "{{id|tojson}}",
       "type": "container"
     }
   }
