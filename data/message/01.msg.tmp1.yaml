@@ -9,10 +9,10 @@ data:
           class: txt md hint
           format: md
         type: text
-        value: '{{''{{reason|tojson}}''}}'
+        value: '{{''{{reason}}''}}'
       - attrs:
           format: md
         type: text
-        value: '{{''{{content|tojson}}''}}'
+        value: '{{''{{content}}''}}'
       id: '{{''{{id}}''}}'
       type: container

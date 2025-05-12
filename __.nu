@@ -38,5 +38,7 @@ export def 'update tmpl' [
     | from yaml
     | update data {|x| $x.data | to json -r }
     | to json
+    | str replace -a '\"{{' '{{'
+    | str replace -a '}}\"' '}}'
     | save -f $dest
 }
