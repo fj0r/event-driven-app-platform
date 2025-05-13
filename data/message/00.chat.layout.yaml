@@ -11,7 +11,7 @@ data:
       class: shadow nogrow
       format: md
     data:
-      event: title
+      event: login
   - type: list
     attrs:
       class: box xs gap scrolly
@@ -21,7 +21,7 @@ data:
     item:
     - type: card
       attrs:
-        class: nogrow _ye primary
+        class: nogrow _ye accent
         selector: ask
     - type: card
       attrs:
@@ -37,5 +37,4 @@ data:
       children:
       - type: input
         data:
-          upload: true
           event: message

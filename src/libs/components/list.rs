@@ -1,4 +1,4 @@
-use super::super::data::{Layout, Bind};
+use super::super::data::{Bind, Layout, Settings};
 use super::super::store::Store;
 use super::utils::merge_css_class;
 use super::{Dynamic, Frame};
@@ -17,14 +17,14 @@ impl From<Vec<Layout>> for ItemContainer {
         let mut default = None;
         let mut index = HashMap::new();
         for l in &value {
-            if let Some(x) = l
-                .attrs
-                .as_ref()
-                .and_then(|x| x.as_object())
-                .and_then(|x| x.get("selector"))
-                .and_then(|x| x.as_str())
-            {
-                index.insert(x.to_string(), l.clone());
+            if let Some(x) = l.attrs.as_ref().and_then(|x| {
+                if let Some(Settings::Item { selector }) = &x.settings {
+                    Some(selector)
+                } else {
+                    None
+                }
+            }) {
+                index.insert(x.to_owned(), l.clone());
             } else {
                 default = Some(l.clone());
             };
@@ -36,13 +36,7 @@ impl From<Vec<Layout>> for ItemContainer {
 impl ItemContainer {
     fn select(&self, child: &Layout) -> Layout {
         let default = self.default.clone().unwrap();
-        if let Some(s) = child
-            .attrs
-            .as_ref()
-            .and_then(|x| x.as_object())
-            .and_then(|x| x.get("type"))
-            .and_then(|x| x.as_str())
-        {
+        if let Some(s) = child.attrs.as_ref().and_then(|x| x.kind.as_ref()) {
             self.index.get(s).unwrap_or_else(|| &default).clone()
         } else {
             default
@@ -69,10 +63,7 @@ pub fn List(layout: Layout, children: Element) -> Element {
 
     let s = use_context::<Store>();
     let c = s.list.read();
-    let c = c
-        .get(event)
-        .cloned()
-        .unwrap_or_else(|| Vec::new());
+    let c = c.get(event).cloned().unwrap_or_else(|| Vec::new());
     let r = c.iter().enumerate().map(|(idx, child)| {
         let x = rsx! {
             Frame {
@@ -101,8 +92,7 @@ pub fn List(layout: Layout, children: Element) -> Element {
         }
     });
 
-    if let Some(f) = attrs.as_object() {
-        let x = f.get("scroll").and_then(|x| x.as_bool()).unwrap_or(false);
+    if let Some(Settings::List { scroll: x, .. }) = attrs.settings {
         if x {
             let sl = s.list.clone();
             let eid = id.clone();

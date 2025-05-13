@@ -1,34 +1,17 @@
 use super::super::data::Layout;
-use serde_json::{from_str, Value};
-use std::sync::LazyLock;
 
-static DEFAULT_ATTRS: LazyLock<Value> =
-    LazyLock::new(|| from_str("{}").expect("Failed to parse default empty JSON object"));
-
-pub fn get_attrs(layout: &Layout, key: &str) -> Option<Value> {
-    let a = layout.attrs.as_ref().unwrap_or(&DEFAULT_ATTRS);
-    let Some(h) = a.as_object() else {
-        return None;
-    };
-    h.get(key).cloned()
-}
-
-pub fn merge_css_class<'a>(
-    css: &'a mut Vec<&'a str>,
-    layout: &'a Layout
-) -> &'a mut Vec<&'a str> {
-    let attrs = layout.attrs.as_ref().unwrap_or(&DEFAULT_ATTRS);
-    if let Some(a) = attrs.as_object() {
-        let h = a
-            .get("horizontal")
-            .and_then(|x| x.as_bool())
-            .unwrap_or(false);
-        if !h {
-            css.push("v");
+pub fn merge_css_class<'a>(css: &'a mut Vec<&'a str>, layout: &'a Layout) -> &'a mut Vec<&'a str> {
+    let mut ho = false;
+    if let Some(a) = layout.attrs.as_ref() {
+        if let Some(h) = a.horizontal {
+            if h {
+                ho = true;
+            }
         }
-        if let Some(cc) = a.get("class").and_then(|x| x.as_str()) {
+        if let Some(cc) = &a.class {
             css.push(cc);
         }
     }
+    if !ho { css.push("v"); }
     css
 }

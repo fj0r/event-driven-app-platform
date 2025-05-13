@@ -80,14 +80,26 @@ pub enum Bind {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
-pub enum Opts {
+pub enum Settings {
+    List {
+        scroll: bool
+    },
+    Text {
+        format: String,
+    },
+    Item {
+        selector: String
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Attrs {
-    class: Option<String>,
+    pub class: Option<String>,
+    #[serde(rename = "type")]
+    pub kind: Option<String>,
+    pub horizontal: Option<bool>,
     #[serde(flatten)]
-    option: Option<Opts>
+    pub settings: Option<Settings>
 }
 
 #[derive(Debug, Clone, PartialEq, Props, Serialize, Deserialize, Default)]
@@ -95,7 +107,7 @@ pub struct Layout {
     #[serde(rename = "type")]
     pub kind: String,
     pub id: Option<String>,
-    pub attrs: Option<Value>,
+    pub attrs: Option<Attrs>,
     pub data: Option<Bind>,
     pub value: Option<Value>,
     pub item: Option<Vec<Layout>>,

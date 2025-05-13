@@ -1,6 +1,6 @@
+use super::super::data::{Bind, Layout, Settings};
 use super::super::store::Store;
 use super::utils::merge_css_class;
-use super::{super::data::{Layout, Bind}, utils::get_attrs};
 use comrak::{markdown_to_html, Options};
 use dioxus::prelude::*;
 use std::sync::LazyLock;
@@ -23,10 +23,10 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
         }
     };
     if let Some(Bind::Event { event, .. }) = &layout.read().data {
-            let x = s.data.read().get(event).cloned();
-            if let Some(t1) = x {
-                t = t1
-            }
+        let x = s.data.read().get(event).cloned();
+        if let Some(t1) = x {
+            t = t1
+        }
     };
     let v = if let Some(j) = t.value {
         if j.is_string() {
@@ -38,10 +38,17 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
         "".to_string()
     };
 
-    static MDFMT: LazyLock<Vec<&str>> = LazyLock::new(|| vec!["markdown", "md"]);
+    static MDFMT: LazyLock<Vec<String>> = LazyLock::new(|| {
+        vec!["markdown", "md"]
+            .iter()
+            .map(|x| x.to_string())
+            .collect()
+    });
 
-    if let Some(a) = get_attrs(&layout.read(), "format") {
-        if a.is_string() && (*MDFMT).contains(&a.as_str().unwrap()) {
+    if let Some(Settings::Text { format: a, .. }) =
+        layout.read().clone().attrs.and_then(|x| x.settings)
+    {
+        if (*MDFMT).contains(&a) {
             let v = v.clone();
             let md = markdown_to_html(&v, &Options::default());
             return rsx! {
