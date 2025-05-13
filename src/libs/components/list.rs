@@ -50,7 +50,7 @@ pub fn List(id: String, layout: Layout, children: Element) -> Element {
 
     let item: ItemContainer = layout.item.clone().context("item")?.into();
     let Bind::Event { event, .. } = layout.data.as_ref().context("data")? else {
-        return Err(RenderError::Aborted(CapturedError::from_str("")?));
+        return Err(RenderError::Aborted(CapturedError::from_str("no event")?));
     };
     let attrs = layout.attrs.as_ref().context("attrs")?;
 

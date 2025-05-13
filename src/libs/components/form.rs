@@ -6,7 +6,18 @@ use dioxus::prelude::*;
 
 #[component]
 pub fn Form(layout: Layout) -> Element {
+    dioxus_logger::tracing::info!("{layout:?}");
+
+    let children = layout.clone().children.unwrap_or_else(|| vec![]);
+    let children = children.into_iter().map(|c| {
+        rsx! {
+            Frame { layout: c }
+        }
+    });
     rsx! {
-        div {}
+        Dynamic {
+            layout: layout,
+            {children}
+        }
     }
 }
