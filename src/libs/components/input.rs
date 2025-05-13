@@ -6,7 +6,14 @@ use serde_json::{to_value, Value};
 
 #[component]
 pub fn Input(layout: Layout) -> Element {
-    let mut x = use_signal(|| "".to_string());
+    let mut x = use_signal(|| {
+        layout
+            .value
+            .as_ref()
+            .and_then(|x| x.as_str())
+            .map(|x| x.to_owned())
+            .unwrap_or("".to_string())
+    });
     let s = use_context::<Store>();
     let mut css = vec!["input", "f", "shadow"];
     let css = merge_css_class(&mut css, &layout);
@@ -18,8 +25,8 @@ pub fn Input(layout: Layout) -> Element {
             class: css.join(" "),
             value: x,
             oninput: move |event| {
-                let ev = layout.data.clone();
                 x.set(event.value());
+                let ev = layout.data.clone();
                 if let Some(Bind::Signal { mut signal }) = ev {
                     signal.set(to_value(event.value()).unwrap());
                 };
