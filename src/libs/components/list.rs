@@ -5,7 +5,6 @@ use super::{Dynamic, Frame};
 use dioxus::{prelude::*, CapturedError};
 use std::collections::hash_map::HashMap;
 use std::str::FromStr;
-use std::sync::{LazyLock, Mutex};
 
 struct ItemContainer {
     index: HashMap<String, Layout>,
@@ -45,13 +44,7 @@ impl ItemContainer {
 }
 
 #[component]
-pub fn List(layout: Layout, children: Element) -> Element {
-    static LIST_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
-
-    let mut tc = LIST_ID.lock().unwrap();
-    *tc += 1;
-    let id = format!("list-{}", *tc);
-
+pub fn List(id: String, layout: Layout, children: Element) -> Element {
     let mut css = vec!["list", "f"];
     let css = merge_css_class(&mut css, &layout);
 
