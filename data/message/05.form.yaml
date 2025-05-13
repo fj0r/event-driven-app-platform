@@ -1,0 +1,42 @@
+action: join
+event: chat
+data:
+    type: form
+    data:
+      event: confirm
+      oneshot: true
+    children:
+      - type: container
+        children:
+          - type: text
+            value: confirm order
+          - type: container
+            attrs:
+                horizontal: true
+            children:
+              - type: container
+                children:
+                  - type: input
+                    value: name
+                    data:
+                        field: name
+                  - type: input
+                    value: age
+                    data:
+                        field: age
+              - type: container
+                children:
+                  - type: input
+                    name: gender
+                    data:
+                        field: gender
+                  - type: input
+                    name: phone
+                    data:
+                        field: phone
+          - type: button
+            value: confirm
+            data:
+                confirm: true
+
+

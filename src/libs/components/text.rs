@@ -23,12 +23,10 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
         }
     };
     if let Some(b) = &layout.read().data {
-        if !b.upload {
             let x = s.data.read().get(&b.event).cloned();
             if let Some(t1) = x {
                 t = t1
             }
-        }
     };
     let v = if let Some(j) = t.value {
         if j.is_string() {

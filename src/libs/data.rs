@@ -64,13 +64,14 @@ pub struct Influx {
 
 #[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
 pub struct Bind {
-    #[serde(default)]
-    pub upload: bool,
-    #[serde(default)]
-    pub list: bool,
     pub event: String,
-    // TODO: local event when upload
-    pub local: Option<String>,
+    // Abandon
+    pub local: Option<String>
+}
+
+#[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
+pub struct Attrs {
+    pub class: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Props, Serialize, Deserialize, Default)]
