@@ -1,8 +1,8 @@
 use super::super::data::{Bind, Layout, Settings};
 use super::super::store::Store;
 use super::utils::merge_css_class;
-use comrak::{markdown_to_html, Options};
 use dioxus::prelude::*;
+use markdown::{to_html_with_options, Options};
 use std::sync::LazyLock;
 
 #[component]
@@ -50,13 +50,14 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
     {
         if (*MDFMT).contains(&a) {
             let v = v.clone();
-            let md = markdown_to_html(&v, &Options::default());
-            return rsx! {
-                div {
-                    class: css.join(" "),
-                    dangerous_inner_html: md
-                }
-            };
+            if let Ok(md) = to_html_with_options(&v, &Options::gfm()) {
+                return rsx! {
+                    div {
+                        class: css.join(" "),
+                        dangerous_inner_html: md
+                    }
+                };
+            }
         }
     };
 
