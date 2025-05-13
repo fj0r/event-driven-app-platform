@@ -73,6 +73,11 @@ pub enum Bind {
     Field {
         field: String
     },
+    #[allow(dead_code)]
+    #[serde(skip)]
+    Signal {
+        signal: Signal<Value>
+    },
     Confirm {
         confirm: bool
     },
