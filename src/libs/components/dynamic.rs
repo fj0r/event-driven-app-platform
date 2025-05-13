@@ -4,7 +4,7 @@ use super::container::*;
 use super::form::Form;
 use super::list::List;
 use super::text::Text;
-use super::widgets::*;
+use super::input::*;
 use super::x::*;
 use dioxus::prelude::*;
 
