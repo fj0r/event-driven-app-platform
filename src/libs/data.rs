@@ -62,7 +62,7 @@ pub struct Influx {
     pub data: Layout,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum Bind {
     Event {
@@ -76,13 +76,18 @@ pub enum Bind {
     Confirm {
         confirm: bool
     },
-    #[default]
-    Empty,
 }
 
-#[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum Opts {
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Attrs {
-    pub class: String,
+    class: Option<String>,
+    #[serde(flatten)]
+    option: Option<Opts>
 }
 
 #[derive(Debug, Clone, PartialEq, Props, Serialize, Deserialize, Default)]
