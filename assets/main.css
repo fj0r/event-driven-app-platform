@@ -10,6 +10,7 @@
   --border-width: 1px;
   --border-style: solid;
   --border: var(--border-width) var(--border-style) var(--secondary);
+  --img-max-width: 500px;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -51,7 +52,6 @@ body {
   & > main,
   & > footer {
     margin: auto;
-    max-width: 660px;
     padding-left: 10px;
     padding-right: 10px;
     width: 100%;
@@ -329,6 +329,11 @@ a {
   }
   &.plain:focus {
     box-shadow: none;
+  }
+}
+.markdown {
+  & img {
+      max-width: var(--img-max-width);
   }
 }
 figure {

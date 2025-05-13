@@ -51,6 +51,7 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
         if (*MDFMT).contains(&a) {
             let v = v.clone();
             if let Ok(md) = to_html_with_options(&v, &Options::gfm()) {
+                css.push("markdown");
                 return rsx! {
                     div {
                         class: css.join(" "),
