@@ -62,11 +62,22 @@ pub struct Influx {
     pub data: Layout,
 }
 
-#[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
-pub struct Bind {
-    pub event: String,
-    // Abandon
-    pub local: Option<String>
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[serde(untagged)]
+pub enum Bind {
+    Event {
+        event: String,
+        // Abandon
+        local: Option<String>
+    },
+    Field {
+        field: String
+    },
+    Confirm {
+        confirm: bool
+    },
+    #[default]
+    Empty,
 }
 
 #[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]

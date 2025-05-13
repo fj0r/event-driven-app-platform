@@ -1,6 +1,6 @@
 use super::super::store::Store;
 use super::utils::merge_css_class;
-use super::{super::data::Layout, utils::get_attrs};
+use super::{super::data::{Layout, Bind}, utils::get_attrs};
 use comrak::{markdown_to_html, Options};
 use dioxus::prelude::*;
 use std::sync::LazyLock;
@@ -22,8 +22,8 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
             ..Layout::default()
         }
     };
-    if let Some(b) = &layout.read().data {
-            let x = s.data.read().get(&b.event).cloned();
+    if let Some(Bind::Event { event, .. }) = &layout.read().data {
+            let x = s.data.read().get(event).cloned();
             if let Some(t1) = x {
                 t = t1
             }

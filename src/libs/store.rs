@@ -51,7 +51,9 @@ fn dispatch(
         Message {
             content: Content::create(x),
             ..
-        } => layout.set(x.data),
+        } => {
+            layout.set(x.data)
+        },
         Message {
             content: Content::tmpl(x),
             ..

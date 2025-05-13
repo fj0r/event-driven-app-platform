@@ -1,4 +1,4 @@
-use super::super::data::Layout;
+use super::super::data::{Bind, Layout};
 use super::super::store::Store;
 use super::utils::merge_css_class;
 use dioxus::prelude::*;
@@ -7,11 +7,17 @@ use serde_json::to_value;
 #[component]
 pub fn Input(layout: Layout) -> Element {
     let mut x = use_signal(|| "".to_string());
-    let mut s = use_context::<Store>();
+    let s = use_context::<Store>();
     let mut css = vec!["input", "f", "shadow"];
     let css = merge_css_class(&mut css, &layout);
 
-    let ev = layout.clone().data.map(|x| x.event);
+    let ev = layout.clone().data.and_then(|x| {
+        if let Bind::Event { event, .. } = x {
+            Some(event)
+        } else {
+            None
+        }
+    });
 
     rsx! {
         input {

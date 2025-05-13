@@ -1,9 +1,10 @@
-use super::super::data::Layout;
+use super::super::data::{Layout, Bind};
 use super::super::store::Store;
 use super::utils::merge_css_class;
 use super::{Dynamic, Frame};
-use dioxus::prelude::*;
+use dioxus::{prelude::*, CapturedError};
 use std::collections::hash_map::HashMap;
+use std::str::FromStr;
 use std::sync::{LazyLock, Mutex};
 
 struct ItemContainer {
@@ -61,13 +62,15 @@ pub fn List(layout: Layout, children: Element) -> Element {
     let css = merge_css_class(&mut css, &layout);
 
     let item: ItemContainer = layout.item.clone().context("item")?.into();
-    let data_bind = layout.data.as_ref().context("data")?;
+    let Bind::Event { event, .. } = layout.data.as_ref().context("data")? else {
+        return Err(RenderError::Aborted(CapturedError::from_str("")?));
+    };
     let attrs = layout.attrs.as_ref().context("attrs")?;
 
     let s = use_context::<Store>();
     let c = s.list.read();
     let c = c
-        .get(&data_bind.event)
+        .get(event)
         .cloned()
         .unwrap_or_else(|| Vec::new());
     let r = c.iter().enumerate().map(|(idx, child)| {
