@@ -1,4 +1,4 @@
-use super::super::super::data::{Bind, Layout};
+use super::super::super::data::{Bind, Layout, Settings};
 use super::super::super::store::Store;
 use super::super::utils::merge_css_class;
 use dioxus::prelude::*;
@@ -29,6 +29,12 @@ pub fn Input(layout: Layout) -> Element {
                 let ev = layout.data.clone();
                 if let Some(Bind::Signal { mut signal }) = ev {
                     signal.set(to_value(event.value()).unwrap());
+                    // TODO: instant
+                    if let Some(x) =  &layout.attrs {
+                        if let Some(Settings::Input { target: _, instant: _ }) = &x.settings {
+                            todo!()
+                        }
+                    };
                 };
             },
             onkeydown: move |event| {
@@ -54,4 +60,3 @@ pub fn Input(layout: Layout) -> Element {
         }
     }
 }
-

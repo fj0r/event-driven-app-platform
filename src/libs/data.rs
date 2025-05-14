@@ -109,7 +109,8 @@ pub enum Settings {
         oneshot: bool
     },
     Input {
-        target: String
+        target: String,
+        instant: bool
     },
 }
 
