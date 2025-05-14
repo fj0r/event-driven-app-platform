@@ -12,7 +12,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope) {
     match layout.data {
         Some(Bind::Field { ref field }) => {
             let s = use_signal(|| Value::default());
-            scope.insert(field.clone(), s);
+            scope.insert(field.to_string(), s);
             layout.data = Some(Bind::Signal { signal: s });
         },
         Some(Bind::Confirm { ref confirm }) => {

@@ -1,7 +1,5 @@
-use super::super::data::Layout;
-use super::super::store::Store;
-use super::utils::merge_css_class;
-use super::Dynamic;
+use super::super::super::data::Layout;
+use super::super::utils::merge_css_class;
 use dioxus::prelude::*;
 
 #[component]

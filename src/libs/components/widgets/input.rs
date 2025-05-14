@@ -1,8 +1,8 @@
-use super::super::data::{Bind, Layout};
-use super::super::store::Store;
-use super::utils::merge_css_class;
+use super::super::super::data::{Bind, Layout};
+use super::super::super::store::Store;
+use super::super::utils::merge_css_class;
 use dioxus::prelude::*;
-use serde_json::{to_value, Value};
+use serde_json::to_value;
 
 #[component]
 pub fn Input(layout: Layout) -> Element {
@@ -55,19 +55,3 @@ pub fn Input(layout: Layout) -> Element {
     }
 }
 
-#[component]
-pub fn Button(layout: Layout) -> Element {
-    let t = layout
-        .value
-        .unwrap_or(to_value("Ok").unwrap())
-        .as_str()
-        .unwrap()
-        .to_owned();
-
-    rsx! {
-        button {
-            class: "button",
-            {t}
-        }
-    }
-}
