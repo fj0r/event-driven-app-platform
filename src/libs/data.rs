@@ -86,7 +86,7 @@ pub enum Bind {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Attrs {
     pub class: Option<String>,
-    #[serde(rename = "type")]
+    // for selector
     pub kind: Option<String>,
     pub horizontal: Option<bool>,
     #[serde(flatten)]
@@ -106,7 +106,8 @@ pub enum Settings {
         selector: String
     },
     Button {
-        onshot: bool
+        onshot: bool,
+        kind: String
     }
 }
 
