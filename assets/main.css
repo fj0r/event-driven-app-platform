@@ -278,24 +278,31 @@ body {
 .shadow {
   box-shadow:
     --csstools-color-scheme--light: initial;
-    --shadow-base: var(--disabled);
-    --shadow-color: rgb(from var(--shadow-base) r g b / calc(alpha - .2));
-    box-shadow: 2px 2px 0px 0px var(--shadow-color),0px 0px 2px 0px var(--shadow-color);
+    --shadow-color: var(--disabled);
+    --shadow-color-calc: rgb(from var(--shadow-color) r g b / calc(alpha - .2));
+    --shadow-width: 2px 2px 0px 0px;
+    box-shadow: var(--shadow-width) var(--shadow-color-calc), 0px 0px 2px 0px var(--shadow-color-calc);
     transition: all 0.1s ease-in-out 0s;
   &:hover {
-    box-shadow: 4px 4px 0px 0px var(--shadow-color),0px 0px 2px 0px var(--shadow-color);
+    --shadow-width: 4px 4px 0px 0px;
+  }
+  &.button {
+    --shadow-width: 4px 4px 0px 0px;
+    &:hover {
+        --shadow-width: 2px 2px 0px 0px;
+    }
   }
   &.primary {
-    --shadow-base: var(--primary);
+    --shadow-color: var(--primary);
   }
   &.accent {
-    --shadow-base: var(--accent);
+    --shadow-color: var(--accent);
   }
   &.secondary {
-    --shadow-base: var(--secondary);
+    --shadow-color: var(--secondary);
   }
   &.disabled {
-    --shadow-base: var(--disabled);
+    --shadow-color: var(--disabled);
   }
 }
 

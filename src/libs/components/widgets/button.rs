@@ -1,4 +1,4 @@
-use super::super::super::data::{Layout, Bind};
+use super::super::super::data::{Bind, Layout, Settings};
 use dioxus::prelude::*;
 use serde_json::{to_value, Value};
 
@@ -11,16 +11,40 @@ pub fn Button(layout: Layout) -> Element {
         .unwrap()
         .to_owned();
 
-    rsx! {
-        button {
-            class: "button",
-            onclick: move |_event| {
-                if let Some(Bind::Signal { signal: mut s }) = layout.data {
-                    let v = s.read().as_bool().unwrap();
-                    s.set(Value::Bool(!v));
-                }
-            },
-            {t}
+    let oneshot = layout
+        .attrs
+        .and_then(|x| {
+            if let Some(Settings::Button { oneshot }) = x.settings {
+                Some(oneshot)
+            } else {
+                None
+            }
+        })
+        .unwrap_or(false);
+
+    if let Some(Bind::Signal { signal: mut s }) = layout.data {
+        let v = s.read().as_bool().unwrap();
+        let mut css = vec!["button", "shadow"];
+        css.push(if !v { "accent" } else { "disabled" });
+        rsx! {
+            button {
+                class: css.join(" "),
+                onclick: move |_event| {
+                    if oneshot {
+                        if !v {
+                            s.set(Value::Bool(true));
+                        }
+                    } else {
+                        s.set(Value::Bool(!v));
+                        spawn(async move {
+                            s.set(Value::Bool(v));
+                        });
+                    }
+                },
+                {t}
+            }
         }
+    } else {
+        rsx! {}
     }
 }

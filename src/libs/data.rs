@@ -106,9 +106,11 @@ pub enum Settings {
         selector: String
     },
     Button {
-        onshot: bool,
-        kind: String
-    }
+        oneshot: bool
+    },
+    Input {
+        target: String
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Props, Serialize, Deserialize, Default)]
