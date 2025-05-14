@@ -83,6 +83,16 @@ pub enum Bind {
     },
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+pub struct Attrs {
+    pub class: Option<String>,
+    #[serde(rename = "type")]
+    pub kind: Option<String>,
+    pub horizontal: Option<bool>,
+    #[serde(flatten)]
+    pub settings: Option<Settings>
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum Settings {
@@ -94,17 +104,10 @@ pub enum Settings {
     },
     Item {
         selector: String
+    },
+    Button {
+        onshot: bool
     }
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
-pub struct Attrs {
-    pub class: Option<String>,
-    #[serde(rename = "type")]
-    pub kind: Option<String>,
-    pub horizontal: Option<bool>,
-    #[serde(flatten)]
-    pub settings: Option<Settings>
 }
 
 #[derive(Debug, Clone, PartialEq, Props, Serialize, Deserialize, Default)]

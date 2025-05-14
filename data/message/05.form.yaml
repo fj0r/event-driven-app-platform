@@ -36,6 +36,8 @@ data:
                         field: phone
           - type: button
             value: confirm
+            attrs:
+                oneshot: true
             data:
                 confirm: true
 
