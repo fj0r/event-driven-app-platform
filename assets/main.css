@@ -93,6 +93,21 @@ body {
   }
   &.gap {
     gap: 1em;
+    &.sm {
+      gap: 0.2rem;
+    }
+    &.md {
+      gap: 0.4rem;
+    }
+    &.lg {
+      gap: 0.8rem;
+    }
+    &.xl {
+      gap: 1rem;
+    }
+    &.xxl {
+      gap: 2rem;
+    }
   }
   &.ms {
     justify-content: flex-start;
