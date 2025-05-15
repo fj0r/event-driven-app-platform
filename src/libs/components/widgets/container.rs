@@ -20,6 +20,7 @@ pub fn Container(layout: Layout, children: Element) -> Element {
                         .join("\n");
                 }
                 Ct::table(Table{column, header}) => {
+                    // TODO: table
                     // let mut headers = vec![];
                     // let mut rows = vec![];
                     let mut idx = 0;

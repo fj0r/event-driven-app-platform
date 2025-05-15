@@ -1,0 +1,122 @@
+action: join
+data:
+  attrs:
+    class: gap md
+  children:
+  - type: text
+    value: confirm order
+  - attrs:
+      class: gap md
+    children:
+    - children:
+      - type: thead
+        children:
+        - type: tr
+          children:
+          - type: th
+            children:
+            - type: text
+              value: a
+          - type: th
+            children:
+            - type: text
+              value: b
+          - type: th
+            children:
+            - type: text
+              value: c
+          - type: th
+            children:
+            - type: text
+              value: d
+          - type: th
+            children:
+            - type: text
+              value: e
+      - type: tbody
+        children:
+        - children:
+          - children:
+            - data:
+                field: '853736'
+              type: input
+              value: '853736'
+            type: td
+          - children:
+            - type: text
+              value: a1
+            type: td
+          - children:
+            - type: text
+              value: 2.25
+            type: td
+          - children:
+            - type: text
+              value: a2
+            type: td
+          - children:
+            - type: text
+              value: a3
+            type: td
+          type: tr
+        - children:
+          - children:
+            - data:
+                field: '56459'
+              type: input
+              value: '56459'
+            type: td
+          - children:
+            - type: text
+              value: b1
+            type: td
+          - children:
+            - type: text
+              value: 0.31
+            type: td
+          - children:
+            - type: text
+              value: b2
+            type: td
+          - children:
+            - type: text
+              value: b3
+            type: td
+          type: tr
+        - children:
+          - children:
+            - data:
+                field: '934900'
+              type: input
+              value: '934900'
+            type: td
+          - children:
+            - type: text
+              value: c1
+            type: td
+          - children:
+            - type: text
+              value: 33.83
+            type: td
+          - children:
+            - type: text
+              value: c2
+            type: td
+          - children:
+            - type: text
+              value: c3
+            type: td
+          type: tr
+      type: table
+    type: container
+  - attrs:
+      oneshot: true
+    data:
+      confirm: true
+    type: button
+    value: confirm
+  data:
+    event: confirm
+  id: null
+  type: form
+event: chat

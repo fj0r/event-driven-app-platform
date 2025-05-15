@@ -21,10 +21,16 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
             }
             "form" => rsx!(Form { layout: layout }),
             "chart" => rsx!(Chart { layout: layout }),
-            "card" => rsx! (Card { layout: layout, {children } }),
+            "card" => rsx! (Card { layout: layout, {children} }),
             "input" => rsx!(Input { layout: layout }),
             "text" => rsx!(Text { layout: layout }),
             "button" => rsx!(Button { layout: layout }),
+            "table" => rsx! (TABLE { layout: layout, {children} }),
+            "thead" => rsx! (Thead { layout: layout, {children} }),
+            "tbody" => rsx! (Tbody { layout: layout, {children} }),
+            "tr" => rsx! (Tr { layout: layout, {children} }),
+            "th" => rsx! (Th { layout: layout, {children} }),
+            "td" => rsx! (Td { layout: layout, {children} }),
             "x" => rsx!(X { layout: layout }),
             _ => {
                 let t = format!("{} unimplemented!", layout.kind);
