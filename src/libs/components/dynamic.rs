@@ -25,6 +25,7 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
             "input" => rsx!(Input { layout: layout }),
             "text" => rsx!(Text { layout: layout }),
             "button" => rsx!(Button { layout: layout }),
+            "image" => rsx!(Img { layout: layout }),
             "table" => rsx! (TABLE { layout: layout, {children} }),
             "thead" => rsx! (Thead { layout: layout, {children} }),
             "tbody" => rsx! (Tbody { layout: layout, {children} }),

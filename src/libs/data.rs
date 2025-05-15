@@ -113,6 +113,9 @@ pub enum Settings {
         target: String,
         instant: bool
     },
+    Image {
+        alt: String,
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
