@@ -9,14 +9,25 @@ use dioxus::prelude::*;
 type FormScope = HashMap<String, Signal<Value>>;
 
 fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
-    match layout.data {
-        Some(Bind::Field { ref field }) => {
+    match &layout.data {
+        Some(Bind::Field {
+            field,
+            kind,
+            signal: _,
+        }) => {
             let s = use_signal(Value::default);
             scope.insert(field.to_string(), s);
-            layout.data = Some(Bind::Signal { signal: s });
+            layout.data = Some(Bind::Field {
+                field: field.to_string(),
+                kind: kind.clone(),
+                signal: Some(s),
+            });
         }
-        Some(Bind::Confirm { confirm: _ }) => {
-            layout.data = Some(Bind::Signal { signal: confirm });
+        Some(Bind::Confirm { .. }) => {
+            layout.data = Some(Bind::Confirm {
+                confirm: true,
+                signal: Some(confirm),
+            });
         }
         _ => {}
     };
@@ -46,6 +57,7 @@ pub fn Form(layout: Layout) -> Element {
         for (k, v) in &data {
             payload.insert(k.to_owned(), v());
         }
+        //dioxus_logger::tracing::info!("{payload:?}");
         let v = Value::Object(payload);
         let _ = use_resource(move || {
             let ev = event.clone();
@@ -54,6 +66,7 @@ pub fn Form(layout: Layout) -> Element {
             async move {
                 if let Some(c) = confirm.read().as_bool() {
                     if c {
+                        // FIXME: send
                         s.send(ev, None, v).await;
                     }
                 }

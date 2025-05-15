@@ -67,19 +67,24 @@ pub struct Influx {
 pub enum Bind {
     Event {
         event: String,
+        #[serde(rename = "type")]
+        kind: Option<String>,
         // Abandon
         local: Option<String>
     },
     Field {
-        field: String
-    },
-    #[allow(dead_code)]
-    #[serde(skip)]
-    Signal {
-        signal: Signal<Value>
+        field: String,
+        #[serde(rename = "type")]
+        kind: Option<String>,
+        #[allow(dead_code)]
+        #[serde(skip)]
+        signal: Option<Signal<Value>>
     },
     Confirm {
-        confirm: bool
+        confirm: bool,
+        #[allow(dead_code)]
+        #[serde(skip)]
+        signal: Option<Signal<Value>>
     },
 }
 
@@ -110,7 +115,6 @@ pub enum Settings {
         oneshot: bool
     },
     Input {
-        target: String,
         instant: bool
     },
     Image {

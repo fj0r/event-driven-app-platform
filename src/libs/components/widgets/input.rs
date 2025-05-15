@@ -18,45 +18,73 @@ pub fn Input(layout: Layout) -> Element {
     let mut css = vec!["input", "f", "shadow"];
     let css = merge_css_class(&mut css, &layout);
 
-    let ev = layout.data.clone();
+    let instant = layout
+        .attrs
+        .clone()
+        .and_then(|x| {
+            if let Some(Settings::Input { instant }) = x.settings {
+                Some(instant)
+            } else {
+                None
+            }
+        })
+        .unwrap_or(false);
+
+    let (ty, event, kind, signal) = layout
+        .data
+        .clone()
+        .and_then(|x| match x {
+            Bind::Field {
+                field,
+                kind,
+                signal,
+            } => Some(("field", field, kind.unwrap_or("text".to_string()), signal)),
+            Bind::Event { event, kind, local: _ } => {
+                Some(("event", event, kind.unwrap_or("text".to_string()), None))
+            }
+            _ => None,
+        })
+        .unwrap_or(("", "".to_string(), "text".to_string(), None));
+
+    let oninput = move |event: Event<FormData>| {
+        x.set(event.value());
+        if let Some(mut signal) = signal {
+            signal.set(to_value(event.value()).unwrap());
+            // TODO: instant
+            if instant {
+                todo!()
+            }
+        };
+    };
+
+    let onkeydown = move |ev: Event<KeyboardData>| {
+        let mut s = s.clone();
+        let event = event.clone();
+        async move {
+            if ev.data.key() == Key::Enter {
+                let v = to_value(x.read().to_string()).unwrap();
+                match ty {
+                    "field" => {
+                        if let Some(mut sig) = signal {
+                            sig.set(v);
+                        };
+                    }
+                    "event" => {
+                        s.send(event, None, v).await;
+                        *x.write() = "".to_string()
+                    }
+                    _ => {}
+                }
+            }
+        }
+    };
 
     rsx! {
         input {
             class: css.join(" "),
             value: x,
-            oninput: move |event| {
-                x.set(event.value());
-                let ev = layout.data.clone();
-                if let Some(Bind::Signal { mut signal }) = ev {
-                    signal.set(to_value(event.value()).unwrap());
-                    // TODO: instant
-                    if let Some(x) =  &layout.attrs {
-                        if let Some(Settings::Input { target: _, instant: _ }) = &x.settings {
-                            todo!()
-                        }
-                    };
-                };
-            },
-            onkeydown: move |event| {
-                let mut s = s.clone();
-                let ev = ev.clone();
-                async move {
-                    if event.data.key() == Key::Enter {
-                        let v = to_value(x.read().to_string()).unwrap();
-                        match ev {
-                            Some(Bind::Event { event: e, .. }) => {
-                                s.send(e, None, v).await;
-                                *x.write() = "".to_string()
-                            },
-                            Some(Bind::Signal { mut signal }) => {
-                                signal.set(v);
-                                x.set("".to_string())
-                            },
-                            _ => unreachable!()
-                        }
-                    }
-                }
-            }
+            oninput: oninput,
+            onkeydown: onkeydown
         }
     }
 }

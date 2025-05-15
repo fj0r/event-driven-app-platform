@@ -40,7 +40,7 @@ data:
       - type: button
         value: confirm
         attrs:
-            oneshot: true
+            oneshot: false
         data:
             confirm: true
 
