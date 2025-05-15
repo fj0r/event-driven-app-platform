@@ -114,7 +114,11 @@ pub enum Settings {
         instant: bool
     },
     Image {
-        alt: String,
+        desc: String,
+        #[serde(default)]
+        thumb: bool,
+        width: Option<String>,
+        height: Option<String>,
     }
 }
 

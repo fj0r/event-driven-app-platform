@@ -15,8 +15,11 @@ data:
           children:
           - type: th
             children:
-            - type: text
-              value: a
+            - type: image
+              attrs:
+                  desc: ccacc
+                  height: 1em
+              value: https://github.com/luser/keep-calm-and-call-clone/blob/master/keep-calm-and-call-clone.png?raw=true
           - type: th
             children:
             - type: text
