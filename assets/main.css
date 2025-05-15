@@ -69,6 +69,10 @@ body {
 }
 
 /*** LAYOUT ***/
+.g {
+    display: grid;
+}
+
 .f {
   display: flex;
   flex: 1 0 auto;

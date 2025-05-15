@@ -11,8 +11,7 @@ const HEADER_SVG: Asset = asset!("/assets/header.svg");
 
 static STORE: GlobalSignal<Store> = Global::new(|| {
     let url = "ws://localhost:3000/channel";
-    let r = use_store(url).expect("connecting failed");
-    r
+    use_store(url).expect("connecting failed")
 });
 
 fn main() {

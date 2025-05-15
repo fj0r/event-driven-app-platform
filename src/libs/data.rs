@@ -4,7 +4,7 @@ use itertools::{
     Itertools,
 };
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{json, Value, Map};
 
 type Session = String;
 
@@ -96,6 +96,9 @@ pub struct Attrs {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum Settings {
+    Container {
+        grid: Option<Map<String, Value>>
+    },
     List {
         scroll: bool
     },
@@ -142,7 +145,7 @@ impl Layout {
                 }
             }
         }
-        return false;
+        false
     }
     pub fn join(&mut self, rhs: Self) {
         let value = match &self.value {
@@ -172,7 +175,7 @@ impl Layout {
         self.value = value;
         if let Some(children) = &mut self.children {
             if let Some(rchildren) = rhs.children {
-                for x in children.into_iter().zip_longest(rchildren.into_iter()) {
+                for x in children.iter_mut().zip_longest(rchildren.into_iter()) {
                     match x {
                         Both(l, r) => {
                             l.join(r);

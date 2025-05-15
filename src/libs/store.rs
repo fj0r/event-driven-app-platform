@@ -102,7 +102,7 @@ fn dispatch(
             let d = &x.data;
             if let Some(_id) = &d.id {
                 let mut l = list.write();
-                let list = l.entry(e).or_insert(vec![]);
+                let list = l.entry(e).or_default();
                 let mut m = false;
                 for i in list.iter_mut() {
                     if i.cmp_id(d) {
@@ -114,7 +114,7 @@ fn dispatch(
                     list.push(d.clone());
                 }
             } else {
-                list.write().entry(e).or_insert(vec![]).push(d.clone());
+                list.write().entry(e).or_default().push(d.clone());
             }
         }
         Message {
@@ -128,9 +128,9 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
     let ws = use_web_socket(url)?;
     let x = ws.message_texts();
 
-    let mut layout = use_signal::<Layout>(|| Layout::default());
-    let mut data = use_signal::<HashMap<String, Layout>>(|| HashMap::new());
-    let mut list = use_signal::<HashMap<String, Vec<Layout>>>(|| HashMap::new());
+    let mut layout = use_signal::<Layout>(Layout::default);
+    let mut data = use_signal::<HashMap<String, Layout>>(HashMap::new);
+    let mut list = use_signal::<HashMap<String, Vec<Layout>>>(HashMap::new);
 
     use_memo(move || {
         let act = serde_json::from_str::<Message>(&x()).unwrap_or_else(|_| Message::default());

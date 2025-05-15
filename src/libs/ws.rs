@@ -25,8 +25,8 @@ pub struct WebSocketHandle {
 /// or when [`WebSocketHandle::close`] is called.
 pub fn use_web_socket(url: &str) -> Result<WebSocketHandle, JsError> {
     let state = use_signal(|| websocket::State::Closed);
-    let mut message = use_signal(|| String::new());
-    let mut message_bytes = use_signal(|| Vec::new());
+    let mut message = use_signal(String::new);
+    let mut message_bytes = use_signal(Vec::new);
 
     let ws = WebSocket::open(url)?;
     let (write, mut read) = ws.split();
@@ -57,6 +57,7 @@ impl WebSocketHandle {
         self.ws_write.write().borrow_mut().send(message).await
     }
 
+    #[allow(unused)]
     pub fn status(self) -> Signal<websocket::State> {
         self.state
     }
@@ -65,11 +66,13 @@ impl WebSocketHandle {
         self.message
     }
 
+    #[allow(unused)]
     pub fn message_bytes(self) -> Signal<Vec<u8>> {
         self.message_bytes
     }
 
     /// NOTE: Not yet implemented due to technical reasons.
+    #[allow(unused)]
     pub fn close(self) {
         unimplemented!();
     }

@@ -11,7 +11,7 @@ type FormScope = HashMap<String, Signal<Value>>;
 fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
     match layout.data {
         Some(Bind::Field { ref field }) => {
-            let s = use_signal(|| Value::default());
+            let s = use_signal(Value::default);
             scope.insert(field.to_string(), s);
             layout.data = Some(Bind::Signal { signal: s });
         }
@@ -32,7 +32,7 @@ pub fn Form(layout: Layout) -> Element {
     let mut data: FormScope = HashMap::new();
     let confirm = use_signal(|| Value::Bool(false));
     walk(&mut layout, &mut data, confirm);
-    let children = layout.clone().children.unwrap_or_else(|| vec![]);
+    let children = layout.clone().children.unwrap_or_else(Vec::new);
     let children = children.into_iter().map(|c| {
         rsx! {
             Frame { layout: c }

@@ -39,7 +39,7 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
     };
 
     static MDFMT: LazyLock<Vec<String>> = LazyLock::new(|| {
-        vec!["markdown", "md"]
+        ["markdown", "md"]
             .iter()
             .map(|x| x.to_string())
             .collect()
