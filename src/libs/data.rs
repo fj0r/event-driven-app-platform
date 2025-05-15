@@ -97,6 +97,7 @@ pub struct Attrs {
 #[serde(untagged)]
 pub enum Settings {
     Container {
+        table: Option<Table>,
         grid: Option<Map<String, Value>>
     },
     List {
@@ -115,6 +116,12 @@ pub enum Settings {
         target: String,
         instant: bool
     },
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Table {
+    column: u8,
+    header: Option<Vec<String>>
 }
 
 #[derive(Debug, Clone, PartialEq, Props, Serialize, Deserialize, Default)]
