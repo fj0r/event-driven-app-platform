@@ -96,10 +96,7 @@ pub struct Attrs {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum Settings {
-    Container {
-        table: Option<Table>,
-        grid: Option<Map<String, Value>>
-    },
+    Container(Container),
     List {
         scroll: bool
     },
@@ -119,9 +116,18 @@ pub enum Settings {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum Container {
+    #[allow(non_camel_case_types)]
+    table(Table),
+    #[allow(non_camel_case_types)]
+    grid(Map<String, Value>),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Table {
-    column: u8,
-    header: Option<Vec<String>>
+    pub column: usize,
+    #[serde(default)]
+    pub header: bool
 }
 
 #[derive(Debug, Clone, PartialEq, Props, Serialize, Deserialize, Default)]

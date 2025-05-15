@@ -1,4 +1,4 @@
-use super::super::super::data::{Layout, Settings};
+use super::super::super::data::{Container as Ct, Table, Layout, Settings};
 use super::super::utils::merge_css_class;
 use dioxus::prelude::*;
 use itertools::Itertools;
@@ -9,18 +9,34 @@ pub fn Container(layout: Layout, children: Element) -> Element {
     let mut style = String::new();
     if let Some(a) = &layout.attrs {
         let mut f = true;
-        if let Some(Settings::Container { table, grid }) = &a.settings {
-            if let Some(t) = table {
-                f = false;
-            };
-            if let Some(g) = grid {
-                f = false;
-                css.push("g");
-                style = g
-                    .iter()
-                    .map(|(k, v)| format!("{}: {};", k, v.as_str().unwrap()))
-                    .join("\n");
-            };
+        if let Some(Settings::Container(c)) = &a.settings {
+            match &c {
+                Ct::grid(g) => {
+                    f = false;
+                    css.push("g");
+                    style = g
+                        .iter()
+                        .map(|(k, v)| format!("{}: {};", k, v.as_str().unwrap()))
+                        .join("\n");
+                }
+                Ct::table(Table{column, header}) => {
+                    // let mut headers = vec![];
+                    // let mut rows = vec![];
+                    let mut idx = 0;
+                    let step = children.iter().len() / column;
+                    while idx < step {
+                        #[allow(unused_variables)]
+                        let s = idx * column;
+                        if *header {
+                            // headers = children[s..s+column]
+                        } else {
+
+                        }
+                        idx += 1;
+                    }
+                    f = false;
+                }
+            }
         };
         if f {
             css.push("f");
