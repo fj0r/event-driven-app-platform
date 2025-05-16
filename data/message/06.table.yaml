@@ -115,7 +115,7 @@ data:
   - attrs:
       oneshot: true
     data:
-      confirm: true
+      submit: true
     type: button
     value: confirm
   data:
