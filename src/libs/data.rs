@@ -5,12 +5,24 @@ use itertools::{
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value, Map};
+use time::OffsetDateTime;
+use time::serde::rfc3339;
+
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
+pub struct Created(#[serde(with = "rfc3339")]OffsetDateTime);
+
+impl Default for Created {
+    fn default() -> Self {
+        Self (OffsetDateTime::now_utc())
+    }
+}
 
 type Session = String;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Message {
     pub sender: Session,
+    pub created: Created,
     pub content: Content,
 }
 

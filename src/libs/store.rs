@@ -1,7 +1,7 @@
 use std::str;
 
 use super::data::*;
-use super::data::{Content, Message};
+use super::data::{Content, Message, Created};
 use super::ws::{use_web_socket, WebSocketHandle};
 use anyhow::Result;
 use dioxus::prelude::*;
@@ -77,7 +77,7 @@ fn dispatch(
             let d = t.render(cx).unwrap();
             match serde_json::from_str::<Content>(&d) {
                 Ok(content) => {
-                    let m = Message { sender, content };
+                    let m = Message { sender, content, created: Created::default() };
                     dispatch(m, layout, data, list);
                 }
                 Err(x) => {
@@ -120,6 +120,7 @@ fn dispatch(
         Message {
             sender: _,
             content: Content::empty,
+            created:_
         } => {}
     }
 }
