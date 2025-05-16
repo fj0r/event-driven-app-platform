@@ -22,7 +22,7 @@ type Session = String;
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Message {
     pub sender: Session,
-    pub created: Created,
+    pub created: Option<Created>,
     pub content: Content,
 }
 

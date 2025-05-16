@@ -68,7 +68,7 @@ fn dispatch(
         Message {
             sender,
             content: Content::fill(x),
-            ..
+            created
         } => {
             let n = x.name;
             let cx = x.data;
@@ -77,7 +77,7 @@ fn dispatch(
             let d = t.render(cx).unwrap();
             match serde_json::from_str::<Content>(&d) {
                 Ok(content) => {
-                    let m = Message { sender, content, created: Created::default() };
+                    let m = Message { sender, content, created };
                     dispatch(m, layout, data, list);
                 }
                 Err(x) => {
