@@ -23,9 +23,9 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
                 signal: Some(s),
             });
         }
-        Some(Bind::Confirm { .. }) => {
-            layout.data = Some(Bind::Confirm {
-                confirm: true,
+        Some(Bind::Submit { .. }) => {
+            layout.data = Some(Bind::Submit {
+                submit: true,
                 signal: Some(confirm),
             });
         }

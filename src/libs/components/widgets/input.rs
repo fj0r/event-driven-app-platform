@@ -46,6 +46,16 @@ pub fn Input(layout: Layout) -> Element {
         })
         .unwrap_or(("", "".to_string(), "text".to_string(), None));
 
+    let input_type = match kind.as_str() {
+        "bool" => "checkbox",
+        "number" => "number",
+        "password" => "password",
+        "button" => "button",
+        "submit" => "submit",
+        _ => "text"
+
+    };
+
     let oninput = move |event: Event<FormData>| {
         x.set(event.value());
         if let Some(mut signal) = signal {
@@ -82,6 +92,7 @@ pub fn Input(layout: Layout) -> Element {
     rsx! {
         input {
             class: css.join(" "),
+            type: input_type,
             value: x,
             oninput: oninput,
             onkeydown: onkeydown

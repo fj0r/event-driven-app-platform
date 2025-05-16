@@ -80,8 +80,8 @@ pub enum Bind {
         #[serde(skip)]
         signal: Option<Signal<Value>>
     },
-    Confirm {
-        confirm: bool,
+    Submit {
+        submit: bool,
         #[allow(dead_code)]
         #[serde(skip)]
         signal: Option<Signal<Value>>

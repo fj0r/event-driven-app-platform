@@ -42,6 +42,6 @@ data:
         attrs:
             oneshot: false
         data:
-            confirm: true
+            submit: true
 
 
