@@ -80,6 +80,7 @@ pub enum Bind {
     Event {
         event: String,
         #[serde(rename = "type")]
+        // number, bool, [text]
         kind: Option<String>,
         // Abandon
         local: Option<String>
@@ -87,6 +88,7 @@ pub enum Bind {
     Field {
         field: String,
         #[serde(rename = "type")]
+        // number, bool, [text]
         kind: Option<String>,
         payload: Option<Value>,
         #[allow(dead_code)]
@@ -127,7 +129,7 @@ pub enum Settings {
     Button {
         oneshot: bool
     },
-    Input {
+    Form {
         instant: bool
     },
     Image {

@@ -1,7 +1,7 @@
-use serde_json::{to_value, Map, Value};
+use serde_json::{to_value, Value};
 use std::collections::HashMap;
 
-use super::super::data::{Bind, Layout};
+use super::super::data::{Bind, Layout, Settings};
 use super::super::store::Store;
 use super::{Dynamic, Frame};
 use dioxus::prelude::*;
@@ -73,6 +73,19 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
 
 #[component]
 pub fn Form(layout: Layout) -> Element {
+    // TODO: instant
+    let instant = layout
+        .attrs
+        .clone()
+        .and_then(|x| {
+            if let Some(Settings::Form { instant }) = x.settings {
+                Some(instant)
+            } else {
+                None
+            }
+        })
+        .unwrap_or(false);
+
     let mut data: FormScope = HashMap::new();
     let confirm = use_signal(|| Value::Bool(false));
     walk(&mut layout, &mut data, confirm);

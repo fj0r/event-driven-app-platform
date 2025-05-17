@@ -1,4 +1,4 @@
-use super::super::super::data::{Bind, Layout, Settings};
+use super::super::super::data::{Bind, Layout};
 use super::super::super::store::Store;
 use super::super::utils::merge_css_class;
 use dioxus::prelude::*;
@@ -17,18 +17,6 @@ fn default_kind(kind: &str) -> Value {
 
 #[component]
 pub fn Input(layout: Layout) -> Element {
-    let instant = layout
-        .attrs
-        .clone()
-        .and_then(|x| {
-            if let Some(Settings::Input { instant }) = x.settings {
-                Some(instant)
-            } else {
-                None
-            }
-        })
-        .unwrap_or(false);
-
     let (ty, event, kind, signal) = layout
         .data
         .clone()
@@ -78,10 +66,6 @@ pub fn Input(layout: Layout) -> Element {
             }
             .unwrap();
             signal.set(vl);
-            // TODO: instant
-            if instant {
-                todo!()
-            }
         };
     };
 
