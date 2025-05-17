@@ -14,18 +14,18 @@ data:
       event: login
   - type: list
     attrs:
-      class: box xs gap scrolly
+      class: box c as gap scrolly
       scroll: true
     data:
       event: chat
     item:
     - type: card
       attrs:
-        class: nogrow _ye accent
+        class: nogrow s _ae accent
         selector: ask
     - type: card
       attrs:
-        class: nogrow _ys
+        class: nogrow s _as
   - type: container
     attrs:
       class: nogrow box

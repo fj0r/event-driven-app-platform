@@ -9,7 +9,7 @@ data:
     children:
       - type: text
         attrs:
-            class: aic
+            class: i ac
         value: confirm order
       - type: container
         attrs:

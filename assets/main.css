@@ -125,7 +125,7 @@ body {
   }
 }
 
-.f,.g{
+.f,.g {
   .f {
       --start: flex-start;
       --end: flex-end;
@@ -134,68 +134,110 @@ body {
       --start: start;
       --end: end;
   }
-  &.jcs {
-    justify-content: var(--start);
+  &.c {
+    &.js {
+      justify-content: var(--start);
+    }
+    &.je {
+      justify-content: var(--end);
+    }
+    &.jc {
+      justify-content: center;
+    }
+    &.jx { /* g */
+      justify-content: stretch;
+    }
+    &.ja {
+      justify-content: space-around;
+    }
+    &.jb {
+      justify-content: space-between;
+    }
+    &.jn { /* g */
+      justify-content: space-evenly;
+    }
+    &.as {
+      align-content: var(--start);
+    }
+    &.ae {
+      align-content: var(--end);
+    }
+    &.ac {
+      align-content: center;
+    }
+    &.ax {
+      align-content: stretch;
+    }
+    &.aa {
+      align-content: space-around;
+    }
+    &.ab {
+      align-content: space-between;
+    }
+    &.an { /* g */
+      align-content: space-evenly;
+    }
   }
-  &.jce {
-    justify-content: var(--end);
+  &.i {
+    &.as {
+      align-items: var(--start);
+    }
+    &.ae {
+      align-items: var(--end);
+    }
+    &.ac {
+      align-items: center;
+    }
+    &.ax {
+      align-items: stretch;
+    }
+    &.ab { /* f */
+      align-items: baseline;
+    }
+    &.js { /* g */
+      justify-items: var(--start);
+    }
+    &.je { /* g */
+      justify-items: var(--end);
+    }
+    &.jc { /* g */
+      justify-items: center;
+    }
+    &.jx { /* g */
+      justify-items: stretch;
+    }
   }
-  &.jcc {
-    justify-content: center;
-  }
-  &.jca {
-    justify-content: space-around;
-  }
-  &.jcb {
-    justify-content: space-between;
-  }
-  &.ais {
-    align-items: var(--start);
-  }
-  &.aie {
-    align-items: var(--end);
-  }
-  &.aic {
-    align-items: center;
-  }
-  &.aix {
-    align-items: stretch;
-  }
-  &.aib {
-    align-items: baseline;
-  }
-  &.acs {
-    align-content: var(--start);
-  }
-  &.ace {
-    align-content: var(--end);
-  }
-  &.acc {
-    align-content: center;
-  }
-  &.acx {
-    align-content: stretch;
-  }
-  &.aca {
-    align-content: space-around;
-  }
-  &.acb {
-    align-content: space-between;
-  }
-  & >._ass {
-    align-self: var(--start);
-  }
-  & >._ase {
-    align-self: var(--end);
-  }
-  & >._aso {
-    align-self: center;
-  }
-  & >._asx {
-    align-self: stretch;
-  }
-  & >._asb {
-    align-self: baseline;
+  &.s {
+    &.aa , & >._aa { /* f */
+      align-self: auto;
+    }
+    &.as , & >._as {
+      align-self: var(--start);
+    }
+    &.ae , & >._ae {
+      align-self: var(--end);
+    }
+    &.ac , & >._ac {
+      align-self: center;
+    }
+    &.ax , & >._ax {
+      align-self: stretch;
+    }
+    &.ab , & >._ab { /* f */
+      align-self: baseline;
+    }
+    &.js , & >._js { /* g */
+      justify-self: var(--start);
+    }
+    &.je , & >._je { /* g */
+      justify-self: var(--end);
+    }
+    &.jc , & >._jc { /* g */
+      justify-self: center;
+    }
+    &.jx , & >._jx { /* g */
+      justify-self: stretch;
+    }
   }
 }
 
