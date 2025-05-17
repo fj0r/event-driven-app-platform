@@ -29,7 +29,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         {
           "type": "list",
           "attrs": {
-            "class": "box xs gap scrolly"
+            "class": "card xs gap scrolly"
           },
           "data": {
             "event": "chat"
@@ -46,7 +46,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         {
           "type": "container",
           "attrs": {
-            "class": "nogrow box",
+            "class": "nogrow card",
             "horizontal": true
           },
           "children": [

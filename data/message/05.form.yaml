@@ -11,11 +11,11 @@ data:
         attrs:
             class: i ac
         value: confirm order
-      - type: container
+      - type: box
         attrs:
             class: gap md
         children:
-          - type: container
+          - type: box
             attrs:
                 horizontal: true
             children:
@@ -27,7 +27,7 @@ data:
                 value: age
                 data:
                     field: age
-          - type: container
+          - type: box
             attrs:
                 horizontal: true
             children:

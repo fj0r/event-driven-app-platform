@@ -12,7 +12,7 @@ static LIST_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
 pub fn Dynamic(layout: Layout, children: Element) -> Element {
     let c = {
         match layout.kind.as_str() {
-            "container" => rsx!(Container { layout: layout, {children} }),
+            "box" => rsx!(Container { layout: layout, {children} }),
             "list" => {
                 let mut tc = LIST_ID.lock().unwrap();
                 *tc += 1;
@@ -21,7 +21,6 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
             }
             "form" => rsx!(Form { layout: layout }),
             "chart" => rsx!(Chart { layout: layout }),
-            "card" => rsx! (Card { layout: layout, {children} }),
             "input" => rsx!(Input { layout: layout }),
             "text" => rsx!(Text { layout: layout }),
             "button" => rsx!(Button { layout: layout }),

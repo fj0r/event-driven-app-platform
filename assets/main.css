@@ -255,8 +255,8 @@ body {
 
 /* }}} */
 /*** CONTAINER {{{ ***/
-.__box>*,
-.box {
+.__card>*,
+.card {
   padding: 0.5rem;
   color: var(--fg);
   background-color: var(--bg);
@@ -278,6 +278,31 @@ body {
   }
   &.wd {
     padding: 1em 4em 1em 4em;
+  }
+}
+
+.shadow {
+  box-shadow:
+    --csstools-color-scheme--light: initial;
+    --shadow-color: var(--disabled);
+    --shadow-color-calc: rgb(from var(--shadow-color) r g b / calc(alpha - .2));
+    --shadow-width: 2px 2px 0px 0px;
+    box-shadow: var(--shadow-width) var(--shadow-color-calc), 0px 0px 2px 0px var(--shadow-color-calc);
+    transition: all 0.1s ease-in-out 0s;
+  &:hover {
+    --shadow-width: 4px 4px 0px 0px;
+  }
+  &.primary {
+    --shadow-color: var(--primary);
+  }
+  &.accent {
+    --shadow-color: var(--accent);
+  }
+  &.secondary {
+    --shadow-color: var(--secondary);
+  }
+  &.disabled {
+    --shadow-color: var(--disabled);
   }
 }
 
@@ -323,31 +348,6 @@ body {
 .filter-gray {
   filter: grayscale(100%);
   filter: #808080;
-}
-
-.shadow {
-  box-shadow:
-    --csstools-color-scheme--light: initial;
-    --shadow-color: var(--disabled);
-    --shadow-color-calc: rgb(from var(--shadow-color) r g b / calc(alpha - .2));
-    --shadow-width: 2px 2px 0px 0px;
-    box-shadow: var(--shadow-width) var(--shadow-color-calc), 0px 0px 2px 0px var(--shadow-color-calc);
-    transition: all 0.1s ease-in-out 0s;
-  &:hover {
-    --shadow-width: 4px 4px 0px 0px;
-  }
-  &.primary {
-    --shadow-color: var(--primary);
-  }
-  &.accent {
-    --shadow-color: var(--accent);
-  }
-  &.secondary {
-    --shadow-color: var(--secondary);
-  }
-  &.disabled {
-    --shadow-color: var(--disabled);
-  }
 }
 
 .glass {

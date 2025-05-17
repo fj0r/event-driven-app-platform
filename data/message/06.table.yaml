@@ -111,7 +111,7 @@ data:
             type: td
           type: tr
       type: table
-    type: container
+    type: box
   - attrs:
       oneshot: true
     data:

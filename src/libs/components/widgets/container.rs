@@ -5,7 +5,7 @@ use itertools::Itertools;
 
 #[component]
 pub fn Container(layout: Layout, children: Element) -> Element {
-    let mut css = vec!["container"];
+    let mut css = vec!["container"]; // box border shadow
     let mut style = String::new();
     if let Some(a) = &layout.attrs {
         let mut f = true;
@@ -68,18 +68,6 @@ pub fn Tab(layout: Layout, children: Element) -> Element {
 
 #[component]
 pub fn Menu(layout: Layout, children: Element) -> Element {
-    let mut css = vec!["card", "f", "v", "box", "border", "shadow"];
-    let css = merge_css_class(&mut css, &layout);
-    rsx! {
-        div {
-            class: css.join(" "),
-            {children}
-        }
-    }
-}
-
-#[component]
-pub fn Card(layout: Layout, children: Element) -> Element {
     let mut css = vec!["card", "f", "v", "box", "border", "shadow"];
     let css = merge_css_class(&mut css, &layout);
     rsx! {

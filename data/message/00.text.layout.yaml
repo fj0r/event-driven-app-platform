@@ -1,13 +1,15 @@
 action: create
-type: container
+type: box
 attrs:
     horizontal: true
-    class: box
+    class: card
 children:
     - type: test
-    - type: container
+    - type: box
       children:
-        - type: card
+        - type: box
+          attrs:
+            class: card shadow
           children:
             - type: text
               value: child of card
@@ -19,20 +21,22 @@ children:
       data:
           event: chat
       item:
-          - type: card
-    - type: container
+          - type: box
+            attrs:
+              class: card shadow
+    - type: box
       children:
         - type: text
           value: lv 1
           data:
               event: test-data
-        - type: container
+        - type: box
           children:
             - type: text
               value: lv 2
-            - type: container
+            - type: box
               children:
-                - type: container
+                - type: box
                   children:
                 - type: text
                   value: lv 3

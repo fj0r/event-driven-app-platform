@@ -15,4 +15,4 @@ data:
         type: text
         value: '{{''{{content}}''}}'
       id: '{{''{{id}}''}}'
-      type: container
+      type: box

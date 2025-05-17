@@ -1,7 +1,9 @@
 action: create
-type: container
+type: box
 children:
-    - type: card
+    - type: box
+      attrs:
+        class: card shadow
       value: 123
       data:
           event: test-data
