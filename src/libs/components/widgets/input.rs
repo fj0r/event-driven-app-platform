@@ -58,7 +58,7 @@ pub fn Input(layout: Layout) -> Element {
     };
 
     let s = use_context::<Store>();
-    let mut css = vec!["input"];
+    let mut css = vec!["input", "f", "shadow"];
     let css = merge_css_class(&mut css, &layout);
 
     let oninput = move |event: Event<FormData>| {

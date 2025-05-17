@@ -456,14 +456,38 @@ hr {
   border: 0.05rem solid var(--fg);
 }
 
+ul {
+  list-style: square;
+}
+nav {
+  margin: 2rem 0;
+  & ul {
+    padding: 0;
+    list-style: none;
+    & li {
+      margin: 0 0.2rem;
+      display: inline-block;
+    }
+  }
+}
+
 /* }}} */
 /*** INPUT {{{ ***/
+fieldset {
+  border: var(--border);
+}
+label,
+legend {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.4rem;
+}
+
 button,
 input[type="button"],
 input[type="reset"],
 input[type="submit"] {
-  display: inline-block;
-  vertical-align: middle;
+  display: inline-flex;
   padding: 0.2rem 0.5rem;
   font-size: 1rem;
   font-weight: normal;
@@ -480,30 +504,6 @@ input[type="submit"]:disabled {
   border-style: dashed;
   cursor: not-allowed;
 }
-ul {
-  list-style: square;
-}
-nav {
-  margin: 2rem 0;
-  & ul {
-    padding: 0;
-    list-style: none;
-    & li {
-      margin: 0 0.2rem;
-      display: inline-block;
-    }
-  }
-}
-
-fieldset {
-  border: var(--border);
-}
-label,
-legend {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 0.4rem;
-}
 
 input[type="email"],
 input[type="number"],
@@ -517,10 +517,8 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  box-shadow: none;
   box-sizing: inherit;
   padding: 0.2rem 0.5rem;
-  width: 100%;
   font-size: 1rem;
   color: var(--fg);
   background-color: var(--bg);
