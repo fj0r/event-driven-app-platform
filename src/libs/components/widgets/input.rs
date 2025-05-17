@@ -3,6 +3,17 @@ use super::super::super::store::Store;
 use super::super::utils::merge_css_class;
 use dioxus::prelude::*;
 use serde_json::{to_value, Value};
+use std::ops::Deref;
+use std::rc::Rc;
+
+fn default_kind(kind: &str) -> Value {
+    match kind {
+        "number" => to_value(0),
+        "bool" => to_value(false),
+        _ => to_value(""),
+    }
+    .unwrap()
+}
 
 #[component]
 pub fn Input(layout: Layout) -> Element {
@@ -40,6 +51,9 @@ pub fn Input(layout: Layout) -> Element {
     let mut css = vec!["input", "f", "shadow"];
     let css = merge_css_class(&mut css, &layout);
 
+    let kind = Rc::new(kind);
+    let event = Rc::new(event);
+
     let input_type = match kind.as_str() {
         "bool" => "checkbox",
         "number" => "number",
@@ -50,15 +64,7 @@ pub fn Input(layout: Layout) -> Element {
     };
 
     let mut v = signal.unwrap_or_else(|| {
-        use_signal(|| {
-            let v = match kind.as_str() {
-                "number" => to_value(0),
-                "bool" => to_value(false),
-                _ => to_value(""),
-            }
-            .unwrap();
-            v
-        })
+        use_signal(|| default_kind(kind.as_str()))
     });
 
     let kind_clone = kind.clone();
@@ -80,13 +86,14 @@ pub fn Input(layout: Layout) -> Element {
         };
     };
 
+    let kind_clone = kind.clone();
     let onkeydown = move |ev: Event<KeyboardData>| {
         let mut s = s.clone();
         let event = event.clone();
+        let kind = kind_clone.clone();
+        let val = v();
         async move {
             if ev.data.key() == Key::Enter {
-                // TODO: remove convert to string
-                let val = to_value(v.read().to_string()).unwrap();
                 match ty {
                     "field" => {
                         if let Some(mut sig) = signal {
@@ -94,8 +101,8 @@ pub fn Input(layout: Layout) -> Element {
                         };
                     }
                     "event" => {
-                        s.send(event, None, val).await;
-                        *v.write() = to_value("".to_string()).unwrap();
+                        s.send(event.deref(), None, val).await;
+                        *v.write() = default_kind(kind.as_str());
                     }
                     _ => {}
                 }

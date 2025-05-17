@@ -1,5 +1,6 @@
 ### TODO
 - [x] Dynamic layout
+    - [ ] Rack/Case: table/grid
 - [x] Data binding (for some components)
 - [x] User input (listen to input events)
     - [x] Listen for enter key press
@@ -13,12 +14,20 @@
     - [x] multiple type items
         - [x] item filter
 - [x] Logic for merging list unit(based on ID), used for AI's dynamic output
-- [ ] Form defined by jsonschema
-- [x] ~Component Interactivity~
-- [x] ~Subpath~
+    - [ ] push to Vec (children)
+- [x] Form defined ~by jsonschema~
+    - [ ] payload of bool/number input
+    - [ ] instant message
+    - [ ] List of form
+- [ ] foldable div
 - [ ] Channel Support (Tabpage)
-- [ ] Better markdown support (js)
-- [ ] Chart support (js/Plotlars)
+- [ ] choice
+    - [ ] menu
+    - [ ] redio group
+- [x] Better markdown support (~js~)
+- [ ] Chart support (js/~Plotlars~)
 - [x] json template
     - [x] defined on server side
     - [x] optimization
+- [x] ~Component Interactivity~
+- [x] ~Subpath~

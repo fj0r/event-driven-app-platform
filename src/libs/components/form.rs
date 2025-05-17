@@ -90,7 +90,6 @@ pub fn Form(layout: Layout) -> Element {
             async move {
                 if let Some(c) = confirm.read().as_bool() {
                     if c {
-                        // FIXME: send
                         s.send(ev, None, v).await;
                     }
                 }
