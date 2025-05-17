@@ -1,4 +1,4 @@
-/*** GLOBAL ***/
+/*** GLOBAL {{{ ***/
 :root {
   --fg: #111;
   --bg: #fff;
@@ -68,7 +68,8 @@ body {
     height: 100vh;
 }
 
-/*** LAYOUT ***/
+/* }}} */
+/*** LAYOUT {{{ ***/
 .g {
     display: grid;
 }
@@ -186,6 +187,20 @@ body {
   }
 }
 
+.overlay {
+  position: absolute;
+  width: 100%;
+  opacity: 1;
+  height: auto;
+  align-self: center;
+}
+
+.abs {
+  position: absolute;
+}
+
+/* }}} */
+/*** CONTAINER {{{ ***/
 .__box>*,
 .box {
   padding: 0.5rem;
@@ -211,38 +226,6 @@ body {
     padding: 1em 4em 1em 4em;
   }
 }
-
-.txt {
-  line-height: 1.2;
-  color: var(--fg);
-  word-break: break-all;
-  &.sm {
-    font-size: 0.6rem;
-  }
-  &.md {
-    font-size: 0.8rem;
-  }
-  &.lg {
-    font-size: 1.6rem;
-  }
-  &.xl {
-    font-size: 2rem;
-  }
-  &.xxl {
-    font-size: 4rem;
-  }
-  &.bold {
-    font-weight: bold;
-  }
-  &.accent {
-    color: var(--accent);
-    font-weight: 600;
-  }
-  &.hint {
-    color: var(--disabled);
-  }
-}
-
 
 .scrollx {
   overflow-x: auto;
@@ -273,16 +256,10 @@ body {
   }
 }
 
-.overlay {
-  position: absolute;
-  width: 100%;
-  opacity: 1;
-  height: auto;
-  align-self: center;
-}
-
-.abs {
-  position: absolute;
+/* }}} */
+/*** DECORATE {{{ ***/
+.pointer {
+  cursor: pointer;
 }
 
 .ease {
@@ -340,11 +317,66 @@ body {
     inset 0px 0px 10px 5px rgba(255, 255, 255, 0.025);
 }
 
-.pointer {
-  cursor: pointer;
+
+/* }}} */
+/*** TEXT {{{ ***/
+.txt {
+  line-height: 1.2;
+  color: var(--fg);
+  word-break: break-all;
+  &.sm {
+    font-size: 0.6rem;
+  }
+  &.md {
+    font-size: 0.8rem;
+  }
+  &.lg {
+    font-size: 1.6rem;
+  }
+  &.xl {
+    font-size: 2rem;
+  }
+  &.xxl {
+    font-size: 4rem;
+  }
+  &.bold {
+    font-weight: bold;
+  }
+  &.accent {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  &.hint {
+    color: var(--disabled);
+  }
 }
 
-/*** ELEMENTS ***/
+.markdown {
+  & img {
+      max-width: var(--img-max-width);
+  }
+}
+
+blockquote,
+pre {
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0.5rem 0.8rem;
+  border-left: 0.1rem solid var(--fg);
+  overflow-y: hidden;
+}
+pre {
+  border: 0.05rem dotted var(--fg);
+  border-left: 0.1rem solid var(--fg);
+  & > code {
+    white-space: pre;
+    display: block;
+    font-size: 0.8rem;
+  }
+}
+
+/* }}} */
+/*** ELEMENTS {{{ ***/
 p {
     margin: 0.2rem;
 }
@@ -355,11 +387,6 @@ a {
   }
   &.plain:focus {
     box-shadow: none;
-  }
-}
-.markdown {
-  & img {
-      max-width: var(--img-max-width);
   }
 }
 figure {
@@ -401,6 +428,36 @@ h6 {
 footer {
   text-align: center;
 }
+
+progress {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  height: 0.5rem;
+  overflow: hidden;
+  padding: 0;
+  width: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  border: 0.1rem solid var(--fg);
+  border-radius: var(--round);
+  &::-webkit-progress-bar {
+    background-color: var(--bg);
+  }
+  &::-webkit-progress-value {
+    background-color: var(--fg);
+  }
+  &::-moz-progress-bar {
+    background-color: var(--fg);
+  }
+}
+
+hr {
+  border: 0.05rem solid var(--fg);
+}
+
+/* }}} */
+/*** INPUT {{{ ***/
 button,
 input[type="button"],
 input[type="reset"],
@@ -493,7 +550,8 @@ textarea {
     transition: all 0.5s ease-in-out 0s;
   }
 }
-
+/* }}} */
+/*** TABLE {{{ ***/
 table {
   width: 100%;
   border-spacing: 0;
@@ -517,48 +575,4 @@ td {
   border-bottom: 0.05rem solid var(--fg);
 }
 
-blockquote,
-pre {
-  margin-left: 0;
-  margin-right: 0;
-  padding: 0.5rem 0.8rem;
-  border-left: 0.1rem solid var(--fg);
-  overflow-y: hidden;
-}
-pre {
-  border: 0.05rem dotted var(--fg);
-  border-left: 0.1rem solid var(--fg);
-  & > code {
-    white-space: pre;
-    display: block;
-    font-size: 0.8rem;
-  }
-}
-
-progress {
-  -moz-appearance: none;
-  -webkit-appearance: none;
-  display: block;
-  height: 0.5rem;
-  overflow: hidden;
-  padding: 0;
-  width: 100%;
-  background: var(--bg);
-  color: var(--fg);
-  border: 0.1rem solid var(--fg);
-  border-radius: var(--round);
-  &::-webkit-progress-bar {
-    background-color: var(--bg);
-  }
-  &::-webkit-progress-value {
-    background-color: var(--fg);
-  }
-  &::-moz-progress-bar {
-    background-color: var(--fg);
-  }
-}
-
-hr {
-  border: 0.05rem solid var(--fg);
-}
-
+/* }}} */
