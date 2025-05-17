@@ -42,3 +42,20 @@ export def 'update tmpl' [
     | str replace -a '}}\"' '}}'
     | save -f $dest
 }
+
+export def 'export css' [] {
+    use git *
+    use git/shortcut.nu *
+    use lg
+    lg level 1 'begin'
+    cp assets/main.css .../ydncf/index.css
+    let msg = git-last-commit
+    let msg = $"($msg.message)\n\n($msg.body)"
+    cd .../ydncf
+    if (git-changes | is-not-empty) {
+        git add .
+        git commit -m $msg
+        git push
+    }
+    lg level 1 'end'
+}

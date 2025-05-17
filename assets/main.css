@@ -125,8 +125,7 @@ body {
   }
 }
 
-.f,
-.g {
+.f {
   &.jcs {
     justify-content: flex-start;
   }
