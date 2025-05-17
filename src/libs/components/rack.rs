@@ -7,8 +7,8 @@ use std::collections::hash_map::HashMap;
 use std::str::FromStr;
 
 struct ItemContainer {
-    index: HashMap<String, Layout>,
     default: Option<Layout>,
+    index: HashMap<String, Layout>,
 }
 
 impl From<Vec<Layout>> for ItemContainer {
@@ -33,13 +33,13 @@ impl From<Vec<Layout>> for ItemContainer {
 }
 
 impl ItemContainer {
-    fn select(&self, child: &Layout) -> Layout {
-        let default = self.default.clone().unwrap();
-        if let Some(s) = child.attrs.as_ref().and_then(|x| x.kind.as_ref()) {
-            self.index.get(s).unwrap_or(&default).clone()
-        } else {
-            default
+    fn select(&self, child: &Layout) -> Option<Layout> {
+        if let Some(kind) = child.attrs.as_ref().and_then(|x| x.kind.as_ref()) {
+            if let Some(i) = self.index.get(kind) {
+                return Some(i).cloned();
+            }
         }
+        self.default.clone()
     }
 }
 
@@ -58,28 +58,37 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
     let c = s.list.read();
     let c = c.get(event).cloned().unwrap_or_else(Vec::new);
     let r = c.iter().enumerate().map(|(idx, child)| {
-        let x = rsx! {
-            Frame {
-                layout: child.clone()
-            }
-        };
         let key = child.id.clone().unwrap_or(idx.to_string());
         let layout = item.select(child);
-        if c.len() - 1 == idx {
-            // last element
-            rsx! {
-                Dynamic {
-                    key: "{key}",
-                    layout: layout,
-                    {x}
+        if let Some(layout) = layout {
+            let x = rsx! {
+                Frame {
+                    layout: child.clone()
+                }
+            };
+            if c.len() - 1 == idx {
+                // last element
+                rsx! {
+                    Dynamic {
+                        key: "{key}",
+                        layout: layout,
+                        {x}
+                    }
+                }
+            } else {
+                rsx! {
+                    Dynamic {
+                        key: "{key}",
+                        layout: layout,
+                        {x}
+                    }
                 }
             }
         } else {
             rsx! {
-                Dynamic {
+                Frame {
                     key: "{key}",
-                    layout: layout,
-                    {x}
+                    layout: child.clone()
                 }
             }
         }
