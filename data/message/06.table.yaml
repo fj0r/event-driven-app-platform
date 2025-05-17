@@ -41,7 +41,8 @@ data:
         - children:
           - children:
             - data:
-                field: '853736'
+                field: s
+                type: string
               type: input
               value: '853736'
             type: td
@@ -65,9 +66,10 @@ data:
         - children:
           - children:
             - data:
-                field: '56459'
+                field: b
+                type: bool
               type: input
-              value: '56459'
+              value: false
             type: td
           - children:
             - type: text
@@ -89,9 +91,10 @@ data:
         - children:
           - children:
             - data:
-                field: '934900'
+                field: n
+                type: number
               type: input
-              value: '934900'
+              value: 9
             type: td
           - children:
             - type: text
@@ -113,7 +116,7 @@ data:
       type: table
     type: case
   - attrs:
-      oneshot: true
+      oneshot: false
     data:
       submit: true
     type: button

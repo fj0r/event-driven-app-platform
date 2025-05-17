@@ -2,7 +2,7 @@ use super::super::super::data::{Bind, Layout, Settings};
 use super::super::super::store::Store;
 use super::super::utils::merge_css_class;
 use dioxus::prelude::*;
-use serde_json::to_value;
+use serde_json::{to_value, Value};
 
 #[component]
 pub fn Input(layout: Layout) -> Element {
@@ -36,17 +36,9 @@ pub fn Input(layout: Layout) -> Element {
         })
         .unwrap_or(("", "".to_string(), "text".to_string(), None));
 
-    let mut v = signal.unwrap_or_else(|| {
-        use_signal(|| {
-            let x = layout
-                .value
-                .as_ref()
-                .and_then(|x| x.as_str())
-                .map(|x| x.to_owned())
-                .unwrap_or("".to_string());
-            to_value(x).unwrap_or_else(|_| to_value("").unwrap())
-        })
-    });
+    let s = use_context::<Store>();
+    let mut css = vec!["input", "f", "shadow"];
+    let css = merge_css_class(&mut css, &layout);
 
     let input_type = match kind.as_str() {
         "bool" => "checkbox",
@@ -57,14 +49,31 @@ pub fn Input(layout: Layout) -> Element {
         _ => "text",
     };
 
-    let s = use_context::<Store>();
-    let mut css = vec!["input", "f", "shadow"];
-    let css = merge_css_class(&mut css, &layout);
+    let mut v = signal.unwrap_or_else(|| {
+        use_signal(|| {
+            layout.value.clone().unwrap_or_else(|| {
+                match kind.as_str() {
+                    "number" => to_value(0),
+                    "bool" => to_value(false),
+                    _ => to_value(""),
+                }
+                .unwrap()
+            })
+        })
+    });
 
+    let kind_clone = kind.clone();
     let oninput = move |event: Event<FormData>| {
         v.set(to_value(event.value()).unwrap());
         if let Some(mut signal) = signal {
-            signal.set(to_value(event.value()).unwrap());
+            let vl = event.value();
+            let vl = match kind_clone.as_str() {
+                "bool" => to_value(vl == "true"),
+                "number" => to_value(vl.parse::<f64>().unwrap()),
+                _ => to_value(vl),
+            }
+            .unwrap();
+            signal.set(vl);
             // TODO: instant
             if instant {
                 todo!()
@@ -94,19 +103,42 @@ pub fn Input(layout: Layout) -> Element {
         }
     };
 
-    let v1 = v.clone();
-    let tv = use_memo(move || {
-        let x = v1.read();
-        x.as_str().unwrap_or_else(|| "").to_string()
-    });
-
-    rsx! {
-        input {
-            class: css.join(" "),
-            type: input_type,
-            value: tv,
-            oninput: oninput,
-            onkeydown: onkeydown
+    match kind.as_str() {
+        "number" => {
+            let v = v.read().as_f64();
+            rsx! {
+                input {
+                    class: css.join(" "),
+                    type: input_type,
+                    value: v,
+                    oninput: oninput,
+                    onkeydown: onkeydown
+                }
+            }
+        }
+        "bool" => {
+            let v = v.read().as_bool();
+            rsx! {
+                input {
+                    class: css.join(" "),
+                    type: input_type,
+                    value: v,
+                    oninput: oninput,
+                    onkeydown: onkeydown
+                }
+            }
+        }
+        _ => {
+            let v = v.read().as_str().unwrap_or("").to_string();
+            rsx! {
+                input {
+                    class: css.join(" "),
+                    type: input_type,
+                    value: v,
+                    oninput: oninput,
+                    onkeydown: onkeydown
+                }
+            }
         }
     }
 }
