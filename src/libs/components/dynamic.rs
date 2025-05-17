@@ -1,8 +1,8 @@
 use super::super::data::Layout;
 use super::chart::Chart;
-use super::widgets::*;
 use super::form::Form;
 use super::list::List;
+use super::widgets::*;
 use dioxus::prelude::*;
 
 use std::sync::{LazyLock, Mutex};
@@ -33,7 +33,7 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
             "td" => rsx! (Td { layout: layout, {children} }),
             "x" => rsx!(X { layout: layout }),
             _ => {
-                let t = format!("{} unimplemented!", layout.kind);
+                let t = format!("{} unimplemented!\n{:?}", layout.kind, layout);
                 rsx! { div { "{t}" } }
             }
         }

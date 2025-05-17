@@ -74,7 +74,7 @@ pub fn Form(layout: Layout) -> Element {
         });
     };
 
-    layout.kind = "container".to_owned();
+    layout.kind = "box".to_owned();
     rsx! {
         Dynamic {
             layout: layout,
