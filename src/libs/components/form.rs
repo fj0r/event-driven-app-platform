@@ -1,4 +1,4 @@
-use serde_json::{Map, Value};
+use serde_json::{to_value, Map, Value};
 use std::collections::HashMap;
 
 use super::super::data::{Bind, Layout};
@@ -15,11 +15,35 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
             kind,
             signal: _,
         }) => {
-            let s = use_signal(Value::default);
+            let kind = kind.clone();
+            let v = match kind.as_ref().map(|x| x.as_str()) {
+                Some("number") => {
+                    let n = layout
+                        .value
+                        .as_ref()
+                        .and_then(|x| x.as_f64())
+                        .unwrap_or(0 as f64);
+                    to_value(n).unwrap()
+                }
+                Some("bool") => {
+                    let b = layout
+                        .value
+                        .as_ref()
+                        .and_then(|x| x.as_bool())
+                        .unwrap_or(false);
+                    to_value(b).unwrap()
+                }
+                _ => {
+                    let s = layout.value.as_ref().and_then(|x| x.as_str()).unwrap_or("");
+                    to_value(s).unwrap()
+                }
+            };
+
+            let s = use_signal(|| v);
             scope.insert(field.to_string(), s);
             layout.data = Some(Bind::Field {
                 field: field.to_string(),
-                kind: kind.clone(),
+                kind,
                 signal: Some(s),
             });
         }

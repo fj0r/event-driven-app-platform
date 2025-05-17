@@ -51,14 +51,13 @@ pub fn Input(layout: Layout) -> Element {
 
     let mut v = signal.unwrap_or_else(|| {
         use_signal(|| {
-            layout.value.clone().unwrap_or_else(|| {
-                match kind.as_str() {
-                    "number" => to_value(0),
-                    "bool" => to_value(false),
-                    _ => to_value(""),
-                }
-                .unwrap()
-            })
+            let v = match kind.as_str() {
+                "number" => to_value(0),
+                "bool" => to_value(false),
+                _ => to_value(""),
+            }
+            .unwrap();
+            v
         })
     });
 
@@ -86,6 +85,7 @@ pub fn Input(layout: Layout) -> Element {
         let event = event.clone();
         async move {
             if ev.data.key() == Key::Enter {
+                // TODO: remove convert to string
                 let val = to_value(v.read().to_string()).unwrap();
                 match ty {
                     "field" => {
