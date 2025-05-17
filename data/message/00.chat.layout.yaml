@@ -21,11 +21,11 @@ data:
     item:
     - type: box
       attrs:
-        class: card shadow nogrow s ae accent
+        class: card border shadow nogrow s ae accent
         selector: ask
     - type: box
       attrs:
-        class: card shadow nogrow s as
+        class: card border shadow nogrow s as
   - type: box
     attrs:
       class: nogrow card

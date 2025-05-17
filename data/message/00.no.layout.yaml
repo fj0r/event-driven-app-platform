@@ -3,7 +3,7 @@ type: box
 children:
     - type: box
       attrs:
-        class: card shadow
+        class: card border shadow
       value: 123
       data:
           event: test-data

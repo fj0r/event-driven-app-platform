@@ -9,7 +9,7 @@ children:
       children:
         - type: box
           attrs:
-            class: card shadow
+            class: card border shadow
           children:
             - type: text
               value: child of card
@@ -23,7 +23,7 @@ children:
       item:
           - type: box
             attrs:
-              class: card shadow
+              class: card border shadow
     - type: box
       children:
         - type: text
