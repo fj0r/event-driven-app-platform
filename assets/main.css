@@ -125,12 +125,20 @@ body {
   }
 }
 
-.f {
+.f,.g{
+  .f {
+      --start: flex-start;
+      --end: flex-end;
+  }
+  .g {
+      --start: start;
+      --end: end;
+  }
   &.jcs {
-    justify-content: flex-start;
+    justify-content: var(--start);
   }
   &.jce {
-    justify-content: flex-end;
+    justify-content: var(--end);
   }
   &.jcc {
     justify-content: center;
@@ -142,10 +150,10 @@ body {
     justify-content: space-between;
   }
   &.ais {
-    align-items: flex-start;
+    align-items: var(--start);
   }
   &.aie {
-    align-items: flex-end;
+    align-items: var(--end);
   }
   &.aic {
     align-items: center;
@@ -157,10 +165,10 @@ body {
     align-items: baseline;
   }
   &.acs {
-    align-content: flex-start;
+    align-content: var(--start);
   }
   &.ace {
-    align-content: flex-end;
+    align-content: var(--end);
   }
   &.acc {
     align-content: center;
@@ -175,10 +183,10 @@ body {
     align-content: space-between;
   }
   & >._ass {
-    align-self: flex-start;
+    align-self: var(--start);
   }
   & >._ase {
-    align-self: flex-end;
+    align-self: var(--end);
   }
   & >._aso {
     align-self: center;
