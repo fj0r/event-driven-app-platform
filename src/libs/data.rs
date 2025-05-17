@@ -88,6 +88,7 @@ pub enum Bind {
         field: String,
         #[serde(rename = "type")]
         kind: Option<String>,
+        payload: Option<Value>,
         #[allow(dead_code)]
         #[serde(skip)]
         signal: Option<Signal<Value>>

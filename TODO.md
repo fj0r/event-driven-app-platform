@@ -16,14 +16,19 @@
 - [x] Logic for merging list unit(based on ID), used for AI's dynamic output
     - [ ] push to Vec (children)
 - [x] Form defined ~by jsonschema~
-    - [ ] payload of bool/number input
+    - [x] payload of bool/number input
     - [ ] instant message
     - [ ] List of form
+- [ ] Input
+    - [ ] number
+        - [ ] int/float
+        - [ ] range
+        - [ ] UI
+    - [ ] choice
+        - [ ] menu
+        - [ ] redio group
 - [ ] foldable div
 - [ ] Channel Support (Tabpage)
-- [ ] choice
-    - [ ] menu
-    - [ ] redio group
 - [x] Better markdown support (~js~)
 - [ ] Chart support (js/~Plotlars~)
 - [x] json template

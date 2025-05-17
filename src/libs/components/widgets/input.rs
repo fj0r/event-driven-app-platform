@@ -36,6 +36,7 @@ pub fn Input(layout: Layout) -> Element {
             Bind::Field {
                 field,
                 kind,
+                payload: _,
                 signal,
             } => Some(("field", field, kind.unwrap_or("text".to_string()), signal)),
             Bind::Event {
@@ -63,9 +64,7 @@ pub fn Input(layout: Layout) -> Element {
         _ => "text",
     };
 
-    let mut v = signal.unwrap_or_else(|| {
-        use_signal(|| default_kind(kind.as_str()))
-    });
+    let mut v = signal.unwrap_or_else(|| use_signal(|| default_kind(kind.as_str())));
 
     let kind_clone = kind.clone();
     let oninput = move |event: Event<FormData>| {

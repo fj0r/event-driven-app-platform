@@ -5,14 +5,22 @@ use super::super::data::{Bind, Layout};
 use super::super::store::Store;
 use super::{Dynamic, Frame};
 use dioxus::prelude::*;
+use serde::{Deserialize, Serialize};
 
-type FormScope = HashMap<String, Signal<Value>>;
+#[derive(Debug, Deserialize, Serialize)]
+struct Data {
+    pub value: Value,
+    pub payload: Option<Value>,
+}
+
+type FormScope = HashMap<String, (Signal<Value>, Option<Value>)>;
 
 fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
     match &layout.data {
         Some(Bind::Field {
             field,
             kind,
+            payload,
             signal: _,
         }) => {
             let kind = kind.clone();
@@ -40,10 +48,11 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
             };
 
             let s = use_signal(|| v);
-            scope.insert(field.to_string(), s);
+            scope.insert(field.to_string(), (s, payload.clone()));
             layout.data = Some(Bind::Field {
                 field: field.to_string(),
                 kind,
+                payload: None,
                 signal: Some(s),
             });
         }
@@ -77,12 +86,16 @@ pub fn Form(layout: Layout) -> Element {
     let lc = layout.data.clone();
     if let Some(Bind::Event { event, .. }) = lc {
         let s = use_context::<Store>();
-        let mut payload = Map::new();
+        let mut content = HashMap::new();
         for (k, v) in &data {
-            payload.insert(k.to_owned(), v());
+            let d = Data {
+                value: v.0(),
+                payload: v.1.clone(),
+            };
+            content.insert(k.to_owned(), d);
         }
         //dioxus_logger::tracing::info!("{payload:?}");
-        let v = Value::Object(payload);
+        let v = to_value(content).unwrap();
         let _ = use_resource(move || {
             let ev = event.clone();
             let mut s = s.clone();

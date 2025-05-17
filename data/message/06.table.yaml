@@ -43,6 +43,10 @@ data:
             - data:
                 field: s
                 type: string
+                payload:
+                    a: 1
+                    b:
+                        c: 2
               type: input
               value: '853736'
             type: td
