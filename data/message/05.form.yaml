@@ -8,6 +8,8 @@ data:
         class: gap md
     children:
       - type: text
+        attrs:
+            class: aic
         value: confirm order
       - type: container
         attrs:

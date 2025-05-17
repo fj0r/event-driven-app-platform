@@ -115,69 +115,6 @@ body {
       gap: 2rem;
     }
   }
-  &.ms {
-    justify-content: flex-start;
-  }
-  &.me {
-    justify-content: flex-end;
-  }
-  &.mo {
-    justify-content: center;
-  }
-  &.ma {
-    justify-content: space-around;
-  }
-  &.mb {
-    justify-content: space-between;
-  }
-  &.cs {
-    align-items: flex-start;
-  }
-  &.ce {
-    align-items: flex-end;
-  }
-  &.co {
-    align-items: center;
-  }
-  &.cx {
-    align-items: stretch;
-  }
-  &.cl {
-    align-items: baseline;
-  }
-  &.xs {
-    align-content: flex-start;
-  }
-  &.xe {
-    align-content: flex-end;
-  }
-  &.xo {
-    align-content: center;
-  }
-  &.xx {
-    align-content: stretch;
-  }
-  &.xa {
-    align-content: space-around;
-  }
-  &.xb {
-    align-content: space-between;
-  }
-  & >._ys {
-    align-self: flex-start;
-  }
-  & >._ye {
-    align-self: flex-end;
-  }
-  & >._yo {
-    align-self: center;
-  }
-  & >._yx {
-    align-self: stretch;
-  }
-  & >._yl {
-    align-self: baseline;
-  }
   &.nogrow,
   & >._nogrow {
     flex-grow: 0;
@@ -185,6 +122,73 @@ body {
   &.shrink,
   & >._shrink {
     flex-shrink: 1;
+  }
+}
+
+.f,
+.g {
+  &.jcs {
+    justify-content: flex-start;
+  }
+  &.jce {
+    justify-content: flex-end;
+  }
+  &.jcc {
+    justify-content: center;
+  }
+  &.jca {
+    justify-content: space-around;
+  }
+  &.jcb {
+    justify-content: space-between;
+  }
+  &.ais {
+    align-items: flex-start;
+  }
+  &.aie {
+    align-items: flex-end;
+  }
+  &.aic {
+    align-items: center;
+  }
+  &.aix {
+    align-items: stretch;
+  }
+  &.aib {
+    align-items: baseline;
+  }
+  &.acs {
+    align-content: flex-start;
+  }
+  &.ace {
+    align-content: flex-end;
+  }
+  &.acc {
+    align-content: center;
+  }
+  &.acx {
+    align-content: stretch;
+  }
+  &.aca {
+    align-content: space-around;
+  }
+  &.acb {
+    align-content: space-between;
+  }
+  & >._ass {
+    align-self: flex-start;
+  }
+  & >._ase {
+    align-self: flex-end;
+  }
+  & >._aso {
+    align-self: center;
+  }
+  & >._asx {
+    align-self: stretch;
+  }
+  & >._asb {
+    align-self: baseline;
   }
 }
 
@@ -282,12 +286,6 @@ body {
     transition: all 0.1s ease-in-out 0s;
   &:hover {
     --shadow-width: 4px 4px 0px 0px;
-  }
-  &.button {
-    --shadow-width: 4px 4px 0px 0px;
-    &:hover {
-        --shadow-width: 2px 2px 0px 0px;
-    }
   }
   &.primary {
     --shadow-color: var(--primary);
@@ -484,11 +482,22 @@ legend {
   margin-bottom: 0.4rem;
 }
 
+.button {
+  &.shadow {
+    --shadow-width: 4px 4px 0px 0px;
+    &:hover {
+        --shadow-width: 2px 2px 0px 0px;
+    }
+  }
+}
+
 button,
 input[type="button"],
 input[type="reset"],
 input[type="submit"] {
   display: inline-flex;
+  justify-content: center;
+  align-items: center;
   padding: 0.2rem 0.5rem;
   font-size: 1rem;
   font-weight: normal;
