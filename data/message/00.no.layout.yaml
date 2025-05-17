@@ -1,9 +1,9 @@
 action: create
-type: box
+type: case
 children:
-    - type: box
+    - type: case
       attrs:
-        class: card border shadow
+        class: box border shadow
       value: 123
       data:
           event: test-data

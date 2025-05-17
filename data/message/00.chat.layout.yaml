@@ -3,7 +3,7 @@ event: ''
 data:
   attrs:
     class: maximize
-  type: box
+  type: case
   children:
   - type: text
     value: chat with **AI**
@@ -14,24 +14,24 @@ data:
       event: login
   - type: list
     attrs:
-      class: card c as gap scrolly
+      class: box c as gap scrolly
       scroll: true
     data:
       event: chat
     item:
-    - type: box
+    - type: case
       attrs:
-        class: card border shadow nogrow s ae accent
+        class: box border shadow nogrow s ae accent
         selector: ask
-    - type: box
+    - type: case
       attrs:
-        class: card border shadow nogrow s as
-  - type: box
+        class: box border shadow nogrow s as
+  - type: case
     attrs:
-      class: nogrow card
+      class: nogrow box
       horizontal: true
     children:
-    - type: box
+    - type: case
       attrs:
         horizontal: true
       children:

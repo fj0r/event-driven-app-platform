@@ -1,18 +1,18 @@
 action: create
-type: box
+type: case
 attrs:
     horizontal: true
-    class: card
+    class: box
 children:
     - type: test
-    - type: box
+    - type: case
       children:
-        - type: box
+        - type: case
           attrs:
-            class: card border shadow
+            class: box border shadow
           children:
             - type: text
-              value: child of card
+              value: child of box
         - type: text
           value: 123
           data:
@@ -21,22 +21,22 @@ children:
       data:
           event: chat
       item:
-          - type: box
+          - type: case
             attrs:
-              class: card border shadow
-    - type: box
+              class: box border shadow
+    - type: case
       children:
         - type: text
           value: lv 1
           data:
               event: test-data
-        - type: box
+        - type: case
           children:
             - type: text
               value: lv 2
-            - type: box
+            - type: case
               children:
-                - type: box
+                - type: case
                   children:
                 - type: text
                   value: lv 3

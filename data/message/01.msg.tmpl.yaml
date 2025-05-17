@@ -23,6 +23,6 @@ data: |-
         }
       ],
       "id": "{{id|tojson}}",
-      "type": "box"
+      "type": "case"
     }
   }

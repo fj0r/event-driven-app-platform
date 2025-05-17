@@ -1,7 +1,7 @@
 action: join
 event: chat
 data:
-    type: box
+    type: case
     children:
       - type: text
         value: who are you?

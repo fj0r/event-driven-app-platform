@@ -5,7 +5,7 @@ use itertools::Itertools;
 
 #[component]
 pub fn Container(layout: Layout, children: Element) -> Element {
-    let mut css = vec!["container"]; // box border shadow
+    let mut css = vec!["case"];
     let mut style = String::new();
     if let Some(a) = &layout.attrs {
         let mut f = true;

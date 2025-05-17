@@ -255,8 +255,8 @@ body {
 
 /* }}} */
 /*** CONTAINER {{{ ***/
-.__card>*,
-.card {
+.__box>*,
+.box {
   padding: 0.5rem;
   color: var(--fg);
   background-color: var(--bg);
