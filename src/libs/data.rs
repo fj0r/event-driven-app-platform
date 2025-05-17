@@ -114,7 +114,7 @@ pub struct Attrs {
 #[serde(untagged)]
 pub enum Settings {
     Container(Container),
-    List {
+    Rack {
         scroll: bool
     },
     Text {

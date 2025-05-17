@@ -17,7 +17,7 @@ children:
           value: 123
           data:
               event: test-data
-    - type: list
+    - type: rack
       data:
           event: chat
       item:

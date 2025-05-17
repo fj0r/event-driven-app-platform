@@ -12,7 +12,7 @@ data:
       format: md
     data:
       event: login
-  - type: list
+  - type: rack
     attrs:
       class: box c as gap scrolly
       scroll: true

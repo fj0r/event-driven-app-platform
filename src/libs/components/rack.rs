@@ -44,7 +44,7 @@ impl ItemContainer {
 }
 
 #[component]
-pub fn List(id: String, layout: Layout, children: Element) -> Element {
+pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
     let mut css = vec!["list", "f"];
     let css = merge_css_class(&mut css, &layout);
 
@@ -85,7 +85,7 @@ pub fn List(id: String, layout: Layout, children: Element) -> Element {
         }
     });
 
-    if let Some(Settings::List { scroll: x, .. }) = attrs.settings {
+    if let Some(Settings::Rack { scroll: x, .. }) = attrs.settings {
         if x {
             let sl = s.list;
             let eid = id.clone();

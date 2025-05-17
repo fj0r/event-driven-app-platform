@@ -4,7 +4,7 @@ pub mod dynamic;
 pub use dynamic::Dynamic;
 pub mod chart;
 pub mod form;
-pub mod list;
+pub mod rack;
 pub mod types;
 pub mod utils;
 pub mod widgets;

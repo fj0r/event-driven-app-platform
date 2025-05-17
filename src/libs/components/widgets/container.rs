@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 use itertools::Itertools;
 
 #[component]
-pub fn Container(layout: Layout, children: Element) -> Element {
+pub fn Case(layout: Layout, children: Element) -> Element {
     let mut css = vec!["case"];
     let mut style = String::new();
     if let Some(a) = &layout.attrs {
