@@ -45,7 +45,7 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
             .collect()
     });
 
-    if let Some(Settings::Text { format: a, .. }) =
+    if let Some(Settings::Text { format: a, fold: _ }) =
         layout.read().clone().attrs.and_then(|x| x.settings)
     {
         if (*MDFMT).contains(&a) {

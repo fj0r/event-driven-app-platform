@@ -19,6 +19,7 @@
     - [x] payload of bool/number input
     - [ ] instant message
     - [ ] List of form
+- [ ] Custom index.html
 - [ ] Input
     - [ ] number
         - [ ] int/float
