@@ -20,7 +20,7 @@ export def 'send message' [
 ] {
     let d = open ([$WORKDIR data message $file] | path join)
     let c = open ([$WORKDIR __.toml] | path join) | get server
-    let host = $"http://($c.host)/admin/message"
+    let host = $"http://($c.host)/admin/send"
     let data = {
         receiver: [],
         sender: "",
