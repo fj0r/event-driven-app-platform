@@ -15,11 +15,12 @@
         - [x] item filter
 - [x] Logic for merging list unit(based on ID), used for AI's dynamic output
     - [ ] push to Vec (children)
+    - [ ] **multiple segment**
 - [x] Form defined ~by jsonschema~
     - [x] payload of bool/number input
-    - [ ] instant message
+    - [ ] **instant message**
     - [ ] List of form
-- [ ] Custom index.html
+- [x] Custom index.html templates
 - [ ] Input
     - [ ] number
         - [ ] int/float

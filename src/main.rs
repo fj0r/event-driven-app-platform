@@ -5,9 +5,7 @@ use libs::components::*;
 use libs::store::{use_store, Store};
 use tracing_wasm::WASMLayerConfigBuilder;
 
-const FAVICON: Asset = asset!("/assets/favicon.ico");
 const MAIN_CSS: Asset = asset!("/assets/main.css");
-const HEADER_SVG: Asset = asset!("/assets/header.svg");
 
 static STORE: GlobalSignal<Store> = Global::new(|| {
     let url = "ws://localhost:3000/channel";
@@ -29,9 +27,7 @@ fn App() -> Element {
     let layout = STORE().layout;
 
     rsx! {
-        document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
-        document::Link { rel: "svg", href: HEADER_SVG }
         Frame {
             layout: layout()
         }
