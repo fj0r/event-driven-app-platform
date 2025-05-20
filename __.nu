@@ -29,6 +29,27 @@ export def 'send message' [
     http post --content-type application/json $host $data
 }
 
+export def 'border flashing' [] {
+    for _ in 1.. {
+        for i in [primary, disable, secondary, accent] {
+            sleep 0.2sec
+            send message 00.chat.layout.yaml -p {
+                data: {
+                    children: [
+                        {},
+                        {item:
+                            [
+                                {},
+                                {attrs: {class: $'box border shadow nogrow s as ($i)'}}
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
+
 
 export def 'update tmpl' [
     src: string = "data/message/01.msg.tmp1.yaml"
