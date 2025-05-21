@@ -17,16 +17,26 @@ def cmpl-data [] {
 export def 'send message' [
     file:string@cmpl-data
     --patch(-p): record = {}
+    --full
 ] {
-    let d = open ([$WORKDIR data message $file] | path join)
+    let f = if $full { $file } else {
+        [$WORKDIR data message $file] | path join
+    }
     let c = open ([$WORKDIR __.toml] | path join) | get server
     let host = $"http://($c.host)/admin/send"
     let data = {
         receiver: [],
         sender: "",
-        content: ($d | merge deep $patch)
+        content: (open $f | merge deep $patch)
     }
     http post --content-type application/json $host $data
+}
+
+export def 'watch message' [] {
+    watch data/message {|op, path|
+        if $op not-in ['Write'] { return }
+        send message --full $path
+    }
 }
 
 export def 'border flashing' [] {
