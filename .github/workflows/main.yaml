@@ -16,7 +16,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    if: ${{ !endsWith(github.event.head_commit.message, '~') }}
+    if: ${{ startsWith(github.event.head_commit.message, '🏗️') }}
     permissions:
       contents: read
       packages: write

@@ -8,8 +8,15 @@ use tracing_wasm::WASMLayerConfigBuilder;
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 
 static STORE: GlobalSignal<Store> = Global::new(|| {
-    let url = "ws://localhost:3000/channel";
-    use_store(url).expect("connecting failed")
+    let d = web_sys::window().unwrap().document().unwrap();
+    let url = d
+        .query_selector("#main")
+        .ok()
+        .and_then(|x| x)
+        .and_then(|u| u.get_attribute("data-host"))
+        .unwrap_or_else(|| d.location().unwrap().host().unwrap());
+    let url = format!("ws://{}/channel", url);
+    use_store(&url).expect("connecting failed")
 });
 
 fn main() {

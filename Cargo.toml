@@ -20,6 +20,7 @@ itertools = "0.14.0"
 minijinja = { version = "2.10.2", features = ["json", "loader"] }
 time = { version = "0.3.41", features = ["formatting", "parsing", "serde", "wasm-bindgen"] }
 markdown = "1.0.0"
+web-sys = "0.3.77"
 
 [features]
 default = ["web"]
