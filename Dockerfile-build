@@ -1,0 +1,7 @@
+ARG BASEIMAGE=rust
+FROM ${BASEIMAGE}
+
+WORKDIR /app
+COPY . .
+RUN cargo install dioxus-cli \
+ && dx build --platform web --release

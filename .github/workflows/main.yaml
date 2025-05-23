@@ -45,13 +45,23 @@ jobs:
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
-      - name: Build base
+      - name: Build
         uses: docker/build-push-action@v4
         with:
+          file: Dockerfile-build
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:lastest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build
           cache-from: type=registry,ref=user/app:latest
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            BASEIMAGE=rust
+            BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build
+
+      - name: Save
+        uses: docker/build-push-action@v4
+        with:
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:lastest
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build
