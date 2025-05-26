@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 use itertools::{
-    EitherOrBoth::{Both, Left},
+    EitherOrBoth::{Both, Left, Right},
     Itertools,
 };
 use serde::{Deserialize, Serialize};
@@ -233,16 +233,23 @@ impl Layout {
             None => rhs.value,
         };
         self.value = value;
-        if let Some(children) = &mut self.children {
-            if let Some(rchildren) = rhs.children {
-                for x in children.iter_mut().zip_longest(rchildren.into_iter()) {
-                    match x {
+        if let Some(rchildren) = rhs.children {
+            if let Some(children) = &mut self.children {
+                let children = children
+                    .into_iter()
+                    .zip_longest(rchildren.into_iter())
+                    .map(|x| match x {
                         Both(l, r) => {
                             l.join(r);
+                            l.clone()
                         }
-                        _ => {}
-                    }
-                }
+                        Left(l) => l.clone(),
+                        Right(r) => r,
+                    })
+                    .collect();
+                self.children = Some(children);
+            } else {
+                self.children = Some(rchildren);
             }
         }
     }
