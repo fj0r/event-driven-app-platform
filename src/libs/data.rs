@@ -165,9 +165,11 @@ pub struct Table {
     pub header: bool,
 }
 
+fn kind_empty() -> String { "empty".to_string() }
+
 #[derive(Debug, Clone, PartialEq, Props, Serialize, Deserialize, Default)]
 pub struct Layout {
-    #[serde(rename = "type")]
+    #[serde(rename = "type", default = "kind_empty")]
     pub kind: String,
     pub id: Option<String>,
     pub attrs: Option<Attrs>,

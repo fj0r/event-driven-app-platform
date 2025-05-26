@@ -32,6 +32,7 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
             "th" => rsx! (Th { layout: layout, {children} }),
             "td" => rsx! (Td { layout: layout, {children} }),
             "x" => rsx!(X { layout: layout }),
+            "empty" => rsx!(),
             _ => {
                 let t = format!("{} unimplemented!\n{:?}", layout.kind, layout);
                 rsx! { div { "{t}" } }
