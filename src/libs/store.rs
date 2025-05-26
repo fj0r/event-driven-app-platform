@@ -103,14 +103,14 @@ fn dispatch(
             if let Some(_id) = &d.id {
                 let mut l = list.write();
                 let list = l.entry(e).or_default();
-                let mut m = false;
+                let mut mg = false;
                 for i in list.iter_mut() {
                     if i.cmp_id(d) {
-                        m = true;
+                        mg = true;
                         i.join(d.clone());
                     }
                 }
-                if !m {
+                if !mg {
                     list.push(d.clone());
                 }
             } else {

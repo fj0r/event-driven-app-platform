@@ -4,16 +4,16 @@ use itertools::{
     Itertools,
 };
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value, Map};
-use time::OffsetDateTime;
+use serde_json::{json, Map, Value};
 use time::serde::rfc3339;
+use time::OffsetDateTime;
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
-pub struct Created(#[serde(with = "rfc3339")]OffsetDateTime);
+pub struct Created(#[serde(with = "rfc3339")] OffsetDateTime);
 
 impl Default for Created {
     fn default() -> Self {
-        Self (OffsetDateTime::now_utc())
+        Self(OffsetDateTime::now_utc())
     }
 }
 
@@ -63,7 +63,7 @@ pub struct InfluxTmpl {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct InfluxFill{
+pub struct InfluxFill {
     pub name: String,
     pub data: Value,
 }
@@ -83,7 +83,7 @@ pub enum Bind {
         // number, bool, [text]
         kind: Option<String>,
         // Abandon
-        local: Option<String>
+        local: Option<String>,
     },
     Field {
         field: String,
@@ -93,13 +93,13 @@ pub enum Bind {
         payload: Option<Value>,
         #[allow(dead_code)]
         #[serde(skip)]
-        signal: Option<Signal<Value>>
+        signal: Option<Signal<Value>>,
     },
     Submit {
         submit: bool,
         #[allow(dead_code)]
         #[serde(skip)]
-        signal: Option<Signal<Value>>
+        signal: Option<Signal<Value>>,
     },
 }
 
@@ -110,7 +110,7 @@ pub struct Attrs {
     pub kind: Option<String>,
     pub horizontal: Option<bool>,
     #[serde(flatten)]
-    pub settings: Option<Settings>
+    pub settings: Option<Settings>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -126,20 +126,20 @@ pub enum TextFold {
 pub enum Settings {
     Container(Container),
     Rack {
-        scroll: bool
+        scroll: bool,
     },
     Text {
         format: String,
-        fold: Option<TextFold>
+        fold: Option<TextFold>,
     },
     Item {
-        selector: String
+        selector: String,
     },
     Button {
-        oneshot: bool
+        oneshot: bool,
     },
     Form {
-        instant: bool
+        instant: bool,
     },
     Image {
         desc: String,
@@ -147,7 +147,7 @@ pub enum Settings {
         thumb: bool,
         width: Option<String>,
         height: Option<String>,
-    }
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -162,7 +162,7 @@ pub enum Container {
 pub struct Table {
     pub column: usize,
     #[serde(default)]
-    pub header: bool
+    pub header: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Props, Serialize, Deserialize, Default)]
@@ -210,6 +210,18 @@ impl Layout {
                             let mut x = x.clone();
                             x.push_str(r);
                             json!(x)
+                        }
+                        (Value::Object(x), Value::Object(r)) => {
+                            let mut x = x.clone();
+                            for (k, v) in r {
+                                x.entry(k)
+                                    .and_modify(|x| *x = v.clone())
+                                    .or_insert_with(|| v.clone());
+                            }
+                            json!(x)
+                        }
+                        (Value::Array(x), Value::Array(r)) => {
+                            json!([x.clone(), r.clone()].concat())
                         }
                         _ => r.clone(),
                     };
