@@ -238,8 +238,8 @@ impl Layout {
         if let Some(rchildren) = rhs.children {
             if let Some(children) = &mut self.children {
                 let children = children
-                    .into_iter()
-                    .zip_longest(rchildren.into_iter())
+                    .iter_mut()
+                    .zip_longest(rchildren)
                     .map(|x| match x {
                         Both(l, r) => {
                             l.join(r);

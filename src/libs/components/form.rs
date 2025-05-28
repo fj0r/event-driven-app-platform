@@ -24,7 +24,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
             signal: _,
         }) => {
             let kind = kind.clone();
-            let v = match kind.as_ref().map(|x| x.as_str()) {
+            let v = match kind.as_deref() {
                 Some("number") => {
                     let n = layout
                         .value
