@@ -1,7 +1,7 @@
 use std::str;
 
 use super::data::*;
-use super::data::{Content, Message, Created};
+use super::data::{Content, Created, Message};
 use super::ws::{use_web_socket, WebSocketHandle};
 use anyhow::Result;
 use dioxus::prelude::*;
@@ -51,9 +51,7 @@ fn dispatch(
         Message {
             content: Content::create(x),
             ..
-        } => {
-            layout.set(x.data)
-        },
+        } => layout.set(x.data),
         Message {
             content: Content::tmpl(x),
             ..
@@ -68,23 +66,31 @@ fn dispatch(
         Message {
             sender,
             content: Content::fill(x),
-            created
+            created,
         } => {
             let n = x.name;
             let cx = x.data;
             let t = TMPL.read().expect("read TMPL failed");
-            let t = t.get_template(&n).expect("not found TMPL");
-            let d = t.render(cx).unwrap();
-            match serde_json::from_str::<Content>(&d) {
-                Ok(content) => {
-                    let m = Message { sender, content, created };
+            if let Err(x) = t
+                .get_template(&n)
+                .map_err(|e| e.to_string())
+                .and_then(|t| t.render(cx).map_err(|e| format!("render failed: {}", e)))
+                .and_then(|d| {
+                    serde_json::from_str::<Content>(&d)
+                        .map_err(|e| format!("deserialize failed: {}", e))
+                })
+                .and_then(|content| {
+                    let m = Message {
+                        sender,
+                        content,
+                        created,
+                    };
                     dispatch(m, layout, data, list);
-                }
-                Err(x) => {
-                    dioxus_logger::tracing::info!("{x:?}");
-                    dioxus_logger::tracing::info!("{d:?}");
-                }
-            }
+                    Ok(())
+                })
+            {
+                dioxus_logger::tracing::info!("{x:?}");
+            };
         }
         Message {
             content: Content::merge(x),
@@ -120,7 +126,7 @@ fn dispatch(
         Message {
             sender: _,
             content: Content::empty,
-            created:_
+            created: _,
         } => {}
     }
 }
