@@ -1,0 +1,30 @@
+action: join
+event: chat
+data:
+    type: fold
+    value: true
+    attrs:
+      class: v
+    item:
+    - type: text
+      value: |
+          0
+    children:
+    - type: text
+      value: |
+          1
+          2
+          3
+          4
+    - type: text
+      value: |
+          1
+          2
+          3
+          4
+    - type: text
+      value: |
+          1
+          2
+          3
+          4

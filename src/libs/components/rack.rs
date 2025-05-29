@@ -45,7 +45,7 @@ impl ItemContainer {
 
 #[component]
 pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
-    let mut css = vec!["list", "f"];
+    let mut css = vec!["rack", "f"];
     let css = merge_css_class(&mut css, &layout);
 
     let item: ItemContainer = layout.item.clone().context("item")?.into();
