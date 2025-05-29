@@ -54,8 +54,8 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
     };
     let attrs = layout.attrs.as_ref().context("attrs")?;
 
-    let s = use_context::<Store>();
-    let c = s.list.read();
+    let store = use_context::<Store>();
+    let c = store.list.read();
     let c = c.get(event).cloned().unwrap_or_else(Vec::new);
     let r = c.iter().enumerate().map(|(idx, child)| {
         let key = child.id.clone().unwrap_or(idx.to_string());
@@ -96,7 +96,7 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
 
     if let Some(Settings::Rack { scroll: x, .. }) = attrs.settings {
         if x {
-            let sl = s.list;
+            let sl = store.list;
             let eid = id.clone();
             use_effect(move || {
                 let _ = sl.read();
