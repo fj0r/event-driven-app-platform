@@ -1,0 +1,1 @@
+{"action":"join","data":{"children":[{% for i in range(rank - 1) -%} {{ "{}," -}} {% endfor %}{{payload}}],"id":{{id}},"type":"case"},"event":"chat"}

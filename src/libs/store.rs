@@ -14,7 +14,7 @@ use std::sync::{LazyLock, RwLock};
 
 static TMPL: LazyLock<RwLock<Environment>> = LazyLock::new(|| {
     let mut env = Environment::new();
-    env.set_auto_escape_callback(|_| AutoEscape::Json);
+    //env.set_auto_escape_callback(|_| AutoEscape::Json);
     RwLock::new(env)
 });
 

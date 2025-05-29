@@ -61,19 +61,6 @@ export def 'border flashing' [] {
 }
 
 
-export def 'update tmpl' [
-    src: string = "data/message/01.msg.tmp1.yaml"
-    dest: string = "../flange/assets/ai.tmpl.json"
-] {
-    cat $src
-    | from yaml
-    | update data {|x| $x.data | to json -r }
-    | to json
-    | str replace -a '\"{{' '{{'
-    | str replace -a '}}\"' '}}'
-    | save -f $dest
-}
-
 export def 'export css' [] {
     use git *
     use git/shortcut.nu *

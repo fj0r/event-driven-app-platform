@@ -1,0 +1,9 @@
+action: fill
+name: message
+data:
+    rank: 5
+    id: ''
+    payload:
+        type: text
+        value: hello
+
