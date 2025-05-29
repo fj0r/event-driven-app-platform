@@ -29,10 +29,10 @@
     - [ ] choice
         - [ ] menu
         - [ ] redio group
-- [ ] Fold / Tab / Hover
+- [ ] Fold / Pop / Switch
     - [ ] foldable div
-    - [ ] Channel Support (Tabpage)
-    - [ ] menu
+    - [ ] Channel Support (Switch)
+    - [ ] menu (Pop)
 - [x] Better markdown support (~js~)
 - [ ] Chart support (js/~Plotlars~)
 - [x] json template

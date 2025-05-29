@@ -13,6 +13,9 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
     let c = {
         match layout.kind.as_str() {
             "case" => rsx!(Case { layout: layout, {children} }),
+            "pop" => rsx!(Pop { layout: layout, {children} }),
+            "fold" => rsx!(Fold { layout: layout, {children} }),
+            "switch" => rsx!(Switch { layout: layout, {children} }),
             "rack" => {
                 let mut tc = RACK_ID.lock().unwrap();
                 *tc += 1;

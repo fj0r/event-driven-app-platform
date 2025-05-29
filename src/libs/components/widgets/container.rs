@@ -37,7 +37,7 @@ pub fn Case(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn Tab(layout: Layout, children: Element) -> Element {
+pub fn Fold(layout: Layout, children: Element) -> Element {
     let mut css = vec!["card", "f", "v", "box", "border", "shadow"];
     let css = merge_css_class(&mut css, &layout);
     rsx! {
@@ -49,7 +49,7 @@ pub fn Tab(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn Menu(layout: Layout, children: Element) -> Element {
+pub fn Pop(layout: Layout, children: Element) -> Element {
     let mut css = vec!["card", "f", "v", "box", "border", "shadow"];
     let css = merge_css_class(&mut css, &layout);
     rsx! {
@@ -59,3 +59,16 @@ pub fn Menu(layout: Layout, children: Element) -> Element {
         }
     }
 }
+
+#[component]
+pub fn Switch(layout: Layout, children: Element) -> Element {
+    let mut css = vec!["card", "f", "v", "box", "border", "shadow"];
+    let css = merge_css_class(&mut css, &layout);
+    rsx! {
+        div {
+            class: css.join(" "),
+            {children}
+        }
+    }
+}
+
