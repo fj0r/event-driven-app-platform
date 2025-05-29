@@ -19,24 +19,6 @@ pub fn Case(layout: Layout, children: Element) -> Element {
                         .map(|(k, v)| format!("{}: {};", k, v.as_str().unwrap()))
                         .join("\n");
                 }
-                Ct::table(Table{column, header}) => {
-                    // TODO: table
-                    // let mut headers = vec![];
-                    // let mut rows = vec![];
-                    let mut idx = 0;
-                    let step = children.iter().len() / column;
-                    while idx < step {
-                        #[allow(unused_variables)]
-                        let s = idx * column;
-                        if *header {
-                            // headers = children[s..s+column]
-                        } else {
-
-                        }
-                        idx += 1;
-                    }
-                    f = false;
-                }
             }
         };
         if f {

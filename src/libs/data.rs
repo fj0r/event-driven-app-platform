@@ -153,8 +153,6 @@ pub enum Settings {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Container {
     #[allow(non_camel_case_types)]
-    table(Table),
-    #[allow(non_camel_case_types)]
     grid(Map<String, Value>),
 }
 

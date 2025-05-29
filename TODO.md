@@ -14,8 +14,8 @@
     - [x] multiple type items
         - [x] item filter
 - [x] Logic for merging list unit(based on ID), used for AI's dynamic output
-    - [ ] push to Vec (children)
-    - [ ] **multiple segment**
+    - [x] push to Vec (children)
+    - [x] **multiple segment**
 - [x] Form defined ~by jsonschema~
     - [x] payload of bool/number input
     - [ ] **instant message**
@@ -29,8 +29,10 @@
     - [ ] choice
         - [ ] menu
         - [ ] redio group
-- [ ] foldable div
-- [ ] Channel Support (Tabpage)
+- [ ] Fold / Tab / Hover
+    - [ ] foldable div
+    - [ ] Channel Support (Tabpage)
+    - [ ] menu
 - [x] Better markdown support (~js~)
 - [ ] Chart support (js/~Plotlars~)
 - [x] json template
