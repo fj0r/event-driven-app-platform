@@ -3,6 +3,7 @@ name: message
 data:
     rank: 5
     id: ''
+    kind: 'ask'
     payload:
         type: text
         value: hello
