@@ -121,6 +121,9 @@ pub enum Settings {
     Rack {
         scroll: bool,
     },
+    Svg {
+        svg: Map<String, Value>,
+    },
     Text {
         format: String,
     },

@@ -18,9 +18,19 @@ pub fn Svg(layout: Layout, children: Element) -> Element {
 pub fn Group(layout: Layout, children: Element) -> Element {
     let mut css = vec!["group"];
     let css = merge_css_class(&mut css, &layout);
+
+    let mut style = String::new();
+    if let Some(Settings::Svg { svg }) = layout.attrs.as_ref().and_then(|x| x.settings.as_ref()) {
+        style = svg
+            .iter()
+            .map(|(k, v)| format!("{}: {};", k, v.as_str().unwrap()))
+            .collect::<Vec<String>>()
+            .join("\n");
+    };
     rsx! {
         g {
             class: css.join(" "),
+            style: style,
             {children}
         }
     }
