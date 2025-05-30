@@ -315,16 +315,16 @@ body {
 /* }}} */
 /*** COLORS {{{ ***/
 .accent {
-  &.txt, & .txt {
+  &.txt {
     color: var(--accent);
   }
-  &.border, & .border {
+  &.border {
     --border-color: var(--accent);
   }
-  &.shadow, & .shadow{
+  &.shadow {
     --shadow-color: var(--accent);
   }
-  &.highlight, & .highlight {
+  &.highlight {
     &:hover {
       background-color: var(--accent);
     }
@@ -332,16 +332,16 @@ body {
 }
 
 .primary {
-  &.txt, & .txt {
+  &.txt {
     color: var(--primary);
   }
-  &.border, & .border {
+  &.border {
     --border-color: var(--primary);
   }
-  &.shadow, & .shadow{
+  &.shadow {
     --shadow-color: var(--primary);
   }
-  &.highlight, & .highlight {
+  &.highlight {
     &:hover {
       background-color: var(--primary);
     }
@@ -349,16 +349,16 @@ body {
 }
 
 .secondary {
-  &.txt, & .txt {
+  &.txt {
     color: var(--secondary);
   }
-  &.border, & .border {
+  &.border {
     --border-color: var(--secondary);
   }
-  &.shadow, & .shadow{
+  &.shadow {
     --shadow-color: var(--secondary);
   }
-  &.highlight, & .highlight {
+  &.highlight {
     &:hover {
       background-color: var(--secondary);
     }
@@ -366,16 +366,16 @@ body {
 }
 
 .disabled {
-  &.txt, & .txt {
+  &.txt {
     color: var(--disabled);
   }
-  &.border, & .border {
+  &.border {
     --border-color: var(--disabled);
   }
-  &.shadow, & .shadow{
+  &.shadow {
     --shadow-color: var(--disabled);
   }
-  &.highlight, & .highlight {
+  &.highlight {
     &:hover {
       background-color: var(--disabled);
     }
@@ -383,16 +383,16 @@ body {
 }
 
 .warn {
-  &.txt, & .txt {
+  &.txt {
     color: var(--warn);
   }
-  &.border, & .border {
+  &.border {
     --border-color: var(--warn);
   }
-  &.shadow, & .shadow{
+  &.shadow {
     --shadow-color: var(--warn);
   }
-  &.highlight, & .highlight {
+  &.highlight {
     &:hover {
       background-color: var(--warn);
     }
@@ -400,16 +400,16 @@ body {
 }
 
 .error {
-  &.txt, & .txt {
+  &.txt {
     color: var(--error);
   }
-  &.border, & .border {
+  &.border {
     --border-color: var(--error);
   }
-  &.shadow, & .shadow{
+  &.shadow {
     --shadow-color: var(--error);
   }
-  &.highlight, & .highlight {
+  &.highlight {
     &:hover {
       background-color: var(--error);
     }
@@ -417,16 +417,16 @@ body {
 }
 
 .clear {
-  &.txt, & .txt {
+  &.txt {
     color: var(--fg);
   }
-  &.border, & .border {
+  &.border {
     --border-color: var(--fg);
   }
-  &.shadow, & .shadow{
+  &.shadow {
     --shadow-color: var(--fg);
   }
-  &.highlight, & .highlight {
+  &.highlight {
     &:hover {
       background-color: var(--fg);
     }
@@ -435,70 +435,70 @@ body {
 /* }}} */
 /*** SIZE {{{ ***/
 .wd {
-  &.box, & .box {
+  &.box {
     padding: 1em 4em 1em 4em;
   }
 }
 
 .sm {
-  &.txt, & .txt {
+  &.txt {
     font-size: 0.6rem;
   }
-  &.box, & .box {
+  &.box {
     padding: 0.1rem;
   }
-  &.f.gap, & .f.gap {
+  &.f.gap {
     gap: 0.2rem;
   }
 }
 
 .md {
-  &.txt, & .txt {
+  &.txt {
     font-size: 0.8rem;
   }
-  &.box, & .box {
+  &.box {
     padding: 0.3rem;
   }
-  &.f.gap, & .f.gap {
+  &.f.gap {
     gap: 0.4rem;
   }
 }
 
 .lg {
-  &.txt, & .txt {
+  &.txt {
     font-size: 1.6rem;
   }
-  &.f.gap, & .f.gap {
+  &.f.gap {
     gap: 0.8rem;
   }
 }
 
 .xl {
-  &.txt, & .txt {
+  &.txt {
     font-size: 2rem;
   }
-  &.f.gap, & .f.gap {
+  &.f.gap {
     gap: 1rem;
   }
 }
 
 .xxl {
-  &.txt, & .txt {
+  &.txt {
     font-size: 4rem;
   }
-  &.f.gap, & .f.gap {
+  &.f.gap {
     gap: 2rem;
   }
 }
 
 .clear {
-  &.box, & .box {
+  &.box {
     padding: 0;
   }
-  &.txt, & .txt {
+  &.txt {
     font-size: 1rem;
   }
-  &.f.gap, & .f.gap {
+  &.f.gap {
     gap: 0;
   }
 }
