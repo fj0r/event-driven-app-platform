@@ -2,7 +2,6 @@ use super::super::data::{Container as Ct, Layout, Settings};
 use super::Frame;
 use super::utils::merge_css_class;
 use dioxus::prelude::*;
-use itertools::Itertools;
 
 #[component]
 pub fn Case(layout: Layout, children: Element) -> Element {
@@ -18,6 +17,7 @@ pub fn Case(layout: Layout, children: Element) -> Element {
                     style = g
                         .iter()
                         .map(|(k, v)| format!("{}: {};", k, v.as_str().unwrap()))
+                        .collect::<Vec<String>>()
                         .join("\n");
                 }
             }
