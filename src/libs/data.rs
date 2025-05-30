@@ -3,6 +3,7 @@ use itertools::{
     EitherOrBoth::{Both, Left, Right},
     Itertools,
 };
+use minijinja::Environment;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Map, Value};
 use time::serde::rfc3339;
@@ -43,9 +44,6 @@ pub enum Content {
     tmpl(InfluxTmpl),
 
     #[allow(non_camel_case_types)]
-    fill(InfluxFill),
-
-    #[allow(non_camel_case_types)]
     merge(Influx),
 
     #[allow(non_camel_case_types)]
@@ -60,12 +58,6 @@ pub enum Content {
 pub struct InfluxTmpl {
     pub name: String,
     pub data: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct InfluxFill {
-    pub name: String,
-    pub data: Value,
 }
 
 #[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
@@ -113,7 +105,6 @@ pub struct Attrs {
     pub settings: Option<Settings>,
 }
 
-
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum Settings {
@@ -158,7 +149,15 @@ pub struct Table {
     pub header: bool,
 }
 
-fn kind_empty() -> String { "empty".to_string() }
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+pub struct Render {
+    pub name: String,
+    pub data: Value,
+}
+
+fn kind_empty() -> String {
+    "empty".to_string()
+}
 
 #[derive(Debug, Clone, PartialEq, Props, Serialize, Deserialize, Default)]
 pub struct Layout {
@@ -168,6 +167,7 @@ pub struct Layout {
     pub attrs: Option<Attrs>,
     pub data: Option<Bind>,
     pub value: Option<Value>,
+    pub render: Option<Render>,
     pub item: Option<Vec<Layout>>,
     pub children: Option<Vec<Layout>>,
 }
@@ -190,6 +190,35 @@ impl Layout {
         }
         false
     }
+
+    pub fn render(&mut self, env: &Environment) {
+        if let Some(r) = &self.render {
+            let n = &r.name;
+            let cx = &r.data;
+            let n = env
+                .get_template(&n)
+                .map_err(|e| e.to_string())
+                .and_then(|t| t.render(cx).map_err(|e| format!("render failed: {}", e)))
+                .and_then(|t| {
+                    serde_json::from_str::<Layout>(&t)
+                        .map_err(|e| format!("deserialize failed: {}", e))
+                });
+            match n {
+                Ok(x) => {
+                    *self = x;
+                }
+                Err(x) => {
+                    dioxus_logger::tracing::info!("{x:?}");
+                }
+            }
+        }
+        if let Some(cs) = &mut self.children {
+            for c in cs {
+                c.render(env);
+            }
+        }
+    }
+
     pub fn join(&mut self, rhs: Self) {
         let value = match &self.value {
             Some(x) => {

@@ -49,10 +49,6 @@ fn dispatch(
 ) {
     match act {
         Message {
-            content: Content::create(x),
-            ..
-        } => layout.set(x.data),
-        Message {
             content: Content::tmpl(x),
             ..
         } => {
@@ -64,46 +60,29 @@ fn dispatch(
                 .add_template_owned(n, d);
         }
         Message {
-            sender,
-            content: Content::fill(x),
-            created,
+            content: Content::create(mut x),
+            ..
         } => {
-            let n = x.name;
-            let cx = x.data;
-            let t = TMPL.read().expect("read TMPL failed");
-            if let Err(x) = t
-                .get_template(&n)
-                .map_err(|e| e.to_string())
-                .and_then(|t| t.render(cx).map_err(|e| format!("render failed: {}", e)))
-                .and_then(|d| {
-                    serde_json::from_str::<Content>(&d)
-                        .map_err(|e| format!("deserialize failed: {}", e))
-                })
-                .and_then(|content| {
-                    let m = Message {
-                        sender,
-                        content,
-                        created,
-                    };
-                    dispatch(m, layout, data, list);
-                    Ok(())
-                })
-            {
-                dioxus_logger::tracing::info!("{x:?}");
-            };
+            let env = TMPL.read().expect("read TMPL failed");
+            x.data.render(&env);
+            layout.set(x.data)
         }
         Message {
             content: Content::merge(x),
             ..
         } => {
             let e = x.event;
-            let d = x.data;
+            let mut d = x.data;
+            let env = TMPL.read().expect("read TMPL failed");
+            d.render(&env);
             data.write().insert(e, d);
         }
         Message {
-            content: Content::join(x),
+            content: Content::join(mut x),
             ..
         } => {
+            let env = TMPL.read().expect("read TMPL failed");
+            x.data.render(&env);
             let e = x.event;
             let d = &x.data;
             if let Some(_id) = &d.id {
