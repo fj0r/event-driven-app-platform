@@ -1,30 +1,28 @@
 action: join
 event: chat
 data:
-    type: fold
-    value: true
-    attrs:
-      class: v
-    item:
-    - type: text
-      value: |
-          0
+  attrs:
+    class: f v gap xxx md
+  children:
+  - {}
+  - {}
+  - attrs:
+      class: box sm border warn
     children:
-    - type: text
-      value: |
-          1
-          2
-          3
-          4
-    - type: text
-      value: |
-          1
-          2
-          3
-          4
-    - type: text
-      value: |
-          1
-          2
-          3
-          4
+    - attrs:
+        class: pointer highlight warn
+      children:
+      - attrs:
+          class: txt sm hint
+          format: md
+        type: text
+        value: test
+      item:
+      - attrs:
+          class: txt sm hint
+        type: text
+        value: PartStarting
+      type: fold
+    type: case
+  id: "fd"
+  type: case
