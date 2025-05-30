@@ -102,21 +102,6 @@ body {
   }
   &.gap {
     gap: 1em;
-    &.sm {
-      gap: 0.2rem;
-    }
-    &.md {
-      gap: 0.4rem;
-    }
-    &.lg {
-      gap: 0.8rem;
-    }
-    &.xl {
-      gap: 1rem;
-    }
-    &.xxl {
-      gap: 2rem;
-    }
   }
   &.nogrow,
   & >._nogrow {
@@ -256,51 +241,6 @@ body {
   position: absolute;
 }
 
-/* }}} */
-/*** CONTAINER {{{ ***/
-.__box>*,
-.box {
-  padding: 0.5rem;
-  color: var(--fg);
-  background-color: var(--bg);
-  &.bottom {
-    border-bottom: var(--border);
-  }
-  &.sm {
-    padding: 0.1rem;
-  }
-  &.md {
-    padding: 0.3rem;
-  }
-  &.wd {
-    padding: 1em 4em 1em 4em;
-  }
-}
-
-.border {
-  border: var(--border);
-  border-radius: var(--round);
-}
-
-.highlight {
-  &:hover {
-    background-color: var(--bg);
-  }
-}
-
-.shadow {
-  box-shadow:
-    --csstools-color-scheme--light: initial;
-    --shadow-color: var(--disabled);
-    --shadow-color-calc: rgb(from var(--shadow-color) r g b / calc(alpha - .2));
-    --shadow-width: 2px 2px 0px 0px;
-    box-shadow: var(--shadow-width) var(--shadow-color-calc), 0px 0px 2px 0px var(--shadow-color-calc);
-    transition: all 0.1s ease-in-out 0s;
-  &:hover {
-    --shadow-width: 4px 4px 0px 0px;
-  }
-}
-
 .scrollx {
   overflow-x: auto;
   overflow-y: hidden;
@@ -329,6 +269,55 @@ body {
     border-radius: var(--round);
   }
 }
+
+/* }}} */
+/*** BASE {{{ ***/
+.txt {
+  line-height: 1.2;
+  color: var(--fg);
+  word-break: break-all;
+  &.bold {
+    font-weight: bold;
+  }
+  &.hint {
+    color: var(--disabled);
+  }
+}
+
+.__box>*,
+.box {
+  padding: 0.5rem;
+  color: var(--fg);
+  background-color: var(--bg);
+  &.bottom {
+    border-bottom: var(--border);
+  }
+}
+
+.border {
+  border: var(--border);
+  border-radius: var(--round);
+}
+
+.highlight {
+  &:hover {
+    background-color: var(--bg);
+  }
+}
+
+.shadow {
+  box-shadow:
+    --csstools-color-scheme--light: initial;
+    --shadow-color: var(--disabled);
+    --shadow-color-calc: rgb(from var(--shadow-color) r g b / calc(alpha - .2));
+    --shadow-width: 2px 2px 0px 0px;
+    box-shadow: var(--shadow-width) var(--shadow-color-calc), 0px 0px 2px 0px var(--shadow-color-calc);
+    transition: all 0.1s ease-in-out 0s;
+  &:hover {
+    --shadow-width: 4px 4px 0px 0px;
+  }
+}
+
 
 /* }}} */
 /*** COLORS {{{ ***/
@@ -435,6 +424,59 @@ body {
 }
 
 /* }}} */
+/*** SIZE {{{ ***/
+.wd {
+  &.box, & .box {
+    padding: 1em 4em 1em 4em;
+  }
+}
+.sm {
+  &.txt, & .txt {
+    font-size: 0.6rem;
+  }
+  &.box, & .box {
+    padding: 0.1rem;
+  }
+  &.f.gap, & .f.gap {
+    gap: 0.2rem;
+  }
+}
+.md {
+  &.txt, & .txt {
+    font-size: 0.8rem;
+  }
+  &.box, & .box {
+    padding: 0.3rem;
+  }
+  &.f.gap, & .f.gap {
+    gap: 0.4rem;
+  }
+}
+.lg {
+  &.txt, & .txt {
+    font-size: 1.6rem;
+  }
+  &.f.gap, & .f.gap {
+    gap: 0.8rem;
+  }
+}
+.xl {
+  &.txt, & .txt {
+    font-size: 2rem;
+  }
+  &.f.gap, & .f.gap {
+    gap: 1rem;
+  }
+}
+.xxl {
+  &.txt, & .txt {
+    font-size: 4rem;
+  }
+  &.f.gap, & .f.gap {
+    gap: 2rem;
+  }
+}
+/* }}} */
 /*** DECORATE {{{ ***/
 .pointer {
   cursor: pointer;
@@ -466,34 +508,7 @@ body {
 
 
 /* }}} */
-/*** TEXT {{{ ***/
-.txt {
-  line-height: 1.2;
-  color: var(--fg);
-  word-break: break-all;
-  &.sm {
-    font-size: 0.6rem;
-  }
-  &.md {
-    font-size: 0.8rem;
-  }
-  &.lg {
-    font-size: 1.6rem;
-  }
-  &.xl {
-    font-size: 2rem;
-  }
-  &.xxl {
-    font-size: 4rem;
-  }
-  &.bold {
-    font-weight: bold;
-  }
-  &.hint {
-    color: var(--disabled);
-  }
-}
-
+/*** ELEMENTS {{{ ***/
 blockquote,
 pre {
   margin-left: 0;
@@ -512,8 +527,6 @@ pre {
   }
 }
 
-/* }}} */
-/*** ELEMENTS {{{ ***/
 p {
     margin: 0.2rem;
 }
