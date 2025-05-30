@@ -252,7 +252,6 @@ trait Merge {
 }
 
 pub struct JoinM;
-pub struct ReplaceM;
 impl Merge for JoinM {
     fn vist(&self, lhs: &mut Layout, rhs: &Layout) {
         let value = match &lhs.value {
@@ -295,3 +294,37 @@ impl Merge for JoinM {
     }
 }
 
+pub struct ReplaceM;
+impl Merge for ReplaceM {
+    fn vist(&self, lhs: &mut Layout, rhs: &Layout) {
+        let value = match &lhs.value {
+            Some(x) => {
+                if let Some(r) = &rhs.value {
+                    let y = match (x, &r) {
+                        (Value::Number(_x), Value::Number(r)) => {
+                            json!(r.as_f64().unwrap())
+                        }
+                        (Value::Bool(_x), Value::Bool(r)) => {
+                            json!(*r)
+                        }
+                        (Value::String(_x), Value::String(r)) => {
+                            json!(r)
+                        }
+                        (Value::Object(_x), Value::Object(r)) => {
+                            json!(r)
+                        }
+                        (Value::Array(_x), Value::Array(r)) => {
+                            json!(r)
+                        }
+                        _ => r.clone(),
+                    };
+                    Some(y)
+                } else {
+                    Some(x.clone())
+                }
+            }
+            None => rhs.value.clone(),
+        };
+        lhs.value = value;
+    }
+}
