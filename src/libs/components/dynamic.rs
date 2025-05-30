@@ -3,6 +3,7 @@ use super::chart::Chart;
 use super::form::Form;
 use super::rack::Rack;
 use super::widgets::*;
+use super::container::*;
 use dioxus::prelude::*;
 
 use std::sync::{LazyLock, Mutex};
