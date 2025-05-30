@@ -1,7 +1,0 @@
-action: fill
-name: ai-response
-data:
-    reason: ""
-    content: "hello"
-    id: ''
-

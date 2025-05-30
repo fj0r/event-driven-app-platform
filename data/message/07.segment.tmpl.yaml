@@ -1,4 +1,0 @@
-action: tmpl
-name: message
-data: |-
-    {%raw%}{"action":"join","data":{"children":[{%for i in range(rank)-%}{},{%endfor%}{{payload}}],"id":"{{id}}",{%if kind%}"attrs":{"kind":"{{kind}}"},{%endif%}"type":"case"},"event":"chat"}{%endraw%}

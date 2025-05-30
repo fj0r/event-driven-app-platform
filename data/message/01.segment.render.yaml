@@ -1,0 +1,11 @@
+action: join
+event: chat
+data:
+    #type: case
+    render:
+        name: segment
+        data:
+            rank: 5
+            payload:
+              type: text
+              value: who are you?

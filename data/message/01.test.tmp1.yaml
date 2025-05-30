@@ -1,7 +1,0 @@
-action: tmpl
-name: ai-response
-data:
-    action: join
-    event: chat
-    data:
-      id: '{{\"{{id}}\"}}'

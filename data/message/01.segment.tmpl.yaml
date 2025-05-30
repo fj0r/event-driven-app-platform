@@ -1,0 +1,4 @@
+action: tmpl
+name: segment
+data: |-
+    {"children":[{%for i in range(rank)-%}{},{%endfor%}{{payload}}],"id":"{{id}}",{%if kind%}"attrs":{"kind":"{{kind}}"},{%endif%}"type":"case"}
