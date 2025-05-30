@@ -4,6 +4,7 @@ use super::form::Form;
 use super::rack::Rack;
 use super::widgets::*;
 use super::container::*;
+use super::svg::*;
 use dioxus::prelude::*;
 
 use std::sync::{LazyLock, Mutex};
@@ -28,6 +29,9 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
             "text" => rsx!(Text { layout: layout }),
             "button" => rsx!(Button { layout: layout }),
             "image" => rsx!(Img { layout: layout }),
+            "svg" => rsx! (Svg { layout: layout, {children} }),
+            "group" => rsx! (Group { layout: layout, {children} }),
+            "path" => rsx! (Path { layout: layout }),
             "table" => rsx! (TABLE { layout: layout, {children} }),
             "thead" => rsx! (Thead { layout: layout, {children} }),
             "tbody" => rsx! (Tbody { layout: layout, {children} }),

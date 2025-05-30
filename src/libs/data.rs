@@ -113,13 +113,6 @@ pub struct Attrs {
     pub settings: Option<Settings>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum TextFold {
-    #[allow(non_camel_case_types)]
-    begin,
-    #[allow(non_camel_case_types)]
-    end,
-}
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
@@ -130,7 +123,6 @@ pub enum Settings {
     },
     Text {
         format: String,
-        fold: Option<TextFold>,
     },
     Item {
         selector: String,
