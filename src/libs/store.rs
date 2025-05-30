@@ -1,7 +1,7 @@
 use std::str;
 
 use super::data::*;
-use super::data::{Content, Created, Message};
+use super::data::{Content, Created, Message, JoinM, ReplaceM};
 use super::ws::{use_web_socket, WebSocketHandle};
 use anyhow::Result;
 use dioxus::prelude::*;
@@ -92,7 +92,8 @@ fn dispatch(
                 for i in list.iter_mut() {
                     if i.cmp_id(d) {
                         mg = true;
-                        i.join(d.clone());
+                        let vs = JoinM;
+                        i.merge(&vs, d.clone());
                     }
                 }
                 if !mg {

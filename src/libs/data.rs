@@ -219,10 +219,45 @@ impl Layout {
         }
     }
 
-    pub fn join(&mut self, rhs: Self) {
-        let value = match &self.value {
+    pub fn merge(&mut self, vistor: &impl Merge, rhs: Self) {
+        vistor.vist(self, &rhs);
+        if let Some(rchildren) = rhs.children {
+            if let Some(children) = &mut self.children {
+                let children = children
+                    .iter_mut()
+                    .zip_longest(rchildren)
+                    .map(|x| match x {
+                        Both(l, r) => {
+                            // TODO: fillback
+                            l.merge(vistor, r);
+                            l.clone()
+                        }
+                        Left(l) => l.clone(),
+                        Right(r) => r,
+                    })
+                    .collect();
+                self.children = Some(children);
+            } else {
+                self.children = Some(rchildren);
+            }
+        }
+    }
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct Empty;
+
+trait Merge {
+    fn vist(&self, lhs: &mut Layout, rhs: &Layout);
+}
+
+pub struct JoinM;
+pub struct ReplaceM;
+impl Merge for JoinM {
+    fn vist(&self, lhs: &mut Layout, rhs: &Layout) {
+        let value = match &lhs.value {
             Some(x) => {
-                if let Some(r) = rhs.value {
+                if let Some(r) = &rhs.value {
                     let y = match (x, &r) {
                         (Value::Number(x), Value::Number(r)) => {
                             json!(x.as_f64().unwrap() + r.as_f64().unwrap())
@@ -254,31 +289,9 @@ impl Layout {
                     Some(x.clone())
                 }
             }
-            None => rhs.value,
+            None => rhs.value.clone(),
         };
-        self.value = value;
-        if let Some(rchildren) = rhs.children {
-            if let Some(children) = &mut self.children {
-                let children = children
-                    .iter_mut()
-                    .zip_longest(rchildren)
-                    .map(|x| match x {
-                        Both(l, r) => {
-                            // TODO: fillback
-                            l.join(r);
-                            l.clone()
-                        }
-                        Left(l) => l.clone(),
-                        Right(r) => r,
-                    })
-                    .collect();
-                self.children = Some(children);
-            } else {
-                self.children = Some(rchildren);
-            }
-        }
+        lhs.value = value;
     }
 }
 
-#[derive(Clone, Serialize, Deserialize)]
-pub struct Empty;
