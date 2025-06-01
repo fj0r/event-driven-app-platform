@@ -1,4 +1,5 @@
 action: join
+target: List
 event: chat
 data:
     #type: case

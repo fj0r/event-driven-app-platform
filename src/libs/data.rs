@@ -37,21 +37,21 @@ pub struct Outflow {
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[serde(tag = "action")]
 pub enum Content {
-    #[allow(non_camel_case_types)]
-    create(Influx),
+    #[serde(rename = "create")]
+    Create(Influx),
 
-    #[allow(non_camel_case_types)]
-    tmpl(InfluxTmpl),
+    #[serde(rename = "tmpl")]
+    Tmpl(InfluxTmpl),
 
-    #[allow(non_camel_case_types)]
-    merge(Influx),
+    #[serde(rename = "set")]
+    Set(Influx),
 
-    #[allow(non_camel_case_types)]
-    join(Influx),
+    #[serde(rename = "join")]
+    Join(Influx),
 
-    #[allow(non_camel_case_types)]
+    #[serde(rename = "empty")]
     #[default]
-    empty,
+    Empty,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -60,10 +60,26 @@ pub struct InfluxTmpl {
     pub data: String,
 }
 
-#[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum Target {
+    #[serde(rename = "map")]
+    Map,
+    #[serde(rename = "list")]
+    List
+}
+
+impl Default for Target {
+    fn default() -> Self {
+        Self::Map
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Influx {
     pub event: String,
     pub data: Layout,
+    #[serde(default)]
+    pub target: Target,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -219,7 +235,7 @@ impl Layout {
         }
     }
 
-    pub fn merge(&mut self, vistor: &impl Merge, rhs: Self) {
+    pub fn merge(&mut self, vistor: &Box<dyn Merge>, rhs: Self) {
         vistor.vist(self, &rhs);
         if let Some(rchildren) = rhs.children {
             if let Some(children) = &mut self.children {
@@ -247,7 +263,7 @@ impl Layout {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Empty;
 
-trait Merge {
+pub trait Merge {
     fn vist(&self, lhs: &mut Layout, rhs: &Layout);
 }
 

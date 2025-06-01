@@ -1,7 +1,7 @@
 use std::str;
 
 use super::data::*;
-use super::data::{Content, Created, Message, JoinM, ReplaceM};
+use super::data::{Content, Created, Message, Merge, JoinM, ReplaceM};
 use super::ws::{use_web_socket, WebSocketHandle};
 use anyhow::Result;
 use dioxus::prelude::*;
@@ -49,7 +49,7 @@ fn dispatch(
 ) {
     match act {
         Message {
-            content: Content::tmpl(x),
+            content: Content::Tmpl(x),
             ..
         } => {
             let n = x.name;
@@ -60,7 +60,7 @@ fn dispatch(
                 .add_template_owned(n, d);
         }
         Message {
-            content: Content::create(mut x),
+            content: Content::Create(mut x),
             ..
         } => {
             let env = TMPL.read().expect("read TMPL failed");
@@ -68,7 +68,7 @@ fn dispatch(
             layout.set(x.data)
         }
         Message {
-            content: Content::merge(x),
+            content: Content::Set(x),
             ..
         } => {
             let e = x.event;
@@ -78,13 +78,19 @@ fn dispatch(
             data.write().insert(e, d);
         }
         Message {
-            content: Content::join(mut x),
+            content: Content::Join(mut x),
             ..
         } => {
             let env = TMPL.read().expect("read TMPL failed");
             x.data.render(&env);
             let e = x.event;
             let d = &x.data;
+            let vs = JoinM;
+            let vs: Box<dyn Merge> = if x.target == Target::Map {
+                Box::new(ReplaceM)
+            } else {
+                Box::new(JoinM)
+            };
             if let Some(_id) = &d.id {
                 let mut l = list.write();
                 let list = l.entry(e).or_default();
@@ -92,7 +98,6 @@ fn dispatch(
                 for i in list.iter_mut() {
                     if i.cmp_id(d) {
                         mg = true;
-                        let vs = JoinM;
                         i.merge(&vs, d.clone());
                     }
                 }
@@ -105,7 +110,7 @@ fn dispatch(
         }
         Message {
             sender: _,
-            content: Content::empty,
+            content: Content::Empty,
             created: _,
         } => {}
     }

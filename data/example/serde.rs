@@ -22,10 +22,45 @@ pub struct Layout {
 pub struct Empty;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct InfluxTmpl {
+    pub name: String,
+    pub data: String,
+}
+
+#[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
+pub enum Target {
+    Map,
+    List
+}
+
+impl Default for Target {
+    fn default() -> Self {
+        Self::Map;
+    }
+}
+
+#[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
+pub struct Influx {
+    pub event: String,
+    pub data: Layout,
+    #[serde(default)]
+    pub kind: Target
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[serde(tag = "action")]
-pub enum Message {
+pub enum Content {
     #[allow(non_camel_case_types)]
-    layout(Layout),
+    create(Influx),
+
+    #[allow(non_camel_case_types)]
+    tmpl(InfluxTmpl),
+
+    #[allow(non_camel_case_types)]
+    merge(Influx),
+
+    #[allow(non_camel_case_types)]
+    join(Influx),
 
     #[allow(non_camel_case_types)]
     #[default]
