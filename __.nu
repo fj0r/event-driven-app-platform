@@ -7,6 +7,7 @@ export def 'dev start' [] {
 
 export def 'dev build' [] {
     ^dx build --platform web --release
+    dust target/dx/faucet_dx/release/web/public/
 }
 
 def cmpl-data [] {

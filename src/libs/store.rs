@@ -1,7 +1,7 @@
 use std::str;
 
 use super::data::*;
-use super::data::{Content, Created, Message, LayoutMethod, Concat, Replace};
+use super::data::{Content, Created, Message, LayoutOp, Concat, Replace};
 use super::ws::{use_web_socket, WebSocketHandle};
 use anyhow::Result;
 use dioxus::prelude::*;
@@ -85,9 +85,9 @@ fn dispatch(
             x.data.render(&env);
             let e = x.event;
             let d = &x.data;
-            let vs: Box<dyn LayoutMethod> = match x.method {
-                Method::Replace => Box::new(Replace),
-                Method::Concat => Box::new(Concat),
+            let vs: &dyn LayoutOp = match x.method {
+                Method::Replace => &Replace as &dyn LayoutOp,
+                Method::Concat => &Concat as &dyn LayoutOp,
             };
             if let Some(_id) = &d.id {
                 let mut l = list.write();
@@ -96,7 +96,7 @@ fn dispatch(
                 for i in list.iter_mut() {
                     if i.cmp_id(d) {
                         mg = true;
-                        i.merge(&vs, d.clone());
+                        i.merge(vs, d.clone());
                     }
                 }
                 if !mg {

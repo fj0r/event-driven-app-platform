@@ -235,7 +235,7 @@ impl Layout {
         }
     }
 
-    pub fn merge(&mut self, vistor: &Box<dyn LayoutMethod>, rhs: Self) {
+    pub fn merge(&mut self, vistor: &(impl LayoutOp + ?Sized), rhs: Self) {
         vistor.visit(self, &rhs);
         if let Some(rchildren) = rhs.children {
             if let Some(children) = &mut self.children {
@@ -263,12 +263,12 @@ impl Layout {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Empty;
 
-pub trait LayoutMethod {
+pub trait LayoutOp {
     fn visit(&self, lhs: &mut Layout, rhs: &Layout);
 }
 
 pub struct Concat;
-impl LayoutMethod for Concat {
+impl LayoutOp for Concat {
     fn visit(&self, lhs: &mut Layout, rhs: &Layout) {
         let value = match &lhs.value {
             Some(x) => {
@@ -311,7 +311,7 @@ impl LayoutMethod for Concat {
 }
 
 pub struct Replace;
-impl LayoutMethod for Replace {
+impl LayoutOp for Replace {
     fn visit(&self, lhs: &mut Layout, rhs: &Layout) {
         let value = match &lhs.value {
             Some(x) => {
