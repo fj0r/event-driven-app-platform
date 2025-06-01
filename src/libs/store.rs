@@ -1,15 +1,13 @@
-use std::str;
-
 use super::data::*;
-use super::data::{Content, Created, Message, LayoutOp, Concat, Replace};
+use super::data::{Content, Created, LayoutOp, Message};
 use super::ws::{use_web_socket, WebSocketHandle};
 use anyhow::Result;
 use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;
 use minijinja::{AutoEscape, Environment};
 use serde_json::{to_string, Value};
-use std::borrow::Cow;
 use std::collections::HashMap;
+use std::str;
 use std::sync::{LazyLock, RwLock};
 
 static TMPL: LazyLock<RwLock<Environment>> = LazyLock::new(|| {
@@ -88,6 +86,7 @@ fn dispatch(
             let vs: &dyn LayoutOp = match x.method {
                 Method::Replace => &Replace as &dyn LayoutOp,
                 Method::Concat => &Concat as &dyn LayoutOp,
+                Method::Delete => &Delete as &dyn LayoutOp,
             };
             if let Some(_id) = &d.id {
                 let mut l = list.write();

@@ -9,6 +9,11 @@ fn main () -> Result<(), Box<dyn std::error::Error>> {
         println!("{:?}", a[s..s+step].to_vec());
         idx += 1;
     }
+    let a = "abcdefg".to_string();
+    let b = &a[..a.len() - 1];
+    println!("{}", b);
+    let c = &a[..0];
+    println!("{}", c);
 
     Ok(())
 }

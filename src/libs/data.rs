@@ -65,7 +65,9 @@ pub enum Method {
     #[serde(rename = "replace")]
     Replace,
     #[serde(rename = "concat")]
-    Concat
+    Concat,
+    #[serde(rename = "delete")]
+    Delete,
 }
 
 impl Default for Method {
@@ -214,7 +216,10 @@ impl Layout {
             let n = env
                 .get_template(&n)
                 .map_err(|e| e.to_string())
-                .and_then(|t| t.render(cx).map_err(|e| format!("render failed: {} => {}", e, &cx)))
+                .and_then(|t| {
+                    t.render(cx)
+                        .map_err(|e| format!("render failed: {} => {}", e, &cx))
+                })
                 .and_then(|t| {
                     serde_json::from_str::<Layout>(&t)
                         .map_err(|e| format!("deserialize failed: {} => {}", e, &t))
@@ -270,7 +275,7 @@ pub trait LayoutOp {
 pub struct Concat;
 impl LayoutOp for Concat {
     fn visit(&self, lhs: &mut Layout, rhs: &Layout) {
-        let value = match &lhs.value {
+        let value = match &mut lhs.value {
             Some(x) => {
                 if let Some(r) = &rhs.value {
                     let y = match (x, &r) {
@@ -278,15 +283,13 @@ impl LayoutOp for Concat {
                             json!(x.as_f64().unwrap() + r.as_f64().unwrap())
                         }
                         (Value::Bool(x), Value::Bool(r)) => {
-                            json!(*x && *r)
+                            json!(*x || *r)
                         }
                         (Value::String(x), Value::String(r)) => {
-                            let mut x = x.clone();
                             x.push_str(r);
                             json!(x)
                         }
                         (Value::Object(x), Value::Object(r)) => {
-                            let mut x = x.clone();
                             for (k, v) in r {
                                 x.entry(k)
                                     .and_modify(|x| *x = v.clone())
@@ -298,6 +301,52 @@ impl LayoutOp for Concat {
                             json!([x.clone(), r.clone()].concat())
                         }
                         _ => r.clone(),
+                    };
+                    Some(y)
+                } else {
+                    Some(x.clone())
+                }
+            }
+            None => rhs.value.clone(),
+        };
+        lhs.value = value;
+    }
+}
+
+pub struct Delete;
+impl LayoutOp for Delete {
+    fn visit(&self, lhs: &mut Layout, rhs: &Layout) {
+        let value = match &mut lhs.value {
+            Some(x) => {
+                if let Some(r) = &rhs.value {
+                    let y = match (x, &r) {
+                        (Value::Number(x), Value::Number(r)) => {
+                            json!(x.as_f64().unwrap() - r.as_f64().unwrap())
+                        }
+                        (Value::Bool(x), Value::Bool(r)) => {
+                            json!(*x && *r)
+                        }
+                        (Value::String(x), Value::String(r)) => {
+                            json!(x.replace(r, ""))
+                        }
+                        (Value::String(x), Value::Number(r)) => {
+                            let l = x.len();
+                            let s = r.as_u64().unwrap() as usize;
+                            let e = if s >= l { 0 } else { l - s };
+                            json!(x[..e])
+                        }
+                        (Value::Object(x), Value::Object(r)) => {
+                            for (k, _v) in r {
+                                if x.contains_key(k) {
+                                    x.remove(k);
+                                };
+                            }
+                            json!(x)
+                        }
+                        (Value::Array(x), Value::Array(_r)) => {
+                            json!(x)
+                        }
+                        _ => lhs.value.clone().unwrap_or_else(|| r.clone()),
                     };
                     Some(y)
                 } else {
