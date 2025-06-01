@@ -61,16 +61,16 @@ pub struct InfluxTmpl {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum Target {
-    #[serde(rename = "map")]
-    Map,
-    #[serde(rename = "list")]
-    List
+pub enum Method {
+    #[serde(rename = "replace")]
+    Replace,
+    #[serde(rename = "concat")]
+    Concat
 }
 
-impl Default for Target {
+impl Default for Method {
     fn default() -> Self {
-        Self::Map
+        Self::Replace
     }
 }
 
@@ -79,7 +79,7 @@ pub struct Influx {
     pub event: String,
     pub data: Layout,
     #[serde(default)]
-    pub target: Target,
+    pub method: Method,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -235,8 +235,8 @@ impl Layout {
         }
     }
 
-    pub fn merge(&mut self, vistor: &Box<dyn Merge>, rhs: Self) {
-        vistor.vist(self, &rhs);
+    pub fn merge(&mut self, vistor: &Box<dyn LayoutMethod>, rhs: Self) {
+        vistor.visit(self, &rhs);
         if let Some(rchildren) = rhs.children {
             if let Some(children) = &mut self.children {
                 let children = children
@@ -263,13 +263,13 @@ impl Layout {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Empty;
 
-pub trait Merge {
-    fn vist(&self, lhs: &mut Layout, rhs: &Layout);
+pub trait LayoutMethod {
+    fn visit(&self, lhs: &mut Layout, rhs: &Layout);
 }
 
-pub struct JoinM;
-impl Merge for JoinM {
-    fn vist(&self, lhs: &mut Layout, rhs: &Layout) {
+pub struct Concat;
+impl LayoutMethod for Concat {
+    fn visit(&self, lhs: &mut Layout, rhs: &Layout) {
         let value = match &lhs.value {
             Some(x) => {
                 if let Some(r) = &rhs.value {
@@ -310,9 +310,9 @@ impl Merge for JoinM {
     }
 }
 
-pub struct ReplaceM;
-impl Merge for ReplaceM {
-    fn vist(&self, lhs: &mut Layout, rhs: &Layout) {
+pub struct Replace;
+impl LayoutMethod for Replace {
+    fn visit(&self, lhs: &mut Layout, rhs: &Layout) {
         let value = match &lhs.value {
             Some(x) => {
                 if let Some(r) = &rhs.value {

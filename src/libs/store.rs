@@ -1,7 +1,7 @@
 use std::str;
 
 use super::data::*;
-use super::data::{Content, Created, Message, Merge, JoinM, ReplaceM};
+use super::data::{Content, Created, Message, LayoutMethod, Concat, Replace};
 use super::ws::{use_web_socket, WebSocketHandle};
 use anyhow::Result;
 use dioxus::prelude::*;
@@ -85,11 +85,9 @@ fn dispatch(
             x.data.render(&env);
             let e = x.event;
             let d = &x.data;
-            let vs = JoinM;
-            let vs: Box<dyn Merge> = if x.target == Target::Map {
-                Box::new(ReplaceM)
-            } else {
-                Box::new(JoinM)
+            let vs: Box<dyn LayoutMethod> = match x.method {
+                Method::Replace => Box::new(Replace),
+                Method::Concat => Box::new(Concat),
             };
             if let Some(_id) = &d.id {
                 let mut l = list.write();

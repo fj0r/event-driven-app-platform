@@ -36,9 +36,9 @@
 - [x] Better markdown support (~js~)
 - [ ] Chart support (js/~Plotlars~)
     - [x] svg
-- [ ] list update strategy
-    - [x] join
-    - [ ] **merge** / replace
+- [x] list update strategy
+    - [x] concat
+    - [x] replace
 - [x] **Template snippets** (instead of templates)
 - [x] json template
     - [x] defined on server side
