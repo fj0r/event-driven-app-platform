@@ -1,5 +1,5 @@
 action: join
-target: List
+method: concat
 event: chat
 data:
     #type: case

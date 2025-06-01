@@ -1,4 +1,4 @@
-action: merge
+action: set
 event: title
 data:
     type: text
