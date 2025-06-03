@@ -10,6 +10,7 @@ use dioxus::prelude::*;
 use std::sync::{LazyLock, Mutex};
 static RACK_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
 static CHART_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
+static DIAGRAM_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
 
 #[component]
 pub fn Dynamic(layout: Layout, children: Element) -> Element {
@@ -29,6 +30,12 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
                 let mut tc = CHART_ID.lock().unwrap();
                 *tc += 1;
                 let id = format!("chart-{}", *tc);
+                rsx!(Chart { id: id, layout: layout })
+            }
+            "diagram" => {
+                let mut tc = DIAGRAM_ID.lock().unwrap();
+                *tc += 1;
+                let id = format!("diagram-{}", *tc);
                 rsx!(Chart { id: id, layout: layout })
             }
             "input" => rsx!(Input { layout: layout }),

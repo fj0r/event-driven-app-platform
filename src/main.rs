@@ -5,8 +5,6 @@ use libs::components::*;
 use libs::store::{use_store, Store};
 use tracing_wasm::WASMLayerConfigBuilder;
 
-const MAIN_CSS: Asset = asset!("/assets/main.css");
-const APEXCHART_JS: Asset = asset!("/assets/apexcharts.min.js");
 
 static STORE: GlobalSignal<Store> = Global::new(|| {
     let d = web_sys::window().unwrap().document().unwrap();
@@ -35,8 +33,9 @@ fn App() -> Element {
     let layout = STORE().layout;
 
     rsx! {
-        document::Style { href: MAIN_CSS }
-        document::Script { src: APEXCHART_JS }
+        document::Style { href: asset!("/assets/main.css") }
+        document::Script { src: asset!("/assets/apexcharts.min.js") }
+        // document::Script { src: asset!("/assets/mermaid.min.js") }
         Frame {
             layout: layout()
         }
