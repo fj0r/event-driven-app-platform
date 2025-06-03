@@ -2,6 +2,7 @@ use super::super::data::Layout;
 use super::chart::Chart;
 use super::container::*;
 use super::diagram::Diagram;
+use super::fold::Fold;
 use super::form::Form;
 use super::rack::Rack;
 use super::svg::*;
