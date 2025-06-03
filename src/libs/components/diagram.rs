@@ -7,12 +7,11 @@ use dioxus::prelude::*;
 #[component]
 pub fn Diagram(id: String, layout: Layout) -> Element {
     let eid = id.clone();
-    if let Some(val) = layout.value {
+    if let Some(val) = layout.value.and_then(|x| x.as_str().map(|y| y.to_string())) {
         use_effect(move || {
             let js = format!(
                 r#"
-                var chart = new ApexCharts(document.getElementById("{eid}"), {val});
-                chart.render();
+                mermaid.init({{}}, '#{eid}')
             "#
             );
             document::eval(&js);
@@ -20,6 +19,7 @@ pub fn Diagram(id: String, layout: Layout) -> Element {
         rsx! {
             div {
                 id: id,
+                {val}
             }
         }
     } else {

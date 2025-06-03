@@ -1,10 +1,11 @@
 use super::super::data::Layout;
 use super::chart::Chart;
+use super::container::*;
+use super::diagram::Diagram;
 use super::form::Form;
 use super::rack::Rack;
-use super::widgets::*;
-use super::container::*;
 use super::svg::*;
+use super::widgets::*;
 use dioxus::prelude::*;
 
 use std::sync::{LazyLock, Mutex};
@@ -30,13 +31,19 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
                 let mut tc = CHART_ID.lock().unwrap();
                 *tc += 1;
                 let id = format!("chart-{}", *tc);
-                rsx!(Chart { id: id, layout: layout })
+                rsx!(Chart {
+                    id: id,
+                    layout: layout
+                })
             }
             "diagram" => {
                 let mut tc = DIAGRAM_ID.lock().unwrap();
                 *tc += 1;
                 let id = format!("diagram-{}", *tc);
-                rsx!(Chart { id: id, layout: layout })
+                rsx!(Diagram {
+                    id: id,
+                    layout: layout
+                })
             }
             "input" => rsx!(Input { layout: layout }),
             "text" => rsx!(Text { layout: layout }),
@@ -44,7 +51,7 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
             "image" => rsx!(Img { layout: layout }),
             "svg" => rsx! (Svg { layout: layout, {children} }),
             "group" => rsx! (Group { layout: layout, {children} }),
-            "path" => rsx! (Path { layout: layout }),
+            "path" => rsx!(Path { layout: layout }),
             "table" => rsx! (TABLE { layout: layout, {children} }),
             "thead" => rsx! (Thead { layout: layout, {children} }),
             "tbody" => rsx! (Tbody { layout: layout, {children} }),
