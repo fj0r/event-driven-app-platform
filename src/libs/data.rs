@@ -130,6 +130,10 @@ pub enum Settings {
     Rack {
         scroll: bool,
     },
+    Fold {
+        replace_header: bool,
+        float_body: bool,
+    },
     Svg {
         svg: Map<String, Value>,
     },
