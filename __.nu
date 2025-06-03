@@ -6,6 +6,7 @@ export def 'dev start' [] {
 }
 
 export def 'dev build' [] {
+    rm -rf target/dx/faucet_dx/release/web/public/
     ^dx build --platform web --release
     dust target/dx/faucet_dx/release/web/public/
 }
