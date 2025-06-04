@@ -50,4 +50,7 @@ data:
       children:
       - type: input
         data:
-          event: message
+          event: history
+      - type: input
+        data:
+          event: echo
