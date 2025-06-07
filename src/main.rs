@@ -34,7 +34,7 @@ fn App() -> Element {
 
     rsx! {
         document::Style { href: asset!("/assets/main.css") }
-        document::Script { src: asset!("/assets/apexcharts.min.js") }
+        // document::Script { src: asset!("/assets/apexcharts.min.js") }
         // document::Script { src: asset!("/assets/mermaid.min.js") }
         Frame {
             layout: layout()
