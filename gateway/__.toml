@@ -1,4 +1,0 @@
-[server]
-host = 'localhost:3000'
-[redpanda]
-admin = 'localhost:18082'

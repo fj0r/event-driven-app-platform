@@ -21,48 +21,109 @@ export def send [
     --receiver(-r): list<string@receiver> = []
     --sender(-s): string = 'unknown'
     --patch(-p): record = {}
+    --full
 ] {
-    let c = open $CFG
-    let d = open ([$WORKDIR data message $file] | path join)
-    let host = $"http://($c.server.host)/admin/send"
-    let data = $d | merge deep $patch
-    print $"(ansi grey)($data | to yaml)(ansi reset)"
+    let f = if $full { $file } else {
+        [$WORKDIR data message $file] | path join
+    }
+    let c = open ([$WORKDIR __.toml] | path join) | get server
+    let host = $"http://($c.host)/admin/send"
+    let data = {
+        receiver: $receiver,
+        sender: $sender,
+        content: (open $f | merge deep $patch)
+    }
     http post --content-type application/json $host $data
 }
 
-export def 'dev build' [] {
-    $env.RUSTFLAGS = "--cfg tokio_unstable"
-    cargo build --release
+export def 'watch message' [] {
+    watch data/message {|op, path|
+        if $op not-in ['Write'] { return }
+        send --full $path
+    }
 }
 
 export def 'serve' [--rpk] {
     if $rpk {
-        dev rpk
+        rpk up
     }
     $env.RUST_BACKTRACE = 1
     #$env.APP_KAFKA_ENABLE = 1
-    cargo run --bin gateway
+    job spawn {
+        cargo run --bin gateway
+    }
+    ui start
 }
 
 
-export def 'dev start' [] {
-    let t = open ([$WORKDIR ui __.toml] | path join) | get dx
+export def 'ui start' [] {
+    let t = open ([$WORKDIR __.toml] | path join) | get dx
     cd ui
     ^dx serve --port $t.port
 }
 
-export def 'dev profile' [] {
+export def 'ui build' [] {
+    cd ui
+    rm -rf target/dx/ui/release/web/public/
+    ^dx build --platform web --release
+    dust target/dx/ui/release/web/public/
+}
+
+export def 'ui border flashing' [] {
+    for _ in 1.. {
+        for i in [primary, disable, secondary, accent] {
+            sleep 0.2sec
+            send 00.chat.layout.yaml -p {
+                data: {
+                    children: [
+                        {},
+                        {item:
+                            [
+                                {},
+                                {attrs: {class: $'box border shadow nogrow s as ($i)'}}
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
+
+export def 'ui export css' [] {
+    use git *
+    use git/shortcut.nu *
+    use lg
+    lg level 1 'begin'
+    cp ui/assets/main.css ../ydncf/index.css
+    let msg = git-last-commit
+    let msg = $"($msg.message)\n\n($msg.body)"
+    cd ../ydncf
+    if (git-changes | is-not-empty) {
+        git add .
+        git commit -m $msg
+        git push
+    }
+    lg level 1 'end'
+}
+
+export def 'gw build' [] {
+    $env.RUSTFLAGS = "--cfg tokio_unstable"
+    cargo build --release --bin gateway
+}
+
+export def 'gw profile' [] {
     cargo profiler callgrind --bin target/release/gateway
     kcachegrind callgrind.out
     rm callgrind.out
 }
 
-export def 'dev client' [] {
+export def 'gw client' [] {
     let c = open $CFG
     websocat $"ws://($c.server.host)/channel"
 }
 
-export def 'dev test' [] {
+export def 'gw test' [] {
     let ji = job spawn { dev serve }
     sleep 2sec
     do -i {
@@ -70,7 +131,6 @@ export def 'dev test' [] {
     }
     job kill $ji
 }
-
 
 export def 'rpk send' [
     data
@@ -126,7 +186,7 @@ export def 'rpk topic delete' [name:string@'rpk topic list'] {
     ^$env.CNTRCTL ...$args
 }
 
-export def 'rpk up' [
+export def 'rpk start' [
     --dry-run
 ] {
     let external = $env.external? | default 'localhost'
@@ -176,9 +236,9 @@ export def 'rpk up' [
     }
 }
 
-export def 'dev rpk' [--product --consume] {
+export def 'rpk up' [--product --consume] {
     dcr redpanda
-    rpk up
+    rpk start
 
     let readyness = {
         ^$env.CNTRCTL ...[
@@ -208,16 +268,16 @@ export def 'dev rpk' [--product --consume] {
     }
 }
 
-export def 'docker run' [] {
+export def 'docker up' [] {
     let external = $env.external? | default 'localhost'
     ^$env.CNTRCTL run ...[
-        --name event-driven-app-platform
+        --name edap
         --rm -it
         -p 5000:3000
         -e $"APP_QUEUE_EVENT_BROKER=[($external):19092]"
         -e $"APP_QUEUE_PUSH_BROKER=[($external):19092]"
         -w /app
-        ghcr.io/fj0r/event-driven-app-platform:lastest
+        ghcr.io/fj0r/edap:lastest
         /app/gateway
     ]
 }

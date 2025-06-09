@@ -111,7 +111,7 @@ pub struct Login {
     pub variant: Option<LoginVariant>
 }
 
-pub const ASSETS_PATH: &'static str = "gateway/assets";
+pub const ASSETS_PATH: &'static str = "assets";
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]

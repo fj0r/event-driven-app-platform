@@ -1,7 +1,0 @@
-receiver: []
-sender: "1"
-content:
-    action: merge
-    event: message
-    data: build a message APP.
-
