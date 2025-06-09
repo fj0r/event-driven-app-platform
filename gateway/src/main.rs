@@ -3,7 +3,7 @@ use axum::{
     extract::{Query, State, ws::WebSocketUpgrade},
     routing::get,
 };
-use libs::message::{Envelope, MessageQueueEvent, MessageQueuePush};
+use libs::{message::{Envelope, MessageQueueEvent, MessageQueuePush}, template::Tmpls};
 use serde_json::{Map, Value};
 use tower_http::services::ServeDir;
 use tracing::info;
@@ -11,7 +11,7 @@ mod libs;
 use anyhow::{Ok, Result};
 use libs::admin::*;
 use libs::kafka::{KafkaManagerEvent, KafkaManagerPush};
-use libs::settings::{Config, Settings};
+use libs::settings::{Config, Settings, ASSETS_PATH};
 use libs::shared::{Sender, StateChat};
 use libs::websocket::{handle_ws, send_to_ws};
 use std::sync::Arc;
@@ -28,8 +28,8 @@ async fn main() -> Result<()> {
     dbg!(&config.data);
 
     let settings = Arc::new(RwLock::new(Settings::new()?));
-
     //dbg!(&settings);
+    let tmpls: Arc<Tmpls<'static>> = Arc::new(Tmpls::new(ASSETS_PATH).unwrap());
 
     let shared = StateChat::<Sender>::new(settings.clone());
 
@@ -69,7 +69,7 @@ async fn main() -> Result<()> {
                 |ws: WebSocketUpgrade,
                  Query(q): Query<Map<String, Value>>,
                  State(state): State<StateChat<Sender>>| async move {
-                    ws.on_upgrade(|socket| handle_ws(socket, event_tx, state, settings, q))
+                    ws.on_upgrade(|socket| handle_ws(socket, event_tx, state, settings, q, tmpls))
                 },
             ),
         )

@@ -111,10 +111,7 @@ pub struct Login {
     pub variant: Option<LoginVariant>
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Assets {
-    pub path: String
-}
+pub const ASSETS_PATH: &'static str = "gateway/assets";
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
@@ -122,7 +119,6 @@ pub(crate) struct Settings {
     pub queue: Queue,
     pub webhooks: WebhookMap,
     pub greet: HookList,
-    pub assets: Assets,
     pub login: Login,
     pub logout: Login,
 }

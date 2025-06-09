@@ -14,6 +14,7 @@ use axum::{
 use minijinja::Environment;
 use serde::Serialize;
 use serde_json::{Map, Value, from_str};
+use super::settings::ASSETS_PATH;
 
 async fn send(
     State(state): State<StateChat<Sender>>,
@@ -79,14 +80,11 @@ pub fn admin_router() -> Router<StateChat<Sender>> {
 }
 
 async fn render(
-    State(state): State<StateChat<Sender>>,
     Path(name): Path<String>,
     Json(payload): Json<Value>,
 ) -> Result<Response, AppError> {
     let mut env = Environment::new();
-    let s = state.read().await;
-    let s = s.settings.read().await;
-    let path = std::path::Path::new(&s.assets.path);
+    let path = std::path::Path::new(ASSETS_PATH);
     let content = async_fs::read_to_string(path.join(&name)).await?;
     let _ = env.add_template_owned(&name, content);
     let r = env.get_template(&name)?.render(payload)?;

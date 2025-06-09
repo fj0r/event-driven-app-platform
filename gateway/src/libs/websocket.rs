@@ -2,7 +2,6 @@ use super::message::Event;
 use super::settings::{Hooks, HookVariant, Login, LoginVariant, Settings};
 use super::shared::{Info, Session, StateChat};
 use super::template::Tmpls;
-use std::sync::LazyLock;
 use super::webhooks::{greet_post, login_post, webhook_post};
 use anyhow::Result;
 use anyhow::{Context, Ok as Okk};
@@ -28,9 +27,7 @@ impl<'a> AsyncIterator for GreetIter<'a> {
 }
 */
 
-static TMPL: LazyLock<Tmpls> = LazyLock::new(|| Tmpls::new("gateway/assets").unwrap());
-
-async fn handle_greet<T>(asset: &Hooks, context: &Map<String, Value>) -> Result<String>
+async fn handle_greet<T>(asset: &Hooks, context: &Map<String, Value>, tmpls: Arc<Tmpls<'_>>) -> Result<String>
 where
     T: Event + Serialize + From<(Session, Value)>,
 {
@@ -39,7 +36,7 @@ where
     }
     let content = match &asset.variant {
         HookVariant::Path { path } => {
-            let tmpl = TMPL.get_template(path).unwrap();
+            let tmpl = tmpls.get_template(path).unwrap();
             tmpl.render(context).ok()
         }
         wh @ HookVariant::Webhook { .. } => {
@@ -68,6 +65,7 @@ pub async fn handle_ws<T>(
     state: StateChat<UnboundedSender<T>>,
     settings: Arc<RwLock<Settings>>,
     query: Map<String, Value>,
+    tmpls: Arc<Tmpls<'static>>,
 ) where
     T: Event
         + for<'a> Deserialize<'a>
@@ -120,7 +118,7 @@ pub async fn handle_ws<T>(
     );
 
     for g in setting1.greet.iter() {
-        if let Ok(text) = handle_greet::<T>(g, &context).await {
+        if let Ok(text) = handle_greet::<T>(g, &context, tmpls.clone()).await {
             let _ = sender
                 .send(axum::extract::ws::Message::Text(text.into()))
                 .await;
@@ -170,7 +168,7 @@ pub async fn handle_ws<T>(
                                 let _ = tx.send(r);
                             } else {
                                 context.insert("event".into(), ev.into());
-                                let t = TMPL
+                                let t = tmpls
                                     .get_template("webhook_error.json")
                                     .unwrap()
                                     .render(&context)
