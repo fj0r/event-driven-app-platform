@@ -1,0 +1,48 @@
+[queue]
+enable = true
+
+[queue.event]
+type = 'kafka'
+broker = ['localhost:19092']
+topic = 'event'
+
+[queue.push]
+type = 'kafka'
+broker = ['localhost:19092']
+topic = ['push']
+group = 'ws'
+
+[login]
+enable = true
+endpoint = 'http://localhost:3000/debug/login'
+#event = 'login'
+
+[logout]
+enable = true
+endpoint = 'http://localhost:3000/debug/logout'
+#event = 'login'
+
+[webhooks.history]
+enable = false
+endpoint = 'http://localhost:8000/v1/history'
+
+[webhooks.echo]
+enable = true
+endpoint = 'http://localhost:3000/debug/echo'
+
+[webhooks.render]
+enable = true
+endpoint = 'http://localhost:3000/debug/render/layout.json'
+
+[[greet]]
+enable = true
+path = 'user.json'
+
+[[greet]]
+enable = true
+endpoint = 'http://localhost:3000/debug/render/layout.json'
+
+[[greet]]
+enable = true
+path = 'segment.tmpl.json'
+

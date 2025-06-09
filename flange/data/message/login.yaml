@@ -1,0 +1,8 @@
+receiver: []
+sender: ""
+content:
+    event: login
+    data:
+      name: login-from-mq
+      from: kafka
+

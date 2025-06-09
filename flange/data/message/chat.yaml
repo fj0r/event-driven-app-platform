@@ -1,0 +1,9 @@
+
+receiver: []
+sender: ""
+content:
+    action: join
+    event: chat
+    data:
+        type: text
+        value: who are you???

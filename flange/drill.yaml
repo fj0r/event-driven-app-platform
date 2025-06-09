@@ -1,0 +1,27 @@
+concurrency: 2000
+base: 'http://localhost:3000'
+iterations: 20000
+rampup: 4
+
+plan:
+  #- name: Fetch users
+  #  request:
+  #    url: /admin/users
+
+  #- name: Echo
+  #  request:
+  #    url: /debug/echo
+  #    method: POST
+  #    body: hello
+
+  #- name: Hello
+  #  request:
+  #    url: /debug/health
+
+  - name: Inc
+    request:
+      headers:
+        Content-Type: 'application/json'
+      url: /debug/inc
+      method: POST
+      body: '{}'

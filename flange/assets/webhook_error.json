@@ -1,0 +1,7 @@
+{
+    "sender": {{session_id}},
+    "content": {
+        "event": "error",
+        "data": "webhook for `{{event}}` failed"
+    }
+}
