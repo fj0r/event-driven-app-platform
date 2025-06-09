@@ -2,7 +2,7 @@ ARG BASEIMAGE=rust
 FROM ${BASEIMAGE}
 
 WORKDIR /app
-COPY . .
+COPY ui .
 
 RUN apt update \
  && apt-get install -y --no-install-recommends ripgrep \
