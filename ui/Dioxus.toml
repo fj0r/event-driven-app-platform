@@ -5,20 +5,12 @@
 # HTML title tag content
 title = "ui"
 
-# include `assets` in web platform
-[web.resource]
-
-# Additional CSS style files
-style = []
-
-# Additional JavaScript files
-script = []
-
-[web.resource.dev]
-
-# Javascript code file
-# serve: [dev-server] only
-script = []
-
 [web.watcher]
 reload_html = true
+
+[[web.proxy]]
+backend = "http://localhost:3000/assets/apexcharts.min.js"
+[[web.proxy]]
+backend = "http://localhost:3000/assets/apexcharts.min.css"
+[[web.proxy]]
+backend = "http://localhost:3000/assets/mermaid.min.js"
