@@ -22,18 +22,35 @@ export def send [
     --sender(-s): string = 'unknown'
     --patch(-p): record = {}
     --full
+    --rpk
+    --topic(-t):string@"rpk topic list" = "push"
+    --partition:int=0
 ] {
     let f = if $full { $file } else {
         [$WORKDIR data message $file] | path join
     }
-    let c = open ([$WORKDIR __.toml] | path join) | get server
-    let host = $"http://($c.host)/admin/send"
     let data = {
         receiver: $receiver,
         sender: $sender,
         content: (open $f | merge deep $patch)
     }
-    http post --content-type application/json $host $data
+    let c = open ([$WORKDIR __.toml] | path join)
+    if $rpk {
+        let data = {
+            records: {
+                value: $data
+                partition: $partition
+            }
+        }
+        | to json -r
+        http post -H [
+            Content-Type application/vnd.kafka.json.v2+json
+        ] $"http://($c.redpanda.admin)/topics/($topic)" $data
+    } else {
+        let c = $c | get server
+        let host = $"http://($c.host)/admin/send"
+        http post --content-type application/json $host $data
+    }
 }
 
 export def 'watch message' [] {
