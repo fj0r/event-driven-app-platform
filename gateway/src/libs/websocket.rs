@@ -1,5 +1,5 @@
 use super::message::Event;
-use super::settings::{Hooks, HookVariant, Login, LoginVariant, Settings};
+use super::settings::{HookVariant, Hooks, Login, LoginVariant, Settings};
 use super::shared::{Info, Session, StateChat};
 use super::template::Tmpls;
 use super::webhooks::{greet_post, login_post, webhook_post};
@@ -27,7 +27,11 @@ impl<'a> AsyncIterator for GreetIter<'a> {
 }
 */
 
-async fn handle_greet<T>(asset: &Hooks, context: &Map<String, Value>, tmpls: Arc<Tmpls<'_>>) -> Result<String>
+async fn handle_greet<T: Debug>(
+    asset: &Hooks,
+    context: &Map<String, Value>,
+    tmpls: Arc<Tmpls<'_>>,
+) -> Result<String>
 where
     T: Event + Serialize + From<(Session, Value)>,
 {
@@ -47,7 +51,8 @@ where
     };
     let v = from_str(&content.context("render failed")?)?;
     let msg: T = (Session::default(), v).into();
-    Ok(serde_json::to_string(&msg)?)
+    let msg = serde_json::to_string(&msg)?;
+    Ok(msg)
 }
 
 async fn handle_login(login: &Login, query: &Map<String, Value>) -> Option<(Session, Info)> {
@@ -119,10 +124,15 @@ pub async fn handle_ws<T>(
     );
 
     for g in setting1.greet.iter() {
-        if let Ok(text) = handle_greet::<T>(g, &context, tmpls.clone()).await {
-            let _ = sender
-                .send(axum::extract::ws::Message::Text(text.into()))
-                .await;
+        match handle_greet::<T>(g, &context, tmpls.clone()).await {
+            Ok(text) => {
+                let _ = sender
+                    .send(axum::extract::ws::Message::Text(text.into()))
+                    .await;
+            }
+            Err(e) => {
+                println!("{:?}", e)
+            }
         }
     }
 

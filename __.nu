@@ -298,3 +298,7 @@ export def 'docker up' [] {
         /app/gateway
     ]
 }
+
+export def 'test render' [] {
+    curl -H 'Content-Type: application/json' -X POST http://localhost:3000/debug/render/user.json -d'{"info": {"username": "test"}}'
+}
