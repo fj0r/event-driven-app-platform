@@ -1,7 +1,7 @@
 use super::error::AppError;
 use super::{
     message::Envelope,
-    settings::{AssetsList, Login, WebhookMap},
+    settings::{HookList, Login, WebhookMap},
     shared::{Info, Sender, Session, StateChat},
 };
 use axum::{
@@ -79,11 +79,14 @@ pub fn admin_router() -> Router<StateChat<Sender>> {
 }
 
 async fn render(
+    State(state): State<StateChat<Sender>>,
     Path(name): Path<String>,
     Json(payload): Json<Value>,
 ) -> Result<Response, AppError> {
     let mut env = Environment::new();
-    let path = std::path::Path::new("gateway/assets");
+    let s = state.read().await;
+    let s = s.settings.read().await;
+    let path = std::path::Path::new(&s.assets.path);
     let content = async_fs::read_to_string(path.join(&name)).await?;
     let _ = env.add_template_owned(&name, content);
     let r = env.get_template(&name)?.render(payload)?;
@@ -156,7 +159,7 @@ pub fn debug_router() -> Router<StateChat<Sender>> {
 #[derive(Serialize)]
 struct ConfigList {
     login: Login,
-    greet: AssetsList,
+    greet: HookList,
     webhook: WebhookMap,
 }
 
@@ -187,7 +190,7 @@ async fn update_login(
 
 async fn update_greet(
     State(state): State<StateChat<Sender>>,
-    Json(payload): Json<AssetsList>,
+    Json(payload): Json<HookList>,
 ) -> Result<(StatusCode, Json<bool>), AppError> {
     let s = state.write().await;
     let mut s = s.settings.write().await;

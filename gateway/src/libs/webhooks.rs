@@ -1,4 +1,4 @@
-use super::settings::{AssetsVariant, Webhook};
+use super::settings::{HookVariant, Webhook};
 use super::shared::{Info, Session};
 use reqwest::Error;
 use serde::{Serialize, de::DeserializeOwned};
@@ -22,10 +22,10 @@ pub enum GreetError {
     NotWebhook,
 }
 
-pub async fn greet_post(wh: &AssetsVariant, msg: &Map<String, Value>) -> Result<String, GreetError> {
+pub async fn greet_post(wh: &HookVariant, msg: &Map<String, Value>) -> Result<String, GreetError> {
     let client = reqwest::Client::new();
     match wh {
-        AssetsVariant::Webhook {
+        HookVariant::Webhook {
             endpoint,
             accept: _,
         } => {

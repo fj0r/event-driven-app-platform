@@ -11,7 +11,7 @@ use tokio::sync::Mutex;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
-pub enum AssetsVariant {
+pub enum HookVariant {
     Path {
         path: String,
     },
@@ -22,9 +22,9 @@ pub enum AssetsVariant {
     },
 }
 
-impl From<AssetsVariant> for Webhook {
-    fn from(value: AssetsVariant) -> Self {
-        if let AssetsVariant::Webhook { endpoint, accept } = value {
+impl From<HookVariant> for Webhook {
+    fn from(value: HookVariant) -> Self {
+        if let HookVariant::Webhook { endpoint, accept } = value {
             Self {
                 enable: true,
                 accept,
@@ -42,14 +42,14 @@ impl From<AssetsVariant> for Webhook {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[allow(unused)]
-pub struct Assets {
+pub struct Hooks {
     #[serde(default)]
     pub enable: bool,
     #[serde(flatten)]
-    pub variant: AssetsVariant,
+    pub variant: HookVariant,
 }
 
-pub type AssetsList = Vec<Assets>;
+pub type HookList = Vec<Hooks>;
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
@@ -111,12 +111,18 @@ pub struct Login {
     pub variant: Option<LoginVariant>
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Assets {
+    pub path: String
+}
+
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
 pub(crate) struct Settings {
     pub queue: Queue,
     pub webhooks: WebhookMap,
-    pub greet: AssetsList,
+    pub greet: HookList,
+    pub assets: Assets,
     pub login: Login,
     pub logout: Login,
 }

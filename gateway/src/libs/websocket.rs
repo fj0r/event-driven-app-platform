@@ -1,7 +1,8 @@
 use super::message::Event;
-use super::settings::{Assets, AssetsVariant, Login, LoginVariant, Settings};
+use super::settings::{Hooks, HookVariant, Login, LoginVariant, Settings};
 use super::shared::{Info, Session, StateChat};
 use super::template::Tmpls;
+use std::sync::LazyLock;
 use super::webhooks::{greet_post, login_post, webhook_post};
 use anyhow::Result;
 use anyhow::{Context, Ok as Okk};
@@ -11,7 +12,6 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, from_str, from_value};
 use std::fmt::Debug;
 use std::sync::Arc;
-use std::sync::LazyLock;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::sync::{Mutex, RwLock};
 
@@ -30,7 +30,7 @@ impl<'a> AsyncIterator for GreetIter<'a> {
 
 static TMPL: LazyLock<Tmpls> = LazyLock::new(|| Tmpls::new("gateway/assets").unwrap());
 
-async fn handle_greet<T>(asset: &Assets, context: &Map<String, Value>) -> Result<String>
+async fn handle_greet<T>(asset: &Hooks, context: &Map<String, Value>) -> Result<String>
 where
     T: Event + Serialize + From<(Session, Value)>,
 {
@@ -38,11 +38,11 @@ where
         return Ok("disabled".into());
     }
     let content = match &asset.variant {
-        AssetsVariant::Path { path } => {
+        HookVariant::Path { path } => {
             let tmpl = TMPL.get_template(path).unwrap();
             tmpl.render(context).ok()
         }
-        wh @ AssetsVariant::Webhook { .. } => {
+        wh @ HookVariant::Webhook { .. } => {
             let r = greet_post(wh, context).await.ok();
             r
         }
