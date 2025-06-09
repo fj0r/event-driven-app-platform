@@ -83,7 +83,7 @@ async fn render(
     Json(payload): Json<Value>,
 ) -> Result<Response, AppError> {
     let mut env = Environment::new();
-    let path = std::path::Path::new("assets");
+    let path = std::path::Path::new("gateway/assets");
     let content = async_fs::read_to_string(path.join(&name)).await?;
     let _ = env.add_template_owned(&name, content);
     let r = env.get_template(&name)?.render(payload)?;

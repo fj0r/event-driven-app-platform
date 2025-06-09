@@ -28,7 +28,7 @@ impl<'a> AsyncIterator for GreetIter<'a> {
 }
 */
 
-static TMPL: LazyLock<Tmpls> = LazyLock::new(|| Tmpls::new("assets").unwrap());
+static TMPL: LazyLock<Tmpls> = LazyLock::new(|| Tmpls::new("gateway/assets").unwrap());
 
 async fn handle_greet<T>(asset: &Assets, context: &Map<String, Value>) -> Result<String>
 where

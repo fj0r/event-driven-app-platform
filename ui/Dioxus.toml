@@ -3,7 +3,7 @@
 [web.app]
 
 # HTML title tag content
-title = "faucet"
+title = "ui"
 
 # include `assets` in web platform
 [web.resource]

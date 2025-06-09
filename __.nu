@@ -41,11 +41,18 @@ export def 'serve' [--rpk] {
     }
     $env.RUST_BACKTRACE = 1
     #$env.APP_KAFKA_ENABLE = 1
-    cargo run
+    cargo run --bin gateway
+}
+
+
+export def 'dev start' [] {
+    let t = open ([$WORKDIR ui __.toml] | path join) | get dx
+    cd ui
+    ^dx serve --port $t.port
 }
 
 export def 'dev profile' [] {
-    cargo profiler callgrind --bin target/release/flange
+    cargo profiler callgrind --bin target/release/gateway
     kcachegrind callgrind.out
     rm callgrind.out
 }
@@ -204,13 +211,13 @@ export def 'dev rpk' [--product --consume] {
 export def 'docker run' [] {
     let external = $env.external? | default 'localhost'
     ^$env.CNTRCTL run ...[
-        --name flange
+        --name event-driven-app-platform
         --rm -it
         -p 5000:3000
         -e $"APP_QUEUE_EVENT_BROKER=[($external):19092]"
         -e $"APP_QUEUE_PUSH_BROKER=[($external):19092]"
         -w /app
-        ghcr.io/fj0r/flange:lastest
-        /app/flange
+        ghcr.io/fj0r/event-driven-app-platform:lastest
+        /app/gateway
     ]
 }
