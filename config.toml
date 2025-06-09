@@ -39,11 +39,11 @@ endpoint = 'http://localhost:3000/debug/render/layout.json'
 
 [[greet]]
 enable = true
-path = 'user.json'
+endpoint = 'http://localhost:3000/debug/render/layout.json'
 
 [[greet]]
 enable = true
-endpoint = 'http://localhost:3000/debug/render/layout.json'
+path = 'user.json'
 
 [[greet]]
 enable = true

@@ -69,11 +69,11 @@ export def 'serve' [--rpk] {
     job spawn {
         cargo run --bin gateway
     }
-    ui start
+    ui up
 }
 
 
-export def 'ui start' [] {
+export def 'ui up' [] {
     let t = open ([$WORKDIR __.toml] | path join) | get dx
     cd ui
     ^dx serve --port $t.port

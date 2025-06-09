@@ -37,7 +37,8 @@ where
     let content = match &asset.variant {
         HookVariant::Path { path } => {
             let tmpl = tmpls.get_template(path).unwrap();
-            tmpl.render(context).ok()
+            let r = tmpl.render(context).ok();
+            r
         }
         wh @ HookVariant::Webhook { .. } => {
             let r = greet_post(wh, context).await.ok();

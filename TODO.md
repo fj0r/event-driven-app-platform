@@ -1,4 +1,28 @@
-### TODO
+### gateway:
+- [x] MessageQueue separate into event and push.
+  - The event queue is used for business logic.
+  - The push queue is used to send messages to users
+      - It can be non-persistent (e.g., Redis stream)
+      - Streamed fragments of AI responses
+          - No need for long-term storage (a complete copy should exist in the event queue)
+          - Not convenient for the recipient to extract the content
+- [x] webhook
+    - [x] receive messages via WebSocket and send them to the main queue, or access other services through a **webhook**
+    - [x] event map
+    - [ ] ~history srv~
+    - [x] ~hot reload config~ config update api
+- [ ] ~topic/channel/chatroom~ (client/controller)
+- [x] ~top event~ (unachievable)
+- [x] greet
+    - [x] init ui
+    - [x] template
+    - [x] webhook
+- [x] auth/login
+    - [x] webhook
+    - [x] event (replace session)
+        - [x] ~update session_id after the message queue login event~
+
+### ui:
 - [x] Dynamic layout
     - [ ] Rack/Case: table/grid
 - [x] Data binding (for some components)
