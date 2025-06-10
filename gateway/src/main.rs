@@ -16,6 +16,7 @@ use libs::shared::{Sender, StateChat};
 use libs::websocket::{handle_ws, send_to_ws};
 use std::sync::Arc;
 use tokio::sync::RwLock;
+use listenfd::ListenFd;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -79,9 +80,15 @@ async fn main() -> Result<()> {
         .fallback_service(ServeDir::new("./static"))
         .with_state(shared);
 
-    let addr = "0.0.0.0:3000";
-    let listener = tokio::net::TcpListener::bind(addr).await?;
-    info!("Listening on {}", addr);
+    let mut listenfd = ListenFd::from_env();
+    let listener = if let Some(listener) = listenfd.take_tcp_listener(0)? {
+        tokio::net::TcpListener::from_std(listener)?
+    } else {
+        let addr = "0.0.0.0:3000";
+        let listener = tokio::net::TcpListener::bind(addr).await?;
+        info!("Listening on {}", addr);
+        listener
+    };
 
     axum::serve(listener, app).await?;
     Ok(())

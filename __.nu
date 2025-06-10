@@ -66,10 +66,12 @@ export def 'serve' [--rpk] {
     }
     $env.RUST_BACKTRACE = 1
     #$env.APP_KAFKA_ENABLE = 1
-    job spawn {
-        cargo run --bin gateway
+    let g = job spawn {
+        $env.RUSTFLAGS = "--cfg tokio_allow_from_blocking_fd"
+        systemfd --no-pid -s http::3000 -- watchexec -r -- cargo run --bin gateway
     }
     ui up
+    job kill $g
 }
 
 
