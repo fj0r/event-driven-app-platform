@@ -1,5 +1,5 @@
+use super::config::{QueueEvent, QueuePush};
 use super::message::{Created, Event, MessageQueueEvent, MessageQueuePush};
-use super::settings::{QueueEvent, QueuePush};
 use rdkafka::Timestamp;
 use rdkafka::client::ClientContext;
 use rdkafka::config::{ClientConfig, RDKafkaLogLevel};

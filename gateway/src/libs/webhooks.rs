@@ -1,9 +1,9 @@
-use super::settings::{HookVariant, Webhook};
+use super::config::{HookVariant, Webhook};
 use super::shared::{Info, Session};
 use reqwest::Error;
 use serde::{Serialize, de::DeserializeOwned};
+use serde_json::{Map, Value};
 use std::fmt::Debug;
-use serde_json::{Value, Map};
 
 pub async fn webhook_post<T>(wh: &Webhook, msg: T) -> Result<T, Error>
 where

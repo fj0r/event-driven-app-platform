@@ -1,11 +1,14 @@
+use super::config::Settings;
 use super::message::ChatMessage;
-use super::settings::Settings;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use std::fmt::{Debug, Display};
 use std::sync::Arc;
 use std::{
-    collections::{HashMap, hash_map::{Iter, Entry}},
+    collections::{
+        HashMap,
+        hash_map::{Entry, Iter},
+    },
     ops::Deref,
 };
 use tokio::sync::{Mutex, MutexGuard, RwLock, mpsc::UnboundedSender};

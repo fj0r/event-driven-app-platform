@@ -1,8 +1,8 @@
+use super::config::ASSETS_PATH;
 use super::error::HttpResult;
-use super::settings::ASSETS_PATH;
 use super::{
+    config::{HookList, Login, WebhookMap},
     message::Envelope,
-    settings::{HookList, Login, WebhookMap},
     shared::{Info, Sender, Session, StateChat},
 };
 use axum::{

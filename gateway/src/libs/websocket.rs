@@ -1,5 +1,5 @@
+use super::config::{HookVariant, Hooks, Login, LoginVariant, Settings};
 use super::message::Event;
-use super::settings::{HookVariant, Hooks, Login, LoginVariant, Settings};
 use super::shared::{Info, Session, StateChat};
 use super::template::Tmpls;
 use super::webhooks::{greet_post, login_post, webhook_post};
