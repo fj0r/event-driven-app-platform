@@ -115,7 +115,7 @@ pub const ASSETS_PATH: &'static str = "manifest";
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
-pub(crate) struct Settings {
+pub struct Settings {
     pub queue: Queue,
     pub webhooks: WebhookMap,
     pub greet: HookList,
@@ -124,7 +124,7 @@ pub(crate) struct Settings {
 }
 
 impl Settings {
-    pub(crate) fn new() -> Result<Self> {
+    pub fn new() -> Result<Self> {
         Figment::new()
             .merge(Toml::file("gateway.toml"))
             .merge(Env::prefixed("GATEWAY_").split("_"))

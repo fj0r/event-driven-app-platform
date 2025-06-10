@@ -1,0 +1,18 @@
+[queue.event]
+type = 'kafka'
+broker = ['localhost:19092']
+topic = 'event'
+
+[queue.push]
+type = 'kafka'
+broker = ['localhost:19092']
+topic = ['push']
+group = 'ws'
+
+[database]
+type = 'postgres'
+host = 'localhost'
+port = 5432
+db = 'chat'
+user = 'chat'
+passwd = 'chat'

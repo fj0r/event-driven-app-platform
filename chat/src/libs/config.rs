@@ -2,9 +2,20 @@ use figment::{
     Figment, Result,
     providers::{Env, Format, Toml},
 };
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use std::path::Path;
+use serde::Deserialize;
+
+#[derive(Debug, Deserialize, Clone)]
+#[allow(unused)]
+pub struct Database {
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub host: String,
+    pub port: u16,
+    pub db: String,
+    pub schema: Option<String>,
+    pub user: String,
+    pub passwd: String,
+}
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
@@ -28,19 +39,19 @@ pub struct QueueEvent {
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
 pub struct Queue {
-    pub enable: bool,
     pub event: QueueEvent,
     pub push: QueuePush,
 }
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
-pub(crate) struct Settings {
+pub struct Config {
     pub queue: Queue,
+    pub database: Database,
 }
 
-impl Settings {
-    pub(crate) fn new() -> Result<Self> {
+impl Config {
+    pub fn new() -> Result<Self> {
         Figment::new()
             .merge(Toml::file("chat.toml"))
             .merge(Env::prefixed("CHAT_").split("_"))
