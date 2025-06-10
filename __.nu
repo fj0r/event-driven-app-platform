@@ -16,6 +16,20 @@ def cmpl-data [] {
     ls | get name
 }
 
+def cmpl-external [] {
+    ip route
+    | lines
+    | parse -r ([
+        '(?<default>default via)?'
+        '(?<gateway>[0-9\./]+)'
+        'dev (?<dev>[\w\-]+)'
+        'proto (?<proto>dhcp|kernel scope link)'
+        'src (?<src>[0-9\.]+)'
+    ] | str join '\s*')
+    | get src
+    | uniq
+}
+
 export def send [
     file:string@cmpl-data
     --receiver(-r): list<string@receiver> = []
@@ -60,9 +74,12 @@ export def 'watch message' [] {
     }
 }
 
-export def 'serve' [--rpk] {
+export def 'serve' [
+    --rpk
+    --external: string@cmpl-external = 'localhost'
+] {
     if $rpk {
-        rpk up
+        rpk up --external $external
     }
     $env.RUST_BACKTRACE = 1
     #$env.GATEWAY_KAFKA_ENABLE = 1
@@ -207,8 +224,8 @@ export def 'rpk topic delete' [name:string@'rpk topic list'] {
 
 export def 'rpk start' [
     --dry-run
+    --external: string@cmpl-external = 'localhost'
 ] {
-    let external = $env.external? | default 'localhost'
     let image = 'redpandadata/redpanda:latest'
     mut args = [run -d --name redpanda]
     let ports = {
@@ -255,9 +272,13 @@ export def 'rpk start' [
     }
 }
 
-export def 'rpk up' [--product --consume] {
+export def 'rpk up' [
+    --product
+    --consume
+    --external: string@cmpl-external = 'localhost'
+] {
     dcr redpanda
-    rpk start
+    rpk start --external $external
 
     let readyness = {
         ^$env.CNTRCTL ...[
@@ -287,10 +308,11 @@ export def 'rpk up' [--product --consume] {
     }
 }
 
-export def 'docker up' [] {
+export def 'docker up' [
+    --external: string@cmpl-external = 'localhost'
+] {
     let image = 'ghcr.io/fj0r/edap:lastest'
     ^$env.CNTRCTL pull $image
-    let external = $env.external? | default 'localhost'
     ^$env.CNTRCTL run ...[
         --name edap
         --rm -it
