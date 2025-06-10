@@ -1,6 +1,6 @@
 const WORKDIR = path self .
 const CFG = path self __.toml
-const CONFIG = path self config.toml
+const GW = path self gateway.toml
 
 export def receiver [] {
     let c = open $CFG
@@ -65,7 +65,7 @@ export def 'serve' [--rpk] {
         rpk up
     }
     $env.RUST_BACKTRACE = 1
-    #$env.APP_KAFKA_ENABLE = 1
+    #$env.GATEWAY_KAFKA_ENABLE = 1
     let g = job spawn {
         $env.RUSTFLAGS = "--cfg tokio_allow_from_blocking_fd"
         systemfd --no-pid -s http::3000 -- watchexec -r -- cargo run --bin gateway
@@ -274,7 +274,7 @@ export def 'rpk up' [--product --consume] {
         $time = $time + 1
     }
 
-    let s = open $CONFIG
+    let s = open $GW
     rpk topic create $s.queue.event.topic
     rpk topic create $s.queue.push.topic.0
 
@@ -288,15 +288,17 @@ export def 'rpk up' [--product --consume] {
 }
 
 export def 'docker up' [] {
+    let image = 'ghcr.io/fj0r/edap:lastest'
+    ^$env.CNTRCTL pull $image
     let external = $env.external? | default 'localhost'
     ^$env.CNTRCTL run ...[
         --name edap
         --rm -it
         -p 5000:3000
-        -e $"APP_QUEUE_EVENT_BROKER=[($external):19092]"
-        -e $"APP_QUEUE_PUSH_BROKER=[($external):19092]"
+        -e $"GATEWAY_QUEUE_EVENT_BROKER=[($external):19092]"
+        -e $"GATEWAY_QUEUE_PUSH_BROKER=[($external):19092]"
         -w /app
-        ghcr.io/fj0r/edap:lastest
+        $image
         /app/gateway
     ]
 }

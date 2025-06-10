@@ -126,8 +126,8 @@ pub(crate) struct Settings {
 impl Settings {
     pub(crate) fn new() -> Result<Self> {
         Figment::new()
-            .merge(Toml::file("config.toml"))
-            .merge(Env::prefixed("APP_").split("_"))
+            .merge(Toml::file("gateway.toml"))
+            .merge(Env::prefixed("GATEWAY_").split("_"))
             .extract()
     }
 }

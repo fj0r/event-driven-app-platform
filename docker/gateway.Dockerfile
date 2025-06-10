@@ -8,5 +8,5 @@ RUN apt update \
 
 COPY --from=build /app/target/release/gateway /app/gateway
 COPY --from=assets /app /app/static
-COPY config.toml /app
+COPY gateway.toml /app
 COPY manifest /app/manifest
