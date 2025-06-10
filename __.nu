@@ -316,7 +316,7 @@ export def 'docker up' [
     ^$env.CNTRCTL run ...[
         --name edap
         --rm -it
-        -p 5000:3000
+        -p 3001:3000
         -e $"GATEWAY_QUEUE_EVENT_BROKER=[($external):19092]"
         -e $"GATEWAY_QUEUE_PUSH_BROKER=[($external):19092]"
         -w /app
