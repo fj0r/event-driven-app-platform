@@ -1,10 +1,26 @@
 const WORKDIR = path self .
 const CFG = path self __.toml
 const GW = path self gateway.toml
+const CHAT = path self chat.toml
+
+export def workdir [] {
+    $WORKDIR
+}
+
+def wait-cmd [action -i: duration = 1sec  -t: string='waiting'] {
+    mut time = 0
+    loop {
+        print -e $"(ansi dark_gray)($t) (ansi dark_gray_italic)($i * $time)(ansi reset)"
+        let c = do --ignore-errors $action | complete | get exit_code
+        if ($c == 0) { break }
+        sleep $i
+        $time = $time + 1
+    }
+}
 
 export def receiver [] {
     let c = open $CFG
-    http get $"http://($c.server.host)/admin/users"
+    http get $"http://($c.server.host)/admin/sessions"
 }
 
 def cmpl-act [] {
@@ -77,6 +93,7 @@ export def 'watch message' [] {
 export def 'serve' [
     --rpk
     --external: string@cmpl-external = 'localhost'
+    --watch
 ] {
     if $rpk {
         rpk up --external $external
@@ -84,8 +101,7 @@ export def 'serve' [
     $env.RUST_BACKTRACE = 1
     #$env.GATEWAY_KAFKA_ENABLE = 1
     let g = job spawn {
-        $env.RUSTFLAGS = "--cfg tokio_allow_from_blocking_fd"
-        systemfd --no-pid -s http::3000 -- watchexec -r -- cargo run --bin gateway
+        gw up --watch=$watch
     }
     ui up
     job kill $g
@@ -143,6 +159,22 @@ export def 'ui export css' [] {
     lg level 1 'end'
 }
 
+export def 'chat up' [
+] {
+    cargo run --bin chat
+}
+
+export def 'gw up' [
+    --watch
+] {
+    if $watch {
+        $env.RUSTFLAGS = "--cfg tokio_allow_from_blocking_fd"
+        systemfd --no-pid -s http::3000 -- watchexec -r -- cargo run --bin gateway
+    } else {
+        cargo run --bin gateway
+    }
+}
+
 export def 'gw build' [] {
     $env.RUSTFLAGS = "--cfg tokio_unstable"
     cargo build --release --bin gateway
@@ -166,6 +198,48 @@ export def 'gw test' [] {
         dev client
     }
     job kill $ji
+}
+
+export def 'pg start' [
+    --dry-run
+] {
+    let cfg = open $CHAT | get database
+    let image = 'postgres:17'
+    mut args = [run -d --name chat_db]
+    let ports = {
+        $cfg.port: 5432
+    }
+    for i in ($ports | transpose k v) {
+        $args ++= [-p $"($i.k):($i.v)"]
+    }
+    let envs = {
+        POSTGRES_DB: $cfg.db
+        POSTGRES_USER: $cfg.user
+        POSTGRES_PASSWORD: $cfg.passwd
+    }
+    for i in ($envs | transpose k v) {
+        $args ++= [-e $"($i.k)=($i.v)"]
+    }
+    $args ++= [-v $"($WORKDIR)/data/postgres/data:/var/lib/postgresql/data"]
+    $args ++= [$image]
+    if $dry_run {
+        print $"($env.CNTRCTL) ($args | str join ' ')"
+    } else {
+        ^$env.CNTRCTL ...$args
+    }
+}
+
+export def 'pg up' [] {
+    let cfg = open $CHAT | get database
+    dcr chat_db
+    pg start
+    wait-cmd -t 'wait postgresql' {
+        ^$env.CNTRCTL ...[
+            exec chat_db
+            bash -c
+            $'pg_isready -U ($cfg.user)'
+        ]
+    }
 }
 
 export def 'rpk send' [
@@ -280,19 +354,11 @@ export def 'rpk up' [
     dcr redpanda
     rpk start --external $external
 
-    let readyness = {
+    wait-cmd -t 'wait redpanda' {
         ^$env.CNTRCTL ...[
             exec redpanda
             rpk cluster info
         ]
-    }
-    mut time = 0
-    loop {
-        print -e $"(ansi light_gray)wait redpanda (ansi light_gray_italic)(1sec * $time)(ansi reset)"
-        let c = do --ignore-errors $readyness | complete | get exit_code
-        if ($c == 0) { break }
-        sleep 1sec
-        $time = $time + 1
     }
 
     let s = open $GW
