@@ -1,4 +1,5 @@
-use super::error::AppError;
+use super::error::HttpResult;
+use super::settings::ASSETS_PATH;
 use super::{
     message::Envelope,
     settings::{HookList, Login, WebhookMap},
@@ -14,12 +15,11 @@ use axum::{
 use minijinja::Environment;
 use serde::Serialize;
 use serde_json::{Map, Value, from_str};
-use super::settings::ASSETS_PATH;
 
 async fn send(
     State(state): State<StateChat<Sender>>,
     Json(payload): Json<Envelope>,
-) -> Result<(StatusCode, Json<Vec<Session>>), AppError> {
+) -> HttpResult<(StatusCode, Json<Vec<Session>>)> {
     let mut succ: Vec<Session> = Vec::new();
     let s = state.read().await;
     if payload.receiver.is_empty() {
@@ -79,10 +79,7 @@ pub fn admin_router() -> Router<StateChat<Sender>> {
         .route("/send", post(send))
 }
 
-async fn render(
-    Path(name): Path<String>,
-    Json(payload): Json<Value>,
-) -> Result<Response, AppError> {
+async fn render(Path(name): Path<String>, Json(payload): Json<Value>) -> HttpResult<Response> {
     let mut env = Environment::new();
     let path = std::path::Path::new(ASSETS_PATH);
     let content = async_fs::read_to_string(path.join(&name)).await?;
@@ -91,7 +88,7 @@ async fn render(
     Ok(Response::new(r.into()))
 }
 
-async fn echo(req: Request) -> Result<Response, AppError> {
+async fn echo(req: Request) -> HttpResult<Response> {
     println!("{}", Req(&req));
     match req.headers().get(ACCEPT).map(|x| x.as_bytes()) {
         Some(b"application/json") => {
@@ -108,7 +105,7 @@ async fn echo(req: Request) -> Result<Response, AppError> {
 async fn login(
     State(_state): State<StateChat<Sender>>,
     Json(mut payload): Json<Map<String, Value>>,
-) -> Result<Json<(Session, Info)>, AppError> {
+) -> HttpResult<Json<(Session, Info)>> {
     use short_uuid::ShortUuid;
     let uuid = ShortUuid::generate().to_string();
     payload.insert("username".into(), uuid[..6].into());
@@ -118,26 +115,26 @@ async fn login(
 async fn logout(
     State(_state): State<StateChat<Sender>>,
     Json(payload): Json<Map<String, Value>>,
-) -> Result<Json<(Session, Info)>, AppError> {
+) -> HttpResult<Json<(Session, Info)>> {
     Ok(Json(("".into(), Some(payload))))
 }
 
 async fn inc(
     State(state): State<StateChat<Sender>>,
     Json(payload): Json<Map<String, Value>>,
-) -> Result<String, AppError> {
+) -> HttpResult<String> {
     let mut s = state.write().await;
     s.count += 1;
     let count = s.count;
     drop(s);
     if let Some(interval) = payload.get("interval").and_then(|x| x.as_u64()) {
-        use tokio::time::{sleep, Duration};
+        use tokio::time::{Duration, sleep};
         let _ = sleep(Duration::from_secs(interval)).await;
     };
     Ok(count.to_string())
 }
 
-async fn health(State(state): State<StateChat<Sender>>) -> Result<Json<Value>, AppError> {
+async fn health(State(state): State<StateChat<Sender>>) -> HttpResult<Json<Value>> {
     let mut b = Map::new();
     let count = state.read().await.count as u64;
     b.insert("count".to_string(), count.into());
@@ -163,7 +160,7 @@ struct ConfigList {
 
 async fn list_config(
     State(state): State<StateChat<Sender>>,
-) -> Result<(StatusCode, Json<ConfigList>), AppError> {
+) -> HttpResult<(StatusCode, Json<ConfigList>)> {
     let s = state.read().await;
     let s = s.settings.read().await.clone();
     Ok((
@@ -179,7 +176,7 @@ async fn list_config(
 async fn update_login(
     State(state): State<StateChat<Sender>>,
     Json(payload): Json<Login>,
-) -> Result<(StatusCode, Json<bool>), AppError> {
+) -> HttpResult<(StatusCode, Json<bool>)> {
     let s = state.write().await;
     let mut s = s.settings.write().await;
     s.login = payload;
@@ -189,7 +186,7 @@ async fn update_login(
 async fn update_greet(
     State(state): State<StateChat<Sender>>,
     Json(payload): Json<HookList>,
-) -> Result<(StatusCode, Json<bool>), AppError> {
+) -> HttpResult<(StatusCode, Json<bool>)> {
     let s = state.write().await;
     let mut s = s.settings.write().await;
     s.greet = payload;
@@ -199,7 +196,7 @@ async fn update_greet(
 async fn update_webhook(
     State(state): State<StateChat<Sender>>,
     Json(payload): Json<WebhookMap>,
-) -> Result<(StatusCode, Json<bool>), AppError> {
+) -> HttpResult<(StatusCode, Json<bool>)> {
     let s = state.write().await;
     let mut s = s.settings.write().await;
     s.webhooks = payload;

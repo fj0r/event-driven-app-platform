@@ -1,8 +1,8 @@
+use anyhow::Result;
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
-use anyhow::Result;
 
 pub struct HttpError(anyhow::Error);
 
@@ -13,15 +13,6 @@ impl IntoResponse for HttpError {
             format!("Something went wrong: {}", self.0),
         )
             .into_response()
-    }
-}
-
-impl<E> From<E> for HttpError
-where
-    E: Into<anyhow::Error>,
-{
-    fn from(err: E) -> Self {
-        Self(err.into())
     }
 }
 

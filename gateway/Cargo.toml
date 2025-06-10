@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-anyhow = "1.0.97"
-axum = { version = "0.8.3", features = ["ws", "macros"] }
+anyhow = "1.0.98"
+axum = { version = "0.8.4", features = ["ws", "macros"] }
 futures = { version = "0.3.31" }
 rdkafka = { version = "0.37", features = ["cmake-build"] }
 libc = "0.2.0"
