@@ -1,8 +1,8 @@
-use super::config::{HookVariant, Hooks, Login, LoginVariant, Settings};
+use super::config::{HookVariant, Hooks, LoginVariant, Settings};
 use super::message::Event;
-use super::shared::{Info, Session, StateChat};
+use super::shared::{Client, Info, Session, StateChat};
 use super::template::Tmpls;
-use super::webhooks::{greet_post, login_post, webhook_post};
+use super::webhooks::{greet_post, webhook_post};
 use anyhow::Result;
 use anyhow::{Context, Ok as Okk};
 use axum::extract::ws::WebSocket;
@@ -41,13 +41,9 @@ where
     let content = match &asset.variant {
         HookVariant::Path { path } => {
             let tmpl = tmpls.get_template(path).unwrap();
-            let r = tmpl.render(context).ok();
-            r
+            tmpl.render(context).ok()
         }
-        wh @ HookVariant::Webhook { .. } => {
-            let r = greet_post(wh, context).await.ok();
-            r
-        }
+        wh @ HookVariant::Webhook { .. } => greet_post(wh, context).await.ok(),
     };
     let v = from_str(&content.context("render failed")?)?;
     let msg: T = (Session::default(), v).into();
@@ -55,23 +51,13 @@ where
     Ok(msg)
 }
 
-async fn handle_login(login: &Login, query: &Map<String, Value>) -> Option<(Session, Info)> {
-    if login.enable {
-        if let Some(LoginVariant::Endpoint { endpoint }) = &login.variant {
-            let r = login_post(endpoint, query).await.ok()?;
-            return Some((r.0, r.1));
-        };
-    }
-    None
-}
-
 pub async fn handle_ws<T>(
     socket: WebSocket,
     event_tx: Option<UnboundedSender<T>>,
     state: StateChat<UnboundedSender<T>>,
     settings: Arc<RwLock<Settings>>,
-    query: Map<String, Value>,
     tmpls: Arc<Tmpls<'static>>,
+    (sid, info): (Session, Info),
 ) where
     T: Event
         + for<'a> Deserialize<'a>
@@ -86,42 +72,22 @@ pub async fn handle_ws<T>(
     let (mut sender, mut receiver) = socket.split();
 
     let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<T>();
-    let sid: Session;
-    let inf: Option<Map<String, Value>>;
 
-    if let Some((s, info)) = handle_login(&setting1.login, &query).await {
-        sid = s;
-        inf = info.clone();
-        let mut s = state.write().await;
-        s.session.insert(
-            sid.clone(),
-            super::shared::Client {
-                sender: tx.clone(),
-                info,
-            },
-        );
-    } else {
-        let mut s = state.write().await;
-        s.count += 1;
-        sid = s.count.into();
-        inf = None;
-        s.session.insert(
-            sid.clone(),
-            super::shared::Client {
-                sender: tx.clone(),
-                info: None,
-            },
-        );
-    }
+    let mut s = state.write().await;
+    s.session.insert(
+        sid.clone(),
+        Client {
+            sender: tx.clone(),
+            info: info.clone(),
+        },
+    );
+    drop(s);
 
     tracing::info!("Connection opened for {}", &sid);
 
     let mut context = Map::new();
     context.insert("session_id".into(), sid.clone().into());
-    context.insert(
-        "info".into(),
-        Value::Object(inf.unwrap_or_else(|| Map::new())),
-    );
+    context.insert("info".into(), Value::Object(info));
 
     for g in setting1.greet.iter() {
         match handle_greet::<T>(g, &context, tmpls.clone()).await {
@@ -211,14 +177,6 @@ pub async fn handle_ws<T>(
     tracing::info!("Connection closed for {}", &sid);
     let mut s = state.write().await;
     s.session.remove(&sid);
-    let setting2 = settings.read().await;
-    let _ = handle_login(&setting2.logout, &query).await;
-}
-
-#[allow(unused)]
-trait Client {
-    fn on_init() {}
-    fn on_message() {}
 }
 
 use super::message::{ChatMessage, Envelope};
@@ -249,8 +207,7 @@ pub async fn send_to_ws(
                                         .as_object()
                                         .and_then(|x| x.get("data"))
                                         .and_then(|x| {
-                                            from_value::<Option<Map<String, Value>>>(x.to_owned())
-                                                .ok()
+                                            from_value::<Map<String, Value>>(x.to_owned()).ok()
                                         })
                                     {
                                         s.session.entry(r.clone()).and_modify(|x| x.info = info);

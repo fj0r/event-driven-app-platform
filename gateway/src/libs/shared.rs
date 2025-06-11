@@ -125,7 +125,7 @@ impl<T> Shared<T> {
     }
 }
 
-pub type Info = Option<Map<String, Value>>;
+pub type Info = Map<String, Value>;
 
 #[derive(Debug, Clone)]
 pub struct Client<T> {

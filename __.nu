@@ -93,7 +93,6 @@ export def 'watch message' [] {
 export def 'serve' [
     --rpk
     --external: string@cmpl-external = 'localhost'
-    --watch
 ] {
     if $rpk {
         rpk up --external $external
@@ -101,7 +100,7 @@ export def 'serve' [
     $env.RUST_BACKTRACE = 1
     #$env.GATEWAY_KAFKA_ENABLE = 1
     let g = job spawn {
-        gw up --watch=$watch
+        gw up
     }
     ui up
     job kill $g
@@ -165,12 +164,15 @@ export def 'chat up' [
 }
 
 export def 'gw up' [
-    --watch
 ] {
-    if $watch {
-        $env.RUSTFLAGS = "--cfg tokio_allow_from_blocking_fd"
-        systemfd --no-pid -s http::3000 -- watchexec -r -- cargo run --bin gateway
-    } else {
+    cargo run --bin gateway
+    watch gateway --glob **/*.rs -q {|op, path, newPath|
+        if $op not-in ['Write'] { return }
+
+        let x = ps -l | where command == target/debug/gateway
+        if ($x | is-not-empty) {
+            kill $x.pid
+        }
         cargo run --bin gateway
     }
 }
@@ -393,4 +395,13 @@ export def 'docker up' [
 
 export def 'test render' [] {
     curl -H 'Content-Type: application/json' -X POST http://localhost:3000/debug/render/user.json -d'{"info": {"username": "test"}}'
+}
+
+export def clippy [dir] {
+    cd $dir
+    cargo clippy
+}
+
+export def benchmark [] {
+    drill -b drill.yaml -s
 }

@@ -57,7 +57,7 @@ async fn info(
     let u = s
         .session
         .get(&user.as_str().into())
-        .and_then(|x| x.info.clone());
+        .map(|x| x.info.clone());
     Json(u.unwrap_or_else(|| Map::new()))
 }
 
@@ -109,14 +109,14 @@ async fn login(
     use short_uuid::ShortUuid;
     let uuid = ShortUuid::generate().to_string();
     payload.insert("username".into(), uuid[..6].into());
-    Ok(Json((uuid.as_str().into(), Some(payload))))
+    Ok(Json((uuid.as_str().into(), payload)))
 }
 
 async fn logout(
     State(_state): State<StateChat<Sender>>,
     Json(payload): Json<Map<String, Value>>,
 ) -> HttpResult<Json<(Session, Info)>> {
-    Ok(Json(("".into(), Some(payload))))
+    Ok(Json(("".into(), payload)))
 }
 
 async fn inc(

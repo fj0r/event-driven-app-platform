@@ -1,5 +1,6 @@
 use axum::{
     Router,
+    http::StatusCode,
     extract::{Query, State, ws::WebSocketUpgrade},
     routing::get,
 };
@@ -13,6 +14,7 @@ use tracing::info;
 mod libs;
 use anyhow::{Ok, Result};
 use libs::admin::*;
+use libs::auth::auth;
 use libs::config::{ASSETS_PATH, Config, Settings};
 use libs::kafka::{KafkaManagerEvent, KafkaManagerPush};
 use libs::shared::{Sender, StateChat};
@@ -72,7 +74,19 @@ async fn main() -> Result<()> {
                 |ws: WebSocketUpgrade,
                  Query(q): Query<Map<String, Value>>,
                  State(state): State<StateChat<Sender>>| async move {
-                    ws.on_upgrade(|socket| handle_ws(socket, event_tx, state, settings, q, tmpls))
+                    let s = settings.read().await;
+                    let login = s.login.clone();
+                    let logout = s.logout.clone();
+                    drop(s);
+                    if let Some(a) = auth(&login, &q).await {
+                        let _ = ws.on_upgrade(|socket| {
+                            handle_ws(socket, event_tx, state, settings, tmpls, a)
+                        });
+                        auth(&logout, &q).await;
+                        StatusCode::OK
+                    } else {
+                        StatusCode::UNAUTHORIZED
+                    };
                 },
             ),
         )
