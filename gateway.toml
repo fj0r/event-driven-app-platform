@@ -13,12 +13,10 @@ topic = ['push']
 group = 'ws'
 
 [login]
-enable = true
 endpoint = 'http://localhost:3000/debug/login'
 #event = 'login'
 
 [logout]
-enable = true
 endpoint = 'http://localhost:3000/debug/logout'
 #event = 'login'
 

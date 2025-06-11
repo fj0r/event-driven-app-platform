@@ -1,4 +1,4 @@
-use super::config::{HookVariant, Hooks, LoginVariant, Settings};
+use super::config::{HookVariant, Hooks, Login, Settings};
 use super::message::Event;
 use super::shared::{Client, Info, Session, StateChat};
 use super::template::Tmpls;
@@ -198,7 +198,7 @@ pub async fn send_to_ws(
                         let e = x.message.event();
                         let l = s.settings.clone();
                         let l = l.read().await;
-                        if let Some(LoginVariant::Event { event }) = &l.login.variant {
+                        if let Login::Event { event } = &l.login {
                             if let Some(e) = e {
                                 if event == e {
                                     if let Some(info) = x

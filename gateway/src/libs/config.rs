@@ -95,20 +95,13 @@ pub type WebhookMap = HashMap<String, Webhook>;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
-pub enum LoginVariant {
+pub enum Login {
     Endpoint {
         endpoint: String,
     },
     Event {
         event: String,
     }
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Login {
-    pub enable: bool,
-    #[serde(flatten)]
-    pub variant: Option<LoginVariant>
 }
 
 pub const ASSETS_PATH: &'static str = "manifest";

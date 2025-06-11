@@ -1,7 +1,7 @@
 use axum::{
     Router,
-    http::StatusCode,
     extract::{Query, State, ws::WebSocketUpgrade},
+    http::Response,
     routing::get,
 };
 use libs::{
@@ -79,14 +79,14 @@ async fn main() -> Result<()> {
                     let logout = s.logout.clone();
                     drop(s);
                     if let Some(a) = auth(&login, &q).await {
-                        let _ = ws.on_upgrade(|socket| {
+                        let r = ws.on_upgrade(|socket| {
                             handle_ws(socket, event_tx, state, settings, tmpls, a)
                         });
                         auth(&logout, &q).await;
-                        StatusCode::OK
+                        r
                     } else {
-                        StatusCode::UNAUTHORIZED
-                    };
+                        Response::new("UNAUTHORIZED".into())
+                    }
                 },
             ),
         )

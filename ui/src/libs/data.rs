@@ -92,7 +92,7 @@ pub enum Bind {
         #[serde(rename = "type")]
         // number, bool, [text]
         kind: Option<String>,
-        // Abandon
+        // TODO:
         local: Option<String>,
     },
     Field {
