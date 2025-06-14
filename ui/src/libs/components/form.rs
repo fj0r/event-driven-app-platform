@@ -8,8 +8,8 @@ use dioxus::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
-struct Data {
-    pub value: Value,
+struct Message {
+    pub data: Value,
     pub payload: Option<Value>,
 }
 
@@ -101,8 +101,8 @@ pub fn Form(layout: Layout) -> Element {
         let s = use_context::<Store>();
         let mut content = HashMap::new();
         for (k, v) in &data {
-            let d = Data {
-                value: v.0(),
+            let d = Message {
+                data: v.0(),
                 payload: v.1.clone(),
             };
             content.insert(k.to_owned(), d);
