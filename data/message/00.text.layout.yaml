@@ -15,10 +15,10 @@ children:
               value: child of box
         - type: text
           value: 123
-          data:
+          bind:
               event: test-data
     - type: rack
-      data:
+      bind:
           event: chat
       item:
           - type: case
@@ -28,7 +28,7 @@ children:
       children:
         - type: text
           value: lv 1
-          data:
+          bind:
               event: test-data
         - type: case
           children:
@@ -41,11 +41,11 @@ children:
                 - type: text
                   value: lv 3
     - type: input
-      data:
+      bind:
           upload: true
           event: message
     - type: button
-      data:
+      bind:
           upload: true
           event: ok
       value: "Count"

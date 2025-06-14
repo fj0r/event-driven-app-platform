@@ -43,7 +43,7 @@ data:
         - children:
           - children:
             - children:
-              - data:
+              - bind:
                   field: '853736'
                   type: number
                 type: input
@@ -71,7 +71,7 @@ data:
             type: tr
           - children:
             - children:
-              - data:
+              - bind:
                   field: '56459'
                   type: number
                 type: input
@@ -99,7 +99,7 @@ data:
             type: tr
           - children:
             - children:
-              - data:
+              - bind:
                   field: '934900'
                   type: number
                 type: input
@@ -130,11 +130,11 @@ data:
       type: case
     - attrs:
         oneshot: true
-      data:
+      bind:
         submit: true
       type: button
       value: confirm
-    data:
+    bind:
       event: confirm
     id: QQucja82kxbHPGLozJWdbk
     type: form

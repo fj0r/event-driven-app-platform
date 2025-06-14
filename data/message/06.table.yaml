@@ -40,7 +40,7 @@ data:
         children:
         - children:
           - children:
-            - data:
+            - bind:
                 field: s
                 type: string
                 payload:
@@ -69,7 +69,7 @@ data:
           type: tr
         - children:
           - children:
-            - data:
+            - bind:
                 field: b
                 type: bool
               type: input
@@ -94,7 +94,7 @@ data:
           type: tr
         - children:
           - children:
-            - data:
+            - bind:
                 field: n
                 type: number
               type: input
@@ -121,11 +121,11 @@ data:
     type: case
   - attrs:
       oneshot: false
-    data:
+    bind:
       submit: true
     type: button
     value: confirm
-  data:
+  bind:
     event: confirm
   id: null
   type: form

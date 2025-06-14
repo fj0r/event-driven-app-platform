@@ -14,7 +14,7 @@
           "class": "shadow nogrow",
           "format": "md"
         },
-        "data": {
+        "bind": {
           "event": "login"
         }
       },
@@ -24,7 +24,7 @@
           "class": "box c as gap scrolly",
           "scroll": true
         },
-        "data": {
+        "bind": {
           "event": "chat"
         },
         "item": [
@@ -58,7 +58,7 @@
             "children": [
               {
                 "type": "input",
-                "data": {
+                "bind": {
                   "event": "message"
                 }
               }

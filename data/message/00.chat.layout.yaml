@@ -15,21 +15,21 @@ data:
         attrs:
           class: shadow nogrow
           format: md
-        data:
+        bind:
           event: login
       - type: form
-        data:
+        bind:
           event: login
         children:
           - type: button
             value: LOGIN
-            data:
+            bind:
                 submit: true
   - type: rack
     attrs:
       class: box c as gap scrolly
       scroll: true
-    data:
+    bind:
       event: chat
     item:
     - type: case
@@ -49,8 +49,8 @@ data:
         horizontal: true
       children:
       - type: input
-        data:
+        bind:
           event: history
       - type: input
-        data:
+        bind:
           event: echo

@@ -5,5 +5,5 @@ children:
       attrs:
         class: box border shadow
       value: 123
-      data:
+      bind:
           event: test-data

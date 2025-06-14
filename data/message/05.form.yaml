@@ -2,7 +2,7 @@ action: join
 event: chat
 data:
     type: form
-    data:
+    bind:
       event: confirm
     attrs:
         class: gap md
@@ -21,11 +21,11 @@ data:
             children:
               - type: input
                 value: name
-                data:
+                bind:
                     field: name
               - type: input
                 value: age
-                data:
+                bind:
                     field: age
           - type: case
             attrs:
@@ -33,17 +33,17 @@ data:
             children:
               - type: input
                 name: gender
-                data:
+                bind:
                     field: gender
               - type: input
                 name: phone
-                data:
+                bind:
                     field: phone
       - type: button
         value: confirm
         attrs:
             oneshot: false
-        data:
+        bind:
             submit: true
 
 

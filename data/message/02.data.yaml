@@ -2,7 +2,6 @@ action: set
 event: test-data
 data:
     type: text
-    data:
-        upload: true
+    bind:
         event: user-message
     value: guide
