@@ -12,10 +12,10 @@ struct ItemContainer {
 }
 
 impl From<Vec<Layout>> for ItemContainer {
-    fn from(value: Vec<Layout>) -> Self {
+    fn from(data: Vec<Layout>) -> Self {
         let mut default = None;
         let mut index = HashMap::new();
-        for l in &value {
+        for l in &data {
             if let Some(x) = l.attrs.as_ref().and_then(|x| {
                 if let Some(Settings::Item { selector }) = &x.settings {
                     Some(selector)

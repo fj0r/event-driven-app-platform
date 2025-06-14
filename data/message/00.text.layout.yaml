@@ -12,9 +12,9 @@ children:
             class: box border shadow
           children:
             - type: text
-              value: child of box
+              data: child of box
         - type: text
-          value: 123
+          data: 123
           bind:
               event: test-data
     - type: rack
@@ -27,19 +27,19 @@ children:
     - type: case
       children:
         - type: text
-          value: lv 1
+          data: lv 1
           bind:
               event: test-data
         - type: case
           children:
             - type: text
-              value: lv 2
+              data: lv 2
             - type: case
               children:
                 - type: case
                   children:
                 - type: text
-                  value: lv 3
+                  data: lv 3
     - type: input
       bind:
           upload: true
@@ -48,4 +48,4 @@ children:
       bind:
           upload: true
           event: ok
-      value: "Count"
+      data: "Count"

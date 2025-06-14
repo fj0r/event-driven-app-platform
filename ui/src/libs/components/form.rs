@@ -27,7 +27,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
             let v = match kind.as_deref() {
                 Some("number") => {
                     let n = layout
-                        .value
+                        .data
                         .as_ref()
                         .and_then(|x| x.as_f64())
                         .unwrap_or(0 as f64);
@@ -35,14 +35,14 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
                 }
                 Some("bool") => {
                     let b = layout
-                        .value
+                        .data
                         .as_ref()
                         .and_then(|x| x.as_bool())
                         .unwrap_or(false);
                     to_value(b).unwrap()
                 }
                 _ => {
-                    let s = layout.value.as_ref().and_then(|x| x.as_str()).unwrap_or("");
+                    let s = layout.data.as_ref().and_then(|x| x.as_str()).unwrap_or("");
                     to_value(s).unwrap()
                 }
             };

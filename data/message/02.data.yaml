@@ -4,4 +4,4 @@ data:
     type: text
     bind:
         event: user-message
-    value: guide
+    data: guide

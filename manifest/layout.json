@@ -9,7 +9,7 @@
     "children": [
       {
         "type": "text",
-        "value": "chat with **AI**",
+        "data": "chat with **AI**",
         "attrs": {
           "class": "shadow nogrow",
           "format": "md"

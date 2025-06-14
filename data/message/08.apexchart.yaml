@@ -2,7 +2,7 @@ action: join
 event: chat
 data:
   type: chart
-  value: {
+  data: {
     series: [44, 55, 13, 33],
     labels: ['Apple', 'Mango', 'Orange', 'Watermelon'],
     chart: {type: "pie"}

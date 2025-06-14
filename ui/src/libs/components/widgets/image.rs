@@ -4,7 +4,7 @@ use super::super::super::data::{Layout, Settings};
 
 #[component]
 pub fn Img(layout: Layout, children: Element) -> Element {
-    if let Some(src) = &layout.value {
+    if let Some(src) = &layout.data {
         if let Some (src) = src.as_str() {
             let s = layout.attrs.and_then(|x| x.settings);
             if let Some(Settings::Image { desc, width, height, thumb: _ }) = s {

@@ -4,7 +4,7 @@ data:
     class: gap md
   children:
   - type: text
-    value: confirm order
+    data: confirm order
   - attrs:
       class: gap md
     children:
@@ -19,23 +19,23 @@ data:
               attrs:
                   desc: ccacc
                   height: 1em
-              value: https://github.com/luser/keep-calm-and-call-clone/blob/master/keep-calm-and-call-clone.png?raw=true
+              data: https://github.com/luser/keep-calm-and-call-clone/blob/master/keep-calm-and-call-clone.png?raw=true
           - type: th
             children:
             - type: text
-              value: b
+              data: b
           - type: th
             children:
             - type: text
-              value: c
+              data: c
           - type: th
             children:
             - type: text
-              value: d
+              data: d
           - type: th
             children:
             - type: text
-              value: e
+              data: e
       - type: tbody
         children:
         - children:
@@ -48,23 +48,23 @@ data:
                     b:
                         c: 2
               type: input
-              value: '853736'
+              data: '853736'
             type: td
           - children:
             - type: text
-              value: a1
+              data: a1
             type: td
           - children:
             - type: text
-              value: 2.25
+              data: 2.25
             type: td
           - children:
             - type: text
-              value: a2
+              data: a2
             type: td
           - children:
             - type: text
-              value: a3
+              data: a3
             type: td
           type: tr
         - children:
@@ -73,23 +73,23 @@ data:
                 field: b
                 type: bool
               type: input
-              value: false
+              data: false
             type: td
           - children:
             - type: text
-              value: b1
+              data: b1
             type: td
           - children:
             - type: text
-              value: 0.31
+              data: 0.31
             type: td
           - children:
             - type: text
-              value: b2
+              data: b2
             type: td
           - children:
             - type: text
-              value: b3
+              data: b3
             type: td
           type: tr
         - children:
@@ -98,23 +98,23 @@ data:
                 field: n
                 type: number
               type: input
-              value: 9
+              data: 9
             type: td
           - children:
             - type: text
-              value: c1
+              data: c1
             type: td
           - children:
             - type: text
-              value: 33.83
+              data: 33.83
             type: td
           - children:
             - type: text
-              value: c2
+              data: c2
             type: td
           - children:
             - type: text
-              value: c3
+              data: c3
             type: td
           type: tr
       type: table
@@ -124,7 +124,7 @@ data:
     bind:
       submit: true
     type: button
-    value: confirm
+    data: confirm
   bind:
     event: confirm
   id: null

@@ -9,4 +9,4 @@ data:
             rank: 5
             payload:
               type: text
-              value: who are you?
+              data: who are you?

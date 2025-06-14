@@ -2,7 +2,7 @@ action: join
 event: chat
 data:
   type: diagram
-  value: |-
+  data: |-
     sequenceDiagram
         Alice->>John: Hello John, how are you?
         John-->>Alice: Great!

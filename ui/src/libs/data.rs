@@ -188,7 +188,7 @@ pub struct Layout {
     pub id: Option<String>,
     pub attrs: Option<Attrs>,
     pub bind: Option<Bind>,
-    pub value: Option<Value>,
+    pub data: Option<Value>,
     pub render: Option<Render>,
     pub item: Option<Vec<Layout>>,
     pub children: Option<Vec<Layout>>,
@@ -279,9 +279,9 @@ pub trait LayoutOp {
 pub struct Concat;
 impl LayoutOp for Concat {
     fn visit(&self, lhs: &mut Layout, rhs: &Layout) {
-        let value = match &mut lhs.value {
+        let data = match &mut lhs.data {
             Some(x) => {
-                if let Some(r) = &rhs.value {
+                if let Some(r) = &rhs.data {
                     let y = match (x, &r) {
                         (Value::Number(x), Value::Number(r)) => {
                             json!(x.as_f64().unwrap() + r.as_f64().unwrap())
@@ -311,18 +311,18 @@ impl LayoutOp for Concat {
                     Some(x.clone())
                 }
             }
-            None => rhs.value.clone(),
+            None => rhs.data.clone(),
         };
-        lhs.value = value;
+        lhs.data = data;
     }
 }
 
 pub struct Delete;
 impl LayoutOp for Delete {
     fn visit(&self, lhs: &mut Layout, rhs: &Layout) {
-        let value = match &mut lhs.value {
+        let data = match &mut lhs.data {
             Some(x) => {
-                if let Some(r) = &rhs.value {
+                if let Some(r) = &rhs.data {
                     let y = match (x, &r) {
                         (Value::Number(x), Value::Number(r)) => {
                             json!(x.as_f64().unwrap() - r.as_f64().unwrap())
@@ -350,25 +350,25 @@ impl LayoutOp for Delete {
                         (Value::Array(x), Value::Array(_r)) => {
                             json!(x)
                         }
-                        _ => lhs.value.clone().unwrap_or_else(|| r.clone()),
+                        _ => lhs.data.clone().unwrap_or_else(|| r.clone()),
                     };
                     Some(y)
                 } else {
                     Some(x.clone())
                 }
             }
-            None => rhs.value.clone(),
+            None => rhs.data.clone(),
         };
-        lhs.value = value;
+        lhs.data = data;
     }
 }
 
 pub struct Replace;
 impl LayoutOp for Replace {
     fn visit(&self, lhs: &mut Layout, rhs: &Layout) {
-        let value = match &lhs.value {
+        let data = match &lhs.data {
             Some(x) => {
-                if let Some(r) = &rhs.value {
+                if let Some(r) = &rhs.data {
                     let y = match (x, &r) {
                         (Value::Number(_x), Value::Number(r)) => {
                             json!(r.as_f64().unwrap())
@@ -392,8 +392,8 @@ impl LayoutOp for Replace {
                     Some(x.clone())
                 }
             }
-            None => rhs.value.clone(),
+            None => rhs.data.clone(),
         };
-        lhs.value = value;
+        lhs.data = data;
     }
 }

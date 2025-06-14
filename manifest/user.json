@@ -3,7 +3,7 @@
     "event": "login",
     "data": {
         "type": "text",
-        "value": "chat with **AI** (user: {{info.username}})",
+        "data": "chat with **AI** (user: {{info.username}})",
         "attrs": {
             "class": "shadow nogrow",
             "format": "md"

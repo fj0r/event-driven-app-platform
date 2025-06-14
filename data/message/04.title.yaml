@@ -2,4 +2,4 @@ action: set
 event: title
 data:
     type: text
-    value: "**hello**"
+    data: "**hello**"

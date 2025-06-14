@@ -5,7 +5,7 @@ use serde_json::{to_value, Value};
 #[component]
 pub fn Button(layout: Layout) -> Element {
     let t = layout
-        .value
+        .data
         .unwrap_or(to_value("Ok").unwrap())
         .as_str()
         .unwrap()
