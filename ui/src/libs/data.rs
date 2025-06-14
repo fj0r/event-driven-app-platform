@@ -187,7 +187,7 @@ pub struct Layout {
     pub kind: String,
     pub id: Option<String>,
     pub attrs: Option<Attrs>,
-    pub data: Option<Bind>,
+    pub bind: Option<Bind>,
     pub value: Option<Value>,
     pub render: Option<Render>,
     pub item: Option<Vec<Layout>>,

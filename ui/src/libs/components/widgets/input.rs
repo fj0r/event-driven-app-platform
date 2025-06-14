@@ -18,7 +18,7 @@ fn default_kind(kind: &str) -> Value {
 #[component]
 pub fn Input(layout: Layout) -> Element {
     let (ty, event, kind, signal) = layout
-        .data
+        .bind
         .clone()
         .and_then(|x| match x {
             Bind::Field {

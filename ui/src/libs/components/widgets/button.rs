@@ -22,7 +22,7 @@ pub fn Button(layout: Layout) -> Element {
         })
         .unwrap_or(false);
 
-    if let Some(Bind::Submit { signal: Some(mut s), .. }) = layout.data {
+    if let Some(Bind::Submit { signal: Some(mut s), .. }) = layout.bind {
         let v = s.read().as_bool().unwrap();
         let mut css = vec!["button", "shadow"];
         css.push(if !v { "accent" } else { "disabled" });

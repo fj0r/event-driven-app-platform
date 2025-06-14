@@ -49,7 +49,7 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
     let css = merge_css_class(&mut css, &layout);
 
     let item: ItemContainer = layout.item.clone().context("item")?.into();
-    let Bind::Event { event, .. } = layout.data.as_ref().context("data")? else {
+    let Bind::Event { event, .. } = layout.bind.as_ref().context("data")? else {
         return Err(RenderError::Aborted(CapturedError::from_str("no event")?));
     };
     let attrs = layout.attrs.as_ref().context("attrs")?;

@@ -16,7 +16,7 @@ struct Data {
 type FormScope = HashMap<String, (Signal<Value>, Option<Value>)>;
 
 fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
-    match &layout.data {
+    match &layout.bind {
         Some(Bind::Field {
             field,
             kind,
@@ -49,7 +49,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
 
             let s = use_signal(|| v);
             scope.insert(field.to_string(), (s, payload.clone()));
-            layout.data = Some(Bind::Field {
+            layout.bind = Some(Bind::Field {
                 field: field.to_string(),
                 kind,
                 payload: None,
@@ -57,7 +57,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
             });
         }
         Some(Bind::Submit { .. }) => {
-            layout.data = Some(Bind::Submit {
+            layout.bind = Some(Bind::Submit {
                 submit: true,
                 signal: Some(confirm),
             });
@@ -96,7 +96,7 @@ pub fn Form(layout: Layout) -> Element {
         }
     });
 
-    let lc = layout.data.clone();
+    let lc = layout.bind.clone();
     if let Some(Bind::Event { event, .. }) = lc {
         let s = use_context::<Store>();
         let mut content = HashMap::new();
