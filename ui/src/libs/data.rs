@@ -203,14 +203,13 @@ impl Layout {
         }
     }
     pub fn cmp_id(&self, other: &Self) -> bool {
-        if let Some(id) = &self.id {
-            if let Some(oid) = &other.id {
-                if id == oid {
-                    return true;
-                }
-            }
-        }
-        false
+        let Some(id) = &self.id else {
+            return false;
+        };
+        let Some(oid) = &other.id else {
+            return false;
+        };
+        id == oid
     }
 
     pub fn render(&mut self, env: &Environment) {

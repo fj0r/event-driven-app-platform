@@ -78,15 +78,14 @@ async fn main() -> Result<()> {
                     let login = s.login.clone();
                     let logout = s.logout.clone();
                     drop(s);
-                    if let Some(a) = auth(&login, &q).await {
-                        let r = ws.on_upgrade(|socket| {
-                            handle_ws(socket, event_tx, state, settings, tmpls, a)
-                        });
-                        auth(&logout, &q).await;
-                        r
-                    } else {
-                        Response::new("UNAUTHORIZED".into())
-                    }
+                    let Some(a) = auth(&login, &q).await else {
+                        return Response::new("UNAUTHORIZED".into());
+                    };
+                    let r = ws.on_upgrade(|socket| {
+                        handle_ws(socket, event_tx, state, settings, tmpls, a)
+                    });
+                    auth(&logout, &q).await;
+                    r
                 },
             ),
         )
