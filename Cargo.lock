@@ -1912,8 +1912,10 @@ dependencies = [
  "axum",
  "figment",
  "futures",
+ "kafka",
  "libc",
  "listenfd",
+ "message",
  "minijinja",
  "notify",
  "rand 0.9.1",
@@ -2811,6 +2813,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "kafka"
+version = "0.1.0"
+dependencies = [
+ "message",
+ "rdkafka",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "time",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "keyboard-types"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3127,6 +3143,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "488016bfae457b036d996092f6cb448677611ce4449e970ceaf42695203f218a"
 dependencies = [
  "autocfg",
+]
+
+[[package]]
+name = "message"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "time",
+ "tokio",
 ]
 
 [[package]]

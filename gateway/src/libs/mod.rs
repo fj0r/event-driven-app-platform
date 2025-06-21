@@ -2,7 +2,6 @@ pub mod admin;
 pub mod auth;
 pub mod config;
 pub mod error;
-pub mod kafka;
 pub mod message;
 pub mod shared;
 pub mod template;

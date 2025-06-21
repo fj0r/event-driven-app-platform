@@ -1,5 +1,6 @@
-use super::config::{QueueEvent, QueuePush};
-use super::message::{Created, Event, MessageQueueEvent, MessageQueuePush};
+pub mod config;
+use config::{QueueEvent, QueuePush};
+use message::{Event, MessageQueueEvent, MessageQueuePush};
 use rdkafka::Timestamp;
 use rdkafka::client::ClientContext;
 use rdkafka::config::{ClientConfig, RDKafkaLogLevel};
@@ -9,18 +10,29 @@ use rdkafka::error::KafkaResult;
 use rdkafka::message::{Header, Message, OwnedHeaders};
 use rdkafka::producer::{FutureProducer, FutureRecord};
 use rdkafka::topic_partition_list::TopicPartitionList;
+use serde::Deserialize;
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 use std::fmt::Debug;
 use std::sync::Arc;
 use std::time::Duration;
 use time::OffsetDateTime;
+use time::serde::rfc3339;
 use tokio::sync::{
     Mutex,
     mpsc::{UnboundedReceiver, UnboundedSender, unbounded_channel},
 };
 use tokio::task::spawn;
 use tracing::{error, info, warn};
+
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
+pub struct Created(#[serde(with = "rfc3339")] pub OffsetDateTime);
+
+impl Default for Created {
+    fn default() -> Self {
+        Self(OffsetDateTime::now_utc())
+    }
+}
 
 impl From<Timestamp> for Created {
     fn from(value: Timestamp) -> Self {
@@ -32,7 +44,6 @@ impl From<Timestamp> for Created {
         Self(OffsetDateTime::from_unix_timestamp(0).unwrap())
     }
 }
-
 #[derive(Clone)]
 pub struct KafkaManagerEvent<T>
 where
@@ -114,7 +125,7 @@ where
 
 impl<T> MessageQueuePush for KafkaManagerPush<T>
 where
-    T: Debug + Clone + Send + Serialize + DeserializeOwned + Event + 'static,
+    T: Debug + Clone + Send + Serialize + DeserializeOwned + Event<Created> + 'static,
 {
     type Item = T;
 

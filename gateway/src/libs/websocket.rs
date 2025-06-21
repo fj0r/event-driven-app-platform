@@ -1,5 +1,4 @@
 use super::config::{HookVariant, Hooks, Login, Settings};
-use super::message::Event;
 use super::shared::{Client, Info, Session, StateChat};
 use super::template::Tmpls;
 use super::webhooks::{greet_post, webhook_post};
@@ -7,6 +6,8 @@ use anyhow::Result;
 use anyhow::{Context, Ok as Okk};
 use axum::extract::ws::WebSocket;
 use futures::{sink::SinkExt, stream::StreamExt};
+use kafka::Created;
+use message::Event;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, from_str, from_value};
 use std::fmt::Debug;
@@ -33,7 +34,7 @@ async fn handle_greet<T: Debug>(
     tmpls: Arc<Tmpls<'_>>,
 ) -> Result<String>
 where
-    T: Event + Serialize + From<(Session, Value)>,
+    T: Event<Created> + Serialize + From<(Session, Value)>,
 {
     if !asset.enable {
         return Ok("disabled".into());
@@ -59,7 +60,7 @@ pub async fn handle_ws<T>(
     tmpls: Arc<Tmpls<'static>>,
     (sid, info): (Session, Info),
 ) where
-    T: Event
+    T: Event<Created>
         + for<'a> Deserialize<'a>
         + Serialize
         + From<(Session, Value)>

@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = [ "chat", "gateway", "ui"]
+members = [ "chat", "gateway", "kafka", "message", "ui"]
 
 [profile]
 
