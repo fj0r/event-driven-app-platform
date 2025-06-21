@@ -3,6 +3,8 @@ use figment::{
     providers::{Env, Format, Toml},
 };
 use serde::Deserialize;
+use kafka::config::Queue;
+
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
@@ -15,32 +17,6 @@ pub struct Database {
     pub schema: Option<String>,
     pub user: String,
     pub passwd: String,
-}
-
-#[derive(Debug, Deserialize, Clone)]
-#[allow(unused)]
-pub struct QueuePush {
-    #[serde(rename = "type")]
-    pub kind: String,
-    pub broker: Vec<String>,
-    pub topic: Vec<String>,
-    pub group: Option<String>,
-}
-
-#[derive(Debug, Deserialize, Clone)]
-#[allow(unused)]
-pub struct QueueEvent {
-    #[serde(rename = "type")]
-    pub kind: String,
-    pub broker: Vec<String>,
-    pub topic: String,
-}
-
-#[derive(Debug, Deserialize, Clone)]
-#[allow(unused)]
-pub struct Queue {
-    pub event: QueueEvent,
-    pub push: QueuePush,
 }
 
 #[derive(Debug, Deserialize, Clone)]

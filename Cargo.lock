@@ -494,6 +494,7 @@ dependencies = [
  "axum",
  "figment",
  "futures",
+ "kafka",
  "minijinja",
  "serde",
  "serde_derive",

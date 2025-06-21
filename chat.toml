@@ -1,3 +1,6 @@
+[queue]
+enable = true
+
 [queue.event]
 type = 'kafka'
 broker = ['localhost:19092']
