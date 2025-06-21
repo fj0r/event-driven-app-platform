@@ -78,7 +78,7 @@ pub enum Login {
     }
 }
 
-pub const ASSETS_PATH: &'static str = "manifest";
+pub const ASSETS_PATH: &str = "manifest";
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]

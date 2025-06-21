@@ -33,7 +33,7 @@ pub fn Fold(layout: Layout, children: Element) -> Element {
     });
 
     let onclick = move |_event| {
-        let mut s = show.clone();
+        let mut s = show;
         s.set(!show());
     };
 

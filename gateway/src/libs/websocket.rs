@@ -28,7 +28,7 @@ impl<'a> AsyncIterator for GreetIter<'a> {
 }
 */
 
-async fn handle_greet<T: Debug>(
+async fn handle_greet<T>(
     asset: &Hooks,
     context: &Map<String, Value>,
     tmpls: Arc<Tmpls<'_>>,

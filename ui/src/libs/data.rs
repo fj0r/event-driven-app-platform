@@ -217,7 +217,7 @@ impl Layout {
             let n = &r.name;
             let cx = &r.data;
             let n = env
-                .get_template(&n)
+                .get_template(n)
                 .map_err(|e| e.to_string())
                 .and_then(|t| {
                     t.render(cx)
@@ -335,7 +335,7 @@ impl LayoutOp for Delete {
                         (Value::String(x), Value::Number(r)) => {
                             let l = x.len();
                             let s = r.as_u64().unwrap() as usize;
-                            let e = if s >= l { 0 } else { l - s };
+                            let e = if s >= l { 0 } else { l.saturating_sub(s) };
                             json!(x[..e])
                         }
                         (Value::Object(x), Value::Object(r)) => {

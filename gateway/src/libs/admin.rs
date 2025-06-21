@@ -58,7 +58,7 @@ async fn info(
         .session
         .get(&user.as_str().into())
         .map(|x| x.info.clone());
-    Json(u.unwrap_or_else(|| Map::new()))
+    Json(u.unwrap_or_else(Map::new))
 }
 
 struct Req<'a>(&'a Request);
