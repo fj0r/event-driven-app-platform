@@ -243,8 +243,8 @@ impl Layout {
         }
     }
 
-    pub fn merge(&mut self, vistor: &(impl LayoutOp + ?Sized), rhs: Self) {
-        vistor.visit(self, &rhs);
+    pub fn merge(&mut self, op: &(impl LayoutOp + ?Sized), rhs: Self) {
+        op.merge(self, &rhs);
         if let Some(rchildren) = rhs.children {
             if let Some(children) = &mut self.children {
                 let children = children
@@ -252,8 +252,7 @@ impl Layout {
                     .zip_longest(rchildren)
                     .map(|x| match x {
                         Both(l, r) => {
-                            // TODO: fillback
-                            l.merge(vistor, r);
+                            l.merge(op, r);
                             l.clone()
                         }
                         Left(l) => l.clone(),
@@ -272,12 +271,12 @@ impl Layout {
 pub struct Empty;
 
 pub trait LayoutOp {
-    fn visit(&self, lhs: &mut Layout, rhs: &Layout);
+    fn merge(&self, lhs: &mut Layout, rhs: &Layout);
 }
 
 pub struct Concat;
 impl LayoutOp for Concat {
-    fn visit(&self, lhs: &mut Layout, rhs: &Layout) {
+    fn merge(&self, lhs: &mut Layout, rhs: &Layout) {
         let data = match &mut lhs.data {
             Some(x) => {
                 if let Some(r) = &rhs.data {
@@ -318,7 +317,7 @@ impl LayoutOp for Concat {
 
 pub struct Delete;
 impl LayoutOp for Delete {
-    fn visit(&self, lhs: &mut Layout, rhs: &Layout) {
+    fn merge(&self, lhs: &mut Layout, rhs: &Layout) {
         let data = match &mut lhs.data {
             Some(x) => {
                 if let Some(r) = &rhs.data {
@@ -364,7 +363,7 @@ impl LayoutOp for Delete {
 
 pub struct Replace;
 impl LayoutOp for Replace {
-    fn visit(&self, lhs: &mut Layout, rhs: &Layout) {
+    fn merge(&self, lhs: &mut Layout, rhs: &Layout) {
         let data = match &lhs.data {
             Some(x) => {
                 if let Some(r) = &rhs.data {

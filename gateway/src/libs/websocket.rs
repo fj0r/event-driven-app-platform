@@ -195,6 +195,7 @@ pub async fn send_to_ws(
                 let mut s = shared.write().await;
                 for r in x.receiver {
                     if s.session.contains_key(&r) {
+                        // TODO: REMOVE
                         let mut is_login = false;
                         let e = x.message.event();
                         let l = s.settings.clone();
