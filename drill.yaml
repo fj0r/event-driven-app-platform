@@ -4,9 +4,9 @@ iterations: 20000
 rampup: 4
 
 plan:
-  #- name: Fetch users
-  #  request:
-  #    url: /admin/users
+  - name: Sessions
+    request:
+      url: /admin/sessions
 
   #- name: Echo
   #  request:
@@ -18,10 +18,10 @@ plan:
   #  request:
   #    url: /debug/health
 
-  - name: Inc
-    request:
-      headers:
-        Content-Type: 'application/json'
-      url: /debug/inc
-      method: POST
-      body: '{}'
+  #- name: Inc
+  #  request:
+  #    headers:
+  #      Content-Type: 'application/json'
+  #    url: /debug/inc
+  #    method: POST
+  #    body: '{}'
