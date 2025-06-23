@@ -19,7 +19,7 @@
     - [x] webhook
 - [x] auth/login
     - [x] webhook
-    - [x] event (replace session)
+    - [x] ~event (replace session)~
         - [x] ~update session_id after the message queue login event~
 
 ### ui:
@@ -35,6 +35,7 @@
     - [x] keyed list
     - [ ] auto scroll to bottom
         - [x] text scroll to self on data reception
+        - [x] The container scrolls automatically only when it is ~at~in the bottom.
     - [x] multiple type items
         - [x] item filter
 - [x] Logic for merging list unit(based on ID), used for AI's dynamic output

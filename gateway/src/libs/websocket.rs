@@ -1,4 +1,4 @@
-use super::config::{HookVariant, Hooks, Login, Settings};
+use super::config::{HookVariant, Hooks, Settings};
 use super::shared::{Client, Info, Session, StateChat};
 use super::template::Tmpls;
 use super::webhooks::{greet_post, webhook_post};
@@ -192,36 +192,11 @@ pub async fn send_to_ws(
 
         while let Some(x) = rx.recv().await {
             if !x.receiver.is_empty() {
-                let mut s = shared.write().await;
+                let s = shared.write().await;
                 for r in x.receiver {
                     if s.session.contains_key(&r) {
-                        // TODO: REMOVE
-                        let mut is_login = false;
-                        let e = x.message.event();
-                        let l = s.settings.clone();
-                        let l = l.read().await;
-                        if let Login::Event { event } = &l.login {
-                            if let Some(e) = e {
-                                if event == e {
-                                    if let Some(info) = x
-                                        .message
-                                        .content
-                                        .as_object()
-                                        .and_then(|x| x.get("data"))
-                                        .and_then(|x| {
-                                            from_value::<Map<String, Value>>(x.to_owned()).ok()
-                                        })
-                                    {
-                                        s.session.entry(r.clone()).and_modify(|x| x.info = info);
-                                    }
-                                    is_login = true;
-                                };
-                            }
-                        };
-                        if !is_login {
-                            let s = s.session.get(&r)?;
-                            let _ = s.send(x.message.clone());
-                        }
+                        let s = s.session.get(&r)?;
+                        let _ = s.send(x.message.clone());
                     }
                 }
             }

@@ -68,14 +68,8 @@ pub struct Webhook {
 pub type WebhookMap = HashMap<String, Webhook>;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(untagged)]
-pub enum Login {
-    Endpoint {
-        endpoint: String,
-    },
-    Event {
-        event: String,
-    }
+pub struct Login {
+    pub endpoint: String
 }
 
 pub const ASSETS_PATH: &str = "manifest";

@@ -99,11 +99,14 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
             let sl = store.list;
             let eid = id.clone();
             use_effect(move || {
+                // TODO: fine-grained
                 let _ = sl.read();
                 document::eval(&format!(
                     r#"
                 var e = document.getElementById("{eid}");
-                e.scrollTop = e.scrollHeight;
+                if (Math.abs(e.scrollHeight - e.offsetHeight - e.scrollTop) < e.offsetHeight) {{
+                    e.scrollTop = e.scrollHeight;
+                }}
             "#
                 ));
             });
