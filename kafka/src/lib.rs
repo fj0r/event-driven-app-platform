@@ -12,7 +12,6 @@ use rdkafka::producer::{FutureProducer, FutureRecord};
 use rdkafka::topic_partition_list::TopicPartitionList;
 use serde::Deserialize;
 use serde::Serialize;
-use serde::de::DeserializeOwned;
 use std::fmt::Debug;
 use std::sync::Arc;
 use std::time::Duration;
@@ -47,7 +46,7 @@ impl From<Timestamp> for Created {
 #[derive(Clone)]
 pub struct KafkaManagerEvent<T>
 where
-    T: Send + Serialize + DeserializeOwned,
+    T: Send + Serialize + for<'de>Deserialize<'de>,
 {
     tx: Option<UnboundedSender<T>>,
     producer: QueueEvent,
@@ -55,7 +54,7 @@ where
 
 impl<T> KafkaManagerEvent<T>
 where
-    T: Send + Serialize + DeserializeOwned + 'static,
+    T: Send + Serialize + for<'de>Deserialize<'de> + 'static,
 {
     pub fn new(producer: QueueEvent) -> Self {
         Self { tx: None, producer }
@@ -64,7 +63,7 @@ where
 
 impl<T> MessageQueueEvent for KafkaManagerEvent<T>
 where
-    T: Debug + Clone + Send + Serialize + DeserializeOwned + 'static,
+    T: Debug + Clone + Send + Serialize + for<'de>Deserialize<'de> + 'static,
 {
     type Item = T;
 
@@ -108,7 +107,7 @@ where
 #[derive(Clone)]
 pub struct KafkaManagerPush<T>
 where
-    T: Send + Serialize + DeserializeOwned,
+    T: Send + Serialize + for<'de>Deserialize<'de>,
 {
     rx: Option<Arc<Mutex<UnboundedReceiver<T>>>>,
     consumer: QueuePush,
@@ -116,7 +115,7 @@ where
 
 impl<T> KafkaManagerPush<T>
 where
-    T: Send + Serialize + DeserializeOwned + 'static,
+    T: Send + Serialize + for<'de>Deserialize<'de> + 'static,
 {
     pub fn new(consumer: QueuePush) -> Self {
         Self { rx: None, consumer }
@@ -125,7 +124,7 @@ where
 
 impl<T> MessageQueuePush for KafkaManagerPush<T>
 where
-    T: Debug + Clone + Send + Serialize + DeserializeOwned + Event<Created> + 'static,
+    T: Debug + Clone + Send + Serialize + for<'de>Deserialize<'de> + Event<Created> + 'static,
 {
     type Item = T;
 

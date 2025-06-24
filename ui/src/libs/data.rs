@@ -6,35 +6,38 @@ use itertools::{
 use minijinja::Environment;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Map, Value};
-use time::serde::rfc3339;
-use time::OffsetDateTime;
+use chrono::{DateTime, Utc};
+use schemars::JsonSchema;
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
-pub struct Created(#[serde(with = "rfc3339")] OffsetDateTime);
+
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, JsonSchema)]
+pub struct Created(
+    DateTime<Utc>
+);
 
 impl Default for Created {
     fn default() -> Self {
-        Self(OffsetDateTime::now_utc())
+        Self(Utc::now())
     }
 }
 
 type Session = String;
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, JsonSchema)]
 pub struct Message {
     pub sender: Session,
     pub created: Option<Created>,
     pub content: Content,
 }
 
-#[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default, JsonSchema)]
 pub struct Outflow {
     pub event: String,
     pub id: Option<String>,
     pub data: Value,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, JsonSchema)]
 #[serde(tag = "action")]
 pub enum Content {
     #[serde(rename = "create")]
@@ -54,13 +57,13 @@ pub enum Content {
     Empty,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, JsonSchema)]
 pub struct InfluxTmpl {
     pub name: String,
     pub data: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub enum Method {
     #[serde(rename = "replace")]
     Replace,
@@ -76,7 +79,7 @@ impl Default for Method {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default, JsonSchema)]
 pub struct Influx {
     pub event: String,
     pub data: Layout,
@@ -84,7 +87,7 @@ pub struct Influx {
     pub method: Method,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(untagged)]
 pub enum Bind {
     Event {
@@ -113,7 +116,7 @@ pub enum Bind {
     },
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default, JsonSchema)]
 pub struct Attrs {
     pub class: Option<String>,
     // for selector
@@ -123,7 +126,7 @@ pub struct Attrs {
     pub settings: Option<Settings>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(untagged)]
 pub enum Settings {
     Container(Container),
@@ -158,7 +161,7 @@ pub enum Settings {
     },
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub enum Container {
     #[allow(non_camel_case_types)]
     grid(Map<String, Value>),
@@ -171,7 +174,7 @@ pub struct Table {
     pub header: bool,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default, JsonSchema)]
 pub struct Render {
     pub name: String,
     pub data: Value,
@@ -181,7 +184,7 @@ fn kind_empty() -> String {
     "empty".to_string()
 }
 
-#[derive(Debug, Clone, PartialEq, Props, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Props, Serialize, Deserialize, Default, JsonSchema)]
 pub struct Layout {
     #[serde(rename = "type", default = "kind_empty")]
     pub kind: String,

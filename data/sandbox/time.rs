@@ -4,11 +4,13 @@
 //! serde_derive = "1.0.219"
 //! serde_json = "1.0.140"
 //! time = { version = "0.3.41", features = ["formatting", "serde", "parsing"] }
+//! chrono = { version = "0.4.41", features = ["serde"] }
 //! ```
 use serde::{Deserialize, Serialize};
 use time::OffsetDateTime;
 use time::serde::rfc3339;
 use time::UtcDateTime;
+use chrono::{DateTime, Utc};
 
 impl Default for MyData {
     fn default() -> Self {
@@ -43,7 +45,11 @@ struct X {
 
 fn main () -> Result<(), Box<dyn std::error::Error>> {
     let n = std::time::Instant::now();
-    println!("{:?}", n);
+    println!("Instant::now() => {:?}", n);
+    println!("Utc::now() => {:?}", Utc::now());
+    let o1n = OffsetDateTime::now_utc();
+    println!("OffsetDateTime::now_utc() => {:?}", &o1n);
+    println!("Y => {:?}", serde_json::to_string(&Y(o1n)).unwrap());
 
     let json_string = r#"{"my_date": "2023-11-08T12:34:56Z"}"#; // Example JSON string
     let data: MyData = serde_json::from_str(json_string).unwrap(); // Deserialize

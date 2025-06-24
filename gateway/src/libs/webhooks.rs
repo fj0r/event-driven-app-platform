@@ -1,13 +1,13 @@
 use super::config::{HookVariant, Webhook};
 use super::shared::{Info, Session};
 use reqwest::Error;
-use serde::{Serialize, de::DeserializeOwned};
+use serde::{Serialize, Deserialize};
 use serde_json::{Map, Value};
 use std::fmt::Debug;
 
 pub async fn webhook_post<T>(wh: &Webhook, msg: T) -> Result<T, Error>
 where
-    T: Debug + Serialize + DeserializeOwned,
+    T: Debug + Serialize + for<'de> Deserialize<'de>,
 {
     let client = reqwest::Client::new();
     let r = client.post(&wh.endpoint).json(&msg).send().await?;
