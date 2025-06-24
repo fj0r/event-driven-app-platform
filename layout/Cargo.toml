@@ -1,0 +1,17 @@
+[package]
+name = "layout"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+dioxus = "0.6.3"
+dioxus-logger = "0.6.2"
+itertools = "0.14.0"
+minijinja = { version = "2.10.2", features = ["loader"] }
+serde = "1.0.219"
+serde_json = "1.0.140"
+schemars = { version = "1.0.0", features = ["chrono04"] }
+
+[[bin]]
+name = "schema"
+path = "src/jsonschema.rs"

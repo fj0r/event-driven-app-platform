@@ -1,7 +1,7 @@
-use super::super::super::data::{Bind, Layout, Settings};
 use super::super::super::store::Store;
 use super::super::utils::merge_css_class;
 use dioxus::prelude::*;
+use layout::{Bind, Layout, Settings};
 use markdown::{to_html_with_options, Options};
 use std::sync::LazyLock;
 
@@ -38,15 +38,10 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
         "".to_string()
     };
 
-    static MDFMT: LazyLock<Vec<String>> = LazyLock::new(|| {
-        ["markdown", "md"]
-            .iter()
-            .map(|x| x.to_string())
-            .collect()
-    });
+    static MDFMT: LazyLock<Vec<String>> =
+        LazyLock::new(|| ["markdown", "md"].iter().map(|x| x.to_string()).collect());
 
-    if let Some(Settings::Text { format: a }) =
-        layout.read().clone().attrs.and_then(|x| x.settings)
+    if let Some(Settings::Text { format: a }) = layout.read().clone().attrs.and_then(|x| x.settings)
     {
         if (*MDFMT).contains(&a) {
             let v = v.clone();

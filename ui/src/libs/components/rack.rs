@@ -1,8 +1,8 @@
-use super::super::data::{Bind, Layout, Settings};
 use super::super::store::Store;
 use super::utils::merge_css_class;
 use super::{Dynamic, Frame};
 use dioxus::{prelude::*, CapturedError};
+use layout::{Bind, Layout, Settings};
 use std::collections::hash_map::HashMap;
 use std::str::FromStr;
 

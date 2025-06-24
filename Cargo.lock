@@ -2932,6 +2932,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "layout"
+version = "0.1.0"
+dependencies = [
+ "dioxus",
+ "dioxus-logger 0.6.2",
+ "itertools",
+ "minijinja",
+ "schemars",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "lazy-js-bundle"
 version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5942,9 +5955,9 @@ dependencies = [
  "gloo-net",
  "itertools",
  "js-sys",
+ "layout",
  "markdown",
  "minijinja",
- "schemars",
  "serde",
  "serde_json",
  "tracing-wasm",

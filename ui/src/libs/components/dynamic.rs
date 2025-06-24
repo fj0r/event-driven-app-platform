@@ -1,4 +1,4 @@
-use super::super::data::Layout;
+use layout::Layout;
 use super::chart::Chart;
 use super::container::*;
 use super::diagram::Diagram;

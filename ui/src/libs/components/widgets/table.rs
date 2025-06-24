@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use super::super::super::data::Layout;
+use layout::Layout;
 
 #[component]
 pub fn TABLE(layout: Layout, children: Element) -> Element {

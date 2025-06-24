@@ -5,7 +5,6 @@ use libs::components::*;
 use libs::store::{use_store, Store};
 use tracing_wasm::WASMLayerConfigBuilder;
 
-
 static STORE: GlobalSignal<Store> = Global::new(|| {
     let d = web_sys::window().unwrap().document().unwrap();
     let url = d

@@ -19,9 +19,9 @@ itertools = "0.14.0"
 minijinja = { version = "2.10.2", features = ["loader"] }
 markdown = "1.0.0"
 web-sys = "0.3.77"
-schemars = { version = "1.0.0", features = ["chrono04"] }
 serde = { version = "1.0.219", features = ["derive", "serde_derive"] }
 chrono = { version = "0.4.41", features = ["serde"] }
+layout = { path = "../layout"}
 
 [features]
 default = ["web"]
@@ -38,7 +38,3 @@ inherits = "dev"
 
 [profile.android-dev]
 inherits = "dev"
-
-[[bin]]
-name = "jsonschema"
-path = "src/jsonschema.rs"

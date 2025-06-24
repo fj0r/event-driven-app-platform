@@ -1,9 +1,10 @@
 use super::data::*;
-use super::data::{Content, Created, LayoutOp, Message};
+use super::data::{Content, Created, Message};
 use super::ws::{use_web_socket, WebSocketHandle};
 use anyhow::Result;
 use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;
+use layout::{Concat, Delete, Layout, LayoutOp, Replace};
 use minijinja::{AutoEscape, Environment};
 use serde_json::{to_string, Value};
 use std::collections::HashMap;

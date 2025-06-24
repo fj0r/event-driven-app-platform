@@ -1,5 +1,5 @@
-use super::super::super::data::{Bind, Layout, Settings};
 use dioxus::prelude::*;
+use layout::{Bind, Layout, Settings};
 use serde_json::{to_value, Value};
 
 #[component]
@@ -22,7 +22,11 @@ pub fn Button(layout: Layout) -> Element {
         })
         .unwrap_or(false);
 
-    if let Some(Bind::Submit { signal: Some(mut s), .. }) = layout.bind {
+    if let Some(Bind::Submit {
+        signal: Some(mut s),
+        ..
+    }) = layout.bind
+    {
         let v = s.read().as_bool().unwrap();
         let mut css = vec!["button", "shadow"];
         css.push(if !v { "accent" } else { "disabled" });

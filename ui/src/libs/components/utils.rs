@@ -1,4 +1,4 @@
-use super::super::data::Layout;
+use layout::Layout;
 
 pub fn merge_css_class<'a>(css: &'a mut Vec<&'a str>, layout: &'a Layout) -> &'a mut Vec<&'a str> {
     let mut v = ["box", "case", "rack", "text", "tab", "menu"].contains(&layout.kind.as_str());

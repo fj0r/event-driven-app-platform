@@ -1,7 +1,7 @@
-use super::super::data::{Layout, Settings};
 use super::utils::merge_css_class;
 use super::Frame;
 use dioxus::prelude::*;
+use layout::{Layout, Settings};
 
 #[component]
 pub fn Fold(layout: Layout, children: Element) -> Element {

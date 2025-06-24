@@ -1,5 +1,5 @@
-mod libs;
-use libs::data::Layout;
+mod lib;
+use lib::Layout;
 use schemars::schema_for;
 
 fn main() -> Result<(), &'static dyn std::error::Error> {

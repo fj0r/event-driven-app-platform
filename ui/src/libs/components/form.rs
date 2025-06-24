@@ -1,10 +1,10 @@
 use serde_json::{to_value, Value};
 use std::collections::HashMap;
 
-use super::super::data::{Bind, Layout, Settings};
 use super::super::store::Store;
 use super::{Dynamic, Frame};
 use dioxus::prelude::*;
+use layout::{Bind, Layout, Settings};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]

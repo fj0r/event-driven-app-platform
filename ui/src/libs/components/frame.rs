@@ -1,6 +1,6 @@
-use super::super::data::Layout;
 use super::Dynamic;
 use dioxus::prelude::*;
+use layout::Layout;
 
 #[component]
 pub fn Frame(layout: Layout) -> Element {

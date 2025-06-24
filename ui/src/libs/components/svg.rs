@@ -1,6 +1,6 @@
-use super::super::data::{Container as Ct, Layout, Settings};
 use super::utils::merge_css_class;
 use dioxus::prelude::*;
+use layout::{Container as Ct, Layout, Settings};
 
 #[component]
 pub fn Svg(layout: Layout, children: Element) -> Element {
