@@ -1,4 +1,5 @@
 pub mod config;
+use chrono::{DateTime, LocalResult, TimeZone, Utc};
 use config::{QueueEvent, QueuePush};
 use message::{Event, MessageQueueEvent, MessageQueuePush};
 use rdkafka::Timestamp;
@@ -15,8 +16,7 @@ use serde::Serialize;
 use std::fmt::Debug;
 use std::sync::Arc;
 use std::time::Duration;
-use time::OffsetDateTime;
-use time::serde::rfc3339;
+
 use tokio::sync::{
     Mutex,
     mpsc::{UnboundedReceiver, UnboundedSender, unbounded_channel},
@@ -25,28 +25,31 @@ use tokio::task::spawn;
 use tracing::{error, info, warn};
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
-pub struct Created(#[serde(with = "rfc3339")] pub OffsetDateTime);
+pub struct Created(pub DateTime<Utc>);
 
 impl Default for Created {
     fn default() -> Self {
-        Self(OffsetDateTime::now_utc())
+        Self(Utc::now())
     }
 }
 
 impl From<Timestamp> for Created {
     fn from(value: Timestamp) -> Self {
         if let Timestamp::CreateTime(ts) = value {
-            if let Ok(ts) = OffsetDateTime::from_unix_timestamp(ts / 1000) {
+            if let LocalResult::Single(ts) = Utc.timestamp_millis_opt(ts) {
                 return Self(ts);
             }
         }
-        Self(OffsetDateTime::from_unix_timestamp(0).unwrap())
+        match Utc.timestamp_millis_opt(0) {
+            LocalResult::Single(ts) => Self(ts),
+            _ => unreachable!(),
+        }
     }
 }
 #[derive(Clone)]
 pub struct KafkaManagerEvent<T>
 where
-    T: Send + Serialize + for<'de>Deserialize<'de>,
+    T: Send + Serialize + for<'de> Deserialize<'de>,
 {
     tx: Option<UnboundedSender<T>>,
     producer: QueueEvent,
@@ -54,7 +57,7 @@ where
 
 impl<T> KafkaManagerEvent<T>
 where
-    T: Send + Serialize + for<'de>Deserialize<'de> + 'static,
+    T: Send + Serialize + for<'de> Deserialize<'de> + 'static,
 {
     pub fn new(producer: QueueEvent) -> Self {
         Self { tx: None, producer }
@@ -63,7 +66,7 @@ where
 
 impl<T> MessageQueueEvent for KafkaManagerEvent<T>
 where
-    T: Debug + Clone + Send + Serialize + for<'de>Deserialize<'de> + 'static,
+    T: Debug + Clone + Send + Serialize + for<'de> Deserialize<'de> + 'static,
 {
     type Item = T;
 
@@ -107,7 +110,7 @@ where
 #[derive(Clone)]
 pub struct KafkaManagerPush<T>
 where
-    T: Send + Serialize + for<'de>Deserialize<'de>,
+    T: Send + Serialize + for<'de> Deserialize<'de>,
 {
     rx: Option<Arc<Mutex<UnboundedReceiver<T>>>>,
     consumer: QueuePush,
@@ -115,7 +118,7 @@ where
 
 impl<T> KafkaManagerPush<T>
 where
-    T: Send + Serialize + for<'de>Deserialize<'de> + 'static,
+    T: Send + Serialize + for<'de> Deserialize<'de> + 'static,
 {
     pub fn new(consumer: QueuePush) -> Self {
         Self { rx: None, consumer }
@@ -124,7 +127,7 @@ where
 
 impl<T> MessageQueuePush for KafkaManagerPush<T>
 where
-    T: Debug + Clone + Send + Serialize + for<'de>Deserialize<'de> + Event<Created> + 'static,
+    T: Debug + Clone + Send + Serialize + for<'de> Deserialize<'de> + Event<Created> + 'static,
 {
     type Item = T;
 

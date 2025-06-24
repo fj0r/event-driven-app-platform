@@ -12,3 +12,4 @@ time = "0.3.41"
 tokio = "1.45.1"
 tracing = "0.1.41"
 message = { path = "../message" }
+chrono = { version = "0.4.41", features = ["serde"] }

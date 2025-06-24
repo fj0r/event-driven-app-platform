@@ -2,8 +2,6 @@
 resolver = "3"
 members = [ "chat", "gateway", "kafka", "layout", "message", "ui"]
 
-[profile]
-
 [profile.wasm-dev]
 inherits = "dev"
 opt-level = 1

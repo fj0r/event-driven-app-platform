@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use time::OffsetDateTime;
 use time::serde::rfc3339;
 use time::UtcDateTime;
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Utc, TimeZone};
 
 impl Default for MyData {
     fn default() -> Self {
@@ -44,6 +44,19 @@ struct X {
 }
 
 fn main () -> Result<(), Box<dyn std::error::Error>> {
+
+    let ts : i64 = 1750759227964;
+    let ts1 = OffsetDateTime::from_unix_timestamp(ts / 1000);
+    println!("OffsetDateTime::from_unix_timestamp => {:?}", ts1);
+    let ts2 = Utc.timestamp_millis(ts);
+    println!("Utc.timestamp_millis => {:?}", ts2);
+    println!("Utc.timestamp_millis(0) => {:?}", Utc.timestamp_millis(0));
+
+    let timestamp_millis: i64 = 1678886400000;
+    // Attempt to convert the timestamp to DateTime<Utc>
+    println!("Utc.timestamp_millis_opt => {:?}", Utc.timestamp_millis_opt(timestamp_millis));
+
+
     let n = std::time::Instant::now();
     println!("Instant::now() => {:?}", n);
     println!("Utc::now() => {:?}", Utc::now());

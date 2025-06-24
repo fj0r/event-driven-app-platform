@@ -1,24 +1,24 @@
+mod libs;
+use anyhow::{Ok, Result};
 use axum::{
     Router,
     extract::{Query, State, ws::WebSocketUpgrade},
     http::Response,
     routing::get,
 };
-use libs::{message::Envelope, template::Tmpls};
-use serde_json::{Map, Value};
-use tower_http::services::ServeDir;
-use tracing::info;
-mod libs;
-use anyhow::{Ok, Result};
 use kafka::{KafkaManagerEvent, KafkaManagerPush};
 use libs::admin::*;
 use libs::auth::auth;
 use libs::config::{ASSETS_PATH, Config, Settings};
 use libs::shared::{Sender, StateChat};
 use libs::websocket::{handle_ws, send_to_ws};
+use libs::{message::Envelope, template::Tmpls};
 use message::{MessageQueueEvent, MessageQueuePush};
+use serde_json::{Map, Value};
 use std::sync::Arc;
 use tokio::sync::RwLock;
+use tower_http::services::ServeDir;
+use tracing::info;
 
 #[tokio::main]
 async fn main() -> Result<()> {
