@@ -402,6 +402,11 @@ export def clippy [dir] {
     cargo clippy
 }
 
+export def jsonschema [] {
+    cd layout
+    cargo run --bin schema
+}
+
 export def benchmark [] {
     drill -b drill.yaml -s
 }
