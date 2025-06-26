@@ -2,13 +2,13 @@ use figment::{
     Figment, Result,
     providers::{Env, Format, Toml},
 };
+use kafka::config::Queue;
 use notify::{Event, RecursiveMode, Result as ResultN, Watcher, recommended_watcher};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::Path;
 use std::sync::{Arc, mpsc::channel};
 use tokio::sync::Mutex;
-use kafka::config::Queue;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
@@ -69,10 +69,24 @@ pub type WebhookMap = HashMap<String, Webhook>;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Login {
-    pub endpoint: String
+    pub endpoint: String,
 }
 
 pub const ASSETS_PATH: &str = "manifest";
+
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
+pub enum LogFormat {
+    #[allow(non_camel_case_types)]
+    json,
+    #[default]
+    #[allow(non_camel_case_types)]
+    compact,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Log {
+    pub format: LogFormat,
+}
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
@@ -82,6 +96,7 @@ pub struct Settings {
     pub greet: HookList,
     pub login: Login,
     pub logout: Login,
+    pub trace: Log,
 }
 
 impl Settings {
