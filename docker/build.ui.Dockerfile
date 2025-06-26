@@ -2,12 +2,14 @@ ARG BASEIMAGE=rust
 FROM ${BASEIMAGE}
 
 WORKDIR /app
-COPY ui .
+COPY . .
 
 RUN set -eux \
   ; apt update \
   ; apt-get install -y --no-install-recommends ripgrep \
   ; cargo install dioxus-cli \
+  \
+  ; cd ui \
   ; cat index.html | rg --passthru 'data-host=".+"' -r '' > index.html \
   ; dx build --platform web --release \
   \
