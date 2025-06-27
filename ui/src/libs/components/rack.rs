@@ -1,7 +1,7 @@
 use super::super::store::Store;
 use super::utils::merge_css_class;
 use super::{Dynamic, Frame};
-use dioxus::{prelude::*, CapturedError};
+use dioxus::{CapturedError, prelude::*};
 use layout::{Bind, Layout, Settings};
 use std::collections::hash_map::HashMap;
 use std::str::FromStr;
@@ -16,15 +16,10 @@ impl From<Vec<Layout>> for ItemContainer {
         let mut default = None;
         let mut index = HashMap::new();
         for l in &data {
-            // TODO: if- and while-let-chainslet chains
-            if let Some(x) = l.attrs.as_ref().and_then(|x| {
-                if let Some(Settings::Item { selector }) = &x.settings {
-                    Some(selector)
-                } else {
-                    None
-                }
-            }) {
-                index.insert(x.to_owned(), l.clone());
+            if let Some(x) = &l.attrs
+                && let Some(Settings::Item { selector }) = &x.settings
+            {
+                index.insert(selector.to_owned(), l.clone());
             } else {
                 default = Some(l.clone());
             };
@@ -35,10 +30,11 @@ impl From<Vec<Layout>> for ItemContainer {
 
 impl ItemContainer {
     fn select(&self, child: &Layout) -> Option<Layout> {
-        if let Some(kind) = child.attrs.as_ref().and_then(|x| x.kind.as_ref()) {
-            if let Some(i) = self.index.get(kind) {
-                return Some(i).cloned();
-            }
+        if let Some(x) = &child.attrs
+            && let Some(kind) = &x.kind
+            && let Some(i) = self.index.get(kind)
+        {
+            return Some(i).cloned();
         }
         self.default.clone()
     }
@@ -95,23 +91,23 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
         }
     });
 
-    if let Some(Settings::Rack { scroll: x, .. }) = attrs.settings {
-        if x {
-            let sl = store.list;
-            let eid = id.clone();
-            use_effect(move || {
-                // TODO: fine-grained
-                let _ = sl.read();
-                document::eval(&format!(
-                    r#"
+    if let Some(Settings::Rack { scroll: x, .. }) = attrs.settings
+        && x
+    {
+        let sl = store.list;
+        let eid = id.clone();
+        use_effect(move || {
+            // TODO: fine-grained
+            let _ = sl.read();
+            document::eval(&format!(
+                r#"
                 var e = document.getElementById("{eid}");
                 if (Math.abs(e.scrollHeight - e.offsetHeight - e.scrollTop) < e.offsetHeight) {{
                     e.scrollTop = e.scrollHeight;
                 }}
             "#
-                ));
-            });
-        }
+            ));
+        });
     };
 
     rsx! {

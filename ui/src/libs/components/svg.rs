@@ -20,7 +20,9 @@ pub fn Group(layout: Layout, children: Element) -> Element {
     let css = merge_css_class(&mut css, &layout);
 
     let mut style = String::new();
-    if let Some(Settings::Svg { svg }) = layout.attrs.as_ref().and_then(|x| x.settings.as_ref()) {
+    if let Some(x) = &layout.attrs
+        && let Some(Settings::Svg { svg }) = &x.settings
+    {
         style = svg
             .iter()
             .map(|(k, v)| format!("{}: {};", k, v.as_str().unwrap()))
@@ -40,7 +42,9 @@ pub fn Group(layout: Layout, children: Element) -> Element {
 pub fn Path(layout: Layout, children: Element) -> Element {
     let mut css = vec!["path"];
     let css = merge_css_class(&mut css, &layout);
-    if let Some(d) = layout.data.as_ref().and_then(|x| x.as_str()) {
+    if let Some(x) = layout.data.as_ref()
+        && let Some(d) = x.as_str()
+    {
         rsx! {
             path {
                 class: css.join(" "),

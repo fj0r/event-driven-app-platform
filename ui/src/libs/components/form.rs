@@ -1,4 +1,4 @@
-use serde_json::{to_value, Value};
+use serde_json::{Value, to_value};
 use std::collections::HashMap;
 
 use super::super::store::Store;
@@ -74,7 +74,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
 #[component]
 pub fn Form(layout: Layout) -> Element {
     // TODO: instant
-    let instant = layout
+    let _instant = layout
         .attrs
         .clone()
         .and_then(|x| {
@@ -114,10 +114,10 @@ pub fn Form(layout: Layout) -> Element {
             let mut s = s.clone();
             let v = v.clone();
             async move {
-                if let Some(c) = confirm.read().as_bool() {
-                    if c {
-                        s.send(ev, None, v).await;
-                    }
+                if let Some(c) = confirm.read().as_bool()
+                    && c
+                {
+                    s.send(ev, None, v).await;
                 }
             }
         });

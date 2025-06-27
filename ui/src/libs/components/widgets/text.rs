@@ -2,7 +2,7 @@ use super::super::super::store::Store;
 use super::super::utils::merge_css_class;
 use dioxus::prelude::*;
 use layout::{Bind, Layout, Settings};
-use markdown::{to_html_with_options, Options};
+use markdown::{Options, to_html_with_options};
 use std::sync::LazyLock;
 
 #[component]
@@ -41,19 +41,19 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
     static MDFMT: LazyLock<Vec<String>> =
         LazyLock::new(|| ["markdown", "md"].iter().map(|x| x.to_string()).collect());
 
-    if let Some(Settings::Text { format: a }) = layout.read().clone().attrs.and_then(|x| x.settings)
+    if let Some(x) = layout.read().clone().attrs
+        && let Some(Settings::Text { format: a }) = x.settings
+        && (*MDFMT).contains(&a)
     {
-        if (*MDFMT).contains(&a) {
-            let v = v.clone();
-            if let Ok(md) = to_html_with_options(&v, &Options::gfm()) {
-                css.push("markdown");
-                return rsx! {
-                    div {
-                        class: css.join(" "),
-                        dangerous_inner_html: md
-                    }
-                };
-            }
+        let v = v.clone();
+        if let Ok(md) = to_html_with_options(&v, &Options::gfm()) {
+            css.push("markdown");
+            return rsx! {
+                div {
+                    class: css.join(" "),
+                    dangerous_inner_html: md
+                }
+            };
         }
     };
 

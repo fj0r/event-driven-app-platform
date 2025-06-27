@@ -7,7 +7,10 @@ use layout::Layout;
 #[component]
 pub fn Diagram(id: String, layout: Layout) -> Element {
     let eid = id.clone();
-    if let Some(val) = layout.data.and_then(|x| x.as_str().map(|y| y.to_string())) {
+    if let Some(x) = layout.data
+        && let Some(y) = x.as_str()
+    {
+        let val = y.to_string();
         use_effect(move || {
             let js = format!(
                 r#"
