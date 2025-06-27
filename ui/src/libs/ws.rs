@@ -32,12 +32,10 @@ pub fn use_web_socket(url: &str) -> Result<WebSocketHandle, JsError> {
     let (write, mut read) = ws.split();
 
     spawn(async move {
-        while let Some(next) = read.next().await {
-            if let Ok(m) = next {
-                match m {
-                    Message::Text(t) => message.set(t),
-                    Message::Bytes(b) => message_bytes.set(b),
-                }
+        while let Some(Ok(m)) = read.next().await {
+            match m {
+                Message::Text(t) => message.set(t),
+                Message::Bytes(b) => message_bytes.set(b),
             }
         }
     });

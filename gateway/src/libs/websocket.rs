@@ -137,32 +137,28 @@ pub async fn handle_ws<T>(
             let chat_msg: T = (sid.clone(), value).into();
 
             let mut is_webhook: bool = false;
-            if let Some(ev) = chat_msg.event() {
-                if webhooks.contains_key(ev) {
-                    if let Some(wh) = webhooks.get(ev) {
-                        if wh.enable {
-                            is_webhook = true;
-                            if let Ok(r) = webhook_post(wh, chat_msg.clone()).await {
-                                let _ = tx.send(r);
-                            } else {
-                                context.insert("event".into(), ev.into());
-                                let t = tmpls
-                                    .get_template("webhook_error.json")
-                                    .unwrap()
-                                    .render(&context)
-                                    .unwrap();
-                                let _ = tx.send(serde_json::from_str(&t)?);
-                            }
-                        }
-                    }
+            if let Some(ev) = chat_msg.event()
+                && webhooks.contains_key(ev)
+                && let Some(wh) = webhooks.get(ev)
+                && wh.enable
+            {
+                is_webhook = true;
+                if let Ok(r) = webhook_post(wh, chat_msg.clone()).await {
+                    let _ = tx.send(r);
+                } else {
+                    context.insert("event".into(), ev.into());
+                    let t = tmpls
+                        .get_template("webhook_error.json")
+                        .unwrap()
+                        .render(&context)
+                        .unwrap();
+                    let _ = tx.send(serde_json::from_str(&t)?);
                 }
             }
 
             // send to event MQ
-            if !is_webhook {
-                if let Some(ref m) = event_tx {
-                    let _ = m.send(chat_msg.clone());
-                }
+            if !is_webhook && let Some(ref m) = event_tx {
+                let _ = m.send(chat_msg.clone());
             }
 
             tracing::debug!("[ws] {:?}", &chat_msg);

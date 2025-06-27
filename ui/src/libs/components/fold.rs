@@ -8,7 +8,7 @@ pub fn Fold(layout: Layout, children: Element) -> Element {
     let mut css = vec!["g"];
     let css = merge_css_class(&mut css, &layout);
 
-    let Some((replace_header, float_body)) = layout.attrs.as_ref().map(|x| {
+    let Some((replace_header, _float_body)) = layout.attrs.as_ref().map(|x| {
         let x = if let Some(Settings::Fold {
             replace_header,
             float_body,

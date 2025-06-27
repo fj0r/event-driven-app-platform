@@ -29,11 +29,11 @@ async fn send(
         }
     } else {
         for r in payload.receiver {
-            if s.session.contains_key(&r) {
-                if let Some(x) = s.session.get(&r) {
-                    let _ = x.send(payload.message.clone());
-                    succ.push(r);
-                }
+            if s.session.contains_key(&r)
+                && let Some(x) = s.session.get(&r)
+            {
+                let _ = x.send(payload.message.clone());
+                succ.push(r);
             }
         }
     }
@@ -54,10 +54,7 @@ async fn info(
     State(state): State<StateChat<Sender>>,
 ) -> axum::Json<Map<String, Value>> {
     let s = state.read().await;
-    let u = s
-        .session
-        .get(&user.as_str().into())
-        .map(|x| x.info.clone());
+    let u = s.session.get(&user.as_str().into()).map(|x| x.info.clone());
     Json(u.unwrap_or_else(Map::new))
 }
 

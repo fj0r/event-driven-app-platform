@@ -1,9 +1,9 @@
 use super::shared::Session;
+use kafka::Created;
+use message::Event;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::fmt::Debug;
-use message::Event;
-use kafka::Created;
 
 #[derive(Clone, Debug, Deserialize, Serialize, Default)]
 pub struct Envelope {
@@ -39,11 +39,11 @@ impl From<(Session, Value)> for ChatMessage {
 }
 
 fn get_value_event(v: &Value) -> Option<&str> {
-    if v.is_object() {
-        if let Some(m) = v.as_object() {
-            let r = m.get("event").and_then(|x| x.as_str());
-            return r;
-        };
+    if v.is_object()
+        && let Some(m) = v.as_object()
+    {
+        let r = m.get("event").and_then(|x| x.as_str());
+        return r;
     };
     None
 }

@@ -16,6 +16,7 @@ impl From<Vec<Layout>> for ItemContainer {
         let mut default = None;
         let mut index = HashMap::new();
         for l in &data {
+            // TODO: if- and while-let-chainslet chains
             if let Some(x) = l.attrs.as_ref().and_then(|x| {
                 if let Some(Settings::Item { selector }) = &x.settings {
                     Some(selector)
