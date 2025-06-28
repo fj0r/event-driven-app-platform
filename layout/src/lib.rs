@@ -194,7 +194,7 @@ impl LayoutOp for Concat {
         let data = match &mut lhs.data {
             Some(x) => {
                 if let Some(r) = &rhs.data {
-                    let y = match (x, &r) {
+                    let y = match (x, r) {
                         (Value::Number(x), Value::Number(r)) => {
                             json!(x.as_f64().unwrap() + r.as_f64().unwrap())
                         }
@@ -235,7 +235,7 @@ impl LayoutOp for Delete {
         let data = match &mut lhs.data {
             Some(x) => {
                 if let Some(r) = &rhs.data {
-                    let y = match (x, &r) {
+                    let y = match (x, r) {
                         (Value::Number(x), Value::Number(r)) => {
                             json!(x.as_f64().unwrap() - r.as_f64().unwrap())
                         }
@@ -281,7 +281,7 @@ impl LayoutOp for Replace {
         let data = match &lhs.data {
             Some(x) => {
                 if let Some(r) = &rhs.data {
-                    let y = match (x, &r) {
+                    let y = match (x, r) {
                         (Value::Number(_x), Value::Number(r)) => {
                             json!(r.as_f64().unwrap())
                         }
