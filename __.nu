@@ -231,7 +231,12 @@ export def 'pg start' [
     }
 }
 
-export def 'pg up' [] {
+export def 'pg up' [--reset] {
+    if $reset {
+        const d = path self data/postgres/data/
+        print $"rm -rf ($d)"
+        sudo rm -rf $d
+    }
     let cfg = open $CHAT | get database
     dcr chat_db
     pg start
