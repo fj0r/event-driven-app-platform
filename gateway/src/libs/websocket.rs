@@ -74,8 +74,8 @@ pub async fn handle_ws<T>(
 
     let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<T>();
 
-    let mut s = state.write().await;
-    s.session.insert(
+    let mut s = state.session.write().await;
+    s.insert(
         sid.clone(),
         Client {
             sender: tx.clone(),
@@ -172,8 +172,8 @@ pub async fn handle_ws<T>(
     };
 
     tracing::info!("Connection closed for {}", &sid);
-    let mut s = state.write().await;
-    s.session.remove(&sid);
+    let mut s = state.session.write().await;
+    s.remove(&sid);
 }
 
 use super::message::{ChatMessage, Envelope};
@@ -188,10 +188,10 @@ pub async fn send_to_ws(
 
         while let Some(x) = rx.recv().await {
             if !x.receiver.is_empty() {
-                let s = shared.write().await;
+                let s = shared.session.write().await;
                 for r in x.receiver {
-                    if s.session.contains_key(&r) {
-                        let s = s.session.get(&r)?;
+                    if s.contains_key(&r) {
+                        let s = s.get(&r)?;
                         let _ = s.send(x.message.clone());
                     }
                 }

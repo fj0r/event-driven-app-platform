@@ -1,5 +1,6 @@
 use super::config::Settings;
 use super::message::ChatMessage;
+use axum::extract::FromRef;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use std::fmt::{Debug, Display};
@@ -91,35 +92,38 @@ impl<T> SessionManager<T> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct SharedState<T>(Arc<Mutex<Shared<T>>>);
-
-impl<T> SharedState<T> {
-    pub fn new(settings: Arc<RwLock<Settings>>) -> Self {
-        SharedState::<T>(Arc::new(Mutex::new(Shared::new(settings))))
-    }
-
-    pub async fn read(&self) -> MutexGuard<Shared<T>> {
-        self.0.lock().await
-    }
-
-    pub async fn write(&self) -> MutexGuard<Shared<T>> {
-        self.0.lock().await
-    }
-}
+pub type Arw<T> = Arc<RwLock<T>>;
 
 #[derive(Debug, Clone)]
 pub struct Shared<T> {
-    pub session: SessionManager<T>,
-    pub count: SessionCount,
-    pub settings: Arc<RwLock<Settings>>,
+    pub session: Arw<SessionManager<T>>,
+    pub count: Arw<SessionCount>,
+    pub settings: Arw<Settings>,
+}
+
+impl<T: Clone> FromRef<Shared<T>> for Arw<SessionManager<T>> {
+    fn from_ref(input: &Shared<T>) -> Self {
+        input.session.clone()
+    }
+}
+
+impl<T> FromRef<Shared<T>> for Arw<SessionCount> {
+    fn from_ref(input: &Shared<T>) -> Self {
+        input.count.clone()
+    }
+}
+
+impl<T> FromRef<Shared<T>> for Arw<Settings> {
+    fn from_ref(input: &Shared<T>) -> Self {
+        input.settings.clone()
+    }
 }
 
 impl<T> Shared<T> {
-    pub fn new(settings: Arc<RwLock<Settings>>) -> Self {
+    pub fn new(settings: Arw<Settings>) -> Self {
         Shared {
-            session: SessionManager::new(),
-            count: SessionCount::default(),
+            session: Arc::new(RwLock::new(SessionManager::new())),
+            count: Arc::new(RwLock::new(SessionCount::default())),
             settings,
         }
     }
@@ -142,4 +146,5 @@ impl<T> Deref for Client<T> {
 
 pub type Sender = UnboundedSender<ChatMessage>;
 
-pub type StateChat<T> = SharedState<Client<T>>;
+pub type Arwsc<T> = Arc<RwLock<SessionManager<Client<T>>>>;
+pub type StateChat<T> = Shared<Client<T>>;

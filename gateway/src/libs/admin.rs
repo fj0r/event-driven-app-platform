@@ -1,9 +1,10 @@
 use super::config::ASSETS_PATH;
+use super::config::Settings;
 use super::error::HttpResult;
 use super::{
     config::{HookList, Login, WebhookMap},
     message::Envelope,
-    shared::{Info, Sender, Session, StateChat},
+    shared::{Arw, Arwsc, Info, Sender, Session, SessionCount, StateChat},
 };
 use axum::{
     Router,
@@ -17,20 +18,20 @@ use serde::Serialize;
 use serde_json::{Map, Value, from_str};
 
 async fn send(
-    State(state): State<StateChat<Sender>>,
+    State(session): State<Arwsc<Sender>>,
     Json(payload): Json<Envelope>,
 ) -> HttpResult<(StatusCode, Json<Vec<Session>>)> {
     let mut succ: Vec<Session> = Vec::new();
-    let s = state.read().await;
+    let s = session.read().await;
     if payload.receiver.is_empty() {
-        for (n, c) in &s.session {
+        for (n, c) in &*s {
             let _ = c.send(payload.message.clone());
             succ.push(n.to_owned());
         }
     } else {
         for r in payload.receiver {
-            if s.session.contains_key(&r)
-                && let Some(x) = s.session.get(&r)
+            if s.contains_key(&r)
+                && let Some(x) = s.get(&r)
             {
                 let _ = x.send(payload.message.clone());
                 succ.push(r);
@@ -40,10 +41,10 @@ async fn send(
     Ok((StatusCode::OK, succ.into()))
 }
 
-async fn list(State(state): State<StateChat<Sender>>) -> axum::Json<Vec<Session>> {
-    let s = state.read().await;
+async fn list(State(session): State<Arwsc<Sender>>) -> axum::Json<Vec<Session>> {
+    let s = session.read().await;
     let mut r = Vec::new();
-    for (k, _v) in &s.session {
+    for (k, _v) in &*s {
         r.push(k.clone());
     }
     Json(r)
@@ -51,10 +52,10 @@ async fn list(State(state): State<StateChat<Sender>>) -> axum::Json<Vec<Session>
 
 async fn info(
     Path(user): Path<String>,
-    State(state): State<StateChat<Sender>>,
+    State(session): State<Arwsc<Sender>>,
 ) -> axum::Json<Map<String, Value>> {
-    let s = state.read().await;
-    let u = s.session.get(&user.as_str().into()).map(|x| x.info.clone());
+    let s = session.read().await;
+    let u = s.get(&user.as_str().into()).map(|x| x.info.clone());
     Json(u.unwrap_or_else(Map::new))
 }
 
@@ -117,24 +118,24 @@ async fn logout(
 }
 
 async fn inc(
-    State(state): State<StateChat<Sender>>,
+    State(count): State<Arw<SessionCount>>,
     Json(payload): Json<Map<String, Value>>,
 ) -> HttpResult<String> {
-    let mut s = state.write().await;
-    s.count += 1;
-    let count = s.count;
-    drop(s);
+    let mut count = count.write().await;
+    *count += 1;
+    let c = count.clone();
+    drop(count);
     if let Some(interval) = payload.get("interval").and_then(|x| x.as_u64()) {
         use tokio::time::{Duration, sleep};
         let _ = sleep(Duration::from_secs(interval)).await;
     };
-    Ok(count.to_string())
+    Ok(c.to_string())
 }
 
 async fn health(State(state): State<StateChat<Sender>>) -> HttpResult<Json<Value>> {
     let mut b = Map::new();
-    let count = state.read().await.count as u64;
-    b.insert("count".to_string(), count.into());
+    let count = state.count.read().await;
+    b.insert("count".to_string(), (*count as u64).into());
     Ok(axum::Json(Value::Object(b)))
 }
 
@@ -156,10 +157,9 @@ struct ConfigList {
 }
 
 async fn list_config(
-    State(state): State<StateChat<Sender>>,
+    State(settings): State<Arw<Settings>>,
 ) -> HttpResult<(StatusCode, Json<ConfigList>)> {
-    let s = state.read().await;
-    let s = s.settings.read().await.clone();
+    let s = settings.read().await.clone();
     Ok((
         StatusCode::OK,
         Json(ConfigList {
@@ -171,31 +171,28 @@ async fn list_config(
 }
 
 async fn update_login(
-    State(state): State<StateChat<Sender>>,
+    State(settings): State<Arw<Settings>>,
     Json(payload): Json<Login>,
 ) -> HttpResult<(StatusCode, Json<bool>)> {
-    let s = state.write().await;
-    let mut s = s.settings.write().await;
+    let mut s = settings.write().await;
     s.login = payload;
     Ok((StatusCode::OK, Json(true)))
 }
 
 async fn update_greet(
-    State(state): State<StateChat<Sender>>,
+    State(settings): State<Arw<Settings>>,
     Json(payload): Json<HookList>,
 ) -> HttpResult<(StatusCode, Json<bool>)> {
-    let s = state.write().await;
-    let mut s = s.settings.write().await;
+    let mut s = settings.write().await;
     s.greet = payload;
     Ok((StatusCode::OK, Json(true)))
 }
 
 async fn update_webhook(
-    State(state): State<StateChat<Sender>>,
+    State(settings): State<Arw<Settings>>,
     Json(payload): Json<WebhookMap>,
 ) -> HttpResult<(StatusCode, Json<bool>)> {
-    let s = state.write().await;
-    let mut s = s.settings.write().await;
+    let mut s = settings.write().await;
     s.webhooks = payload;
     Ok((StatusCode::OK, Json(true)))
 }

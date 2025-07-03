@@ -85,7 +85,7 @@ async fn main() -> Result<()> {
                 |ws: WebSocketUpgrade,
                  Query(q): Query<Map<String, Value>>,
                  State(state): State<StateChat<Sender>>| async move {
-                    let s = settings.read().await;
+                    let s = state.settings.read().await;
                     let login = s.login.clone();
                     let logout = s.logout.clone();
                     drop(s);
