@@ -22,6 +22,7 @@ tracing-subscriber = { version = "0.3.19", features = ["json", "env-filter"] }
 kafka = { path = "../kafka" }
 refinery = { version = "0.8.16", features = ["tokio-postgres"] }
 tokio-postgres = { version = "0.7.13", features = ["with-serde_json-1", "with-chrono-0_4"] }
+proc = { path = "../proc" }
 
 [[bin]]
 name = "chat"
