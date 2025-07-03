@@ -1,4 +1,6 @@
 mod libs;
+use std::sync::Arc;
+
 use anyhow::Result;
 use axum::{
     Router,
@@ -7,7 +9,9 @@ use axum::{
 };
 use libs::config::{Config, LogFormat};
 use libs::error::HttpResult;
+use libs::postgres::conn;
 use serde_json::Value;
+use tokio::sync::Mutex;
 use tracing::info;
 use tracing_subscriber::{
     EnvFilter, fmt::layer, prelude::__tracing_subscriber_SubscriberExt, registry,
@@ -33,7 +37,11 @@ async fn main() -> Result<()> {
     };
 
     dbg!(&cfg);
-    let app = Router::new().route("/health", get(health));
+    let mut client = conn(&cfg.database).await?;
+    let state = Arc::new(Mutex::new(client));
+    let app = Router::new()
+        .route("/health", get(health))
+        .with_state(state);
 
     let addr = "0.0.0.0:3003";
     let listener = tokio::net::TcpListener::bind(&addr).await?;
@@ -43,4 +51,3 @@ async fn main() -> Result<()> {
 
     Ok(())
 }
-
