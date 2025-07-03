@@ -4,6 +4,8 @@ use figment::{
 };
 use kafka::config::Queue;
 use serde::Deserialize;
+use crate::concat_fields;
+
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
@@ -16,6 +18,20 @@ pub struct Database {
     pub schema: Option<String>,
     pub user: String,
     pub passwd: String,
+}
+
+
+impl From<&Database> for String {
+    fn from(value: &Database) -> Self {
+        concat_fields!{
+            var value;
+            host;
+            port;
+            dbname = db;
+            user;
+            password = passwd;
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, Clone, Default)]
