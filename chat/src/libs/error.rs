@@ -16,4 +16,13 @@ impl IntoResponse for HttpError {
     }
 }
 
+impl<E> From<E> for HttpError
+where
+    E: Into<anyhow::Error>,
+{
+    fn from(err: E) -> Self {
+        Self(err.into())
+    }
+}
+
 pub type HttpResult<T> = Result<T, HttpError>;

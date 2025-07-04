@@ -1,5 +1,5 @@
 mod libs;
-use std::sync::Arc;
+use std::{error::Error, sync::Arc};
 
 use anyhow::Result;
 use axum::{
@@ -17,9 +17,10 @@ use tracing_subscriber::{
     EnvFilter, fmt::layer, prelude::__tracing_subscriber_SubscriberExt, registry,
     util::SubscriberInitExt,
 };
+use libs::admin::admin_router;
 
 async fn health() -> HttpResult<Json<Value>> {
-    Ok(axum::Json("ok".into()))
+    Ok(axum::Json("ok".into())).into()
 }
 
 #[tokio::main]
@@ -40,6 +41,7 @@ async fn main() -> Result<()> {
     let client = connx(&cfg.database).await?;
     let shared = Shared::new(client);
     let app = Router::new()
+        .nest("/admin", admin_router())
         .route("/health", get(health))
         .with_state(shared);
 
