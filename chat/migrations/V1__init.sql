@@ -1,6 +1,6 @@
 create table account (
     id serial primary key,
-    name text not null,
+    name text not null unique,
     password text,
     created timestamp default now(),
     updated timestamp default now(),

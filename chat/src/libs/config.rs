@@ -1,11 +1,10 @@
+use crate::concat_fields;
 use figment::{
     Figment, Result,
     providers::{Env, Format, Toml},
 };
 use kafka::config::Queue;
 use serde::Deserialize;
-use crate::concat_fields;
-
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
@@ -20,17 +19,22 @@ pub struct Database {
     pub passwd: String,
 }
 
-
-impl From<&Database> for String {
-    fn from(value: &Database) -> Self {
-        concat_fields!{
-            var value;
+impl Database {
+    pub fn to_st(self: &Database) -> String {
+        concat_fields! {
+            var self;
             host;
             port;
             dbname = db;
             user;
             password = passwd;
         }
+    }
+    pub fn to_url(self: &Database) -> String {
+        format!(
+            "postgres://{}:{}@{}:{}/{}",
+            self.user, self.passwd, self.host, self.port, self.db
+        )
     }
 }
 
