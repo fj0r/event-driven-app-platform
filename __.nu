@@ -424,6 +424,6 @@ export def jsonschema [] {
 }
 
 export def benchmark [] {
-    #oha http://localhost:3000/admin/sessions -c 50 -n 200000
-    drill -b drill.yaml -s
+    oha http://localhost:3000/admin/sessions -c 50 -n 200000
+    #drill -b drill.yaml -s
 }
