@@ -223,18 +223,20 @@ impl ConsumerContext for CustomContext {
 
 type LoggingConsumer = StreamConsumer<CustomContext>;
 
-pub async fn split_mq<T>(
+//I Envelope<T>
+//O ChatMessage<T>
+pub async fn split_mq<I, O>(
     queue: Queue,
 ) -> (
-    Option<UnboundedSender<ChatMessage<T>>>,
-    Option<Arc<Mutex<UnboundedReceiver<Envelope<T>>>>>,
+    Option<UnboundedSender<O>>,
+    Option<Arc<Mutex<UnboundedReceiver<I>>>>,
 )
 where
-    T: Send + Serialize + for<'a> Deserialize<'a> + Clone + Debug + 'static,
-    Envelope<T>: Event<Created>,
+    I: Event<Created> + Send + Serialize + for<'a> Deserialize<'a> + Clone + Debug + 'static,
+    O: Event<Created> + Send + Serialize + for<'a> Deserialize<'a> + Clone + Debug + 'static,
 {
     let income_rx = if queue.income.kind.as_str() == "kafka" {
-        let mut income_mq: KafkaManagerIncome<Envelope<T>> = KafkaManagerIncome::new(queue.income);
+        let mut income_mq: KafkaManagerIncome<I> = KafkaManagerIncome::new(queue.income);
         income_mq.run().await;
         income_mq.get_rx()
     } else {
@@ -242,7 +244,7 @@ where
     };
 
     let outgo_tx = if queue.outgo.kind.as_str() == "kafka" {
-        let mut outgo_mq: KafkaManagerOutgo<ChatMessage<T>> = KafkaManagerOutgo::new(queue.outgo);
+        let mut outgo_mq: KafkaManagerOutgo<O> = KafkaManagerOutgo::new(queue.outgo);
         outgo_mq.run().await;
         outgo_mq.get_tx()
     } else {

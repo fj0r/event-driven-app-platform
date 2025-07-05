@@ -1,23 +1,35 @@
-pub async fn logic(
-    mqrx: Arc<Mutex<UnboundedReceiver<Envelope<Created>>>>,
-    mqtx: Arc<Mutex<UnboundedSender<ParseCharError<Created>>>>,
-    shared: ,
-) {
-    let shared = shared.clone();
-    tokio::spawn(async move {
-        let mut rx = mqrx.lock().await;
+use super::shared::Shared;
+use anyhow::{Result, anyhow};
+pub use message::{ChatMessage, Envelope};
+use std::marker::Send;
+use std::sync::Arc;
+use tokio::sync::{
+    Mutex, RwLock,
+    mpsc::{UnboundedReceiver, UnboundedSender},
+};
 
+pub type Sender<T> = Option<UnboundedSender<Envelope<T>>>;
+pub type aShared = Arc<RwLock<Shared>>;
+
+pub async fn logic<T, F, Fut>(
+    tx: Sender<T>,
+    rx: Option<Arc<Mutex<UnboundedReceiver<ChatMessage<T>>>>>,
+    shared: Shared,
+    mut f: F,
+) -> Result<()>
+where
+    T: Send + 'static,
+    F: FnMut(ChatMessage<T>, aShared, Sender<T>) -> Fut + Clone + Send + 'static,
+    Fut: Future<Output = ()> + Send,
+{
+    let rx = rx.ok_or(anyhow!("no rx"))?;
+    let shared = Arc::new(RwLock::new(shared));
+
+    tokio::spawn(async move {
+        let mut rx = rx.lock().await;
         while let Some(x) = rx.recv().await {
-            if !x.receiver.is_empty() {
-                let s = shared.session.write().await;
-                for r in x.receiver {
-                    if s.contains_key(&r) {
-                        let s = s.get(&r)?;
-                        let _ = s.send(x.message.clone());
-                    }
-                }
-            }
+            f(x, shared.clone(), tx.clone()).await;
         }
-        Some(())
     });
+    Ok(())
 }

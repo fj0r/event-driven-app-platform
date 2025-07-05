@@ -2,29 +2,22 @@ mod libs;
 use std::{error::Error, sync::Arc};
 
 use anyhow::Result;
-use axum::{
-    Router,
-    extract::Json,
-    routing::{get, post},
-};
-use libs::{admin::admin_router, handler};
+use axum::{Router, extract::Json, routing::get};
+use libs::admin::admin_router;
 use libs::config::{Config, LogFormat};
 use libs::error::HttpResult;
 use libs::postgres::connx;
 use libs::shared::Shared;
 use serde_json::Value;
+use std::fmt::Debug;
 use tracing::info;
 use tracing_subscriber::{
     EnvFilter, fmt::layer, prelude::__tracing_subscriber_SubscriberExt, registry,
     util::SubscriberInitExt,
 };
 
-use kafka::{Created, KafkaManagerOutgo, KafkaManagerIncome};
-use message::{
-    Envelope,
-    queue::{MessageQueueOutgo, MessageQueueIncome},
-};
-use libs::logic::logic;
+use kafka::{Created, split_mq};
+use libs::logic::{ChatMessage, Envelope, Sender, aShared, logic};
 
 async fn health() -> HttpResult<Json<Value>> {
     Ok(axum::Json("ok".into())).into()
@@ -51,30 +44,16 @@ async fn main() -> Result<()> {
 
     let queue = cfg.queue;
 
-    let income_tx = if queue.enable {
-        let income_mq: KafkaManagerIncome<Envelope<Created>> = match queue.income.kind.as_str() {
-            "kafka" => {
-                let mut mq = KafkaManagerIncome::new(queue.income);
-                mq.run().await;
-                mq
-            }
-            _ => unreachable!(),
-        };
-        let Some(mqrx) = income_mq.get_rx() else {
-            unreachable!()
-        };
-
-        match queue.outgo.kind.as_str() {
-            "kafka" => {
-                let mut mq = KafkaManagerOutgo::new(queue.outgo);
-                mq.run().await;
-                mq.get_tx()
-            }
-            _ => unreachable!(),
-        }
+    let (outgo_tx, income_rx) = if queue.enable {
+        split_mq(queue).await
     } else {
-        None
+        (None, None)
     };
+
+    async fn x<T: Debug>(e: ChatMessage<T>, s: aShared, x: Sender<T>) {
+        println!("{:?}", e);
+    }
+    logic(outgo_tx, income_rx, shared.clone(), x);
 
     let app = Router::new()
         .nest("/admin", admin_router())
