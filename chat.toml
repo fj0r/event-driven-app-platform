@@ -4,16 +4,16 @@ format = 'compact'
 [queue]
 enable = true
 
-[queue.event]
+[queue.outgo]
 type = 'kafka'
 broker = ['localhost:19092']
-topic = 'event'
+topic = 'push'
 
-[queue.push]
+[queue.income]
 type = 'kafka'
 broker = ['localhost:19092']
-topic = ['push']
-group = 'ws'
+topic = ['event']
+group = 'chat'
 
 [database]
 type = 'postgres'

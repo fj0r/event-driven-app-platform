@@ -19,10 +19,10 @@ use tracing_subscriber::{
     util::SubscriberInitExt,
 };
 
-use kafka::{Created, KafkaManagerEvent, KafkaManagerPush};
+use kafka::{Created, KafkaManagerOutgo, KafkaManagerIncome};
 use message::{
     Envelope,
-    queue::{MessageQueueEvent, MessageQueuePush},
+    queue::{MessageQueueOutgo, MessageQueueIncome},
 };
 
 async fn health() -> HttpResult<Json<Value>> {
@@ -48,23 +48,23 @@ async fn main() -> Result<()> {
     let queue = cfg.queue;
 
     let event_tx = if queue.enable {
-        let push_mq: KafkaManagerPush<Envelope<Created>> = match queue.push.kind.as_str() {
+        let income_mq: KafkaManagerIncome<Envelope<Created>> = match queue.income.kind.as_str() {
             "kafka" => {
-                let mut push_mq = KafkaManagerPush::new(queue.push);
-                push_mq.run().await;
-                push_mq
+                let mut imcome_mq = KafkaManagerIncome::new(queue.income);
+                imcome_mq.run().await;
+                imcome_mq
             }
             _ => unreachable!(),
         };
-        let Some(mqrx) = push_mq.get_rx() else {
+        let Some(mqrx) = income_mq.get_rx() else {
             unreachable!()
         };
 
-        match queue.event.kind.as_str() {
+        match queue.outgo.kind.as_str() {
             "kafka" => {
-                let mut event_mq = KafkaManagerEvent::new(queue.event);
-                event_mq.run().await;
-                event_mq.get_tx()
+                let mut outgo_mq = KafkaManagerOutgo::new(queue.outgo);
+                outgo_mq.run().await;
+                outgo_mq.get_tx()
             }
             _ => unreachable!(),
         }

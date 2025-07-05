@@ -55,25 +55,25 @@ async fn main() -> Result<()> {
     let queue = settings.read().await.queue.clone();
 
     let event_tx = if queue.enable {
-        let push_mq: KafkaManagerIncome<Envelope<Created>> = match queue.income.kind.as_str() {
+        let income_mq: KafkaManagerIncome<Envelope<Created>> = match queue.income.kind.as_str() {
             "kafka" => {
-                let mut push_mq = KafkaManagerIncome::new(queue.income);
-                push_mq.run().await;
-                push_mq
+                let mut mq = KafkaManagerIncome::new(queue.income);
+                mq.run().await;
+                mq
             }
             _ => unreachable!(),
         };
         let shared = shared.clone();
-        let Some(mqrx) = push_mq.get_rx() else {
+        let Some(mqrx) = income_mq.get_rx() else {
             unreachable!()
         };
         send_to_ws(mqrx, &shared).await;
 
         match queue.outgo.kind.as_str() {
             "kafka" => {
-                let mut event_mq = KafkaManagerOutgo::new(queue.outgo);
-                event_mq.run().await;
-                event_mq.get_tx()
+                let mut outgo_mq = KafkaManagerOutgo::new(queue.outgo);
+                outgo_mq.run().await;
+                outgo_mq.get_tx()
             }
             _ => unreachable!(),
         }
