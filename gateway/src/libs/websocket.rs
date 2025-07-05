@@ -54,7 +54,7 @@ where
 
 pub async fn handle_ws<T>(
     socket: WebSocket,
-    event_tx: Option<UnboundedSender<T>>,
+    outgo_tx: Option<UnboundedSender<T>>,
     state: StateChat<UnboundedSender<T>>,
     settings: Arc<RwLock<Settings>>,
     tmpls: Arc<Tmpls<'static>>,
@@ -157,7 +157,7 @@ pub async fn handle_ws<T>(
             }
 
             // send to event MQ
-            if !is_webhook && let Some(ref m) = event_tx {
+            if !is_webhook && let Some(ref m) = outgo_tx {
                 let _ = m.send(chat_msg.clone());
             }
 
@@ -179,12 +179,12 @@ pub async fn handle_ws<T>(
 use message::{ChatMessage, Envelope};
 
 pub async fn send_to_ws(
-    mqrx: Arc<Mutex<UnboundedReceiver<Envelope<Created>>>>,
+    income_rx: Arc<Mutex<UnboundedReceiver<Envelope<Created>>>>,
     shared: &StateChat<UnboundedSender<ChatMessage<Created>>>,
 ) {
     let shared = shared.clone();
     tokio::spawn(async move {
-        let mut rx = mqrx.lock().await;
+        let mut rx = income_rx.lock().await;
 
         while let Some(x) = rx.recv().await {
             if !x.receiver.is_empty() {

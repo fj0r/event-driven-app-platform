@@ -54,7 +54,7 @@ async fn main() -> Result<()> {
 
     let queue = settings.read().await.queue.clone();
 
-    let event_tx = if queue.enable {
+    let outgo_tx = if queue.enable {
         let income_mq: KafkaManagerIncome<Envelope<Created>> = match queue.income.kind.as_str() {
             "kafka" => {
                 let mut mq = KafkaManagerIncome::new(queue.income);
@@ -64,10 +64,10 @@ async fn main() -> Result<()> {
             _ => unreachable!(),
         };
         let shared = shared.clone();
-        let Some(mqrx) = income_mq.get_rx() else {
+        let Some(income_rx) = income_mq.get_rx() else {
             unreachable!()
         };
-        send_to_ws(mqrx, &shared).await;
+        send_to_ws(income_rx, &shared).await;
 
         match queue.outgo.kind.as_str() {
             "kafka" => {
@@ -96,7 +96,7 @@ async fn main() -> Result<()> {
                         return Response::new("UNAUTHORIZED".into());
                     };
                     let r = ws.on_upgrade(|socket| {
-                        handle_ws(socket, event_tx, state, settings, tmpls, a)
+                        handle_ws(socket, outgo_tx, state, settings, tmpls, a)
                     });
                     auth(&logout, &q).await;
                     r

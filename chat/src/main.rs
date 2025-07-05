@@ -7,7 +7,7 @@ use axum::{
     extract::Json,
     routing::{get, post},
 };
-use libs::admin::admin_router;
+use libs::{admin::admin_router, handler};
 use libs::config::{Config, LogFormat};
 use libs::error::HttpResult;
 use libs::postgres::connx;
@@ -24,6 +24,7 @@ use message::{
     Envelope,
     queue::{MessageQueueOutgo, MessageQueueIncome},
 };
+use libs::logic::logic;
 
 async fn health() -> HttpResult<Json<Value>> {
     Ok(axum::Json("ok".into())).into()
@@ -45,14 +46,17 @@ async fn main() -> Result<()> {
 
     dbg!(&cfg);
 
+    let client = connx(&cfg.database).await?;
+    let shared = Shared::new(client);
+
     let queue = cfg.queue;
 
-    let event_tx = if queue.enable {
+    let income_tx = if queue.enable {
         let income_mq: KafkaManagerIncome<Envelope<Created>> = match queue.income.kind.as_str() {
             "kafka" => {
-                let mut imcome_mq = KafkaManagerIncome::new(queue.income);
-                imcome_mq.run().await;
-                imcome_mq
+                let mut mq = KafkaManagerIncome::new(queue.income);
+                mq.run().await;
+                mq
             }
             _ => unreachable!(),
         };
@@ -62,9 +66,9 @@ async fn main() -> Result<()> {
 
         match queue.outgo.kind.as_str() {
             "kafka" => {
-                let mut outgo_mq = KafkaManagerOutgo::new(queue.outgo);
-                outgo_mq.run().await;
-                outgo_mq.get_tx()
+                let mut mq = KafkaManagerOutgo::new(queue.outgo);
+                mq.run().await;
+                mq.get_tx()
             }
             _ => unreachable!(),
         }
@@ -72,8 +76,6 @@ async fn main() -> Result<()> {
         None
     };
 
-    let client = connx(&cfg.database).await?;
-    let shared = Shared::new(client);
     let app = Router::new()
         .nest("/admin", admin_router())
         .route("/health", get(health))
