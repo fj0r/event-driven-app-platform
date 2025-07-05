@@ -1,5 +1,5 @@
 use super::config::{HookVariant, Hooks, Settings};
-use super::shared::{Client, Info, Session, StateChat};
+use super::shared::{Client, Info, StateChat};
 use super::template::Tmpls;
 use super::webhooks::{greet_post, webhook_post};
 use anyhow::Result;
@@ -7,9 +7,9 @@ use anyhow::{Context, Ok as Okk};
 use axum::extract::ws::WebSocket;
 use futures::{sink::SinkExt, stream::StreamExt};
 use kafka::Created;
-use message::Event;
+use message::{Event, session::Session};
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value, from_str, from_value};
+use serde_json::{Map, Value, from_str};
 use std::fmt::Debug;
 use std::sync::Arc;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
@@ -179,8 +179,8 @@ pub async fn handle_ws<T>(
 use message::{ChatMessage, Envelope};
 
 pub async fn send_to_ws(
-    mqrx: Arc<Mutex<UnboundedReceiver<Envelope<Session, Created>>>>,
-    shared: &StateChat<UnboundedSender<ChatMessage<Session, Created>>>,
+    mqrx: Arc<Mutex<UnboundedReceiver<Envelope<Created>>>>,
+    shared: &StateChat<UnboundedSender<ChatMessage<Created>>>,
 ) {
     let shared = shared.clone();
     tokio::spawn(async move {

@@ -1,10 +1,12 @@
 use super::config::Settings;
-use kafka::Created;
-use message::ChatMessage;
 use axum::extract::FromRef;
-use serde::{Deserialize, Serialize};
+use kafka::Created;
+use message::{
+    ChatMessage,
+    session::{Session, SessionCount},
+};
 use serde_json::{Map, Value};
-use std::fmt::{Debug, Display};
+use std::fmt::Debug;
 use std::sync::Arc;
 use std::{
     collections::{
@@ -14,43 +16,6 @@ use std::{
     ops::Deref,
 };
 use tokio::sync::{RwLock, mpsc::UnboundedSender};
-
-pub type SessionCount = u128;
-pub type SessionId = String;
-
-#[derive(Clone, Debug, Deserialize, Serialize, Default, PartialEq, Eq, Hash)]
-pub struct Session(pub SessionId);
-
-impl From<&str> for Session {
-    fn from(value: &str) -> Self {
-        Self(value.to_string())
-    }
-}
-
-impl From<Session> for Value {
-    fn from(value: Session) -> Self {
-        value.0.into()
-    }
-}
-
-impl From<SessionCount> for Session {
-    fn from(value: SessionCount) -> Self {
-        Self(value.to_string())
-    }
-}
-
-impl Display for Session {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self.0)
-    }
-}
-
-impl Deref for Session {
-    type Target = SessionId;
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
 
 #[derive(Clone, Debug)]
 pub struct SessionManager<T> {
@@ -145,7 +110,7 @@ impl<T> Deref for Client<T> {
     }
 }
 
-pub type Sender = UnboundedSender<ChatMessage<Session, Created>>;
+pub type Sender = UnboundedSender<ChatMessage<Created>>;
 
 pub type Arwsc<T> = Arc<RwLock<SessionManager<Client<T>>>>;
 pub type StateChat<T> = Shared<Client<T>>;

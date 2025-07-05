@@ -7,6 +7,7 @@ use axum::{
     extract::Json,
     routing::{get, post},
 };
+use libs::admin::admin_router;
 use libs::config::{Config, LogFormat};
 use libs::error::HttpResult;
 use libs::postgres::connx;
@@ -17,11 +18,14 @@ use tracing_subscriber::{
     EnvFilter, fmt::layer, prelude::__tracing_subscriber_SubscriberExt, registry,
     util::SubscriberInitExt,
 };
-use libs::admin::admin_router;
+
+use kafka::{Created, KafkaManagerEvent, KafkaManagerPush};
+use message::Envelope;
 
 async fn health() -> HttpResult<Json<Value>> {
     Ok(axum::Json("ok".into())).into()
 }
+
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -38,6 +42,36 @@ async fn main() -> Result<()> {
     };
 
     dbg!(&cfg);
+
+    let queue = cfg.queue;
+
+    let event_tx = if queue.enable {
+        let push_mq: KafkaManagerPush<Envelope> = match queue.push.kind.as_str() {
+            "kafka" => {
+                let mut push_mq = KafkaManagerPush::new(queue.push);
+                push_mq.run().await;
+                push_mq
+            }
+            _ => unreachable!(),
+        };
+        let shared = shared.clone();
+        let Some(mqrx) = push_mq.get_rx() else {
+            unreachable!()
+        };
+        send_to_ws(mqrx, &shared).await;
+
+        match queue.event.kind.as_str() {
+            "kafka" => {
+                let mut event_mq = KafkaManagerEvent::new(queue.event);
+                event_mq.run().await;
+                event_mq.get_tx()
+            }
+            _ => unreachable!(),
+        }
+    } else {
+        None
+    };
+
     let client = connx(&cfg.database).await?;
     let shared = Shared::new(client);
     let app = Router::new()

@@ -1,7 +1,8 @@
 use super::config::{HookVariant, Webhook};
-use super::shared::{Info, Session};
+use super::shared::Info;
+use message::session::Session;
 use reqwest::Error;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use std::fmt::Debug;
 

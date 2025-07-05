@@ -3,10 +3,8 @@ use super::config::Settings;
 use super::error::HttpResult;
 use super::{
     config::{HookList, Login, WebhookMap},
-    shared::{Arw, Arwsc, Info, Sender, Session, SessionCount, StateChat},
+    shared::{Arw, Arwsc, Info, Sender, StateChat},
 };
-use message::Envelope;
-use kafka::Created;
 use axum::{
     Router,
     extract::{Json, Path, Request, State},
@@ -14,13 +12,18 @@ use axum::{
     response::{IntoResponse, Response},
     routing::{get, post},
 };
+use kafka::Created;
+use message::{
+    Envelope,
+    session::{Session, SessionCount},
+};
 use minijinja::Environment;
 use serde::Serialize;
 use serde_json::{Map, Value, from_str};
 
 async fn send(
     State(session): State<Arwsc<Sender>>,
-    Json(payload): Json<Envelope<Session, Created>>,
+    Json(payload): Json<Envelope<Created>>,
 ) -> HttpResult<(StatusCode, Json<Vec<Session>>)> {
     let mut succ: Vec<Session> = Vec::new();
     let s = session.read().await;

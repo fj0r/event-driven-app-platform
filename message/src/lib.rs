@@ -6,6 +6,8 @@ use tokio::sync::{
     Mutex,
     mpsc::{UnboundedReceiver, UnboundedSender},
 };
+pub mod session;
+use session::Session;
 
 pub trait Event<T> {
     fn event(&self) -> Option<&str>;
@@ -33,13 +35,13 @@ pub trait MessageQueuePush {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, Default)]
-pub struct Envelope<Session, Created> {
+pub struct Envelope<Created> {
     pub receiver: Vec<Session>,
     #[serde(flatten)]
-    pub message: ChatMessage<Session, Created>,
+    pub message: ChatMessage<Created>,
 }
 
-impl<Session, Created> Event<Created> for Envelope<Session, Created> {
+impl<Created> Event<Created> for Envelope<Created> {
     fn event(&self) -> Option<&str> {
         self.message.event()
     }
@@ -49,13 +51,13 @@ impl<Session, Created> Event<Created> for Envelope<Session, Created> {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, Default)]
-pub struct ChatMessage<Session, Created> {
+pub struct ChatMessage<Created> {
     pub sender: Session,
     pub created: Option<Created>,
     pub content: Value,
 }
 
-impl<Session, Created> From<(Session, Value)> for ChatMessage<Session, Created>
+impl<Created> From<(Session, Value)> for ChatMessage<Created>
 where
     Created: Default,
 {
@@ -78,7 +80,7 @@ fn get_value_event(v: &Value) -> Option<&str> {
     None
 }
 
-impl<Session, Created> Event<Created> for ChatMessage<Session, Created> {
+impl<Created> Event<Created> for ChatMessage<Created> {
     fn event(&self) -> Option<&str> {
         get_value_event(&self.content)
     }
