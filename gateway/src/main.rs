@@ -13,7 +13,10 @@ use libs::config::{ASSETS_PATH, Config, LogFormat, Settings};
 use libs::shared::{Sender, StateChat};
 use libs::template::Tmpls;
 use libs::websocket::{handle_ws, send_to_ws};
-use message::{Envelope, MessageQueueEvent, MessageQueuePush};
+use message::{
+    Envelope,
+    queue::{MessageQueueEvent, MessageQueuePush},
+};
 use serde_json::{Map, Value};
 use std::sync::Arc;
 use tokio::sync::RwLock;

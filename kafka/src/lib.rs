@@ -1,7 +1,10 @@
 pub mod config;
 use chrono::{DateTime, LocalResult, TimeZone, Utc};
 use config::{QueueEvent, QueuePush};
-use message::{Event, MessageQueueEvent, MessageQueuePush};
+use message::{
+    Event,
+    queue::{MessageQueueEvent, MessageQueuePush},
+};
 use rdkafka::Timestamp;
 use rdkafka::client::ClientContext;
 use rdkafka::config::{ClientConfig, RDKafkaLogLevel};

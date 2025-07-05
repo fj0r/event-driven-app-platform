@@ -1,37 +1,14 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::fmt::Debug;
-use std::sync::Arc;
-use tokio::sync::{
-    Mutex,
-    mpsc::{UnboundedReceiver, UnboundedSender},
-};
+
 pub mod session;
 use session::Session;
+pub mod queue;
 
 pub trait Event<T> {
     fn event(&self) -> Option<&str>;
     fn set_time(&mut self, time: T);
-}
-
-pub trait MessageQueueEvent {
-    type Item: Debug + Send + Serialize + serde::de::DeserializeOwned;
-
-    #[allow(unused)]
-    fn run(&mut self) -> impl std::future::Future<Output = ()> + Send;
-
-    #[allow(unused)]
-    fn get_tx(&self) -> Option<UnboundedSender<Self::Item>>;
-}
-
-pub trait MessageQueuePush {
-    type Item: Debug + Send + Serialize + serde::de::DeserializeOwned;
-
-    #[allow(unused)]
-    fn run(&mut self) -> impl std::future::Future<Output = ()> + Send;
-
-    #[allow(unused)]
-    fn get_rx(&self) -> Option<Arc<Mutex<UnboundedReceiver<Self::Item>>>>;
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, Default)]

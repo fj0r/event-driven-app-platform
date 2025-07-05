@@ -20,12 +20,11 @@ use tracing_subscriber::{
 };
 
 use kafka::{Created, KafkaManagerEvent, KafkaManagerPush};
-use message::Envelope;
+use message::{Envelope, MessageQueueEvent, MessageQueuePush};
 
 async fn health() -> HttpResult<Json<Value>> {
     Ok(axum::Json("ok".into())).into()
 }
-
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -46,7 +45,7 @@ async fn main() -> Result<()> {
     let queue = cfg.queue;
 
     let event_tx = if queue.enable {
-        let push_mq: KafkaManagerPush<Envelope> = match queue.push.kind.as_str() {
+        let push_mq: KafkaManagerPush<Envelope<Created>> = match queue.push.kind.as_str() {
             "kafka" => {
                 let mut push_mq = KafkaManagerPush::new(queue.push);
                 push_mq.run().await;
@@ -54,11 +53,9 @@ async fn main() -> Result<()> {
             }
             _ => unreachable!(),
         };
-        let shared = shared.clone();
         let Some(mqrx) = push_mq.get_rx() else {
             unreachable!()
         };
-        send_to_ws(mqrx, &shared).await;
 
         match queue.event.kind.as_str() {
             "kafka" => {
