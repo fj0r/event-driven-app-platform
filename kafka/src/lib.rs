@@ -1,9 +1,9 @@
 pub mod config;
 use chrono::{DateTime, LocalResult, TimeZone, Utc};
-use config::{QueueOutgo, QueueIncome};
+use config::{Queue, QueueIncome, QueueOutgo};
 use message::{
-    Event,
-    queue::{MessageQueueOutgo, MessageQueueIncome},
+    ChatMessage, Envelope, Event,
+    queue::{MessageQueueIncome, MessageQueueOutgo},
 };
 use rdkafka::Timestamp;
 use rdkafka::client::ClientContext;
@@ -14,8 +14,7 @@ use rdkafka::error::KafkaResult;
 use rdkafka::message::{Header, Message, OwnedHeaders};
 use rdkafka::producer::{FutureProducer, FutureRecord};
 use rdkafka::topic_partition_list::TopicPartitionList;
-use serde::Deserialize;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 use std::sync::Arc;
 use std::time::Duration;
@@ -223,3 +222,32 @@ impl ConsumerContext for CustomContext {
 }
 
 type LoggingConsumer = StreamConsumer<CustomContext>;
+
+pub async fn split_mq<T>(
+    queue: Queue,
+) -> (
+    Option<UnboundedSender<ChatMessage<T>>>,
+    Option<Arc<Mutex<UnboundedReceiver<Envelope<T>>>>>,
+)
+where
+    T: Send + Serialize + for<'a> Deserialize<'a> + Clone + Debug + 'static,
+    Envelope<T>: Event<Created>,
+{
+    let income_rx = if queue.income.kind.as_str() == "kafka" {
+        let mut income_mq: KafkaManagerIncome<Envelope<T>> = KafkaManagerIncome::new(queue.income);
+        income_mq.run().await;
+        income_mq.get_rx()
+    } else {
+        None
+    };
+
+    let outgo_tx = if queue.outgo.kind.as_str() == "kafka" {
+        let mut outgo_mq: KafkaManagerOutgo<ChatMessage<T>> = KafkaManagerOutgo::new(queue.outgo);
+        outgo_mq.run().await;
+        outgo_mq.get_tx()
+    } else {
+        None
+    };
+
+    (outgo_tx, income_rx)
+}

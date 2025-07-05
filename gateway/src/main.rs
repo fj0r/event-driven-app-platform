@@ -6,17 +6,13 @@ use axum::{
     http::Response,
     routing::get,
 };
-use kafka::{Created, KafkaManagerIncome, KafkaManagerOutgo};
+use kafka::split_mq;
 use libs::admin::*;
 use libs::auth::auth;
 use libs::config::{ASSETS_PATH, Config, LogFormat, Settings};
 use libs::shared::{Sender, StateChat};
 use libs::template::Tmpls;
 use libs::websocket::{handle_ws, send_to_ws};
-use message::{
-    Envelope,
-    queue::{MessageQueueIncome, MessageQueueOutgo},
-};
 use serde_json::{Map, Value};
 use std::sync::Arc;
 use tokio::sync::RwLock;
@@ -54,31 +50,13 @@ async fn main() -> Result<()> {
 
     let queue = settings.read().await.queue.clone();
 
-    let outgo_tx = if queue.enable {
-        let income_mq: KafkaManagerIncome<Envelope<Created>> = match queue.income.kind.as_str() {
-            "kafka" => {
-                let mut mq = KafkaManagerIncome::new(queue.income);
-                mq.run().await;
-                mq
-            }
-            _ => unreachable!(),
-        };
-        let shared = shared.clone();
-        let Some(income_rx) = income_mq.get_rx() else {
-            unreachable!()
-        };
-        send_to_ws(income_rx, &shared).await;
-
-        match queue.outgo.kind.as_str() {
-            "kafka" => {
-                let mut outgo_mq = KafkaManagerOutgo::new(queue.outgo);
-                outgo_mq.run().await;
-                outgo_mq.get_tx()
-            }
-            _ => unreachable!(),
-        }
+    let (outgo_tx, income_rx) = if queue.enable {
+        split_mq(queue).await
     } else {
-        None
+        (None, None)
+    };
+    if let Some(rx) = income_rx {
+        send_to_ws(rx, &shared).await;
     };
 
     let app = Router::new()

@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 use std::sync::Arc;
 use tokio::sync::{
@@ -7,7 +7,7 @@ use tokio::sync::{
 };
 
 pub trait MessageQueueOutgo {
-    type Item: Debug + Send + Serialize + serde::de::DeserializeOwned;
+    type Item: Debug + Send + Serialize + for<'a> Deserialize<'a>;
 
     #[allow(unused)]
     fn run(&mut self) -> impl std::future::Future<Output = ()> + Send;
@@ -17,7 +17,7 @@ pub trait MessageQueueOutgo {
 }
 
 pub trait MessageQueueIncome {
-    type Item: Debug + Send + Serialize + serde::de::DeserializeOwned;
+    type Item: Debug + Send + Serialize + for<'a> Deserialize<'a>;
 
     #[allow(unused)]
     fn run(&mut self) -> impl std::future::Future<Output = ()> + Send;

@@ -380,15 +380,15 @@ export def 'rpk up' [
     }
 
     let s = open $GW
-    rpk topic create $s.queue.event.topic
-    rpk topic create $s.queue.push.topic.0
+    rpk topic create $s.queue.outgo.topic
+    rpk topic create $s.queue.income.topic.0
 
     if $product {
-        rpk send --topic $s.queue.event.topic (open data/message/event.yaml)
+        rpk send --topic $s.queue.outgo.topic (open data/message/event.yaml)
     }
 
     if $consume {
-        rpk consume $s.queue.event.topic
+        rpk consume $s.queue.outgo.topic
     }
 }
 

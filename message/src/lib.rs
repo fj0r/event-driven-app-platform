@@ -6,42 +6,42 @@ pub mod session;
 use session::Session;
 pub mod queue;
 
-pub trait Event<T> {
+pub trait Event<C> {
     fn event(&self) -> Option<&str>;
-    fn set_time(&mut self, time: T);
+    fn set_time(&mut self, time: C);
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, Default)]
-pub struct Envelope<Created> {
+pub struct Envelope<C> {
     pub receiver: Vec<Session>,
     #[serde(flatten)]
-    pub message: ChatMessage<Created>,
+    pub message: ChatMessage<C>,
 }
 
-impl<Created> Event<Created> for Envelope<Created> {
+impl<C> Event<C> for Envelope<C> {
     fn event(&self) -> Option<&str> {
         self.message.event()
     }
-    fn set_time(&mut self, time: Created) {
+    fn set_time(&mut self, time: C) {
         self.message.set_time(time);
     }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, Default)]
-pub struct ChatMessage<Created> {
+pub struct ChatMessage<C> {
     pub sender: Session,
-    pub created: Option<Created>,
+    pub created: Option<C>,
     pub content: Value,
 }
 
-impl<Created> From<(Session, Value)> for ChatMessage<Created>
+impl<C> From<(Session, Value)> for ChatMessage<C>
 where
-    Created: Default,
+    C: Default,
 {
     fn from(value: (Session, Value)) -> Self {
         ChatMessage {
             sender: value.0,
-            created: Some(Created::default()),
+            created: Some(C::default()),
             content: value.1,
         }
     }
@@ -57,12 +57,12 @@ fn get_value_event(v: &Value) -> Option<&str> {
     None
 }
 
-impl<Created> Event<Created> for ChatMessage<Created> {
+impl<C> Event<C> for ChatMessage<C> {
     fn event(&self) -> Option<&str> {
         get_value_event(&self.content)
     }
 
-    fn set_time(&mut self, time: Created) {
+    fn set_time(&mut self, time: C) {
         self.created = Some(time);
     }
 }
