@@ -3,9 +3,10 @@ use super::config::Settings;
 use super::error::HttpResult;
 use super::{
     config::{HookList, Login, WebhookMap},
-    message::Envelope,
     shared::{Arw, Arwsc, Info, Sender, Session, SessionCount, StateChat},
 };
+use message::Envelope;
+use kafka::Created;
 use axum::{
     Router,
     extract::{Json, Path, Request, State},
@@ -19,7 +20,7 @@ use serde_json::{Map, Value, from_str};
 
 async fn send(
     State(session): State<Arwsc<Sender>>,
-    Json(payload): Json<Envelope>,
+    Json(payload): Json<Envelope<Session, Created>>,
 ) -> HttpResult<(StatusCode, Json<Vec<Session>>)> {
     let mut succ: Vec<Session> = Vec::new();
     let s = session.read().await;

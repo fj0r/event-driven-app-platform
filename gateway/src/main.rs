@@ -6,14 +6,14 @@ use axum::{
     http::Response,
     routing::get,
 };
-use kafka::{KafkaManagerEvent, KafkaManagerPush};
+use kafka::{Created, KafkaManagerEvent, KafkaManagerPush};
 use libs::admin::*;
 use libs::auth::auth;
 use libs::config::{ASSETS_PATH, Config, LogFormat, Settings};
-use libs::shared::{Sender, StateChat};
+use libs::shared::{Sender, Session, StateChat};
+use libs::template::Tmpls;
 use libs::websocket::{handle_ws, send_to_ws};
-use libs::{message::Envelope, template::Tmpls};
-use message::{MessageQueueEvent, MessageQueuePush};
+use message::{Envelope, MessageQueueEvent, MessageQueuePush};
 use serde_json::{Map, Value};
 use std::sync::Arc;
 use tokio::sync::RwLock;
@@ -52,7 +52,7 @@ async fn main() -> Result<()> {
     let queue = settings.read().await.queue.clone();
 
     let event_tx = if queue.enable {
-        let push_mq: KafkaManagerPush<Envelope> = match queue.push.kind.as_str() {
+        let push_mq: KafkaManagerPush<Envelope<Session, Created>> = match queue.push.kind.as_str() {
             "kafka" => {
                 let mut push_mq = KafkaManagerPush::new(queue.push);
                 push_mq.run().await;

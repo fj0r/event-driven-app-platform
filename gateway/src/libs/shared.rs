@@ -1,5 +1,6 @@
 use super::config::Settings;
-use super::message::ChatMessage;
+use kafka::Created;
+use message::ChatMessage;
 use axum::extract::FromRef;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
@@ -144,7 +145,7 @@ impl<T> Deref for Client<T> {
     }
 }
 
-pub type Sender = UnboundedSender<ChatMessage>;
+pub type Sender = UnboundedSender<ChatMessage<Session, Created>>;
 
 pub type Arwsc<T> = Arc<RwLock<SessionManager<Client<T>>>>;
 pub type StateChat<T> = Shared<Client<T>>;

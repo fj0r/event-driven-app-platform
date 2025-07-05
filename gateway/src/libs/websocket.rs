@@ -176,11 +176,11 @@ pub async fn handle_ws<T>(
     s.remove(&sid);
 }
 
-use super::message::{ChatMessage, Envelope};
+use message::{ChatMessage, Envelope};
 
 pub async fn send_to_ws(
-    mqrx: Arc<Mutex<UnboundedReceiver<Envelope>>>,
-    shared: &StateChat<UnboundedSender<ChatMessage>>,
+    mqrx: Arc<Mutex<UnboundedReceiver<Envelope<Session, Created>>>>,
+    shared: &StateChat<UnboundedSender<ChatMessage<Session, Created>>>,
 ) {
     let shared = shared.clone();
     tokio::spawn(async move {
