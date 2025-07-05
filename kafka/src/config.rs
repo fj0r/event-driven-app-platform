@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
-pub struct QueuePush {
+pub struct QueueIncome {
     #[serde(rename = "type")]
     pub kind: String,
     pub broker: Vec<String>,
@@ -12,7 +12,7 @@ pub struct QueuePush {
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
-pub struct QueueEvent {
+pub struct QueueOutgo {
     #[serde(rename = "type")]
     pub kind: String,
     pub broker: Vec<String>,
@@ -23,6 +23,6 @@ pub struct QueueEvent {
 #[allow(unused)]
 pub struct Queue {
     pub enable: bool,
-    pub event: QueueEvent,
-    pub push: QueuePush,
+    pub outgo: QueueOutgo,
+    pub income: QueueIncome,
 }

@@ -1,9 +1,9 @@
 pub mod config;
 use chrono::{DateTime, LocalResult, TimeZone, Utc};
-use config::{QueueEvent, QueuePush};
+use config::{QueueOutgo, QueueIncome};
 use message::{
     Event,
-    queue::{MessageQueueEvent, MessageQueuePush},
+    queue::{MessageQueueOutgo, MessageQueueIncome},
 };
 use rdkafka::Timestamp;
 use rdkafka::client::ClientContext;
@@ -50,24 +50,24 @@ impl From<Timestamp> for Created {
     }
 }
 #[derive(Clone)]
-pub struct KafkaManagerEvent<T>
+pub struct KafkaManagerOutgo<T>
 where
     T: Send + Serialize + for<'de> Deserialize<'de>,
 {
     tx: Option<UnboundedSender<T>>,
-    producer: QueueEvent,
+    producer: QueueOutgo,
 }
 
-impl<T> KafkaManagerEvent<T>
+impl<T> KafkaManagerOutgo<T>
 where
     T: Send + Serialize + for<'de> Deserialize<'de> + 'static,
 {
-    pub fn new(producer: QueueEvent) -> Self {
+    pub fn new(producer: QueueOutgo) -> Self {
         Self { tx: None, producer }
     }
 }
 
-impl<T> MessageQueueEvent for KafkaManagerEvent<T>
+impl<T> MessageQueueOutgo for KafkaManagerOutgo<T>
 where
     T: Debug + Clone + Send + Serialize + for<'de> Deserialize<'de> + 'static,
 {
@@ -111,24 +111,24 @@ where
 }
 
 #[derive(Clone)]
-pub struct KafkaManagerPush<T>
+pub struct KafkaManagerIncome<T>
 where
     T: Send + Serialize + for<'de> Deserialize<'de>,
 {
     rx: Option<Arc<Mutex<UnboundedReceiver<T>>>>,
-    consumer: QueuePush,
+    consumer: QueueIncome,
 }
 
-impl<T> KafkaManagerPush<T>
+impl<T> KafkaManagerIncome<T>
 where
     T: Send + Serialize + for<'de> Deserialize<'de> + 'static,
 {
-    pub fn new(consumer: QueuePush) -> Self {
+    pub fn new(consumer: QueueIncome) -> Self {
         Self { rx: None, consumer }
     }
 }
 
-impl<T> MessageQueuePush for KafkaManagerPush<T>
+impl<T> MessageQueueIncome for KafkaManagerIncome<T>
 where
     T: Debug + Clone + Send + Serialize + for<'de> Deserialize<'de> + Event<Created> + 'static,
 {

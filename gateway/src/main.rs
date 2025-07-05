@@ -6,7 +6,7 @@ use axum::{
     http::Response,
     routing::get,
 };
-use kafka::{Created, KafkaManagerEvent, KafkaManagerPush};
+use kafka::{Created, KafkaManagerIncome, KafkaManagerOutgo};
 use libs::admin::*;
 use libs::auth::auth;
 use libs::config::{ASSETS_PATH, Config, LogFormat, Settings};
@@ -15,7 +15,7 @@ use libs::template::Tmpls;
 use libs::websocket::{handle_ws, send_to_ws};
 use message::{
     Envelope,
-    queue::{MessageQueueEvent, MessageQueuePush},
+    queue::{MessageQueueIncome, MessageQueueOutgo},
 };
 use serde_json::{Map, Value};
 use std::sync::Arc;
@@ -55,9 +55,9 @@ async fn main() -> Result<()> {
     let queue = settings.read().await.queue.clone();
 
     let event_tx = if queue.enable {
-        let push_mq: KafkaManagerPush<Envelope<Created>> = match queue.push.kind.as_str() {
+        let push_mq: KafkaManagerIncome<Envelope<Created>> = match queue.income.kind.as_str() {
             "kafka" => {
-                let mut push_mq = KafkaManagerPush::new(queue.push);
+                let mut push_mq = KafkaManagerIncome::new(queue.income);
                 push_mq.run().await;
                 push_mq
             }
@@ -69,9 +69,9 @@ async fn main() -> Result<()> {
         };
         send_to_ws(mqrx, &shared).await;
 
-        match queue.event.kind.as_str() {
+        match queue.outgo.kind.as_str() {
             "kafka" => {
-                let mut event_mq = KafkaManagerEvent::new(queue.event);
+                let mut event_mq = KafkaManagerOutgo::new(queue.outgo);
                 event_mq.run().await;
                 event_mq.get_tx()
             }

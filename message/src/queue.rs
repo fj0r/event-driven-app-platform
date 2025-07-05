@@ -6,7 +6,7 @@ use tokio::sync::{
     mpsc::{UnboundedReceiver, UnboundedSender},
 };
 
-pub trait MessageQueueEvent {
+pub trait MessageQueueOutgo {
     type Item: Debug + Send + Serialize + serde::de::DeserializeOwned;
 
     #[allow(unused)]
@@ -16,7 +16,7 @@ pub trait MessageQueueEvent {
     fn get_tx(&self) -> Option<UnboundedSender<Self::Item>>;
 }
 
-pub trait MessageQueuePush {
+pub trait MessageQueueIncome {
     type Item: Debug + Send + Serialize + serde::de::DeserializeOwned;
 
     #[allow(unused)]

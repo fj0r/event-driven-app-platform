@@ -20,7 +20,10 @@ use tracing_subscriber::{
 };
 
 use kafka::{Created, KafkaManagerEvent, KafkaManagerPush};
-use message::{Envelope, MessageQueueEvent, MessageQueuePush};
+use message::{
+    Envelope,
+    queue::{MessageQueueEvent, MessageQueuePush},
+};
 
 async fn health() -> HttpResult<Json<Value>> {
     Ok(axum::Json("ok".into())).into()
