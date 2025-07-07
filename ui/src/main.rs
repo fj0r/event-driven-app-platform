@@ -2,7 +2,7 @@ mod libs;
 use dioxus::prelude::*;
 use dioxus_logger::tracing;
 use libs::components::*;
-use libs::store::{use_store, Store};
+use libs::store::{Store, use_store};
 use tracing_wasm::WASMLayerConfigBuilder;
 
 static STORE: GlobalSignal<Store> = Global::new(|| {

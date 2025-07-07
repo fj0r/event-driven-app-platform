@@ -18,6 +18,7 @@
 //!     }
 
 use colored::Colorize;
+use serde_json::Value;
 use std::borrow::Cow;
 use std::env;
 use std::ffi::OsStr;
@@ -26,7 +27,6 @@ use std::fs;
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::process;
-use serde_json::Value;
 
 enum Error {
     IncorrectUsage,
@@ -76,7 +76,6 @@ fn try_main() -> Result<(), Error> {
             source_code: code,
         }
     })?;
-
 
     println!("{:#?}", syntax);
 

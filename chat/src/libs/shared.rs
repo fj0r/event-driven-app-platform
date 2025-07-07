@@ -1,7 +1,7 @@
 use axum::extract::FromRef;
+use sqlx::{Pool, Postgres};
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use sqlx::{Pool, Postgres};
 
 pub type Pg = Arc<RwLock<Pool<Postgres>>>;
 

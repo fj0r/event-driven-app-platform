@@ -2,9 +2,9 @@ use super::error::HttpResult;
 use super::shared::{Pg, Shared};
 use axum::{Json, Router, extract::State, routing::get};
 use futures::TryStreamExt;
+use serde_json::{Value, json};
 use sqlx::{Row, query};
 use std::ops::Deref;
-use serde_json::{Value, json};
 
 async fn users(State(db): State<Pg>) -> HttpResult<Json<Vec<Value>>> {
     let db = db.read().await;

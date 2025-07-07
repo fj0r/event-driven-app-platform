@@ -8,7 +8,5 @@ mod test {
 
         println!("{:?}", A);
         assert!(true);
-
     }
-
 }

@@ -2,7 +2,7 @@ use super::super::super::store::Store;
 use super::super::utils::merge_css_class;
 use dioxus::prelude::*;
 use layout::{Bind, Layout};
-use serde_json::{to_value, Value};
+use serde_json::{Value, to_value};
 use std::ops::Deref;
 use std::rc::Rc;
 

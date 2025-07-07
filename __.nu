@@ -427,3 +427,11 @@ export def benchmark [] {
     oha http://localhost:3000/admin/sessions -c 50 -n 200000
     #drill -b drill.yaml -s
 }
+
+
+export def git-hooks [act ctx] {
+    if $act == 'pre-commit' and $ctx.branch == 'main' {
+        cargo fmt
+        git add .
+    }
+}

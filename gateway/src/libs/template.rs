@@ -1,11 +1,11 @@
+use anyhow::{Ok, Result};
+use minijinja::Environment;
 use std::ops::Deref;
 use std::path::Path;
-use minijinja::Environment;
-use anyhow::{Result, Ok};
 
 #[derive(Debug)]
 pub struct Tmpls<'s> {
-    pub env: Environment<'s>
+    pub env: Environment<'s>,
 }
 
 impl<'s> Tmpls<'s> {
@@ -14,7 +14,11 @@ impl<'s> Tmpls<'s> {
         let entries = std::fs::read_dir(path.as_ref())?;
         for entry in entries {
             let entry = entry?;
-            let name = entry.file_name().to_str().expect("Invalid file name").to_owned();
+            let name = entry
+                .file_name()
+                .to_str()
+                .expect("Invalid file name")
+                .to_owned();
             let path = entry.path();
             let content = std::fs::read_to_string(&path)?;
             env.add_template_owned(name, content)?;
@@ -29,4 +33,3 @@ impl<'s> Deref for Tmpls<'s> {
         &self.env
     }
 }
-

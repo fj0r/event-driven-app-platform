@@ -1,4 +1,3 @@
-use layout::Layout;
 use super::chart::Chart;
 use super::container::*;
 use super::diagram::Diagram;
@@ -8,6 +7,7 @@ use super::rack::Rack;
 use super::svg::*;
 use super::widgets::*;
 use dioxus::prelude::*;
+use layout::Layout;
 
 use std::sync::{LazyLock, Mutex};
 static RACK_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));

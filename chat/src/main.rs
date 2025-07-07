@@ -1,5 +1,4 @@
 mod libs;
-use std::{error::Error, sync::Arc};
 
 use anyhow::Result;
 use axum::{Router, extract::Json, routing::get};
@@ -16,7 +15,7 @@ use tracing_subscriber::{
     util::SubscriberInitExt,
 };
 
-use kafka::{Created, split_mq};
+use kafka::split_mq;
 use libs::logic::{ChatMessage, Envelope, Sender, aShared, logic};
 
 async fn is_ready() -> HttpResult<Json<Value>> {

@@ -1,8 +1,8 @@
+use anyhow::Result;
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
-use anyhow::Result;
 
 pub struct HttpError(anyhow::Error);
 

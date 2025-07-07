@@ -7,8 +7,8 @@ use dioxus::prelude::*;
 use futures::stream::SplitSink;
 use futures::{SinkExt, StreamExt};
 use gloo_net::websocket;
-use gloo_net::websocket::futures::WebSocket;
 use gloo_net::websocket::WebSocketError;
+use gloo_net::websocket::futures::WebSocket;
 use js_sys::wasm_bindgen::JsError;
 
 pub use gloo_net::websocket::Message;

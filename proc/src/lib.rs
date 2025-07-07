@@ -1,6 +1,6 @@
 use proc_macro::TokenStream;
-use syn::{parse_macro_input, DeriveInput};
 use quote::quote;
+use syn::{DeriveInput, parse_macro_input};
 
 #[proc_macro_derive(Hello)]
 pub fn derive(input: TokenStream) -> TokenStream {
@@ -13,5 +13,6 @@ pub fn derive(input: TokenStream) -> TokenStream {
                 format!("hello from {}", #name)
             }
         }
-    }.into()
+    }
+    .into()
 }

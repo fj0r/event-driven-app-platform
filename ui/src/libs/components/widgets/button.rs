@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 use layout::{Bind, Layout, Settings};
-use serde_json::{to_value, Value};
+use serde_json::{Value, to_value};
 
 #[component]
 pub fn Button(layout: Layout) -> Element {
