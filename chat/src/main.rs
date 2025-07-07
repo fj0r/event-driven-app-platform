@@ -19,7 +19,7 @@ use tracing_subscriber::{
 use kafka::{Created, split_mq};
 use libs::logic::{ChatMessage, Envelope, Sender, aShared, logic};
 
-async fn health() -> HttpResult<Json<Value>> {
+async fn is_ready() -> HttpResult<Json<Value>> {
     Ok(axum::Json("ok".into())).into()
 }
 
@@ -57,7 +57,7 @@ async fn main() -> Result<()> {
 
     let app = Router::new()
         .nest("/admin", admin_router())
-        .route("/health", get(health))
+        .route("/is_ready", get(is_ready))
         .with_state(shared);
 
     let addr = "0.0.0.0:3003";
