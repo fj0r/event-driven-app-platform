@@ -4,14 +4,15 @@ use axum::{Json, Router, extract::State, routing::get};
 use futures::TryStreamExt;
 use sqlx::{Row, query};
 use std::ops::Deref;
+use serde_json::{Value, json};
 
-async fn users(State(db): State<Pg>) -> HttpResult<Json<Vec<String>>> {
+async fn users(State(db): State<Pg>) -> HttpResult<Json<Vec<Value>>> {
     let db = db.read().await;
     let mut x = query("select * from account").fetch(db.deref());
     let mut v = Vec::new();
     while let Some(r) = x.try_next().await? {
         let n: &str = r.try_get("name")?;
-        v.push(n.to_string());
+        v.push(json!(n));
     }
     Ok(Json(v)).into()
 }
