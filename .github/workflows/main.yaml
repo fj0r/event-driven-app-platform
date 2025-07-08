@@ -54,9 +54,10 @@ jobs:
           cache-from: type=registry,ref=user/app:latest
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
-          # `rust` for cleaning cache, `build` for using cache
+            #BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build
+            #BASEIMAGE=rust
           build-args: |
-            BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:rust
+            BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build
 
       - name: Export ui
         uses: docker/build-push-action@v4

@@ -1,8 +1,8 @@
 pub mod config;
 use chrono::{DateTime, LocalResult, TimeZone, Utc};
-use config::{Queue, QueueIncome, QueueOutgo};
+use config::{Queue, QueueIncome, QueueIncomeConfig, QueueOutgo, QueueOutgoConfig};
 use message::{
-    ChatMessage, Envelope, Event,
+    Event,
     queue::{MessageQueueIncome, MessageQueueOutgo},
 };
 use rdkafka::Timestamp;
@@ -54,14 +54,14 @@ where
     T: Send + Serialize + for<'de> Deserialize<'de>,
 {
     tx: Option<UnboundedSender<T>>,
-    producer: QueueOutgo,
+    producer: QueueOutgoConfig,
 }
 
 impl<T> KafkaManagerOutgo<T>
 where
     T: Send + Serialize + for<'de> Deserialize<'de> + 'static,
 {
-    pub fn new(producer: QueueOutgo) -> Self {
+    pub fn new(producer: QueueOutgoConfig) -> Self {
         Self { tx: None, producer }
     }
 }
@@ -115,14 +115,14 @@ where
     T: Send + Serialize + for<'de> Deserialize<'de>,
 {
     rx: Option<Arc<Mutex<UnboundedReceiver<T>>>>,
-    consumer: QueueIncome,
+    consumer: QueueIncomeConfig,
 }
 
 impl<T> KafkaManagerIncome<T>
 where
     T: Send + Serialize + for<'de> Deserialize<'de> + 'static,
 {
-    pub fn new(consumer: QueueIncome) -> Self {
+    pub fn new(consumer: QueueIncomeConfig) -> Self {
         Self { rx: None, consumer }
     }
 }
@@ -235,20 +235,20 @@ where
     I: Event<Created> + Send + Serialize + for<'a> Deserialize<'a> + Clone + Debug + 'static,
     O: Event<Created> + Send + Serialize + for<'a> Deserialize<'a> + Clone + Debug + 'static,
 {
-    let income_rx = if queue.income.kind.as_str() == "kafka" {
-        let mut income_mq: KafkaManagerIncome<I> = KafkaManagerIncome::new(queue.income);
-        income_mq.run().await;
-        income_mq.get_rx()
-    } else {
-        None
+    let income_rx = match queue.income {
+        QueueIncome::kafka(income) => {
+            let mut income_mq: KafkaManagerIncome<I> = KafkaManagerIncome::new(income);
+            income_mq.run().await;
+            income_mq.get_rx()
+        }
     };
 
-    let outgo_tx = if queue.outgo.kind.as_str() == "kafka" {
-        let mut outgo_mq: KafkaManagerOutgo<O> = KafkaManagerOutgo::new(queue.outgo);
-        outgo_mq.run().await;
-        outgo_mq.get_tx()
-    } else {
-        None
+    let outgo_tx = match queue.outgo {
+        QueueOutgo::kafka(outgo) => {
+            let mut outgo_mq: KafkaManagerOutgo<O> = KafkaManagerOutgo::new(outgo);
+            outgo_mq.run().await;
+            outgo_mq.get_tx()
+        }
     };
 
     (outgo_tx, income_rx)
