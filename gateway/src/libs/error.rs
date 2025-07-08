@@ -1,10 +1,20 @@
-use anyhow::Result;
+use anyhow::{Result, anyhow};
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
 
 pub struct HttpError(anyhow::Error);
+
+impl HttpError {
+    pub fn new(e: String) -> Self {
+        HttpError(anyhow!(e))
+    }
+}
+
+pub fn mkerr<T>(e: String) -> HttpResult<T> {
+    Err(HttpError::new(e))
+}
 
 impl IntoResponse for HttpError {
     fn into_response(self) -> Response {
