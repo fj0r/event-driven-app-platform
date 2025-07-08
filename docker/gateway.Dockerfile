@@ -1,4 +1,4 @@
-ARG BASEIMAGE=ghcr.io/fj0r/edap:build.gateway
+ARG BASEIMAGE=ghcr.io/fj0r/edap:build
 FROM ${BASEIMAGE} AS build
 FROM ghcr.io/fj0r/edap:ui AS assets
 FROM debian:stable-slim

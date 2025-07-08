@@ -50,12 +50,13 @@ jobs:
         with:
           file: docker/build.ui.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build.ui
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build
           cache-from: type=registry,ref=user/app:latest
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
+          # `rust` for cleaning cache, `build` for using cache
           build-args: |
-            BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build.ui
+            BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:rust
 
       - name: Export ui
         uses: docker/build-push-action@v4
@@ -67,19 +68,19 @@ jobs:
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build.ui
+            BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build
 
       - name: Build gateway
         uses: docker/build-push-action@v4
         with:
           file: docker/build.gateway.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build.gateway
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build
           cache-from: type=registry,ref=user/app:latest
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build.gateway
+            BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build
 
       - name: Export gateway
         uses: docker/build-push-action@v4
@@ -89,4 +90,4 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:lastest
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build.gateway
+            BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:build
