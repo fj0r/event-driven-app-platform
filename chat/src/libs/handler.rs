@@ -9,9 +9,9 @@ use tokio::sync::{
 };
 
 pub type Sender<T> = UnboundedSender<Envelope<T>>;
-pub type aShared = Arc<RwLock<Shared>>;
+pub type ArcShared = Arc<RwLock<Shared>>;
 
-pub async fn logic<T, F, Fut>(
+pub async fn handler<T, F, Fut>(
     tx: Sender<T>,
     rx: Arc<Mutex<UnboundedReceiver<ChatMessage<T>>>>,
     shared: Shared,
@@ -19,7 +19,7 @@ pub async fn logic<T, F, Fut>(
 ) -> Result<()>
 where
     T: Send + 'static,
-    F: FnMut(ChatMessage<T>, aShared, Sender<T>) -> Fut + Clone + Send + 'static,
+    F: FnMut(ChatMessage<T>, ArcShared, Sender<T>) -> Fut + Clone + Send + 'static,
     Fut: Future<Output = ()> + Send,
 {
     let shared = Arc::new(RwLock::new(shared));

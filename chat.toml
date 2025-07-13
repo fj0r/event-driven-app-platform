@@ -1,3 +1,5 @@
+logic = 'chat'
+
 [trace]
 format = 'compact'
 

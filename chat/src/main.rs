@@ -2,12 +2,11 @@ mod libs;
 use anyhow::{Result, bail};
 use axum::{Router, extract::Json, routing::get};
 use libs::admin::admin_router;
-use libs::config::{Config, LogFormat};
+use libs::config::{Config, LogFormat, Logic};
 use libs::error::HttpResult;
 use libs::postgres::connx;
 use libs::shared::Shared;
 use serde_json::Value;
-use std::fmt::Debug;
 use tracing::info;
 use tracing_subscriber::{
     EnvFilter, fmt::layer, prelude::__tracing_subscriber_SubscriberExt, registry,
@@ -15,7 +14,8 @@ use tracing_subscriber::{
 };
 
 use kafka::{Created, split_mq};
-use libs::logic::{ChatMessage, Envelope, Sender, aShared, logic};
+use libs::handler::{ChatMessage, Envelope, handler};
+use libs::logic::*;
 
 async fn is_ready() -> HttpResult<Json<Value>> {
     Ok(axum::Json("ok".into())).into()
@@ -55,10 +55,11 @@ async fn main() -> Result<()> {
         bail!("outgo channel invalid");
     };
 
-    async fn x<T: Debug>(e: ChatMessage<T>, s: aShared, x: Sender<T>) {
-        println!("{:?}", e);
+    match cfg.logic {
+        Logic::Chat => {
+            let _ = handler(outgo_tx, income_rx, shared.clone(), chat).await;
+        }
     }
-    let _ = logic(outgo_tx, income_rx, shared.clone(), x).await;
 
     let app = Router::new()
         .nest("/admin", admin_router())
