@@ -163,6 +163,10 @@ export def 'chat up' [
     cargo run --bin chat
 }
 
+export def 'chat build' [] {
+    cargo build --release --bin gateway
+}
+
 export def 'gw up' [
 ] {
     cargo run --bin gateway

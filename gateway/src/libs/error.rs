@@ -7,11 +7,13 @@ use axum::{
 pub struct HttpError(anyhow::Error);
 
 impl HttpError {
+    #[allow(dead_code)]
     pub fn new(e: String) -> Self {
         HttpError(anyhow!(e))
     }
 }
 
+#[allow(dead_code)]
 pub fn mkerr<T>(e: String) -> HttpResult<T> {
     Err(HttpError::new(e))
 }

@@ -54,7 +54,7 @@ where
 
 pub async fn handle_ws<T>(
     socket: WebSocket,
-    outgo_tx: Option<UnboundedSender<T>>,
+    outgo_tx: UnboundedSender<T>,
     state: StateChat<UnboundedSender<T>>,
     settings: Arc<RwLock<Settings>>,
     tmpls: Arc<Tmpls<'static>>,
@@ -157,8 +157,8 @@ pub async fn handle_ws<T>(
             }
 
             // send to event MQ
-            if !is_webhook && let Some(ref m) = outgo_tx {
-                let _ = m.send(chat_msg.clone());
+            if !is_webhook {
+                let _ = outgo_tx.send(chat_msg.clone());
             }
 
             tracing::debug!("[ws] {:?}", &chat_msg);

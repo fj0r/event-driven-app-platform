@@ -10,3 +10,5 @@ mod test {
         assert!(true);
     }
 }
+
+fn main() {}

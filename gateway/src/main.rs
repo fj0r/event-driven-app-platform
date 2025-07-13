@@ -1,5 +1,5 @@
 mod libs;
-use anyhow::{Ok, Result};
+use anyhow::{Ok, Result, bail};
 use axum::{
     Router,
     extract::{Query, State, ws::WebSocketUpgrade},
@@ -55,9 +55,15 @@ async fn main() -> Result<()> {
     } else {
         (None, None)
     };
-    if let Some(rx) = income_rx {
-        send_to_ws(rx, &shared).await;
+
+    let Some(rx) = income_rx else {
+        bail!("income channel invalid");
     };
+    let Some(tx) = outgo_tx else {
+        bail!("outgo channel invalid");
+    };
+
+    send_to_ws(rx, &shared).await;
 
     let app = Router::new()
         .route(
@@ -73,9 +79,8 @@ async fn main() -> Result<()> {
                     let Some(a) = auth(&login, &q).await else {
                         return Response::new("UNAUTHORIZED".into());
                     };
-                    let r = ws.on_upgrade(|socket| {
-                        handle_ws(socket, outgo_tx, state, settings, tmpls, a)
-                    });
+                    let r =
+                        ws.on_upgrade(|socket| handle_ws(socket, tx, state, settings, tmpls, a));
                     auth(&logout, &q).await;
                     r
                 },

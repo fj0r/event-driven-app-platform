@@ -8,12 +8,12 @@ use tokio::sync::{
     mpsc::{UnboundedReceiver, UnboundedSender},
 };
 
-pub type Sender<T> = Option<UnboundedSender<Envelope<T>>>;
+pub type Sender<T> = UnboundedSender<Envelope<T>>;
 pub type aShared = Arc<RwLock<Shared>>;
 
 pub async fn logic<T, F, Fut>(
     tx: Sender<T>,
-    rx: Option<Arc<Mutex<UnboundedReceiver<ChatMessage<T>>>>>,
+    rx: Arc<Mutex<UnboundedReceiver<ChatMessage<T>>>>,
     shared: Shared,
     mut f: F,
 ) -> Result<()>
@@ -22,7 +22,6 @@ where
     F: FnMut(ChatMessage<T>, aShared, Sender<T>) -> Fut + Clone + Send + 'static,
     Fut: Future<Output = ()> + Send,
 {
-    let rx = rx.ok_or(anyhow!("no rx"))?;
     let shared = Arc::new(RwLock::new(shared));
 
     tokio::spawn(async move {

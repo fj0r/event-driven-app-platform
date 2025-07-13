@@ -1,6 +1,5 @@
 mod libs;
-
-use anyhow::Result;
+use anyhow::{Result, bail};
 use axum::{Router, extract::Json, routing::get};
 use libs::admin::admin_router;
 use libs::config::{Config, LogFormat};
@@ -15,7 +14,7 @@ use tracing_subscriber::{
     util::SubscriberInitExt,
 };
 
-use kafka::split_mq;
+use kafka::{Created, split_mq};
 use libs::logic::{ChatMessage, Envelope, Sender, aShared, logic};
 
 async fn is_ready() -> HttpResult<Json<Value>> {
@@ -44,15 +43,22 @@ async fn main() -> Result<()> {
     let queue = cfg.queue;
 
     let (outgo_tx, income_rx) = if queue.enable {
-        split_mq(queue).await
+        split_mq::<ChatMessage<Created>, Envelope<Created>>(queue).await
     } else {
         (None, None)
+    };
+
+    let Some(income_rx) = income_rx else {
+        bail!("income channel invalid");
+    };
+    let Some(outgo_tx) = outgo_tx else {
+        bail!("outgo channel invalid");
     };
 
     async fn x<T: Debug>(e: ChatMessage<T>, s: aShared, x: Sender<T>) {
         println!("{:?}", e);
     }
-    logic(outgo_tx, income_rx, shared.clone(), x);
+    let _ = logic(outgo_tx, income_rx, shared.clone(), x).await;
 
     let app = Router::new()
         .nest("/admin", admin_router())
