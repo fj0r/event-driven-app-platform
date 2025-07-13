@@ -6,6 +6,7 @@ use axum::{
     routing::{get, post},
 };
 use futures::TryStreamExt;
+use serde::Deserialize;
 use serde_json::{Value, json};
 use sqlx::{Row, query};
 use std::ops::Deref;
@@ -21,22 +22,28 @@ async fn user(State(db): State<Pg>) -> HttpResult<Json<Vec<Value>>> {
     Ok(Json(v)).into()
 }
 
-async fn join(State(db): State<Pg>) -> HttpResult<Json<Vec<Value>>> {
+#[derive(Debug, Deserialize)]
+pub struct Join {
+    pub channel: Option<String>,
+    pub user: String,
+}
+
+async fn join(State(db): State<Pg>, Json(join): Json<Join>) -> HttpResult<Json<Value>> {
     Ok(Json::default()).into()
 }
 
-async fn channel(State(db): State<Pg>) -> HttpResult<Json<Vec<Value>>> {
+async fn history(State(db): State<Pg>, Json(join): Json<Join>) -> HttpResult<Json<Vec<Value>>> {
     Ok(Json::default()).into()
 }
 
-async fn history(State(db): State<Pg>) -> HttpResult<Json<Vec<Value>>> {
+async fn channel(State(db): State<Pg>) -> HttpResult<Json<Value>> {
     Ok(Json::default()).into()
 }
 
 pub fn data_router() -> Router<Shared> {
     Router::new()
-        .route("/join", post(join))
         .route("/channel", post(channel))
+        .route("/join", post(join))
         .route("/history", post(history))
         .route("/user", get(user))
 }
