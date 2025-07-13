@@ -123,7 +123,10 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
     let mut list = use_signal::<HashMap<String, Vec<Layout>>>(HashMap::new);
 
     use_memo(move || {
-        let act = serde_json::from_str::<Message>(&x()).unwrap_or_else(|_| Message::default());
+        let act = serde_json::from_str::<Message>(&x()).unwrap_or_else(|y| {
+            dioxus_logger::tracing::info!("{:?} => {:?}", y, &x());
+            Message::default()
+        });
         dispatch(act, &mut layout, &mut data, &mut list);
     });
 
