@@ -1,7 +1,7 @@
 mod libs;
 use anyhow::{Result, bail};
 use axum::{Router, extract::Json, routing::get};
-use libs::admin::admin_router;
+use libs::admin::data_router;
 use libs::config::{Config, LogFormat, Logic};
 use libs::error::HttpResult;
 use libs::postgres::connx;
@@ -62,7 +62,7 @@ async fn main() -> Result<()> {
     }
 
     let app = Router::new()
-        .nest("/admin", admin_router())
+        .nest("/v1", data_router())
         .route("/is_ready", get(is_ready))
         .with_state(shared);
 

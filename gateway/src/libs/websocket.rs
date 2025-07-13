@@ -136,13 +136,11 @@ pub async fn handle_ws<T>(
             let value = serde_json::from_str(text)?;
             let chat_msg: T = (sid.clone(), value).into();
 
-            let mut is_webhook: bool = false;
             if let Some(ev) = chat_msg.event()
                 && webhooks.contains_key(ev)
                 && let Some(wh) = webhooks.get(ev)
                 && wh.enable
             {
-                is_webhook = true;
                 if let Ok(r) = webhook_post(wh, chat_msg.clone()).await {
                     let _ = tx.send(r);
                 } else {
@@ -154,10 +152,8 @@ pub async fn handle_ws<T>(
                         .unwrap();
                     let _ = tx.send(serde_json::from_str(&t)?);
                 }
-            }
-
-            // send to event MQ
-            if !is_webhook {
+            } else {
+                // send to event MQ
                 let _ = outgo_tx.send(chat_msg.clone());
             }
 
