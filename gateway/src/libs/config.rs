@@ -44,6 +44,20 @@ impl Deref for Hooks {
     }
 }
 
+impl Hooks {
+    fn iter(self: &Self) -> impl Iterator<Item = &Hook> {
+        self.0.iter()
+    }
+}
+
+impl IntoIterator for &Hooks {
+    type Item = Hook;
+    type IntoIter = <Vec<Hook> as IntoIterator>::IntoIter;
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.clone().into_iter()
+    }
+}
+
 fn default_accept() -> String {
     "application/json".to_owned()
 }

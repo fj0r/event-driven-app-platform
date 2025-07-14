@@ -157,17 +157,17 @@ async fn list_hook(
 }
 
 async fn update_hook(
-    Path(name): Path<String>,
+    Path(hook): Path<String>,
     State(settings): State<Arw<Settings>>,
     Json(payload): Json<Hooks>,
 ) -> HttpResult<(StatusCode, Json<bool>)> {
     let mut s = settings.write().await;
-    s.hooks.insert(name, payload);
+    s.hooks.insert(hook, payload);
     Ok((StatusCode::OK, Json(true)))
 }
 
 pub fn config_router() -> Router<StateChat<Sender>> {
     Router::new()
         .route("/hooks", get(list_hook))
-        .route("/hooks", post(update_hook))
+        .route("/hooks/{hook}", post(update_hook))
 }

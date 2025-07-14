@@ -131,7 +131,8 @@ pub async fn handle_ws<T>(
                 && hooks.contains_key(ev)
                 && let Some(wh) = hooks.get(ev)
             {
-                for h in &wh.0 {
+                // TODO:
+                for h in wh.iter() {
                     if h.disable {
                         continue;
                     }
