@@ -5,9 +5,10 @@ use figment::{
 use kafka::config::Queue;
 use notify::{Event, RecursiveMode, Result as ResultN, Watcher, recommended_watcher};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use serde_with::{OneOrMany, serde_as};
 use std::path::Path;
 use std::sync::{Arc, mpsc::channel};
+use std::{collections::HashMap, ops::Deref};
 use tokio::sync::Mutex;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -32,7 +33,16 @@ pub struct Hook {
     pub variant: HookVariant,
 }
 
-pub type Hooks = Vec<Hook>;
+#[serde_as]
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Hooks(#[serde_as(as = "OneOrMany<_>")] pub Vec<Hook>);
+
+impl Deref for Hooks {
+    type Target = Vec<Hook>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
 
 fn default_accept() -> String {
     "application/json".to_owned()

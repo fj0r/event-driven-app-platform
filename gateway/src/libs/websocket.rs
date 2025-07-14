@@ -8,7 +8,7 @@ use futures::{sink::SinkExt, stream::StreamExt};
 use kafka::Created;
 use message::{Event, session::Session};
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value, from_str};
+use serde_json::{Map, Value};
 use std::fmt::Debug;
 use std::sync::Arc;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
@@ -131,7 +131,7 @@ pub async fn handle_ws<T>(
                 && hooks.contains_key(ev)
                 && let Some(wh) = hooks.get(ev)
             {
-                for h in wh {
+                for h in &wh.0 {
                     if h.disable {
                         continue;
                     }

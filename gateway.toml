@@ -15,10 +15,10 @@ broker = ['localhost:19092']
 topic = ['push']
 group = 'ws'
 
-[[hooks.login]]
+[hooks.login]
 endpoint = 'http://localhost:3000/debug/login'
 
-[[hooks.logout]]
+[hooks.logout]
 endpoint = 'http://localhost:3000/debug/logout'
 
 [[hooks.greet]]
@@ -33,13 +33,13 @@ path = 'user.json'
 disable = true
 path = 'segment.tmpl.json'
 
-[[hooks.history]]
+[hooks.history]
 disable = true
 endpoint = 'http://localhost:8000/v1/history'
 
-[[hooks.echo]]
+[hooks.echo]
 endpoint = 'http://localhost:3000/debug/echo'
 
-[[hooks.render]]
+[hooks.render]
 endpoint = 'http://localhost:3000/debug/render/layout.json'
 
