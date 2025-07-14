@@ -21,6 +21,8 @@ pub enum GreetError {
     Reqwest(#[from] Error),
     #[error("not a webhook")]
     NotWebhook,
+    #[error("disabled")]
+    Disabled,
 }
 
 pub async fn greet_post(wh: &HookVariant, msg: &Map<String, Value>) -> Result<String, GreetError> {

@@ -1,7 +1,7 @@
 use super::config::{HookVariant, Hooks, Settings};
 use super::shared::{Client, Info, StateChat};
 use super::template::Tmpls;
-use super::webhooks::{greet_post, webhook_post};
+use super::webhooks::{GreetError, greet_post, webhook_post};
 use anyhow::Result;
 use anyhow::{Context, Ok as Okk};
 use axum::extract::ws::WebSocket;
@@ -37,7 +37,7 @@ where
     T: Event<Created> + Serialize + From<(Session, Value)>,
 {
     if !asset.enable {
-        return Ok("disabled".into());
+        return Err(GreetError::Disabled.into());
     }
     let content = match &asset.variant {
         HookVariant::Path { path } => {
@@ -98,7 +98,7 @@ pub async fn handle_ws<T>(
                     .await;
             }
             Err(e) => {
-                println!("{:?}", e)
+                println!("GreetError => {:?}", e)
             }
         }
     }

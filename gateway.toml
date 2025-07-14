@@ -23,8 +23,17 @@ endpoint = 'http://localhost:3000/debug/login'
 endpoint = 'http://localhost:3000/debug/logout'
 #event = 'login'
 
-[assets]
-path = 'gateway/assets'
+[[greet]]
+enable = false
+endpoint = 'http://localhost:3000/debug/render/layout.json'
+
+[[greet]]
+enable = false
+path = 'user.json'
+
+[[greet]]
+enable = false
+path = 'segment.tmpl.json'
 
 [webhooks.history]
 enable = false
@@ -37,16 +46,4 @@ endpoint = 'http://localhost:3000/debug/echo'
 [webhooks.render]
 enable = true
 endpoint = 'http://localhost:3000/debug/render/layout.json'
-
-[[greet]]
-enable = true
-endpoint = 'http://localhost:3000/debug/render/layout.json'
-
-[[greet]]
-enable = true
-path = 'user.json'
-
-[[greet]]
-enable = true
-path = 'segment.tmpl.json'
 

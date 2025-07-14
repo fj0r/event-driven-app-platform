@@ -64,7 +64,7 @@ export def send [
         sender: $sender,
         content: (open $f | merge deep $patch)
     }
-    let c = open ([$WORKDIR __.toml] | path join)
+    let c = open $CFG
     if $rpk {
         let data = {
             records: {
@@ -90,6 +90,23 @@ export def 'watch message' [] {
     }
 }
 
+
+def cmpl-reg [] {
+    open $CFG | get webhooks | columns
+}
+
+export def 'wh list' [] {
+    let c = open $CFG | get server
+    http get $"http://($c.host)/config/list"
+}
+
+export def 'wh reg' [name: string@cmpl-reg] {
+    let c = open $CFG
+    let d = $c | get webhooks | get $name | get greet
+    let h = $c.server.host
+    http post --allow-errors --content-type application/json $"http://($h)/config/greet" $d
+}
+
 export def 'serve' [
     --rpk
     --external: string@cmpl-external = 'localhost'
@@ -108,7 +125,7 @@ export def 'serve' [
 
 
 export def 'ui up' [] {
-    let t = open ([$WORKDIR __.toml] | path join) | get dx
+    let t = open $CFG | get dx
     cd ui
     ^dx serve --port $t.port
 }
