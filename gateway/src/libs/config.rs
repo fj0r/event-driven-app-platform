@@ -23,49 +23,22 @@ pub enum HookVariant {
     },
 }
 
-impl From<HookVariant> for Webhook {
-    fn from(value: HookVariant) -> Self {
-        if let HookVariant::Webhook { endpoint, accept } = value {
-            Self {
-                enable: true,
-                accept,
-                endpoint,
-            }
-        } else {
-            Self {
-                enable: false,
-                accept: default_accept(),
-                endpoint: "".to_string(),
-            }
-        }
-    }
-}
-
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[allow(unused)]
-pub struct Hooks {
+pub struct Hook {
     #[serde(default)]
-    pub enable: bool,
+    pub disable: bool,
     #[serde(flatten)]
     pub variant: HookVariant,
 }
 
-pub type HookList = Vec<Hooks>;
+pub type Hooks = Vec<Hook>;
 
 fn default_accept() -> String {
     "application/json".to_owned()
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-#[allow(unused)]
-pub struct Webhook {
-    pub enable: bool,
-    pub endpoint: String,
-    #[serde(default = "default_accept")]
-    pub accept: String,
-}
-
-pub type WebhookMap = HashMap<String, Webhook>;
+pub type HookMap = HashMap<String, Hooks>;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Login {
@@ -92,10 +65,7 @@ pub struct Log {
 #[allow(unused)]
 pub struct Settings {
     pub queue: Queue,
-    pub webhooks: WebhookMap,
-    pub greet: HookList,
-    pub login: Login,
-    pub logout: Login,
+    pub hooks: HookMap,
     pub trace: Log,
 }
 

@@ -1,5 +1,5 @@
 mod libs;
-use anyhow::{Ok, Result, bail};
+use anyhow::{Ok as Okk, Result, bail};
 use axum::{
     Router,
     extract::{Query, State, ws::WebSocketUpgrade},
@@ -7,12 +7,11 @@ use axum::{
     routing::get,
 };
 use kafka::split_mq;
-use libs::admin::*;
-use libs::auth::auth;
 use libs::config::{ASSETS_PATH, Config, LogFormat, Settings};
 use libs::shared::{Sender, StateChat};
 use libs::template::Tmpls;
 use libs::websocket::{handle_ws, send_to_ws};
+use libs::{admin::*, webhooks::handle_hook};
 use serde_json::{Map, Value};
 use std::sync::Arc;
 use tokio::sync::RwLock;
@@ -73,15 +72,17 @@ async fn main() -> Result<()> {
                  Query(q): Query<Map<String, Value>>,
                  State(state): State<StateChat<Sender>>| async move {
                     let s = state.settings.read().await;
-                    let login = s.login.clone();
-                    let logout = s.logout.clone();
+                    let login = &s.hooks.get("login").cloned().unwrap()[0];
+                    let logout = &s.hooks.get("logout").cloned().unwrap()[0];
                     drop(s);
-                    let Some(a) = auth(&login, &q).await else {
+                    let Ok(a) = handle_hook(&login, &q, tmpls.clone()).await else {
                         return Response::new("UNAUTHORIZED".into());
                     };
-                    let r =
-                        ws.on_upgrade(|socket| handle_ws(socket, tx, state, settings, tmpls, a));
-                    auth(&logout, &q).await;
+                    let tmpls_cloned = tmpls.clone();
+                    let r = ws.on_upgrade(|socket| {
+                        handle_ws(socket, tx, state, settings, tmpls_cloned, a)
+                    });
+                    let _ = handle_hook::<Value>(&logout, &q, tmpls.clone()).await;
                     r
                 },
             ),
@@ -97,5 +98,5 @@ async fn main() -> Result<()> {
     info!("Listening on {}", addr);
 
     axum::serve(listener, app).await?;
-    Ok(())
+    Okk(())
 }

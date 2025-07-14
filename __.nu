@@ -92,19 +92,21 @@ export def 'watch message' [] {
 
 
 def cmpl-reg [] {
-    open $CFG | get webhooks | columns
+    open $CFG | get hooks | columns
 }
 
-export def 'wh list' [] {
+export def 'hooks list' [] {
     let c = open $CFG | get server
-    http get $"http://($c.host)/config/list"
+    http get $"http://($c.host)/config/hooks"
 }
 
-export def 'wh reg' [name: string@cmpl-reg] {
+export def 'hooks upload' [name: string@cmpl-reg] {
     let c = open $CFG
-    let d = $c | get webhooks | get $name | get greet
+    let d = $c | get hooks | get $name
     let h = $c.server.host
-    http post --allow-errors --content-type application/json $"http://($h)/config/greet" $d
+    for i in ($d | transpose k v) {
+        http post --allow-errors --content-type application/json $"http://($h)/config/hooks/($i.k)" $i.v
+    }
 }
 
 export def 'serve' [

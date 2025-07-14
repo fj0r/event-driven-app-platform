@@ -1,9 +1,8 @@
-use super::config::{HookVariant, Hooks, Settings};
+use super::config::{Hook, Settings};
 use super::shared::{Client, Info, StateChat};
 use super::template::Tmpls;
-use super::webhooks::{GreetError, greet_post, webhook_post};
-use anyhow::Result;
-use anyhow::{Context, Ok as Okk};
+use super::webhooks::{handle_hook, webhook_post};
+use anyhow::{Ok as Okk, Result};
 use axum::extract::ws::WebSocket;
 use futures::{sink::SinkExt, stream::StreamExt};
 use kafka::Created;
@@ -29,24 +28,14 @@ impl<'a> AsyncIterator for GreetIter<'a> {
 */
 
 async fn handle_greet<T>(
-    asset: &Hooks,
+    asset: &Hook,
     context: &Map<String, Value>,
     tmpls: Arc<Tmpls<'_>>,
 ) -> Result<String>
 where
     T: Event<Created> + Serialize + From<(Session, Value)>,
 {
-    if !asset.enable {
-        return Err(GreetError::Disabled.into());
-    }
-    let content = match &asset.variant {
-        HookVariant::Path { path } => {
-            let tmpl = tmpls.get_template(path).unwrap();
-            tmpl.render(context).ok()
-        }
-        wh @ HookVariant::Webhook { .. } => greet_post(wh, context).await.ok(),
-    };
-    let v = from_str(&content.context("render failed")?)?;
+    let v = handle_hook(asset, context, tmpls).await?;
     let msg: T = (Session::default(), v).into();
     let msg = serde_json::to_string(&msg)?;
     Ok(msg)
@@ -90,15 +79,17 @@ pub async fn handle_ws<T>(
     context.insert("session_id".into(), sid.clone().into());
     context.insert("info".into(), Value::Object(info));
 
-    for g in setting1.greet.iter() {
-        match handle_greet::<T>(g, &context, tmpls.clone()).await {
-            Ok(text) => {
-                let _ = sender
-                    .send(axum::extract::ws::Message::Text(text.into()))
-                    .await;
-            }
-            Err(e) => {
-                println!("GreetError => {:?}", e)
+    if let Some(greet) = setting1.hooks.get("greet") {
+        for g in greet.iter() {
+            match handle_greet::<T>(g, &context, tmpls.clone()).await {
+                Ok(text) => {
+                    let _ = sender
+                        .send(axum::extract::ws::Message::Text(text.into()))
+                        .await;
+                }
+                Err(e) => {
+                    println!("GreetError => {:?}", e)
+                }
             }
         }
     }
@@ -119,7 +110,7 @@ pub async fn handle_ws<T>(
     });
 
     let sid_cloned = sid.clone();
-    let webhooks = setting1.webhooks.clone();
+    let hooks = setting1.hooks.clone();
     drop(setting1); // release lock
     let mut recv_task = tokio::spawn(async move {
         // update sid after the message queue login event
@@ -137,20 +128,24 @@ pub async fn handle_ws<T>(
             let chat_msg: T = (sid.clone(), value).into();
 
             if let Some(ev) = chat_msg.event()
-                && webhooks.contains_key(ev)
-                && let Some(wh) = webhooks.get(ev)
-                && wh.enable
+                && hooks.contains_key(ev)
+                && let Some(wh) = hooks.get(ev)
             {
-                if let Ok(r) = webhook_post(wh, chat_msg.clone()).await {
-                    let _ = tx.send(r);
-                } else {
-                    context.insert("event".into(), ev.into());
-                    let t = tmpls
-                        .get_template("webhook_error.json")
-                        .unwrap()
-                        .render(&context)
-                        .unwrap();
-                    let _ = tx.send(serde_json::from_str(&t)?);
+                for h in wh {
+                    if h.disable {
+                        continue;
+                    }
+                    if let Ok(r) = webhook_post(&h.variant, chat_msg.clone()).await {
+                        let _ = tx.send(r);
+                    } else {
+                        context.insert("event".into(), ev.into());
+                        let t = tmpls
+                            .get_template("webhook_error.json")
+                            .unwrap()
+                            .render(&context)
+                            .unwrap();
+                        let _ = tx.send(serde_json::from_str(&t)?);
+                    }
                 }
             } else {
                 // send to event MQ

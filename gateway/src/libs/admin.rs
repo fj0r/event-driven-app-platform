@@ -1,10 +1,6 @@
-use super::config::ASSETS_PATH;
-use super::config::Settings;
+use super::config::{ASSETS_PATH, Hooks, Settings};
 use super::error::HttpResult;
-use super::{
-    config::{HookList, Login, WebhookMap},
-    shared::{Arw, Arwsc, Info, Sender, StateChat},
-};
+use super::shared::{Arw, Arwsc, Info, Sender, StateChat};
 use axum::{
     Router,
     extract::{Json, Path, Request, State},
@@ -18,8 +14,8 @@ use message::{
     session::{Session, SessionCount},
 };
 use minijinja::Environment;
-use serde::Serialize;
 use serde_json::{Map, Value, from_str};
+use std::collections::HashMap;
 
 async fn send(
     State(session): State<Arwsc<Sender>>,
@@ -153,58 +149,25 @@ pub fn debug_router() -> Router<StateChat<Sender>> {
         .route("/health", get(health))
 }
 
-#[derive(Serialize)]
-struct ConfigList {
-    login: Login,
-    greet: HookList,
-    webhook: WebhookMap,
-}
-
-async fn list_config(
+async fn list_hook(
     State(settings): State<Arw<Settings>>,
-) -> HttpResult<(StatusCode, Json<ConfigList>)> {
+) -> HttpResult<(StatusCode, Json<HashMap<String, Hooks>>)> {
     let s = settings.read().await.clone();
-    Ok((
-        StatusCode::OK,
-        Json(ConfigList {
-            login: s.login,
-            greet: s.greet,
-            webhook: s.webhooks,
-        }),
-    ))
+    Ok((StatusCode::OK, Json(s.hooks)))
 }
 
-async fn update_login(
+async fn update_hook(
+    Path(name): Path<String>,
     State(settings): State<Arw<Settings>>,
-    Json(payload): Json<Login>,
+    Json(payload): Json<Hooks>,
 ) -> HttpResult<(StatusCode, Json<bool>)> {
     let mut s = settings.write().await;
-    s.login = payload;
-    Ok((StatusCode::OK, Json(true)))
-}
-
-async fn update_greet(
-    State(settings): State<Arw<Settings>>,
-    Json(payload): Json<HookList>,
-) -> HttpResult<(StatusCode, Json<bool>)> {
-    let mut s = settings.write().await;
-    s.greet = payload;
-    Ok((StatusCode::OK, Json(true)))
-}
-
-async fn update_webhook(
-    State(settings): State<Arw<Settings>>,
-    Json(payload): Json<WebhookMap>,
-) -> HttpResult<(StatusCode, Json<bool>)> {
-    let mut s = settings.write().await;
-    s.webhooks = payload;
+    s.hooks.insert(name, payload);
     Ok((StatusCode::OK, Json(true)))
 }
 
 pub fn config_router() -> Router<StateChat<Sender>> {
     Router::new()
-        .route("/list", get(list_config))
-        .route("/login", post(update_login))
-        .route("/greet", post(update_greet))
-        .route("/webhook", post(update_webhook))
+        .route("/hooks", get(list_hook))
+        .route("/hooks", post(update_hook))
 }
