@@ -446,9 +446,16 @@ export def jsonschema [] {
     cargo run --bin schema
 }
 
-export def benchmark [] {
-    oha -c 50 -n 200000 http://localhost:3000/admin/sessions
+export def benchmark [n: int] {
     #drill -b drill.yaml -s
+    let url = [
+        http://localhost:3000/admin/sessions
+        http://localhost:3003/v1/user/alice
+        http://localhost:3003/v1/users
+    ]
+    let url = $url | get $n
+    print $"====> ($url)"
+    oha -c 50 -n 200000 $url
 }
 
 
