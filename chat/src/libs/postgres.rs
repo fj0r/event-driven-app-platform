@@ -16,6 +16,6 @@ pub async fn conn(config: &Database) -> Result<Client> {
 
 pub async fn connx(config: &Database) -> Result<Pool<Postgres>> {
     let c: String = config.to_url();
-    let pool = PgPoolOptions::new().max_connections(5).connect(&c).await?;
+    let pool = PgPoolOptions::new().max_connections(8).connect(&c).await?;
     Ok(pool)
 }
