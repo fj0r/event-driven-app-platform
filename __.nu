@@ -225,12 +225,14 @@ export def 'gw test' [] {
     job kill $ji
 }
 
-export def 'pg cli' [] {
+export def 'pg cli' [--db:string = 'chat'] {
     let cfg = open $CHAT | get database
+    let db = $db | default $cfg.db
     let cmd = $"
         INSTALL postgres;
         LOAD postgres;
-        ATTACH 'dbname=($cfg.db) user=($cfg.user) host=127.0.0.1 port=($cfg.port) password=($cfg.passwd)' AS chat \(TYPE postgres\);
+        ATTACH 'dbname=($db) user=($cfg.user) host=127.0.0.1 port=($cfg.port) password=($cfg.passwd)' AS ($db) \(TYPE postgres\);
+        USE ($db)
     "
     duckdb -cmd $cmd
 }
