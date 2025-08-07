@@ -109,13 +109,19 @@ impl<'a> IntoIterator for &'a Hooks {
 }
 
 #[derive(Debug, Deserialize, Clone)]
+pub struct Greet {
+    pub url: String,
+    pub data: Hooks,
+}
+
+#[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
 pub struct Config {
     pub logic: Logic,
     pub queue: Queue,
     pub database: Database,
     pub trace: Log,
-    pub greet: Hooks,
+    pub greet: Greet,
 }
 
 impl Config {

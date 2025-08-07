@@ -519,6 +519,7 @@ dependencies = [
  "minijinja",
  "proc",
  "refinery",
+ "reqwest",
  "serde",
  "serde_derive",
  "serde_json",

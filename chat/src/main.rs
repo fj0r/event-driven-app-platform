@@ -37,6 +37,9 @@ async fn main() -> Result<()> {
 
     dbg!(&cfg);
 
+    let hc = reqwest::Client::new();
+    let _ = hc.post(&cfg.greet.url).json(&cfg.greet.data).send().await;
+
     let client = connx(&cfg.database).await?;
     let shared = Shared::new(client);
 

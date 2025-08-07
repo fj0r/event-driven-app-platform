@@ -1,4 +1,4 @@
-logic = 'chat'
+logic = 'chat' # chat, crm
 
 [trace]
 format = 'compact'
@@ -26,15 +26,18 @@ user = 'chat'
 passwd = 'chat'
 
 
-[[greet]]
+[greet]
+url = "http://localhost:3000/config/hooks/greet"
+
+[[greet.data]]
 enable = true
 endpoint = "http://localhost:3000/debug/render/layout.json"
 accept = "application/json"
 
-[[greet]]
+[[greet.data]]
 enable = true
 path = "user.json"
 
-[[greet]]
+[[greet.data]]
 enable = true
 path = "segment.tmpl.json"
