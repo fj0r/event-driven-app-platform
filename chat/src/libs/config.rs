@@ -4,7 +4,9 @@ use figment::{
     providers::{Env, Format, Toml},
 };
 use kafka::config::Queue;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
+use serde_with::{OneOrMany, serde_as};
+use std::ops::Deref;
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
@@ -60,6 +62,52 @@ pub enum Logic {
     Crm,
 }
 
+fn default_accept() -> String {
+    "application/json".to_owned()
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(untagged)]
+pub enum HookVariant {
+    Path {
+        path: String,
+    },
+    Webhook {
+        endpoint: String,
+        #[serde(default = "default_accept")]
+        accept: String,
+    },
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[allow(unused)]
+pub struct Hook {
+    #[serde(default)]
+    pub disable: bool,
+    #[serde(flatten)]
+    pub variant: HookVariant,
+}
+
+#[serde_as]
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Hooks(#[serde_as(as = "OneOrMany<_>")] pub Vec<Hook>);
+
+impl Deref for Hooks {
+    type Target = Vec<Hook>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl<'a> IntoIterator for &'a Hooks {
+    type Item = &'a Hook;
+    type IntoIter = std::slice::Iter<'a, Hook>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.iter()
+    }
+}
+
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
 pub struct Config {
@@ -67,6 +115,7 @@ pub struct Config {
     pub queue: Queue,
     pub database: Database,
     pub trace: Log,
+    pub greet: Hooks,
 }
 
 impl Config {

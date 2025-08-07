@@ -24,3 +24,17 @@ port = 15432
 db = 'chat'
 user = 'chat'
 passwd = 'chat'
+
+
+[[greet]]
+enable = true
+endpoint = "http://localhost:3000/debug/render/layout.json"
+accept = "application/json"
+
+[[greet]]
+enable = true
+path = "user.json"
+
+[[greet]]
+enable = true
+path = "segment.tmpl.json"
