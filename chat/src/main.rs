@@ -59,6 +59,9 @@ async fn main() -> Result<()> {
         Logic::Chat => {
             let _ = handler(outgo_tx, income_rx, shared.clone(), chat).await;
         }
+        Logic::Crm => {
+            let _ = handler(outgo_tx, income_rx, shared.clone(), crm).await;
+        }
     }
 
     let app = Router::new()

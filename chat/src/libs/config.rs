@@ -56,6 +56,8 @@ pub struct Log {
 pub enum Logic {
     #[serde(rename = "chat")]
     Chat,
+    #[serde(rename = "crm")]
+    Crm,
 }
 
 #[derive(Debug, Deserialize, Clone)]
