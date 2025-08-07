@@ -285,6 +285,10 @@ export def 'pg up' [--reset] {
     }
 }
 
+export def 'pg migrate' [] {
+    cargo run --bin migrate
+}
+
 export def 'rpk send' [
     data
     --partition:int=0

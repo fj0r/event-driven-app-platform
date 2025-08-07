@@ -2,6 +2,7 @@ create table account (
     id serial primary key,
     name text not null unique,
     password text,
+    registered boolean default false,
     created timestamp default now(),
     updated timestamp default now(),
     email text not null,

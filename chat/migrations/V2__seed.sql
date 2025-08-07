@@ -1,6 +1,6 @@
-insert into account (name, email) values
-('alice', 'alice@abc.com'),
-('bob', 'bob@abc.com'),
-('carol', 'carol@abc.com'),
-('dave', 'dave@abc.com');
+insert into account (name, registered, email) values
+('alice', true, 'alice@abc.com'),
+('bob', true, 'bob@abc.com'),
+('carol', true, 'carol@abc.com'),
+('dave', true, 'dave@abc.com');
 
