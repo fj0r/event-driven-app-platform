@@ -6,14 +6,16 @@ use axum::{
     routing::{get, post},
 };
 use futures::TryStreamExt;
+use message::session::Session;
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::{Map, Value, json};
 use sqlx::{
     FromRow, Row, query, query_as,
     types::JsonValue,
     types::chrono::{DateTime, NaiveDateTime, Utc},
 };
 use std::ops::Deref;
+use tracing::info;
 
 async fn users(State(db): State<Pg>) -> HttpResult<Json<Vec<Value>>> {
     let db = db.read().await;
@@ -63,8 +65,31 @@ async fn channel(State(db): State<Pg>) -> HttpResult<Json<Value>> {
     Ok(Json::default()).into()
 }
 
+pub type Info = Map<String, Value>;
+
+async fn login(
+    State(db): State<Pg>,
+    Json(mut payload): Json<Map<String, Value>>,
+) -> HttpResult<Json<(Session, Info)>> {
+    use short_uuid::ShortUuid;
+    let uuid = ShortUuid::generate().to_string();
+    payload.insert("username".into(), uuid[..6].into());
+    info!("login: {:?}", payload);
+    Ok(Json((uuid.as_str().into(), payload)))
+}
+
+async fn logout(
+    State(db): State<Pg>,
+    Json(payload): Json<Map<String, Value>>,
+) -> HttpResult<Json<(Session, Info)>> {
+    info!("logout: {:?}", payload);
+    Ok(Json(("".into(), payload)))
+}
+
 pub fn data_router() -> Router<Shared> {
     Router::new()
+        .route("/login", post(login))
+        .route("/logout", post(logout))
         .route("/channel", post(channel))
         .route("/join", post(join))
         .route("/history", post(history))

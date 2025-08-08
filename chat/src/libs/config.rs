@@ -60,6 +60,8 @@ pub enum Logic {
     Chat,
     #[serde(rename = "crm")]
     Crm,
+    #[serde(rename = "echo")]
+    Echo,
 }
 
 fn default_accept() -> String {
@@ -108,6 +110,7 @@ impl<'a> IntoIterator for &'a Hooks {
     }
 }
 
+// TODO:
 #[derive(Debug, Deserialize, Clone)]
 pub struct Greet {
     pub url: String,

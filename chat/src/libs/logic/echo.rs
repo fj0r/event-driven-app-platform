@@ -1,11 +1,10 @@
 use super::super::handler::{ArcShared, ChatMessage, Envelope, Sender};
 use content::{Content, Influx, Method};
 use layout::{Attrs, Layout, Settings};
-use message::session::Session;
 use std::default::Default;
 use std::fmt::Debug;
 
-pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender<T>) {
+pub async fn echo<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender<T>) {
     let ChatMessage {
         sender,
         created: _,

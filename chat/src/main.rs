@@ -1,3 +1,4 @@
+#![allow(unused)]
 mod libs;
 use anyhow::{Result, bail};
 use axum::{Router, extract::Json, routing::get};
@@ -58,12 +59,16 @@ async fn main() -> Result<()> {
         bail!("outgo channel invalid");
     };
 
+    info!("run as: Logic::{:?}", cfg.logic);
     match cfg.logic {
         Logic::Chat => {
             let _ = handler(outgo_tx, income_rx, shared.clone(), chat).await;
         }
         Logic::Crm => {
             let _ = handler(outgo_tx, income_rx, shared.clone(), crm).await;
+        }
+        Logic::Echo => {
+            let _ = handler(outgo_tx, income_rx, shared.clone(), echo).await;
         }
     }
 
