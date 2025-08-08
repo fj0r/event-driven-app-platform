@@ -512,6 +512,7 @@ dependencies = [
  "anyhow",
  "axum",
  "chrono",
+ "content",
  "figment",
  "futures",
  "kafka",
@@ -727,6 +728,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-xid",
+]
+
+[[package]]
+name = "content"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "layout",
+ "serde",
+ "serde_derive",
+ "serde_json",
 ]
 
 [[package]]
@@ -6215,6 +6227,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "chrono",
+ "content",
  "dioxus",
  "dioxus-logger 0.5.1",
  "futures",

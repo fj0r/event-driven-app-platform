@@ -1,5 +1,4 @@
 use chrono::{DateTime, Utc};
-use dioxus::prelude::*;
 use layout::Layout;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -22,7 +21,7 @@ pub struct Message {
     pub content: Content,
 }
 
-#[derive(Debug, Clone, Props, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Outflow {
     pub event: String,
     pub id: Option<String>,

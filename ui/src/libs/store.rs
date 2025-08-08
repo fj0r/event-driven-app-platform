@@ -1,7 +1,6 @@
-use super::data::*;
-use super::data::{Content, Created, Message};
 use super::ws::{WebSocketHandle, use_web_socket};
 use anyhow::Result;
+use content::{Content, Message, Method, Outflow};
 use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;
 use layout::{Concat, Delete, Layout, LayoutOp, Replace};
