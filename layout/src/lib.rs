@@ -111,6 +111,12 @@ pub struct Layout {
     pub children: Option<Vec<Layout>>,
 }
 
+impl From<Layout> for Value {
+    fn from(value: Layout) -> Self {
+        serde_json::to_value(value).expect("Layout n not a Value")
+    }
+}
+
 impl Layout {
     #[allow(dead_code)]
     pub fn new(kind: impl AsRef<str>) -> Self {

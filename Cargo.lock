@@ -516,6 +516,7 @@ dependencies = [
  "figment",
  "futures",
  "kafka",
+ "layout",
  "message",
  "minijinja",
  "proc",

@@ -1,5 +1,5 @@
 use super::shared::Shared;
-use anyhow::{Result, anyhow};
+use anyhow::Result;
 pub use message::{ChatMessage, Envelope};
 use std::marker::Send;
 use std::sync::Arc;
