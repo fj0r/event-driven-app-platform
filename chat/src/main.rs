@@ -17,6 +17,7 @@ use tracing_subscriber::{
 use kafka::{Created, split_mq};
 use libs::handler::{ChatMessage, Envelope, handler};
 use libs::logic::*;
+use url::Url;
 
 async fn is_ready() -> HttpResult<Json<Value>> {
     Ok(axum::Json("ok".into())).into()
@@ -38,8 +39,23 @@ async fn main() -> Result<()> {
 
     dbg!(&cfg);
 
+    let base_url = Url::parse(&cfg.gateway.base_url)?;
     let hc = reqwest::Client::new();
-    let _ = hc.post(&cfg.greet.url).json(&cfg.greet.data).send().await;
+    let _ = hc
+        .post(base_url.join("login")?)
+        .json(&cfg.login)
+        .send()
+        .await;
+    let _ = hc
+        .post(base_url.join("logout")?)
+        .json(&cfg.logout)
+        .send()
+        .await;
+    let _ = hc
+        .post(base_url.join("greet")?)
+        .json(&cfg.greet)
+        .send()
+        .await;
 
     let client = connx(&cfg.database).await?;
     let shared = Shared::new(client);

@@ -29,6 +29,7 @@ proc = { path = "../proc" }
 message = { path = "../message" }
 content = { path = "../content" }
 layout = { path = "../layout" }
+url = "2.5.4"
 
 [[bin]]
 name = "chat"

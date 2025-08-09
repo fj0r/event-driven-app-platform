@@ -110,11 +110,9 @@ impl<'a> IntoIterator for &'a Hooks {
     }
 }
 
-// TODO:
-#[derive(Debug, Deserialize, Clone)]
-pub struct Greet {
-    pub url: String,
-    pub data: Hooks,
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Gateway {
+    pub base_url: String,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -124,7 +122,10 @@ pub struct Config {
     pub queue: Queue,
     pub database: Database,
     pub trace: Log,
-    pub greet: Greet,
+    pub gateway: Gateway,
+    pub login: Hooks,
+    pub logout: Hooks,
+    pub greet: Hooks,
 }
 
 impl Config {

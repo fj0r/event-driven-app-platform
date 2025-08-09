@@ -27,7 +27,7 @@ passwd = 'chat'
 
 
 [gateway]
-url = "http://localhost:3000/config/hooks/greet"
+base_url = "http://localhost:3000/config/hooks/"
 
 [login]
 enable = true
