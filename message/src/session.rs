@@ -41,6 +41,7 @@ impl From<SessionCount> for Session {
 
 #[derive(Clone, Debug, Deserialize, Serialize, Default, PartialEq, Eq, Hash)]
 pub struct SessionInfo {
+    #[serde(rename = "session_id")]
     pub id: Session,
     pub info: Map<String, Value>,
 }
@@ -48,7 +49,7 @@ pub struct SessionInfo {
 impl From<SessionInfo> for Map<String, Value> {
     fn from(session: SessionInfo) -> Self {
         let mut m = Map::new();
-        m.insert("id".into(), session.id.into());
+        m.insert("session_id".into(), session.id.into());
         m.insert("info".into(), session.info.into());
         m
     }

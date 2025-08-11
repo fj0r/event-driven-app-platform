@@ -21,6 +21,16 @@ pub struct Message {
     pub content: Content,
 }
 
+impl From<(Session, Content)> for Message {
+    fn from(value: (Session, Content)) -> Self {
+        Message {
+            sender: value.0,
+            created: Some(Created::default()),
+            content: value.1,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Outflow {
     pub event: String,

@@ -10,6 +10,14 @@ create table account (
 );
 create index account_name_idx on account(name);
 
+create table session(
+    id text not null,
+    account_id integer references account(id),
+    primary key(id, account_id)
+);
+create index session_id on session(id);
+create index session_account on session(account_id);
+
 create table channel (
     id serial primary key,
     parent_id integer,

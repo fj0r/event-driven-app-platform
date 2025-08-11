@@ -3,9 +3,12 @@ use super::shared::{Pg, Shared};
 use axum::{
     Json, Router,
     extract::{Path, State},
+    response::Response,
     routing::{get, post},
 };
+use content::{Content, Influx, Message, Method};
 use futures::TryStreamExt;
+use layout::{Attrs, Layout, Settings};
 use message::session::SessionInfo;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, json};
@@ -57,8 +60,26 @@ async fn join(State(db): State<Pg>, Json(join): Json<Join>) -> HttpResult<Json<V
     Ok(Json::default()).into()
 }
 
-async fn history(State(db): State<Pg>, Json(join): Json<Join>) -> HttpResult<Json<Vec<Value>>> {
-    Ok(Json::default()).into()
+async fn history(State(db): State<Pg>, Json(session): Json<SessionInfo>) -> HttpResult<Response> {
+    info!("history: {:?}", session);
+    let content = Content::Join(Influx {
+        event: "chat/history".into(),
+        data: Layout {
+            kind: "text".into(),
+            attrs: Some(Attrs {
+                settings: Some(Settings::Text {
+                    format: "md".into(),
+                }),
+                ..Default::default()
+            }),
+            ..Default::default()
+        },
+        method: Method::Concat,
+    });
+    let msg: Message = ("chat".into(), content).into();
+    let r = serde_json::to_string(&msg)?;
+    dbg!(&r.to_string());
+    Ok(Response::new(r.into()))
 }
 
 async fn channel(State(db): State<Pg>) -> HttpResult<Json<Value>> {

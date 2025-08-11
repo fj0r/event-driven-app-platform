@@ -50,4 +50,9 @@ path = "user.json"
 
 [[greet]]
 enable = true
+endpoint = "http://localhost:3003/v1/history"
+accept = "application/json"
+
+[[greet]]
+enable = true
 path = "segment.tmpl.json"
