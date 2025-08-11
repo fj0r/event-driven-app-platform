@@ -6,7 +6,7 @@ use axum::{
     routing::{get, post},
 };
 use futures::TryStreamExt;
-use message::session::Session;
+use message::session::SessionInfo;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, json};
 use sqlx::{
@@ -70,20 +70,26 @@ pub type Info = Map<String, Value>;
 async fn login(
     State(db): State<Pg>,
     Json(mut payload): Json<Map<String, Value>>,
-) -> HttpResult<Json<(Session, Info)>> {
+) -> HttpResult<Json<SessionInfo>> {
     use short_uuid::ShortUuid;
     let uuid = ShortUuid::generate().to_string();
     payload.insert("username".into(), uuid[..6].into());
     info!("login: {:?}", payload);
-    Ok(Json((uuid.as_str().into(), payload)))
+    Ok(Json(SessionInfo {
+        id: uuid.as_str().into(),
+        info: payload,
+    }))
 }
 
 async fn logout(
     State(db): State<Pg>,
     Json(payload): Json<Map<String, Value>>,
-) -> HttpResult<Json<(Session, Info)>> {
+) -> HttpResult<Json<SessionInfo>> {
     info!("logout: {:?}", payload);
-    Ok(Json(("".into(), payload)))
+    Ok(Json(SessionInfo {
+        id: "".into(),
+        info: payload,
+    }))
 }
 
 pub fn data_router() -> Router<Shared> {

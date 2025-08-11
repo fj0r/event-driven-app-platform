@@ -1,12 +1,15 @@
 use super::config::{Hook, Settings};
-use super::shared::{Client, Info, StateChat};
+use super::shared::{Client, StateChat};
 use super::template::Tmpls;
 use super::webhooks::{handle_hook, webhook_post};
 use anyhow::{Ok as Okk, Result};
 use axum::extract::ws::WebSocket;
 use futures::{sink::SinkExt, stream::StreamExt};
 use kafka::Created;
-use message::{Event, session::Session};
+use message::{
+    Event,
+    session::{Session, SessionInfo},
+};
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use std::fmt::Debug;
@@ -47,7 +50,7 @@ pub async fn handle_ws<T>(
     state: StateChat<UnboundedSender<T>>,
     settings: Arc<RwLock<Settings>>,
     tmpls: Arc<Tmpls<'static>>,
-    (sid, info): (Session, Info),
+    session: &SessionInfo,
 ) where
     T: Event<Created>
         + for<'a> Deserialize<'a>
@@ -65,19 +68,19 @@ pub async fn handle_ws<T>(
 
     let mut s = state.session.write().await;
     s.insert(
-        sid.clone(),
+        session.id.clone(),
         Client {
             sender: tx.clone(),
-            info: info.clone(),
+            info: session.info.clone(),
         },
     );
     drop(s);
 
-    tracing::info!("Connection opened for {}", &sid);
+    tracing::info!("Connection opened for {}", &session.id);
 
     let mut context = Map::new();
-    context.insert("session_id".into(), sid.clone().into());
-    context.insert("info".into(), Value::Object(info));
+    context.insert("session_id".into(), session.id.clone().into());
+    context.insert("info".into(), Value::Object(session.info.clone()));
 
     if let Some(greet) = setting1.hooks.get("greet") {
         for g in greet.iter() {
@@ -109,7 +112,7 @@ pub async fn handle_ws<T>(
         Okk(())
     });
 
-    let sid_cloned = sid.clone();
+    let sid_cloned = session.id.clone();
     let hooks = setting1.hooks.clone();
     drop(setting1); // release lock
     let mut recv_task = tokio::spawn(async move {
@@ -162,9 +165,9 @@ pub async fn handle_ws<T>(
         _ = &mut send_task => send_task.abort(),
     };
 
-    tracing::info!("Connection closed for {}", &sid);
+    tracing::info!("Connection closed for {}", &session.id);
     let mut s = state.session.write().await;
-    s.remove(&sid);
+    s.remove(&session.id);
 }
 
 use message::{ChatMessage, Envelope};

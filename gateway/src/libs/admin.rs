@@ -1,6 +1,6 @@
 use super::config::{ASSETS_PATH, Hooks, Settings};
 use super::error::HttpResult;
-use super::shared::{Arw, Arwsc, Info, Sender, StateChat};
+use super::shared::{Arw, Arwsc, Sender, StateChat};
 use axum::{
     Router,
     extract::{Json, Path, Request, State},
@@ -11,7 +11,7 @@ use axum::{
 use kafka::Created;
 use message::{
     Envelope,
-    session::{Session, SessionCount},
+    session::{Session, SessionCount, SessionInfo},
 };
 use minijinja::Environment;
 use serde_json::{Map, Value, from_str};
@@ -103,18 +103,24 @@ async fn echo(req: Request) -> HttpResult<Response> {
 async fn login(
     State(_state): State<StateChat<Sender>>,
     Json(mut payload): Json<Map<String, Value>>,
-) -> HttpResult<Json<(Session, Info)>> {
+) -> HttpResult<Json<SessionInfo>> {
     use short_uuid::ShortUuid;
     let uuid = ShortUuid::generate().to_string();
     payload.insert("username".into(), uuid[..6].into());
-    Ok(Json((uuid.as_str().into(), payload)))
+    Ok(Json(SessionInfo {
+        id: uuid.as_str().into(),
+        info: payload,
+    }))
 }
 
 async fn logout(
     State(_state): State<StateChat<Sender>>,
     Json(payload): Json<Map<String, Value>>,
-) -> HttpResult<Json<(Session, Info)>> {
-    Ok(Json(("".into(), payload)))
+) -> HttpResult<Json<SessionInfo>> {
+    Ok(Json(SessionInfo {
+        id: "".into(),
+        info: payload,
+    }))
 }
 
 async fn inc(

@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use serde_json::{Map, Value};
 use std::{fmt::Display, ops::Deref};
 
 pub type SessionId = String;
@@ -36,5 +36,20 @@ impl Display for Session {
 impl From<SessionCount> for Session {
     fn from(value: SessionCount) -> Self {
         Self(value.to_string())
+    }
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, Default, PartialEq, Eq, Hash)]
+pub struct SessionInfo {
+    pub id: Session,
+    pub info: Map<String, Value>,
+}
+
+impl From<SessionInfo> for Map<String, Value> {
+    fn from(session: SessionInfo) -> Self {
+        let mut m = Map::new();
+        m.insert("id".into(), session.id.into());
+        m.insert("info".into(), session.info.into());
+        m
     }
 }
