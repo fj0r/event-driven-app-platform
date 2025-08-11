@@ -1,3 +1,4 @@
+use super::db::Account;
 use super::error::HttpResult;
 use super::shared::{Pg, Shared};
 use axum::{
@@ -7,46 +8,24 @@ use axum::{
     routing::{get, post},
 };
 use content::{Content, Influx, Message, Method};
-use futures::TryStreamExt;
 use layout::{Attrs, Layout, Settings};
 use message::session::SessionInfo;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json::{Map, Value, json};
-use sqlx::{
-    FromRow, Row, query, query_as,
-    types::JsonValue,
-    types::chrono::{DateTime, NaiveDateTime, Utc},
-};
+use short_uuid::ShortUuid;
 use std::ops::Deref;
 use tracing::info;
 
 async fn users(State(db): State<Pg>) -> HttpResult<Json<Vec<Value>>> {
     let db = db.read().await;
-    let mut x = query("select * from account").fetch(db.deref());
-    let mut v = Vec::new();
-    while let Some(r) = x.try_next().await? {
-        let n: &str = r.try_get("name")?;
-        v.push(json!(n));
-    }
+    let v = Account::list(db.deref()).await?;
+    let v = v.iter().map(|x| json!(x.name)).collect();
     Ok(Json(v)).into()
-}
-
-#[derive(Debug, Serialize, FromRow)]
-struct Account {
-    id: i32,
-    name: String,
-    created: NaiveDateTime,
-    updated: NaiveDateTime,
-    email: String,
-    x: Option<JsonValue>,
 }
 
 async fn user(Path(user): Path<String>, State(db): State<Pg>) -> HttpResult<Json<Account>> {
     let db = db.read().await;
-    let x: Account = query_as("select * from account where name = $1")
-        .bind(&user)
-        .fetch_one(db.deref())
-        .await?;
+    let x = Account::get(&user, db.deref()).await?;
     Ok(Json(x))
 }
 
@@ -56,11 +35,11 @@ pub struct Join {
     pub user: String,
 }
 
-async fn join(State(db): State<Pg>, Json(join): Json<Join>) -> HttpResult<Json<Value>> {
+async fn join(State(_db): State<Pg>, Json(join): Json<Join>) -> HttpResult<Json<Value>> {
     Ok(Json::default()).into()
 }
 
-async fn history(State(db): State<Pg>, Json(session): Json<SessionInfo>) -> HttpResult<Response> {
+async fn history(State(_db): State<Pg>, Json(session): Json<SessionInfo>) -> HttpResult<Response> {
     info!("history: {:?}", session);
     let content = Content::Join(Influx {
         event: "chat/history".into(),
@@ -82,7 +61,7 @@ async fn history(State(db): State<Pg>, Json(session): Json<SessionInfo>) -> Http
     Ok(Response::new(r.into()))
 }
 
-async fn channel(State(db): State<Pg>) -> HttpResult<Json<Value>> {
+async fn channel(State(_db): State<Pg>) -> HttpResult<Json<Value>> {
     Ok(Json::default()).into()
 }
 
@@ -92,8 +71,9 @@ async fn login(
     State(db): State<Pg>,
     Json(mut payload): Json<Map<String, Value>>,
 ) -> HttpResult<Json<SessionInfo>> {
-    use short_uuid::ShortUuid;
     let uuid = ShortUuid::generate().to_string();
+    let _db = db.read().await;
+
     payload.insert("username".into(), uuid[..6].into());
     info!("login: {:?}", payload);
     Ok(Json(SessionInfo {
@@ -103,7 +83,7 @@ async fn login(
 }
 
 async fn logout(
-    State(db): State<Pg>,
+    State(_db): State<Pg>,
     Json(payload): Json<Map<String, Value>>,
 ) -> HttpResult<Json<SessionInfo>> {
     info!("logout: {:?}", payload);

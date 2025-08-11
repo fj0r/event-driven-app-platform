@@ -1,5 +1,6 @@
 pub mod admin;
 pub mod config;
+pub mod db;
 pub mod error;
 pub mod handler;
 pub mod logic;
