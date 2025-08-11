@@ -62,7 +62,7 @@ async fn main() -> Result<()> {
 
     let queue = cfg.queue;
 
-    let (outgo_tx, income_rx) = if queue.enable {
+    let (outgo_tx, income_rx) = if !queue.disable {
         split_mq::<ChatMessage<Created>, Envelope<Created>>(queue).await
     } else {
         (None, None)

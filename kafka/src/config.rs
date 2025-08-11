@@ -32,7 +32,8 @@ pub enum QueueOutgo {
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
 pub struct Queue {
-    pub enable: bool,
+    #[serde(default)]
+    pub disable: bool,
     pub outgo: QueueOutgo,
     pub income: QueueIncome,
 }

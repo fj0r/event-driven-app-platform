@@ -3,9 +3,6 @@ logic = 'chat' # chat, crm, echo
 [trace]
 format = 'compact'
 
-[queue]
-enable = true
-
 [queue.outgo]
 type = 'kafka'
 broker = ['localhost:19092']
@@ -30,29 +27,24 @@ passwd = 'chat'
 base_url = "http://localhost:3000/config/hooks/"
 
 [login]
-enable = true
 endpoint = "http://localhost:3003/v1/login"
 accept = "application/json"
 
 [logout]
-enable = true
 endpoint = "http://localhost:3003/v1/logout"
 accept = "application/json"
 
 [[greet]]
-enable = true
 endpoint = "http://localhost:3000/debug/render/layout.json"
 accept = "application/json"
 
 [[greet]]
-enable = true
 path = "user.json"
 
 [[greet]]
-enable = true
+disable = false
 endpoint = "http://localhost:3003/v1/history"
 accept = "application/json"
 
 [[greet]]
-enable = true
 path = "segment.tmpl.json"

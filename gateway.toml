@@ -1,9 +1,6 @@
 [trace]
 format = 'compact'
 
-[queue]
-enable = true
-
 [queue.outgo]
 type = 'kafka'
 broker = ['localhost:19092']

@@ -49,7 +49,7 @@ async fn main() -> Result<()> {
 
     let queue = settings.read().await.queue.clone();
 
-    let (outgo_tx, income_rx) = if queue.enable {
+    let (outgo_tx, income_rx) = if !queue.disable {
         split_mq(queue).await
     } else {
         (None, None)
