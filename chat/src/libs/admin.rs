@@ -56,7 +56,6 @@ async fn history(State(_db): State<Db>, Json(session): Json<SessionInfo>) -> Htt
     });
     let msg: Message = ("chat".into(), content).into();
     let r = serde_json::to_string(&msg)?;
-    dbg!(&r.to_string());
     Ok(Response::new(r.into()))
 }
 
@@ -71,7 +70,9 @@ async fn login(
     Json(mut payload): Json<Map<String, Value>>,
 ) -> HttpResult<Json<SessionInfo>> {
     let uuid = ShortUuid::generate().to_string();
-    let _db = db.read().await;
+    let db = db.read().await;
+    let x = db.login(&uuid).await?;
+    dbg!(x);
 
     payload.insert("username".into(), uuid[..6].into());
     info!("login: {:?}", payload);

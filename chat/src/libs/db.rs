@@ -1,7 +1,8 @@
 use futures::TryStreamExt;
+use message::session::SessionInfo;
 use serde::Serialize;
 use sqlx::{
-    Error, FromRow, Pool, Postgres, query_as,
+    Error, FromRow, Pool, Postgres, Row, query, query_as,
     types::JsonValue,
     types::chrono::{DateTime, NaiveDateTime, Utc},
 };
@@ -44,5 +45,32 @@ impl Model {
             v.push(r)
         }
         Ok(v)
+    }
+    pub async fn login(&self, session_id: &str) -> Result<SessionInfo> {
+        let mut s = query(
+            "
+            with a as (
+                select a.id, a.name from account as a
+                left outer join session as s on a.id = s.account_id
+                where s.id is null
+                limit 1
+            )
+            , s as (
+                insert into session (id, account_id)
+                select $1, id from a returning id
+            )
+            select a.name, s.id from a, s;
+            ",
+        )
+        .bind(session_id)
+        .fetch(self.deref());
+        if let Some(r) = s.try_next().await? {
+            // TODO: unfinish
+            let id = r.try_get("id")?;
+            let name = r.try_get("name")?;
+            Ok(SessionInfo { id, info })
+        } else {
+            Err(Error::RowNotFound)
+        }
     }
 }

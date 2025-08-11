@@ -13,6 +13,8 @@ create index account_name_idx on account(name);
 create table session(
     id text not null,
     account_id integer references account(id),
+    created timestamp default now(),
+    updated timestamp,
     primary key(id, account_id)
 );
 create index session_id on session(id);
