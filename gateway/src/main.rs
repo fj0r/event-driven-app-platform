@@ -73,18 +73,15 @@ async fn main() -> Result<()> {
                  State(state): State<StateChat<Sender>>| async move {
                     let s = state.settings.read().await;
                     let login = &s.hooks.get("login").cloned().unwrap()[0];
-                    let logout = &s.hooks.get("logout").cloned().unwrap()[0];
+                    let logout = s.hooks.get("logout").unwrap()[0].clone();
                     drop(s);
                     let Ok(a) = handle_hook(&login, &q, tmpls.clone()).await else {
                         return Response::new("UNAUTHORIZED".into());
                     };
-                    let tmpls_cloned = tmpls.clone();
-                    let r = ws.on_upgrade(|socket| {
-                        handle_ws(socket, tx, state, settings, tmpls_cloned, a)
-                    });
-                    // TODO: move into handle_ws
-                    let _ = handle_hook::<Value>(&logout, &q, tmpls.clone()).await;
-                    r
+                    ws.on_upgrade(|socket| async move {
+                        handle_ws(socket, tx, state, settings, tmpls.clone(), a).await;
+                        let _ = handle_hook::<Value>(&logout, &q, tmpls.clone()).await;
+                    })
                 },
             ),
         )
