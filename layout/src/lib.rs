@@ -10,11 +10,15 @@ use serde_json::{Map, Value, json};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default, JsonSchema)]
 pub struct Attrs {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<String>,
     // for selector
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub kind: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub horizontal: Option<bool>,
     #[serde(flatten)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub settings: Option<Settings>,
 }
 
@@ -48,7 +52,9 @@ pub enum Settings {
         desc: String,
         #[serde(default)]
         thumb: bool,
+        #[serde(skip_serializing_if = "Option::is_none")]
         width: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
         height: Option<String>,
     },
 }
@@ -70,17 +76,19 @@ pub struct Render {
 pub enum Bind {
     Event {
         event: String,
-        #[serde(rename = "type")]
         // number, bool, [text]
+        #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
         kind: Option<String>,
         // TODO:
+        #[serde(skip_serializing_if = "Option::is_none")]
         local: Option<String>,
     },
     Field {
         field: String,
-        #[serde(rename = "type")]
+        #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
         // number, bool, [text]
         kind: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
         payload: Option<Value>,
         #[allow(dead_code)]
         #[serde(skip)]
@@ -102,12 +110,19 @@ fn kind_empty() -> String {
 pub struct Layout {
     #[serde(rename = "type", default = "kind_empty")]
     pub kind: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<Attrs>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub bind: Option<Bind>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub data: Option<Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub render: Option<Render>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub item: Option<Vec<Layout>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Layout>>,
 }
 

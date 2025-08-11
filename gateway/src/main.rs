@@ -82,6 +82,7 @@ async fn main() -> Result<()> {
                     let r = ws.on_upgrade(|socket| {
                         handle_ws(socket, tx, state, settings, tmpls_cloned, a)
                     });
+                    // TODO: move into handle_ws
                     let _ = handle_hook::<Value>(&logout, &q, tmpls.clone()).await;
                     r
                 },
