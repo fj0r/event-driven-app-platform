@@ -15,6 +15,7 @@ use tracing_subscriber::{
 };
 
 use kafka::{Created, split_mq};
+use libs::db::Model;
 use libs::handler::{ChatMessage, Envelope, handler};
 use libs::logic::*;
 use url::Url;
@@ -58,7 +59,7 @@ async fn main() -> Result<()> {
         .await;
 
     let client = connx(&cfg.database).await?;
-    let shared = Shared::new(client);
+    let shared = Shared::new(Model(client));
 
     let queue = cfg.queue;
 

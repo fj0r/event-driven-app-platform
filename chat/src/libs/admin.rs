@@ -1,6 +1,6 @@
 use super::db::Account;
 use super::error::HttpResult;
-use super::shared::{Pg, Shared};
+use super::shared::{Db, Shared};
 use axum::{
     Json, Router,
     extract::{Path, State},
@@ -13,19 +13,18 @@ use message::session::SessionInfo;
 use serde::Deserialize;
 use serde_json::{Map, Value, json};
 use short_uuid::ShortUuid;
-use std::ops::Deref;
 use tracing::info;
 
-async fn users(State(db): State<Pg>) -> HttpResult<Json<Vec<Value>>> {
+async fn users(State(db): State<Db>) -> HttpResult<Json<Vec<Value>>> {
     let db = db.read().await;
-    let v = Account::list(db.deref()).await?;
+    let v = db.list_account().await?;
     let v = v.iter().map(|x| json!(x.name)).collect();
     Ok(Json(v)).into()
 }
 
-async fn user(Path(user): Path<String>, State(db): State<Pg>) -> HttpResult<Json<Account>> {
+async fn user(Path(user): Path<String>, State(db): State<Db>) -> HttpResult<Json<Account>> {
     let db = db.read().await;
-    let x = Account::get(&user, db.deref()).await?;
+    let x = db.get_account(&user).await?;
     Ok(Json(x))
 }
 
@@ -35,11 +34,11 @@ pub struct Join {
     pub user: String,
 }
 
-async fn join(State(_db): State<Pg>, Json(join): Json<Join>) -> HttpResult<Json<Value>> {
+async fn join(State(_db): State<Db>, Json(join): Json<Join>) -> HttpResult<Json<Value>> {
     Ok(Json::default()).into()
 }
 
-async fn history(State(_db): State<Pg>, Json(session): Json<SessionInfo>) -> HttpResult<Response> {
+async fn history(State(_db): State<Db>, Json(session): Json<SessionInfo>) -> HttpResult<Response> {
     info!("history: {:?}", session);
     let content = Content::Join(Influx {
         event: "chat/history".into(),
@@ -61,14 +60,14 @@ async fn history(State(_db): State<Pg>, Json(session): Json<SessionInfo>) -> Htt
     Ok(Response::new(r.into()))
 }
 
-async fn channel(State(_db): State<Pg>) -> HttpResult<Json<Value>> {
+async fn channel(State(_db): State<Db>) -> HttpResult<Json<Value>> {
     Ok(Json::default()).into()
 }
 
 pub type Info = Map<String, Value>;
 
 async fn login(
-    State(db): State<Pg>,
+    State(db): State<Db>,
     Json(mut payload): Json<Map<String, Value>>,
 ) -> HttpResult<Json<SessionInfo>> {
     let uuid = ShortUuid::generate().to_string();
@@ -83,7 +82,7 @@ async fn login(
 }
 
 async fn logout(
-    State(_db): State<Pg>,
+    State(_db): State<Db>,
     Json(payload): Json<Map<String, Value>>,
 ) -> HttpResult<Json<SessionInfo>> {
     info!("logout: {:?}", payload);
