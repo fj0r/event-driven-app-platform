@@ -1,5 +1,5 @@
 use futures::TryStreamExt;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use sqlx::{
     Error, FromRow, Pool, Postgres, Row, query, query_as,
     types::JsonValue,
@@ -80,6 +80,66 @@ impl Model {
         .bind(session_id)
         .execute(self.deref())
         .await?;
+        Ok(())
+    }
+}
+
+#[derive(Debug, Serialize, FromRow)]
+pub struct Channel {
+    pub id: i32,
+    pub name: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct CreateChan {
+    pub session: String,
+    pub name: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct JoinChan {
+    pub session: String,
+    pub channel: String,
+    pub account: String,
+}
+
+impl Model {
+    pub async fn list_channel(&self, session_id: &str) -> Result<Vec<Channel>> {
+        query_as(
+            "
+            select c.id, c.name from channel as c
+            join channel_account as ca on ca.channel_id = c.id
+            join session as s on ca.account_id = s.account_id
+            where s.id = $1
+            ",
+        )
+        .bind(session_id)
+        .fetch_all(self.deref())
+        .await
+    }
+    pub async fn create_channel(&self, arg: &CreateChan) -> Result<Channel> {
+        query_as(
+            "
+            with x as (
+                insert into channel(name) values($1) returning id, name
+            )
+            , a as (
+                select account_id from session where id = $2
+            )
+            , r as (
+                insert into channel_account(channel_id, account_id, owner)
+                select id, account_id, true from x, a
+            )
+            select * from x
+            ",
+        )
+        .bind(&arg.name)
+        .bind(&arg.session)
+        .fetch_one(self.deref())
+        .await
+    }
+    pub async fn join_channel(&self, arg: &JoinChan) -> Result<()> {
+        query("").bind(&arg.session).execute(self.deref()).await?;
         Ok(())
     }
 }

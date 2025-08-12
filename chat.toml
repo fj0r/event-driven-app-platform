@@ -43,6 +43,11 @@ path = "user.json"
 
 [[greet]]
 disable = false
+endpoint = "http://localhost:3003/v1/channel"
+accept = "application/json"
+
+[[greet]]
+disable = false
 endpoint = "http://localhost:3003/v1/history"
 accept = "application/json"
 

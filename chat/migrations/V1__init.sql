@@ -29,7 +29,9 @@ create index channel_name_idx on channel(name);
 
 create table channel_account (
     channel_id integer references channel (id),
-    account_id integer references account (id)
+    account_id integer references account (id),
+    owner boolean default false,
+    unique(channel_id, account_id)
 );
 create index channel_account_c on channel_account(channel_id);
 create index channel_account_a on channel_account(account_id);

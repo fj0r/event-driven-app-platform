@@ -1,4 +1,4 @@
-use super::db::Account;
+use super::db::{Account, Channel, CreateChan, JoinChan};
 use super::error::HttpResult;
 use super::shared::{Db, Shared};
 use axum::{
@@ -28,17 +28,32 @@ async fn user(Path(user): Path<String>, State(db): State<Db>) -> HttpResult<Json
     Ok(Json(x))
 }
 
-#[derive(Debug, Deserialize)]
-pub struct Join {
-    pub channel: Option<String>,
-    pub user: String,
+async fn create_chan(
+    State(db): State<Db>,
+    Json(create): Json<CreateChan>,
+) -> HttpResult<Json<Channel>> {
+    let db = db.read().await;
+    let chan = db.create_channel(&create).await?;
+    Ok(Json(chan))
 }
 
-async fn join(State(_db): State<Db>, Json(join): Json<Join>) -> HttpResult<Json<Value>> {
+async fn join_chan(State(db): State<Db>, Json(join): Json<JoinChan>) -> HttpResult<Json<Value>> {
+    let db = db.read().await;
+    db.join_channel(&join).await?;
     Ok(Json::default()).into()
 }
 
-async fn history(State(_db): State<Db>, Json(session): Json<SessionInfo>) -> HttpResult<Response> {
+async fn channel(
+    State(db): State<Db>,
+    Json(session): Json<SessionInfo>,
+) -> HttpResult<Json<Vec<Channel>>> {
+    let db = db.read().await;
+    let channel = db.list_channel(&session.id.0).await?;
+    Ok(Json(channel))
+}
+
+async fn history(State(db): State<Db>, Json(session): Json<SessionInfo>) -> HttpResult<Response> {
+    let _db = db.read().await;
     info!("history: {:?}", session);
     let content = Content::Join(Influx {
         event: "chat/history".into(),
@@ -54,13 +69,9 @@ async fn history(State(_db): State<Db>, Json(session): Json<SessionInfo>) -> Htt
         },
         method: Method::Concat,
     });
-    let msg: Message = ("chat".into(), content).into();
-    let r = serde_json::to_string(&msg)?;
+    //let msg: Message = ("chat".into(), content).into();
+    let r = serde_json::to_string(&content)?;
     Ok(Response::new(r.into()))
-}
-
-async fn channel(State(_db): State<Db>) -> HttpResult<Json<Value>> {
-    Ok(Json::default()).into()
 }
 
 async fn login(
@@ -94,7 +105,8 @@ pub fn data_router() -> Router<Shared> {
         .route("/login", post(login))
         .route("/logout", post(logout))
         .route("/channel", post(channel))
-        .route("/join", post(join))
+        .route("/channel/join", post(join_chan))
+        .route("/channel/create", post(create_chan))
         .route("/history", post(history))
         .route("/users", get(users))
         .route("/user/{user}", get(user))
