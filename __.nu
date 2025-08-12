@@ -225,7 +225,9 @@ export def 'gw test' [] {
     job kill $ji
 }
 
-export def 'pg cli' [--db:string = 'chat'] {
+export def 'pg cli' [query? --db:string = 'chat'] {
+    let q = $in
+    let q = if ($q | is-empty) { $query } else { $q }
     let cfg = open $CHAT | get database
     let db = $db | default $cfg.db
     let cmd = $"
@@ -234,7 +236,11 @@ export def 'pg cli' [--db:string = 'chat'] {
         ATTACH 'dbname=($db) user=($cfg.user) host=127.0.0.1 port=($cfg.port) password=($cfg.passwd)' AS ($db) \(TYPE postgres\);
         USE ($db)
     "
-    duckdb -cmd $cmd
+    if ($q | is-empty) {
+        duckdb -cmd $cmd
+    } else {
+        $q | duckdb -cmd $cmd
+    }
 }
 
 

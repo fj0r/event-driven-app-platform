@@ -70,8 +70,9 @@ async fn login(
     Json(mut payload): Json<Map<String, Value>>,
 ) -> HttpResult<Json<SessionInfo>> {
     let uuid = ShortUuid::generate().to_string();
+    let token = payload.get("token").and_then(|x| x.as_str());
     let db = db.read().await;
-    let (id, name) = db.login(&uuid).await?;
+    let (id, name) = db.login(&uuid, token).await?;
     info!("login {}: {}", id, name);
     payload.insert("username".into(), name.into());
     Ok(Json(SessionInfo {
@@ -81,14 +82,13 @@ async fn login(
 }
 
 async fn logout(
-    State(_db): State<Db>,
-    Json(payload): Json<Map<String, Value>>,
+    State(db): State<Db>,
+    Json(session): Json<SessionInfo>,
 ) -> HttpResult<Json<SessionInfo>> {
-    info!("logout: {:?}", payload);
-    Ok(Json(SessionInfo {
-        id: "".into(),
-        info: payload,
-    }))
+    let db = db.read().await;
+    db.logout(&session.id).await?;
+    info!("logout: {:?}", session);
+    Ok(Json(session))
 }
 
 pub fn data_router() -> Router<Shared> {

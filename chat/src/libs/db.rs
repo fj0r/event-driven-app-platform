@@ -45,7 +45,7 @@ impl Model {
         }
         Ok(v)
     }
-    pub async fn login(&self, session_id: &str) -> Result<(String, String)> {
+    pub async fn login(&self, session_id: &str, _token: Option<&str>) -> Result<(String, String)> {
         let mut s = query(
             "
             with a as (
@@ -70,5 +70,16 @@ impl Model {
         } else {
             Err(Error::RowNotFound)
         }
+    }
+    pub async fn logout(&self, session_id: &str) -> Result<()> {
+        query(
+            "
+            delete from session where id = $1
+            ",
+        )
+        .bind(session_id)
+        .execute(self.deref())
+        .await?;
+        Ok(())
     }
 }
