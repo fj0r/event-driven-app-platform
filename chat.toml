@@ -27,11 +27,11 @@ passwd = 'chat'
 base_url = "http://localhost:3000/config/hooks/"
 
 [login]
-endpoint = "http://localhost:3003/v1/login"
+endpoint = "http://localhost:3003/v1/login?layout=true"
 accept = "application/json"
 
 [logout]
-endpoint = "http://localhost:3003/v1/logout"
+endpoint = "http://localhost:3003/v1/logout?layout=true"
 accept = "application/json"
 
 [[greet]]
@@ -43,12 +43,12 @@ path = "user.json"
 
 [[greet]]
 disable = false
-endpoint = "http://localhost:3003/v1/channel"
+endpoint = "http://localhost:3003/v1/channel?layout=true"
 accept = "application/json"
 
 [[greet]]
 disable = false
-endpoint = "http://localhost:3003/v1/history"
+endpoint = "http://localhost:3003/v1/history?layout=true"
 accept = "application/json"
 
 [[greet]]

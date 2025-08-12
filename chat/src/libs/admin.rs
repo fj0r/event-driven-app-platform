@@ -3,7 +3,7 @@ use super::error::HttpResult;
 use super::shared::{Db, Shared};
 use axum::{
     Json, Router,
-    extract::{Path, State},
+    extract::{Path, Query, State},
     response::Response,
     routing::{get, post},
 };
@@ -15,20 +15,30 @@ use serde_json::{Map, Value, json};
 use short_uuid::ShortUuid;
 use tracing::info;
 
-async fn users(State(db): State<Db>) -> HttpResult<Json<Vec<Value>>> {
+#[derive(Deserialize)]
+pub struct Opts {
+    pub layout: Option<bool>,
+}
+
+async fn users(_opts: Query<Opts>, State(db): State<Db>) -> HttpResult<Json<Vec<Value>>> {
     let db = db.read().await;
     let v = db.list_account().await?;
     let v = v.iter().map(|x| json!(x.name)).collect();
     Ok(Json(v)).into()
 }
 
-async fn user(Path(user): Path<String>, State(db): State<Db>) -> HttpResult<Json<Account>> {
+async fn user(
+    _opts: Query<Opts>,
+    Path(user): Path<String>,
+    State(db): State<Db>,
+) -> HttpResult<Json<Account>> {
     let db = db.read().await;
     let x = db.get_account(&user).await?;
     Ok(Json(x))
 }
 
 async fn create_chan(
+    _opts: Query<Opts>,
     State(db): State<Db>,
     Json(create): Json<CreateChan>,
 ) -> HttpResult<Json<Channel>> {
@@ -37,13 +47,18 @@ async fn create_chan(
     Ok(Json(chan))
 }
 
-async fn join_chan(State(db): State<Db>, Json(join): Json<JoinChan>) -> HttpResult<Json<Value>> {
+async fn join_chan(
+    _opts: Query<Opts>,
+    State(db): State<Db>,
+    Json(join): Json<JoinChan>,
+) -> HttpResult<Json<Value>> {
     let db = db.read().await;
     db.join_channel(&join).await?;
     Ok(Json::default()).into()
 }
 
 async fn channel(
+    _opts: Query<Opts>,
     State(db): State<Db>,
     Json(session): Json<SessionInfo>,
 ) -> HttpResult<Json<Vec<Channel>>> {
@@ -52,29 +67,40 @@ async fn channel(
     Ok(Json(channel))
 }
 
-async fn history(State(db): State<Db>, Json(session): Json<SessionInfo>) -> HttpResult<Response> {
+async fn history(
+    opts: Query<Opts>,
+    State(db): State<Db>,
+    Json(session): Json<SessionInfo>,
+) -> HttpResult<Response> {
     let _db = db.read().await;
     info!("history: {:?}", session);
-    let content = Content::Join(Influx {
-        event: "chat/history".into(),
-        data: Layout {
-            kind: "text".into(),
-            attrs: Some(Attrs {
-                settings: Some(Settings::Text {
-                    format: "md".into(),
+    if let Some(layout) = opts.layout
+        && layout
+    {
+        let content = Content::Join(Influx {
+            event: "chat/history".into(),
+            data: Layout {
+                kind: "text".into(),
+                attrs: Some(Attrs {
+                    settings: Some(Settings::Text {
+                        format: "md".into(),
+                    }),
+                    ..Default::default()
                 }),
                 ..Default::default()
-            }),
-            ..Default::default()
-        },
-        method: Method::Concat,
-    });
-    //let msg: Message = ("chat".into(), content).into();
-    let r = serde_json::to_string(&content)?;
-    Ok(Response::new(r.into()))
+            },
+            method: Method::Concat,
+        });
+        //let msg: Message = ("chat".into(), content).into();
+        let r = serde_json::to_string(&content)?;
+        Ok(Response::new(r.into()))
+    } else {
+        Ok(Response::new("".into()))
+    }
 }
 
 async fn login(
+    _opts: Query<Opts>,
     State(db): State<Db>,
     Json(mut payload): Json<Map<String, Value>>,
 ) -> HttpResult<Json<SessionInfo>> {
@@ -91,6 +117,7 @@ async fn login(
 }
 
 async fn logout(
+    _opts: Query<Opts>,
     State(db): State<Db>,
     Json(session): Json<SessionInfo>,
 ) -> HttpResult<Json<SessionInfo>> {
