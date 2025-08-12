@@ -21,6 +21,18 @@ impl From<&str> for Session {
     }
 }
 
+impl From<Session> for String {
+    fn from(value: Session) -> Self {
+        value.0
+    }
+}
+
+impl<'a> From<&'a Session> for &'a str {
+    fn from(value: &'a Session) -> Self {
+        &value.0
+    }
+}
+
 impl From<Session> for Value {
     fn from(value: Session) -> Self {
         value.0.into()

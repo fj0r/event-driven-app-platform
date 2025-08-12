@@ -20,7 +20,7 @@ pub async fn handler<T, F, Fut>(
 where
     T: Send + 'static,
     F: FnMut(ChatMessage<T>, ArcShared, Sender<T>) -> Fut + Clone + Send + 'static,
-    Fut: Future<Output = ()> + Send,
+    Fut: Future<Output = Result<()>> + Send,
 {
     let shared = Arc::new(RwLock::new(shared));
 

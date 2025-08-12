@@ -1,4 +1,5 @@
 use futures::TryStreamExt;
+use indoc::indoc;
 use serde::{Deserialize, Serialize};
 use sqlx::{
     Error, FromRow, Pool, Postgres, Row, query, query_as,
@@ -37,6 +38,7 @@ impl Model {
             .fetch_one(self.deref())
             .await
     }
+
     pub async fn list_account(&self) -> Result<Vec<Account>> {
         let mut x = query_as("select * from account").fetch(self.deref());
         let mut v = Vec::new();
@@ -45,8 +47,9 @@ impl Model {
         }
         Ok(v)
     }
+
     pub async fn login(&self, session_id: &str, _token: Option<&str>) -> Result<(String, String)> {
-        let mut s = query(
+        let mut s = query(indoc! {
             "
             with a as (
                 select a.id, a.name from account as a
@@ -59,8 +62,8 @@ impl Model {
                 select $1, id from a returning id
             )
             select a.name, s.id from a, s;
-            ",
-        )
+            "
+        })
         .bind(session_id)
         .fetch(self.deref());
         if let Some(r) = s.try_next().await? {
@@ -71,12 +74,13 @@ impl Model {
             Err(Error::RowNotFound)
         }
     }
+
     pub async fn logout(&self, session_id: &str) -> Result<()> {
-        query(
+        query(indoc! {
             "
             delete from session where id = $1
-            ",
-        )
+            "
+        })
         .bind(session_id)
         .execute(self.deref())
         .await?;
@@ -105,20 +109,21 @@ pub struct JoinChan {
 
 impl Model {
     pub async fn list_channel(&self, session_id: &str) -> Result<Vec<Channel>> {
-        query_as(
+        query_as(indoc! {
             "
             select c.id, c.name from channel as c
             join channel_account as ca on ca.channel_id = c.id
             join session as s on ca.account_id = s.account_id
             where s.id = $1
-            ",
-        )
+            "
+        })
         .bind(session_id)
         .fetch_all(self.deref())
         .await
     }
+
     pub async fn create_channel(&self, arg: &CreateChan) -> Result<Channel> {
-        query_as(
+        query_as(indoc! {
             "
             with x as (
                 insert into channel(name) values($1) returning id, name
@@ -131,16 +136,17 @@ impl Model {
                 select x.id, a.account_id, true from x, a
             )
             select * from x
-            ",
-        )
+            "
+        })
         .bind(&arg.name)
         .bind(&arg.session)
         .fetch_one(self.deref())
         .await
     }
+
     pub async fn join_channel(&self, arg: &JoinChan) -> Result<()> {
         // Only the owner can add others to the channel
-        query(
+        query(indoc! {
             "
             with c as (
                 select c.id, ca.owner from session as s
@@ -156,13 +162,37 @@ impl Model {
             insert into channel_account(channel_id, account_id)
             select c.id, a.id from c, a where c.owner
             on conflict(channel_id, account_id) do nothing
-            ",
-        )
+            "
+        })
         .bind(&arg.session)
         .bind(&arg.channel)
         .bind(&arg.account)
         .execute(self.deref())
         .await?;
         Ok(())
+    }
+}
+
+#[derive(Debug, Serialize, FromRow)]
+pub struct ActiveUser {
+    pub id: i32,
+    pub name: String,
+    pub session_id: String,
+}
+
+impl Model {
+    pub async fn list_channel_account(&self, channel_id: i32) -> Result<Vec<ActiveUser>> {
+        query_as(indoc! {
+            "
+            select a.id, a.name, s.id as session_id
+            from channel_account as ca
+            join account as a on ca.account_id = a.id
+            join session as s on s.account_id = a.id
+            where ca.channel_id = $1
+            "
+        })
+        .bind(channel_id)
+        .fetch_all(self.deref())
+        .await
     }
 }

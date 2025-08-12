@@ -11,6 +11,7 @@
     - [x] event map
     - [ ] ~history srv~
     - [x] ~hot reload config~ config update api
+    - [ ] migrate txt to json
 - [ ] ~topic/channel/chatroom~ (client/controller)
 - [x] ~top event~ (unachievable)
 - [x] greet
@@ -24,7 +25,7 @@
 
 ### ui:
 - [x] Dynamic layout
-    - [ ] Rack/Case: table/grid
+    - [x] Rack/Case: table/grid
 - [x] Data binding (for some components)
 - [x] User input (listen to input events)
     - [x] Listen for enter key press

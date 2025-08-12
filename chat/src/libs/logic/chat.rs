@@ -1,16 +1,23 @@
 use super::super::handler::{ArcShared, ChatMessage, Envelope, Sender};
+use anyhow::Result;
 use content::{Content, Influx, Method};
 use layout::{Attrs, Layout, Settings};
-use message::session::Session;
 use std::default::Default;
 use std::fmt::Debug;
 
-pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender<T>) {
+pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender<T>) -> Result<()> {
     let ChatMessage {
         sender,
+        // TODO: channel_id,
         created: _,
         content,
     } = &e;
+
+    let s = s.read().await;
+    let db = s.db.read().await;
+    // TODO: channel id
+    let users = db.list_channel_account(3).await;
+    dbg!(&users);
 
     if let Some(content) = content.as_object()
         && let Some(d) = content.get("data")
@@ -38,4 +45,5 @@ pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender
             });
         }
     };
+    Ok(())
 }

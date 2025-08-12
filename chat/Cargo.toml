@@ -30,6 +30,7 @@ message = { path = "../message" }
 content = { path = "../content" }
 layout = { path = "../layout" }
 url = "2.5.4"
+indoc = "2.0.6"
 
 [[bin]]
 name = "chat"

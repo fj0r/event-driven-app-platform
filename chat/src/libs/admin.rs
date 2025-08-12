@@ -63,7 +63,7 @@ async fn channel(
     Json(session): Json<SessionInfo>,
 ) -> HttpResult<Json<Vec<Channel>>> {
     let db = db.read().await;
-    let channel = db.list_channel(&session.id.0).await?;
+    let channel = db.list_channel((&session.id).into()).await?;
     Ok(Json(channel))
 }
 
