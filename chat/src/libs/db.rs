@@ -100,7 +100,7 @@ pub struct CreateChan {
 pub struct JoinChan {
     pub session: String,
     pub channel: String,
-    pub account: String,
+    pub account: Vec<String>,
 }
 
 impl Model {
@@ -128,7 +128,7 @@ impl Model {
             )
             , r as (
                 insert into channel_account(channel_id, account_id, owner)
-                select id, account_id, true from x, a
+                select x.id, a.account_id, true from x, a
             )
             select * from x
             ",
@@ -139,7 +139,30 @@ impl Model {
         .await
     }
     pub async fn join_channel(&self, arg: &JoinChan) -> Result<()> {
-        query("").bind(&arg.session).execute(self.deref()).await?;
+        // Only the owner can add others to the channel
+        query(
+            "
+            with c as (
+                select c.id, ca.owner from session as s
+                join channel_account as ca
+                on s.account_id = ca.account_id
+                join channel as c
+                on ca.channel_id = c.id
+                where s.id = $1 and c.name = $2
+            )
+            , a as (
+                select id from account where name = any($3)
+            )
+            insert into channel_account(channel_id, account_id)
+            select c.id, a.id from c, a where c.owner
+            on conflict(channel_id, account_id) do nothing
+            ",
+        )
+        .bind(&arg.session)
+        .bind(&arg.channel)
+        .bind(&arg.account)
+        .execute(self.deref())
+        .await?;
         Ok(())
     }
 }
