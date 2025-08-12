@@ -1,5 +1,4 @@
 use futures::TryStreamExt;
-use message::session::SessionInfo;
 use serde::Serialize;
 use sqlx::{
     Error, FromRow, Pool, Postgres, Row, query, query_as,
@@ -46,7 +45,7 @@ impl Model {
         }
         Ok(v)
     }
-    pub async fn login(&self, session_id: &str) -> Result<SessionInfo> {
+    pub async fn login(&self, session_id: &str) -> Result<(String, String)> {
         let mut s = query(
             "
             with a as (
@@ -65,10 +64,9 @@ impl Model {
         .bind(session_id)
         .fetch(self.deref());
         if let Some(r) = s.try_next().await? {
-            // TODO: unfinish
-            let id = r.try_get("id")?;
-            let name = r.try_get("name")?;
-            Ok(SessionInfo { id, info })
+            let name: &str = r.try_get("name")?;
+            let id: &str = r.try_get("id")?;
+            Ok((id.to_string(), name.to_string()))
         } else {
             Err(Error::RowNotFound)
         }

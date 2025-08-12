@@ -71,11 +71,9 @@ async fn login(
 ) -> HttpResult<Json<SessionInfo>> {
     let uuid = ShortUuid::generate().to_string();
     let db = db.read().await;
-    let x = db.login(&uuid).await?;
-    dbg!(x);
-
-    payload.insert("username".into(), uuid[..6].into());
-    info!("login: {:?}", payload);
+    let (id, name) = db.login(&uuid).await?;
+    info!("login {}: {}", id, name);
+    payload.insert("username".into(), name.into());
     Ok(Json(SessionInfo {
         id: uuid.as_str().into(),
         info: payload,
