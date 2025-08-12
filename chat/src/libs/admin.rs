@@ -63,8 +63,6 @@ async fn channel(State(_db): State<Db>) -> HttpResult<Json<Value>> {
     Ok(Json::default()).into()
 }
 
-pub type Info = Map<String, Value>;
-
 async fn login(
     State(db): State<Db>,
     Json(mut payload): Json<Map<String, Value>>,
@@ -87,7 +85,7 @@ async fn logout(
 ) -> HttpResult<Json<SessionInfo>> {
     let db = db.read().await;
     db.logout(&session.id).await?;
-    info!("logout: {:?}", session);
+    info!("logout: {}", session.id);
     Ok(Json(session))
 }
 
