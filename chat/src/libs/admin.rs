@@ -79,6 +79,7 @@ async fn history(
     {
         let content = Content::Join(Influx {
             event: "chat/history".into(),
+            channel: None,
             data: Layout {
                 kind: "text".into(),
                 attrs: Some(Attrs {

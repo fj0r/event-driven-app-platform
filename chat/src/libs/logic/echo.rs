@@ -17,6 +17,7 @@ pub async fn echo<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender
     {
         let content = Content::Join(Influx {
             event: "chat".into(),
+            channel: None,
             data: Layout {
                 kind: "text".into(),
                 attrs: Some(Attrs {

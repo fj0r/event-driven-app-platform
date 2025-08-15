@@ -17,6 +17,7 @@ type Session = String;
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Message {
     pub sender: Session,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub created: Option<Created>,
     pub content: Content,
 }
@@ -34,6 +35,7 @@ impl From<(Session, Content)> for Message {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Outflow {
     pub event: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     pub data: Value,
 }
@@ -86,6 +88,8 @@ pub struct Influx {
     pub data: Layout,
     #[serde(default)]
     pub method: Method,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub channel: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
