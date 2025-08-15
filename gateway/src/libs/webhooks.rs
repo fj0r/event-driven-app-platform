@@ -45,7 +45,8 @@ where
         } => {
             let client = reqwest::Client::new();
             let r = client.post(endpoint).json(&msg).send().await?;
-            Ok(r.json::<T>().await?)
+            let r = r.json::<T>().await?;
+            Ok(r)
         }
     }
 }

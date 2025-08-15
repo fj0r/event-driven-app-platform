@@ -71,7 +71,7 @@ async fn history(
     opts: Query<Opts>,
     State(db): State<Db>,
     Json(session): Json<SessionInfo>,
-) -> HttpResult<Response> {
+) -> HttpResult<Json<Value>> {
     let _db = db.read().await;
     info!("history: {:?}", session);
     if let Some(layout) = opts.layout
@@ -93,10 +93,10 @@ async fn history(
             method: Method::Concat,
         });
         //let msg: Message = ("chat".into(), content).into();
-        let r = serde_json::to_string(&content)?;
-        Ok(Response::new(r.into()))
+        let r = serde_json::to_value(&content)?;
+        Ok(Json(r.into()))
     } else {
-        Ok(Response::new("".into()))
+        Ok(Json(Value::Array(Vec::new())))
     }
 }
 

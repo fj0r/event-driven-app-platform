@@ -34,13 +34,12 @@ async fn handle_greet<T>(
     asset: &Hook,
     context: &Map<String, Value>,
     tmpls: Arc<Tmpls<'_>>,
-) -> Result<String>
+) -> Result<T>
 where
     T: Event<Created> + Serialize + From<(Session, Value)>,
 {
     let v = handle_hook(asset, context, tmpls).await?;
     let msg: T = (Session::default(), v).into();
-    let msg = serde_json::to_string(&msg)?;
     Ok(msg)
 }
 
@@ -85,10 +84,12 @@ pub async fn handle_ws<T>(
     if let Some(greet) = setting1.hooks.get("greet") {
         for g in greet.iter() {
             match handle_greet::<T>(g, &context, tmpls.clone()).await {
-                Ok(text) => {
-                    let _ = sender
-                        .send(axum::extract::ws::Message::Text(text.into()))
-                        .await;
+                Ok(payload) => {
+                    if let Ok(text) = serde_json::to_string(&payload) {
+                        let _ = sender
+                            .send(axum::extract::ws::Message::Text(text.into()))
+                            .await;
+                    }
                 }
                 Err(e) => {
                     println!("GreetError => {:?}", e)

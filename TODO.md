@@ -11,7 +11,7 @@
     - [x] event map
     - [ ] ~history srv~
     - [x] ~hot reload config~ config update api
-    - [ ] migrate txt to json
+    - [x] migrate txt to json
 - [ ] channel
     - [x] channel in message
 - [ ] ~topic/channel/chatroom~ (client/controller)

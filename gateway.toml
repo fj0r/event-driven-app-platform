@@ -19,19 +19,19 @@ endpoint = 'http://localhost:3000/debug/login'
 endpoint = 'http://localhost:3000/debug/logout'
 
 [[hooks.greet]]
-disable = true
+disable = false
 endpoint = 'http://localhost:3000/debug/render/layout.json'
 
 [[hooks.greet]]
-disable = true
+disable = false
 path = 'user.json'
 
 [[hooks.greet]]
-disable = true
+disable = false
 path = 'segment.tmpl.json'
 
 [hooks.history]
-disable = true
+disable = false
 endpoint = 'http://localhost:8000/v1/history'
 
 [hooks.echo]

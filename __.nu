@@ -116,7 +116,7 @@ export def 'serve' [
     if $rpk {
         rpk up --external $external
     }
-    $env.RUST_BACKTRACE = 1
+    #$env.RUST_BACKTRACE = 1
     #$env.GATEWAY_KAFKA_ENABLE = 1
     let g = job spawn {
         gw up
