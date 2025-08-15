@@ -116,11 +116,6 @@ pub async fn handle_ws<T>(
     let hooks = setting1.hooks.clone();
     drop(setting1); // release lock
     let mut recv_task = tokio::spawn(async move {
-        // update sid after the message queue login event
-        // UnboundedSender does not implement `Eq` and `Hash`
-        // Therefore, it cannot be used to look up sid in reverse.
-        // If another reverse lookup `r_key` is added, then `r_key` is immutable, while sid is mutable
-        // It would be better if sid were immutable, and the name was placed in `info`
         #[allow(unused_mut)]
         let mut sid = sid_cloned;
 

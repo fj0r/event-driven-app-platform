@@ -12,6 +12,8 @@
     - [ ] ~history srv~
     - [x] ~hot reload config~ config update api
     - [ ] migrate txt to json
+- [ ] channel
+    - [x] channel in message
 - [ ] ~topic/channel/chatroom~ (client/controller)
 - [x] ~top event~ (unachievable)
 - [x] greet
