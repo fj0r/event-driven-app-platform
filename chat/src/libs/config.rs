@@ -136,3 +136,5 @@ impl Config {
             .extract()
     }
 }
+
+pub const ASSETS_PATH: &str = "manifest";

@@ -1,10 +1,11 @@
+use super::config::ASSETS_PATH;
 use super::db::{Account, Channel, CreateChan, JoinChan};
 use super::error::HttpResult;
 use super::shared::{Db, Shared};
+use async_fs::read_to_string;
 use axum::{
     Json, Router,
     extract::{Path, Query, State},
-    response::Response,
     routing::{get, post},
 };
 use content::{Content, Influx, Message, Method};
@@ -13,6 +14,7 @@ use message::session::SessionInfo;
 use serde::Deserialize;
 use serde_json::{Map, Value, json};
 use short_uuid::ShortUuid;
+use std::path::Path as OsPath;
 use tracing::info;
 
 #[derive(Deserialize)]
@@ -100,6 +102,13 @@ async fn history(
     }
 }
 
+async fn yaml(opts: Query<Opts>, Path(name): Path<String>) -> HttpResult<Json<serde_yaml::Value>> {
+    let path = OsPath::new(ASSETS_PATH);
+    let content = read_to_string(path.join(&name)).await?;
+    let v: serde_yaml::Value = serde_yaml::from_str(&content)?;
+    Ok(Json(v))
+}
+
 async fn login(
     _opts: Query<Opts>,
     State(db): State<Db>,
@@ -132,6 +141,7 @@ pub fn data_router() -> Router<Shared> {
     Router::new()
         .route("/login", post(login))
         .route("/logout", post(logout))
+        .route("/yaml/{name}", post(yaml))
         .route("/channel", post(channel))
         .route("/channel/join", post(join_chan))
         .route("/channel/create", post(create_chan))

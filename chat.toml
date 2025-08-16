@@ -35,10 +35,11 @@ endpoint = "http://localhost:3003/v1/logout?layout=true"
 accept = "application/json"
 
 [[greet]]
-endpoint = "http://localhost:3000/debug/render/layout.json"
+endpoint = "http://localhost:3003/v1/yaml/chat_layout.yaml"
 accept = "application/json"
 
 [[greet]]
+disable = true
 path = "user.json"
 
 [[greet]]
