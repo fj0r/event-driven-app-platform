@@ -30,3 +30,4 @@ tower-http = { version = "0.6.4", features = ["fs"] }
 listenfd = "1.0.2"
 message = { path = "../message" }
 kafka = { path = "../kafka" }
+bon = "3.7.0"
