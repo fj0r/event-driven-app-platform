@@ -123,7 +123,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
 
     use_memo(move || {
         let act = serde_json::from_str::<Message>(&x()).unwrap_or_else(|y| {
-            dioxus_logger::tracing::info!("{:?} => {:?}", y, &x());
+            dioxus::logger::tracing::info!("{:?} => {:?}", y, &x());
             Message::default()
         });
         dispatch(act, &mut layout, &mut data, &mut list);

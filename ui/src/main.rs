@@ -1,6 +1,6 @@
 mod libs;
+use dioxus::logger::tracing;
 use dioxus::prelude::*;
-use dioxus_logger::tracing;
 use libs::components::*;
 use libs::store::{Store, use_store};
 use tracing_wasm::WASMLayerConfigBuilder;

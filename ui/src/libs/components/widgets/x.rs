@@ -3,8 +3,8 @@ use super::super::super::store::Store;
 use super::super::dynamic::Dynamic;
 use super::super::utils::*;
 use anyhow::Ok;
+use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
-use dioxus_logger::tracing::info;
 use layout::Layout;
 
 #[component]
