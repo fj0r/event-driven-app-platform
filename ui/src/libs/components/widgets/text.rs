@@ -12,9 +12,9 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
     let layout_cloned = layout();
     let css = merge_css_class(&mut css, &layout_cloned);
 
-    let s = use_context::<Store>();
+    let store = use_context::<Store>();
 
-    let mut t = {
+    let mut txt_layout = {
         let data = layout.read().data.clone();
         Layout {
             kind: "Text".to_string(),
@@ -23,35 +23,41 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
         }
     };
     if let Some(Bind::Event { event, .. }) = &layout.read().bind {
-        let x = s.data.read().get(event).cloned();
-        if let Some(t1) = x {
-            t = t1
+        let event_data = store.data.read().get(event).cloned();
+        if let Some(event_layout) = event_data {
+            txt_layout = event_layout
         }
     };
-    let v = if let Some(j) = t.data {
-        if j.is_string() {
-            j.as_str().unwrap().to_owned()
+    let text_content = if let Some(json_data) = txt_layout.data {
+        if json_data.is_string() {
+            json_data.as_str().unwrap().to_owned()
         } else {
-            j.to_string()
+            json_data.to_string()
         }
     } else {
         "".to_string()
     };
 
-    static MDFMT: LazyLock<Vec<String>> =
-        LazyLock::new(|| ["markdown", "md"].iter().map(|x| x.to_string()).collect());
+    static MDFMT: LazyLock<Vec<String>> = LazyLock::new(|| {
+        ["markdown", "md"]
+            .iter()
+            .map(|fmt| fmt.to_string())
+            .collect()
+    });
 
-    if let Some(x) = layout.read().clone().attrs
-        && let Some(Settings::Text { format: a }) = x.settings
-        && (*MDFMT).contains(&a)
+    if let Some(attrs) = layout.read().clone().attrs
+        && let Some(Settings::Text {
+            format: text_format,
+        }) = attrs.settings
+        && (*MDFMT).contains(&text_format)
     {
-        let v = v.clone();
-        if let Ok(md) = to_html_with_options(&v, &Options::gfm()) {
+        let v = text_content.clone();
+        if let Ok(md_html) = to_html_with_options(&v, &Options::gfm()) {
             css.push("markdown");
             return rsx! {
                 div {
                     class: css.join(" "),
-                    dangerous_inner_html: md
+                    dangerous_inner_html: md_html
                 }
             };
         }
@@ -60,7 +66,7 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
     rsx! {
         div {
             class: css.join(" "),
-            {v}
+            {text_content}
         }
     }
 }
