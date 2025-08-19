@@ -27,11 +27,15 @@ pub fn Input(layout: Layout) -> Element {
                 payload: _,
                 signal,
             } => Some(("field", field, kind.unwrap_or("text".to_string()), signal)),
-            Bind::Event {
-                event,
-                kind,
-                local: _,
-            } => Some(("event", event, kind.unwrap_or("text".to_string()), None)),
+            Bind::Event { event, kind } => {
+                Some(("event", event, kind.unwrap_or("text".to_string()), None))
+            }
+            Bind::Variable { variable, kind } => Some((
+                "variable",
+                variable,
+                kind.unwrap_or("text".to_string()),
+                None,
+            )),
             _ => None,
         })
         .unwrap_or(("", "".to_string(), "text".to_string(), None));

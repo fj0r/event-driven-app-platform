@@ -79,9 +79,12 @@ pub enum Bind {
         // number, bool, [text]
         #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
         kind: Option<String>,
-        // TODO:
-        #[serde(skip_serializing_if = "Option::is_none")]
-        local: Option<String>,
+    },
+    Variable {
+        variable: String,
+        // number, bool, [text]
+        #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
+        kind: Option<String>,
     },
     Field {
         field: String,
