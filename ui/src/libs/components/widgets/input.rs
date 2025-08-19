@@ -17,7 +17,7 @@ fn default_kind(kind: &str) -> Value {
 
 #[component]
 pub fn Input(layout: Layout) -> Element {
-    let (ty, event, kind, signal) = layout
+    let (bind_type, event, kind, signal) = layout
         .bind
         .clone()
         .and_then(|x| match x {
@@ -40,7 +40,7 @@ pub fn Input(layout: Layout) -> Element {
         })
         .unwrap_or(("", "".to_string(), "text".to_string(), None));
 
-    let s = use_context::<Store>();
+    let store = use_context::<Store>();
     let mut css = vec!["input", "f", "shadow"];
     let css = merge_css_class(&mut css, &layout);
 
@@ -56,32 +56,34 @@ pub fn Input(layout: Layout) -> Element {
         _ => "text",
     };
 
-    let mut v = signal.unwrap_or_else(|| use_signal(|| default_kind(kind.as_str())));
+    let mut slot = signal.unwrap_or_else(|| use_signal(|| default_kind(kind.as_str())));
 
+    // TODO: bind
     let kind_clone = kind.clone();
     let oninput = move |event: Event<FormData>| {
-        v.set(to_value(event.value()).unwrap());
+        slot.set(to_value(event.value()).unwrap());
         if let Some(mut signal) = signal {
-            let vl = event.value();
-            let vl = match kind_clone.as_str() {
-                "bool" => to_value(vl == "true"),
-                "number" => to_value(vl.parse::<f64>().unwrap()),
-                _ => to_value(vl),
+            let event_value = event.value();
+            let parsed_value = match kind_clone.as_str() {
+                "bool" => to_value(event_value == "true"),
+                "number" => to_value(event_value.parse::<f64>().unwrap()),
+                _ => to_value(event_value),
             }
             .unwrap();
-            signal.set(vl);
+            signal.set(parsed_value);
         };
     };
 
+    // TODO: bind
     let kind_clone = kind.clone();
     let onkeydown = move |ev: Event<KeyboardData>| {
-        let mut s = s.clone();
+        let mut s = store.clone();
         let event = event.clone();
         let kind = kind_clone.clone();
-        let val = v();
+        let val = slot();
         async move {
             if ev.data.key() == Key::Enter {
-                match ty {
+                match bind_type {
                     "field" => {
                         if let Some(mut sig) = signal {
                             sig.set(val);
@@ -89,7 +91,13 @@ pub fn Input(layout: Layout) -> Element {
                     }
                     "event" => {
                         s.send(event.deref(), None, val).await;
-                        *v.write() = default_kind(kind.as_str());
+                        *slot.write() = default_kind(kind.as_str());
+                    }
+                    "variable" => {
+
+                    }
+                    "variable" => {
+
                     }
                     _ => {}
                 }
@@ -99,7 +107,7 @@ pub fn Input(layout: Layout) -> Element {
 
     match kind.as_str() {
         "number" => {
-            let v = v.read().as_f64();
+            let v = slot.read().as_f64();
             rsx! {
                 input {
                     class: css.join(" "),
@@ -111,7 +119,7 @@ pub fn Input(layout: Layout) -> Element {
             }
         }
         "bool" => {
-            let v = v.read().as_bool();
+            let v = slot.read().as_bool();
             rsx! {
                 input {
                     class: css.join(" "),
@@ -123,7 +131,7 @@ pub fn Input(layout: Layout) -> Element {
             }
         }
         _ => {
-            let v = v.read().as_str().unwrap_or("").to_string();
+            let v = slot.read().as_str().unwrap_or("").to_string();
             rsx! {
                 input {
                     class: css.join(" "),

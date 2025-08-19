@@ -3,7 +3,7 @@ use anyhow::Result;
 use content::{Content, Message, Method, Outflow};
 use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;
-use layout::{Concat, Delete, Layout, LayoutOp, Replace};
+use layout::{Bind, Concat, Delete, Layout, LayoutOp, Replace};
 use minijinja::{AutoEscape, Environment};
 use serde_json::{Value, to_string};
 use std::collections::HashMap;
@@ -36,6 +36,23 @@ impl Store {
             let msg = gloo_net::websocket::Message::Text(msg);
             let _ = self.ws.send(msg).await;
         }
+    }
+
+    pub async fn bind(&mut self, layout: &Layout) -> Result<()> {
+        if let Some(bind) = &layout.bind {
+            match bind {
+                Bind::Field {
+                    field,
+                    kind,
+                    payload: _,
+                    signal,
+                } => {}
+                Bind::Event { event, kind } => {}
+                Bind::Variable { variable, kind } => {}
+                _ => {}
+            }
+        }
+        Ok(())
     }
 }
 
