@@ -6,7 +6,7 @@ use itertools::{
 use minijinja::Environment;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value, json};
+use serde_json::{Map, Value, json, to_value};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default, JsonSchema)]
 pub struct Attrs {
@@ -71,26 +71,62 @@ pub struct Render {
     pub data: Value,
 }
 
+#[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub enum JsKind {
+    #[allow(non_camel_case_types)]
+    bool,
+    #[allow(non_camel_case_types)]
+    number,
+    #[default]
+    #[allow(non_camel_case_types)]
+    text,
+    #[allow(non_camel_case_types)]
+    password,
+    #[allow(non_camel_case_types)]
+    button,
+    #[allow(non_camel_case_types)]
+    submit,
+}
+
+impl JsKind {
+    pub fn input_type(&self) -> &'static str {
+        match self {
+            Self::bool => "checkbox",
+            Self::number => "number",
+            Self::text => "text",
+            Self::password => "password",
+            Self::button => "button",
+            Self::submit => "submit",
+        }
+    }
+
+    pub fn default_value(&self) -> Value {
+        match self {
+            Self::number => to_value(0),
+            Self::bool => to_value(false),
+            _ => to_value(""),
+        }
+        .unwrap()
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(untagged)]
 pub enum Bind {
     Event {
         event: String,
-        // number, bool, [text]
         #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
-        kind: Option<String>,
+        kind: Option<JsKind>,
     },
     Variable {
         variable: String,
-        // number, bool, [text]
         #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
-        kind: Option<String>,
+        kind: Option<JsKind>,
     },
     Field {
         field: String,
         #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
-        // number, bool, [text]
-        kind: Option<String>,
+        kind: Option<JsKind>,
         #[serde(skip_serializing_if = "Option::is_none")]
         payload: Option<Value>,
         #[allow(dead_code)]

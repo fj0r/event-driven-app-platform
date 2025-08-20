@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use super::super::store::Store;
 use super::{Dynamic, Frame};
 use dioxus::prelude::*;
-use layout::{Bind, Layout, Settings};
+use layout::{Bind, Layout, Settings, JsKind};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -24,8 +24,8 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
             signal: _,
         }) => {
             let kind = kind.clone();
-            let v = match kind.as_deref() {
-                Some("number") => {
+            let v = match kind {
+                Some(JsKind::number) => {
                     let n = layout
                         .data
                         .as_ref()
@@ -33,7 +33,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
                         .unwrap_or(0 as f64);
                     to_value(n).unwrap()
                 }
-                Some("bool") => {
+                Some(JsKind::bool) => {
                     let b = layout
                         .data
                         .as_ref()
