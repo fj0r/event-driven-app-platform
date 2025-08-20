@@ -22,7 +22,8 @@ create index session_account on session(account_id);
 
 create table channel (
     id serial primary key,
-    parent_id integer,
+    parent_id integer references channel (id),
+    skip integer,
     name text not null
 );
 create index channel_name_idx on channel(name);
@@ -31,6 +32,8 @@ create table channel_account (
     channel_id integer references channel (id),
     account_id integer references account (id),
     owner boolean default false,
+    created timestamp default now(),
+    updated timestamp,
     unique(channel_id, account_id)
 );
 create index channel_account_c on channel_account(channel_id);
@@ -40,6 +43,7 @@ create table message (
     channel_id integer references channel (id),
     account_id integer references account (id),
     created timestamp default now(),
+    updated timestamp,
     content text not null
 );
 create index message_c on message(channel_id);
