@@ -41,17 +41,14 @@ pub fn Input(layout: Layout) -> Element {
     // TODO: bind
     let k1 = kind.clone();
     let oninput = move |event: Event<FormData>| {
-        slot.set(to_value(event.value()).unwrap());
-        if let Some(mut signal) = signal {
-            let event_value = event.value();
-            let parsed_value = match *k1 {
-                Some(JsKind::bool) => to_value(event_value == "true"),
-                Some(JsKind::number) => to_value(event_value.parse::<f64>().unwrap()),
-                _ => to_value(event_value),
-            }
-            .unwrap();
-            signal.set(parsed_value);
-        };
+        let event_value = event.value();
+        let parsed_value = match *k1 {
+            Some(JsKind::bool) => to_value(event_value == "true"),
+            Some(JsKind::number) => to_value(event_value.parse::<f64>().unwrap()),
+            _ => to_value(event_value),
+        }
+        .unwrap();
+        slot.set(parsed_value);
     };
 
     // TODO: bind

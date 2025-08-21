@@ -4,6 +4,8 @@ pub mod image;
 pub use image::Img;
 pub mod input;
 pub use input::Input;
+pub mod input2;
+pub use input2::Input as Input2;
 pub mod table;
 pub use table::*;
 pub mod text;
