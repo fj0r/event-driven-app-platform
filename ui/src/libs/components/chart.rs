@@ -4,7 +4,7 @@ use layout::Layout;
 #[component]
 pub fn Chart(id: String, layout: Layout) -> Element {
     let eid = id.clone();
-    if let Some(val) = layout.data {
+    if let Some(val) = layout.value {
         use_effect(move || {
             let js = format!(
                 r#"

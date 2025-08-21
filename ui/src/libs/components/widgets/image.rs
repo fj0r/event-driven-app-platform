@@ -3,7 +3,7 @@ use layout::{Layout, Settings};
 
 #[component]
 pub fn Img(layout: Layout, children: Element) -> Element {
-    if let Some(src) = &layout.data
+    if let Some(src) = &layout.value
         && let Some(src) = src.as_str()
         && let Some(x) = layout.attrs
     {

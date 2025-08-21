@@ -7,7 +7,7 @@ use layout::Layout;
 #[component]
 pub fn Diagram(id: String, layout: Layout) -> Element {
     let eid = id.clone();
-    if let Some(x) = layout.data
+    if let Some(x) = layout.value
         && let Some(y) = x.as_str()
     {
         let val = y.to_string();

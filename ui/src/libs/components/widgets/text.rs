@@ -15,10 +15,10 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
     let store = use_context::<Store>();
 
     let mut txt_layout = {
-        let data = layout.read().data.clone();
+        let value = layout.read().value.clone();
         Layout {
             kind: "Text".to_string(),
-            data,
+            value,
             ..Layout::default()
         }
     };
@@ -28,7 +28,7 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
             txt_layout = event_layout
         }
     };
-    let text_content = if let Some(json_data) = txt_layout.data {
+    let text_content = if let Some(json_data) = txt_layout.value {
         if json_data.is_string() {
             json_data.as_str().unwrap().to_owned()
         } else {
