@@ -33,7 +33,7 @@ pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender
                     }),
                     ..Default::default()
                 }),
-                data: Some(d.to_owned()),
+                value: Some(d.to_owned()),
                 ..Default::default()
             },
             method: Method::Concat,
