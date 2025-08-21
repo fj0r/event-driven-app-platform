@@ -6,7 +6,7 @@ data:
   type: case
   children:
   - type: text
-    data: chat ****
+    value: chat ****
     attrs:
       class: shadow nogrow
       format: md

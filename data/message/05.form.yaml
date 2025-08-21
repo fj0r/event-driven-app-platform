@@ -10,7 +10,7 @@ data:
       - type: text
         attrs:
             class: i ac
-        data: confirm order
+        value: confirm order
       - type: case
         attrs:
             class: gap md
@@ -20,11 +20,11 @@ data:
                 horizontal: true
             children:
               - type: input
-                data: name
+                value: name
                 bind:
                     field: name
               - type: input
-                data: age
+                value: age
                 bind:
                     field: age
           - type: case
@@ -40,7 +40,7 @@ data:
                 bind:
                     field: phone
       - type: button
-        data: confirm
+        value: confirm
         attrs:
             oneshot: false
         bind:

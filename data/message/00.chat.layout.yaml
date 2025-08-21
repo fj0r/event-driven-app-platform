@@ -11,7 +11,7 @@ data:
         class: nogrow
     children:
       - type: text
-        data: chat with **AI**
+        value: chat with **AI**
         attrs:
           class: shadow nogrow
           format: md
@@ -22,7 +22,7 @@ data:
           event: login
         children:
           - type: button
-            data: LOGIN
+            value: LOGIN
             bind:
                 submit: true
   - type: rack

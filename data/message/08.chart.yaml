@@ -2,11 +2,11 @@ action: join
 event: chat
 data:
   type: chart
-  data:
+  value:
     series:
     - name: TEAM A
       type: area
-      data:
+      value:
       - 44
       - 55
       - 31
@@ -20,7 +20,7 @@ data:
       - 33
     - name: TEAM B
       type: line
-      data:
+      value:
       - 55
       - 69
       - 45

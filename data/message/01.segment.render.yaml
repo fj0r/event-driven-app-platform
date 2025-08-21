@@ -5,8 +5,8 @@ data:
     #type: case
     render:
         name: segment
-        data:
+        value:
             rank: 5
             payload:
               type: text
-              data: who are you?
+              value: who are you?

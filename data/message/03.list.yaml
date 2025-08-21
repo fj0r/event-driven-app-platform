@@ -4,4 +4,4 @@ data:
     type: case
     children:
       - type: text
-        data: who are you?
+        value: who are you?

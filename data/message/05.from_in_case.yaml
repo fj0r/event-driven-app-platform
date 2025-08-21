@@ -1,8 +1,8 @@
 action: join
 data:
   children:
-  #- {type: text, attrs: {class: 'txt md hint',format: 'md'},data: ''}
-  #- {type: text, attrs: {format: 'md'},data: ''}
+  #- {type: text, attrs: {class: 'txt md hint',format: 'md'},value: ''}
+  #- {type: text, attrs: {format: 'md'},value: ''}
   - {}
   - {}
   - attrs:
@@ -11,7 +11,7 @@ data:
     - attrs:
         class: i ac box border
       type: text
-      data: confirm order
+      value: confirm order
     - attrs:
         class: gap md
       children:
@@ -20,23 +20,23 @@ data:
           - children:
             - children:
               - type: text
-                data: ''
+                value: ''
               type: th
             - children:
               - type: text
-                data: ''
+                value: ''
               type: th
             - children:
               - type: text
-                data: Name
+                value: Name
               type: th
             - children:
               - type: text
-                data: Price
+                value: Price
               type: th
             - children:
               - type: text
-                data: Description
+                value: Description
               type: th
             type: tr
           type: thead
@@ -47,26 +47,26 @@ data:
                   field: '853736'
                   type: number
                 type: input
-                data: 1
+                value: 1
               type: td
             - children:
               - attrs:
                   desc: '853736'
                   height: 2em
                 type: image
-                data: https://i.xinminghui.com/goods/202302/source_img/202302270408590.JPG
+                value: https://i.xinminghui.com/goods/202302/source_img/202302270408590.JPG
               type: td
             - children:
               - type: text
-                data: Honeywell 901 Mask Headband Color Box
+                value: Honeywell 901 Mask Headband Color Box
               type: td
             - children:
               - type: text
-                data: 2.25
+                value: 2.25
               type: td
             - children:
               - type: text
-                data: Efficient filtration, headband design, comfortable to wear
+                value: Efficient filtration, headband design, comfortable to wear
               type: td
             type: tr
           - children:
@@ -75,26 +75,26 @@ data:
                   field: '56459'
                   type: number
                 type: input
-                data: 1
+                value: 1
               type: td
             - children:
               - attrs:
                   desc: '56459'
                   height: 2em
                 type: image
-                data: https://i.xinminghui.com/goods/202103/source_img/20210318040905696.jpg
+                value: https://i.xinminghui.com/goods/202103/source_img/20210318040905696.jpg
               type: td
             - children:
               - type: text
-                data: TECHGONG Medical Disposable Mask
+                value: TECHGONG Medical Disposable Mask
               type: td
             - children:
               - type: text
-                data: 0.31
+                value: 0.31
               type: td
             - children:
               - type: text
-                data: Medical grade protection, disposable use, convenient and hygienic
+                value: Medical grade protection, disposable use, convenient and hygienic
               type: td
             type: tr
           - children:
@@ -103,26 +103,26 @@ data:
                   field: '934900'
                   type: number
                 type: input
-                data: 1
+                value: 1
               type: td
             - children:
               - attrs:
                   desc: '934900'
                   height: 2em
                 type: image
-                data: https://i.xinminghui.com/goods/202501/source_img/202501150324492.png
+                value: https://i.xinminghui.com/goods/202501/source_img/202501150324492.png
               type: td
             - children:
               - type: text
-                data: Simei Jia Disposable Activated Carbon Mask
+                value: Simei Jia Disposable Activated Carbon Mask
               type: td
             - children:
               - type: text
-                data: 33.83
+                value: 33.83
               type: td
             - children:
               - type: text
-                data: Activated carbon filtration, odor absorption, suitable for sensitive individuals
+                value: Activated carbon filtration, odor absorption, suitable for sensitive individuals
               type: td
             type: tr
           type: tbody
@@ -133,7 +133,7 @@ data:
       bind:
         submit: true
       type: button
-      data: confirm
+      value: confirm
     bind:
       event: confirm
     id: QQucja82kxbHPGLozJWdbk

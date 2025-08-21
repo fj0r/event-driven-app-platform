@@ -15,12 +15,12 @@ data:
           class: txt sm hint
           format: md
         type: text
-        data: test
+        value: test
       item:
       - attrs:
           class: txt sm hint
         type: text
-        data: PartStarting
+        value: PartStarting
       type: fold
     type: case
   type: case

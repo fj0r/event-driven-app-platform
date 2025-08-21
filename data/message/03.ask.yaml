@@ -2,4 +2,4 @@ action: join
 event: chat
 data:
     type: text
-    data: who are you?
+    value: who are you?
