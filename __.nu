@@ -178,7 +178,11 @@ export def 'ui export css' [] {
 }
 
 export def 'chat up' [
+    --pg
 ] {
+    if $pg {
+        pg up
+    }
     cargo run --bin chat
 }
 
@@ -187,7 +191,12 @@ export def 'chat build' [] {
 }
 
 export def 'gw up' [
+    --rpk
+    --external: string@cmpl-external = 'localhost'
 ] {
+    if $rpk {
+        rpk up --external $external
+    }
     cargo run --bin gateway
     watch gateway --glob **/*.rs -q {|op, path, newPath|
         if $op not-in ['Write'] { return }
