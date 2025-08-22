@@ -19,9 +19,43 @@ pub fn Input(layout: Layout) -> Element {
     let css = merge_css_class(&mut css, &layout);
 
     return match &layout.bind {
-        Some(Bind::Field { field, kind, payload, signal }) => { rsx!() }
-        Some(Bind::Event { event, kind }) => { rsx!() }
-        Some(Bind::Variable { variable, kind }) => { rsx!() }
-        _ => { rsx!() }
+        Some(Bind::Field {
+            field,
+            kind,
+            payload,
+            signal,
+        }) => {
+            let mut slot = signal.unwrap_or_else(|| use_signal(|| default_option_jskind(&kind)));
+            let oninput = move |event: Event<FormData>| {
+                let event_value = event.value();
+                let parsed_value = match kind {
+                    Some(JsKind::bool) => to_value(event_value == "true"),
+                    Some(JsKind::number) => to_value(event_value.parse::<f64>().unwrap()),
+                    _ => to_value(event_value),
+                }
+                .unwrap();
+                slot.set(parsed_value);
+            };
+            rsx!()
+        }
+        Some(Bind::Event { event, kind }) => {
+            let onkeydown = move |ev: Event<KeyboardData>| {
+                let mut s = store.clone();
+                async move {
+                    if ev.data.key() == Key::Enter {
+                        todo!{
+                            s.send(event.deref(), None, val).await;
+                        }
+                    }
+                }
+            };
+            rsx!()
+        }
+        Some(Bind::Variable { variable, kind }) => {
+            rsx!()
+        }
+        _ => {
+            rsx!()
+        }
     };
 }

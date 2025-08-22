@@ -38,6 +38,7 @@ impl Store {
         }
     }
 
+    // TODO: 
     pub async fn bind(&mut self, layout: &Layout) -> Result<()> {
         if let Some(bind) = &layout.bind {
             match bind {

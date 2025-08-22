@@ -62,6 +62,8 @@ pub fn Input(layout: Layout) -> Element {
             if ev.data.key() == Key::Enter {
                 match bind_type {
                     "field" => {
+                        dioxus::logger::tracing::info!("{:?}", &signal);
+                        dioxus::logger::tracing::info!("{:?}", &val);
                         if let Some(mut sig) = signal {
                             sig.set(val);
                         };
