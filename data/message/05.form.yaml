@@ -11,6 +11,9 @@ data:
         attrs:
             class: i ac
         value: confirm order
+      - type: text
+        bind:
+            event: test
       - type: case
         attrs:
             class: gap md
@@ -39,6 +42,14 @@ data:
                 name: phone
                 bind:
                     field: phone
+          - type: case
+            attrs:
+                horizontal: true
+            children:
+              - type: input
+                name: var
+                bind:
+                    variable: test
       - type: button
         value: confirm
         attrs:
