@@ -18,7 +18,7 @@ pub fn Input(layout: Layout) -> Element {
     let mut css = vec!["input", "f", "shadow"];
     let css = merge_css_class(&mut css, &layout);
 
-    let (bind_type, event, kind, signal) = layout
+    let (bind_type, key, kind, signal) = layout
         .bind
         .clone()
         .and_then(|x| match x {
@@ -30,16 +30,17 @@ pub fn Input(layout: Layout) -> Element {
             } => Some(("field", field, kind, signal)),
             Bind::Event { event, kind } => Some(("event", event, kind, None)),
             Bind::Variable { variable, kind } => Some(("variable", variable, kind, None)),
-            _ => None,
+            _ => Some(("", "".to_string(), Default::default(), None)),
         })
-        .unwrap_or(("", "".to_string(), Default::default(), None));
+        .unwrap();
 
     let mut slot = signal.unwrap_or_else(|| use_signal(|| default_option_jskind(&kind)));
-    let event = Rc::new(event);
+    let key = Rc::new(key);
     let kind = Rc::new(kind);
 
-    // TODO: bind
     let k1 = kind.clone();
+    let k3 = key.clone();
+    let mut s1 = store.clone();
     let oninput = move |event: Event<FormData>| {
         let event_value = event.value();
         let parsed_value = match *k1 {
@@ -48,22 +49,31 @@ pub fn Input(layout: Layout) -> Element {
             _ => to_value(event_value),
         }
         .unwrap();
-        slot.set(parsed_value);
+        match bind_type {
+            "field" => slot.set(parsed_value),
+            "variable" => {
+                s1.set(
+                    k3.deref(),
+                    Layout {
+                        value: Some(parsed_value),
+                        ..Default::default()
+                    },
+                );
+            }
+            _ => {}
+        };
     };
 
-    // TODO: bind
     let k2 = kind.clone();
     let onkeydown = move |ev: Event<KeyboardData>| {
         let mut s = store.clone();
-        let event = event.clone();
+        let event = key.clone();
         let kind = k2.clone();
         let val = slot();
         async move {
             if ev.data.key() == Key::Enter {
                 match bind_type {
                     "field" => {
-                        dioxus::logger::tracing::info!("{:?}", &signal);
-                        dioxus::logger::tracing::info!("{:?}", &val);
                         if let Some(mut sig) = signal {
                             sig.set(val);
                         };
@@ -72,7 +82,6 @@ pub fn Input(layout: Layout) -> Element {
                         s.send(event.deref(), None, val).await;
                         *slot.write() = default_option_jskind(&kind)
                     }
-                    "variable" => {}
                     _ => {}
                 }
             }

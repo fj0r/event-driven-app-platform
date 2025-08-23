@@ -44,7 +44,7 @@ pub fn Input(layout: Layout) -> Element {
                 async move {
                     if ev.data.key() == Key::Enter {
                         todo!{
-                            s.send(event.deref(), None, val).await;
+                            //s.send(event.deref(), None, val).await;
                         }
                     }
                 }

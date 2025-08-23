@@ -6,6 +6,7 @@ use js_sys::wasm_bindgen::JsError;
 use layout::{Bind, Concat, Delete, Layout, LayoutOp, Replace};
 use minijinja::{AutoEscape, Environment};
 use serde_json::{Value, to_string};
+use std::borrow::Borrow;
 use std::collections::HashMap;
 use std::str;
 use std::sync::{LazyLock, RwLock};
@@ -38,22 +39,8 @@ impl Store {
         }
     }
 
-    // TODO: 
-    pub async fn bind(&mut self, layout: &Layout) -> Result<()> {
-        if let Some(bind) = &layout.bind {
-            match bind {
-                Bind::Field {
-                    field,
-                    kind,
-                    payload: _,
-                    signal,
-                } => {}
-                Bind::Event { event, kind } => {}
-                Bind::Variable { variable, kind } => {}
-                _ => {}
-            }
-        }
-        Ok(())
+    pub fn set(&mut self, name: impl AsRef<str>, layout: Layout) {
+        self.data.write().insert(name.as_ref().to_string(), layout);
     }
 }
 
