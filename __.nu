@@ -436,6 +436,40 @@ export def 'rpk up' [
     }
 }
 
+export def 'iggy up' [
+    --dry-run
+] {
+    let image = 'ghcr.io/fj0r/0x:iggy'
+    mut args = [run -d --name iggy]
+    let ports = {
+        '8080': 8080
+        '8090': 8090
+        '3000': 3000
+    }
+    for i in ($ports | transpose k v) {
+        let pi = $i.k | into int
+        let rp = port $pi
+        if $rp != $pi {
+            print $"(ansi grey)Port ($i.k) is already in use, switching to ($rp)(ansi reset)"
+        }
+        $args ++= [-p $"($rp):($i.v)"]
+    }
+    let envs = {
+    }
+    for i in ($envs | transpose k v) {
+        $args ++= [-e $"($i.k)=($i.v)"]
+    }
+    let data = [$WORKDIR data] | path join
+    $args ++= [-v $"($data):/local_data"]
+    $args ++= [$image]
+
+    if $dry_run {
+        print $"($env.CNTRCTL) ($args | str join ' ')"
+    } else {
+        ^$env.CNTRCTL ...$args
+    }
+}
+
 export def 'docker up' [
     --external: string@cmpl-external = 'localhost'
 ] {
