@@ -176,7 +176,7 @@ impl Layout {
     pub fn new(kind: impl AsRef<str>) -> Self {
         Layout {
             kind: kind.as_ref().to_string(),
-            ..Layout::default()
+            ..Default::default()
         }
     }
     pub fn cmp_id(&self, other: &Self) -> bool {

@@ -17,14 +17,18 @@ data:
       horizontal: true
     children:
     - type: case
+      attrs:
+        class: --channel
       children:
       - type: text
         value: hello
     - type: case
+      attrs:
+        class: f
       children:
       - type: rack
         attrs:
-          class: box c as gap scrolly
+          class: --message box c as gap scrolly
           scroll: true
         bind:
           event: chat
@@ -38,7 +42,7 @@ data:
             class: nogrow s ax box border shadow
       - type: case
         attrs:
-          class: nogrow box
+          class: --input nogrow box
           horizontal: true
         children:
         - type: case
