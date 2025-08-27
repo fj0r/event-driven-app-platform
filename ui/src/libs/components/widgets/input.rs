@@ -60,7 +60,7 @@ pub fn Input(layout: Layout) -> Element {
                     },
                 );
             }
-            _ => slot.set(parsed_value)
+            _ => slot.set(parsed_value),
         };
     };
 

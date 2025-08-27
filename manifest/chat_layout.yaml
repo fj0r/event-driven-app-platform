@@ -8,33 +8,51 @@ data:
   - type: text
     value: chat ****
     attrs:
-      class: shadow nogrow
+      class: box shadow nogrow
       format: md
     bind:
       event: login
-  - type: rack
-    attrs:
-      class: box c as gap scrolly
-      scroll: true
-    bind:
-      event: chat
-    item:
-    - type: case
-      attrs:
-        class: nogrow s ae accent box border shadow
-        selector: ask
-    - type: case
-      attrs:
-        class: nogrow s ax box border shadow
   - type: case
     attrs:
-      class: nogrow box
       horizontal: true
     children:
     - type: case
       attrs:
-        horizontal: true
+        class: --channel i jc box nogrow
       children:
-      - type: input
+      - type: text
+        value: hello
+      - type: text
+        value: world
+      - type: text
+        value: chat
+    - type: case
+      attrs:
+        class: f
+      children:
+      - type: rack
+        attrs:
+          class: --message box c as gap scrolly
+          scroll: true
         bind:
-          event: message
+          event: chat
+        item:
+        - type: case
+          attrs:
+            class: nogrow s ae accent box border shadow
+            selector: ask
+        - type: case
+          attrs:
+            class: nogrow s ax box border shadow
+      - type: case
+        attrs:
+          class: --input nogrow box
+          horizontal: true
+        children:
+        - type: case
+          attrs:
+            horizontal: true
+          children:
+          - type: input
+            bind:
+              event: message

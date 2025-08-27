@@ -43,7 +43,7 @@ pub fn Input(layout: Layout) -> Element {
                 let mut s = store.clone();
                 async move {
                     if ev.data.key() == Key::Enter {
-                        todo!{
+                        todo! {
                             //s.send(event.deref(), None, val).await;
                         }
                     }

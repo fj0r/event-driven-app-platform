@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use super::super::store::Store;
 use super::{Dynamic, Frame};
 use dioxus::prelude::*;
-use layout::{Bind, Layout, Settings, JsKind};
+use layout::{Bind, JsKind, Layout, Settings};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
