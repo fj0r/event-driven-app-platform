@@ -47,6 +47,7 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
                 })
             }
             "input" => rsx!(Input { layout: layout }),
+            "menu" => rsx!(Menu { layout: layout, {children} }),
             "text" => rsx!(Text { layout: layout }),
             "button" => rsx!(Button { layout: layout }),
             "image" => rsx!(Img { layout: layout }),
