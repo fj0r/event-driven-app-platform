@@ -79,7 +79,7 @@ async fn main() -> Result<()> {
                     let Ok(a) = handle_hook(&login, &q, tmpls.clone()).await else {
                         return Response::new("UNAUTHORIZED".into());
                     };
-                    ws.on_upgrade(|socket| async move {
+                    ws.on_upgrade(async move |socket| {
                         handle_ws(socket, tx, state, settings, tmpls.clone(), &a).await;
                         let _ = handle_hook::<Value>(&logout, &a.into(), tmpls.clone()).await;
                     })

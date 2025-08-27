@@ -7,7 +7,7 @@ use std::sync::LazyLock;
 
 #[component]
 pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
-    let mut css = vec!["text", "f", "txt"];
+    let mut css = vec!["text", "txt"];
 
     let layout_cloned = layout();
     let css = merge_css_class(&mut css, &layout_cloned);

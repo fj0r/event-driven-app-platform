@@ -8,7 +8,7 @@ data:
   - type: text
     value: chat ****
     attrs:
-      class: shadow nogrow
+      class: box shadow nogrow
       format: md
     bind:
       event: login
@@ -18,10 +18,14 @@ data:
     children:
     - type: case
       attrs:
-        class: --channel
+        class: --channel i jc box nogrow
       children:
       - type: text
         value: hello
+      - type: text
+        value: world
+      - type: text
+        value: chat
     - type: case
       attrs:
         class: f
