@@ -3,7 +3,7 @@ use anyhow::{Ok as Okk, Result, bail};
 use axum::{
     Router,
     extract::{Query, State, ws::WebSocketUpgrade},
-    http::Response,
+    http::{Response, StatusCode},
     routing::get,
 };
 use kafka::split_mq;
@@ -77,7 +77,10 @@ async fn main() -> Result<()> {
                     drop(s);
 
                     let Ok(a) = handle_hook(&login, &q, tmpls.clone()).await else {
-                        return Response::new("UNAUTHORIZED".into());
+                        return Response::builder()
+                            .status(StatusCode::UNAUTHORIZED)
+                            .body("UNAUTHORIZED".into())
+                            .unwrap();
                     };
                     ws.on_upgrade(async move |socket| {
                         handle_ws(socket, tx, state, settings, tmpls.clone(), &a).await;
