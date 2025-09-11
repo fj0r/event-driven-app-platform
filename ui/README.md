@@ -1,3 +1,6 @@
+JSON components achieve decoupling of layout and styling through configuration, supporting dynamic and flexible interface construction and personalized customization.
+
+
 # Development
 
 Your new bare-bones project includes minimal organization with a single `main.rs` file and a few assets.

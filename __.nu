@@ -48,7 +48,7 @@ def cmpl-external [] {
 
 export def send [
     file:string@cmpl-data
-    --receiver(-r): list<string@receiver> = []
+    --receiver(-r): list<string>@receiver = []
     --sender(-s): string = 'unknown'
     --patch(-p): record = {}
     --full
