@@ -362,7 +362,7 @@ export def 'rpk start' [
     --dry-run
     --external: string@cmpl-external = 'localhost'
 ] {
-    let image = 'redpandadata/redpanda:latest'
+    let image = 'docker.io/redpandadata/redpanda:latest'
     mut args = [run -d --name redpanda]
     let ports = {
         '18081': 18081

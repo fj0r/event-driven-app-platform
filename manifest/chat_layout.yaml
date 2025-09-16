@@ -22,10 +22,16 @@ data:
       children:
       - type: text
         value: hello
+        bind:
+          event: channel
       - type: text
         value: world
+        bind:
+          event: channel
       - type: text
         value: chat
+        bind:
+          event: channel
     - type: case
       attrs:
         class: f
