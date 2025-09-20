@@ -2,7 +2,8 @@ FROM rust:1 AS chef
 # We only pay the installation cost once, 
 # it will be cached from the second build onwards
 RUN set -eux \
-  ; cargo install cargo-chef dioxus-cli \
+  ; cargo install cargo-chef \
+  ; cargo install dioxus-cli@0.7.0-rc.0 --force \
   ; apt update \
   ; apt-get install -y --no-install-recommends \
         ripgrep cmake \
