@@ -42,21 +42,16 @@ async fn main() -> Result<()> {
 
     let base_url = Url::parse(&cfg.gateway.base_url)?;
     let hc = reqwest::Client::new();
-    let _ = hc
-        .post(base_url.join("login")?)
-        .json(&cfg.login)
-        .send()
-        .await;
-    let _ = hc
-        .post(base_url.join("logout")?)
-        .json(&cfg.logout)
-        .send()
-        .await;
-    let _ = hc
-        .post(base_url.join("greet")?)
-        .json(&cfg.greet)
-        .send()
-        .await;
+    macro_rules! init_req {
+        ($($k: ident),* $(,)?) => {
+            $(let _ = hc.post(base_url.join(stringify!($k))?)
+                .json(&cfg.$k)
+                .send()
+                .await;
+            )*
+        };
+    }
+    init_req![login, logout, greet];
 
     let client = connx(&cfg.database).await?;
     let shared = Shared::new(Model(client));
