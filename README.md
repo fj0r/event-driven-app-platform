@@ -33,7 +33,19 @@ __ chat up
 
 ## message broker
 
-## menu
+## control center
+In the `chat/src/libs/logic` directory, there are several control centers (business logic is implemented here, and they are separate services, so they're called control centers).
+
+`echo` is the simplest one - it echoes back whatever you send, similar in nature to hello world.
+
+`chat` is like slack-style chat, divided by channels.
+
+`crm` is for AI customer service - both users chatting and backend customer service agents can see it (if they need to grab orders), and it assigns users to one or more agents.
+
+Users see a single chat box, while customer service sees multiple channels, so `chat` needs to be implemented first.
+
+## UI
+### menu
 Currently, components basically bind to a single value, for example, a text input box corresponds to a string "xxx"
 For menus, there are two values: one is all the candidate options, and the other is the already selected value
 Previously, I thought about putting the candidate options in children, but it's not convenient for dynamic binding, and defining styles is also cumbersome (normally define an item value as the style for all child items, rather than wrapping all child items with styles and copying them N times (referencing the rack component design)
