@@ -23,7 +23,6 @@ pub struct Opts {
 }
 
 async fn users(_opts: Query<Opts>, State(db): State<Db>) -> HttpResult<Json<Vec<Value>>> {
-    let db = db.read().await;
     let v = db.list_account().await?;
     let v = v.iter().map(|x| json!(x.name)).collect();
     Ok(Json(v)).into()
@@ -34,7 +33,6 @@ async fn user(
     Path(user): Path<String>,
     State(db): State<Db>,
 ) -> HttpResult<Json<Account>> {
-    let db = db.read().await;
     let x = db.get_account(&user).await?;
     Ok(Json(x))
 }
@@ -44,7 +42,6 @@ async fn create_chan(
     State(db): State<Db>,
     Json(create): Json<CreateChan>,
 ) -> HttpResult<Json<Channel>> {
-    let db = db.read().await;
     let chan = db.create_channel(&create).await?;
     Ok(Json(chan))
 }
@@ -54,7 +51,6 @@ async fn join_chan(
     State(db): State<Db>,
     Json(join): Json<JoinChan>,
 ) -> HttpResult<Json<Value>> {
-    let db = db.read().await;
     db.join_channel(&join).await?;
     Ok(Json::default()).into()
 }
@@ -64,7 +60,6 @@ async fn channel(
     State(db): State<Db>,
     Json(session): Json<SessionInfo>,
 ) -> HttpResult<Json<Vec<Channel>>> {
-    let db = db.read().await;
     let channel = db.list_channel((&session.id).into()).await?;
     Ok(Json(channel))
 }
@@ -74,7 +69,6 @@ async fn history(
     State(db): State<Db>,
     Json(session): Json<SessionInfo>,
 ) -> HttpResult<Json<Value>> {
-    let _db = db.read().await;
     info!("history: {:?}", session);
     if let Some(layout) = opts.layout
         && layout
@@ -116,7 +110,6 @@ async fn login(
 ) -> HttpResult<Json<SessionInfo>> {
     let uuid = ShortUuid::generate().to_string();
     let token = payload.get("token").and_then(|x| x.as_str());
-    let db = db.read().await;
     let (id, name) = db.login(&uuid, token).await?;
     info!("login {}: {}", id, name);
     payload.insert("username".into(), name.into());
@@ -131,7 +124,6 @@ async fn logout(
     State(db): State<Db>,
     Json(session): Json<SessionInfo>,
 ) -> HttpResult<Json<SessionInfo>> {
-    let db = db.read().await;
     db.logout(&session.id).await?;
     info!("logout: {}", session.id);
     Ok(Json(session))

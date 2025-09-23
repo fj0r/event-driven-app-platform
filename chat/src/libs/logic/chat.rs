@@ -14,9 +14,8 @@ pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender
     } = &e;
 
     let s = s.read().await;
-    let db = s.db.read().await;
     // TODO: channel id
-    let users = db.list_channel_account(3).await;
+    let users = s.db.list_channel_account(3).await;
     dbg!(&users);
 
     if let Some(content) = content.as_object()

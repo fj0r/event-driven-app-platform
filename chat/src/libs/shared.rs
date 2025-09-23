@@ -3,7 +3,7 @@ use axum::extract::FromRef;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-pub type Db = Arc<RwLock<Model>>;
+pub type Db = Model;
 
 #[derive(Debug, Clone)]
 pub struct Shared {
@@ -18,8 +18,6 @@ impl FromRef<Shared> for Db {
 
 impl Shared {
     pub fn new(db: Model) -> Self {
-        Self {
-            db: Arc::new(RwLock::new(db)),
-        }
+        Self { db: db }
     }
 }

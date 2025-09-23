@@ -11,7 +11,7 @@ use std::ops::Deref;
 type Executor = Pool<Postgres>;
 type Result<T> = std::result::Result<T, Error>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Model(pub Executor);
 
 impl Deref for Model {
