@@ -16,7 +16,7 @@ struct Message {
 type FormScope = HashMap<String, (Signal<Value>, Option<Value>)>;
 
 fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
-    match &layout.bind {
+    match layout.bind.get("value") {
         Some(Bind::Field {
             field,
             kind,
@@ -49,7 +49,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
 
             let s = use_signal(|| v);
             scope.insert(field.to_string(), (s, payload.clone()));
-            layout.bind = Some(Bind::Field {
+            layout.bind.insert("value".to_owned(), Bind::Field {
                 field: field.to_string(),
                 kind,
                 payload: None,
@@ -57,7 +57,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
             });
         }
         Some(Bind::Submit { .. }) => {
-            layout.bind = Some(Bind::Submit {
+            layout.bind.insert("value".to_owned(), Bind::Submit {
                 submit: true,
                 signal: Some(confirm),
             });
@@ -96,8 +96,8 @@ pub fn Form(layout: Layout) -> Element {
         }
     });
 
-    let lc = layout.bind.clone();
-    if let Some(Bind::Event { event, .. }) = lc {
+    let lc = layout.bind.get("value").cloned();
+    if let Some(Bind::Source { source, .. }) = lc {
         let s = use_context::<Store>();
         let mut content = HashMap::new();
         for (k, v) in &data {
@@ -110,7 +110,7 @@ pub fn Form(layout: Layout) -> Element {
         //dioxus_logger::tracing::info!("{payload:?}");
         let v = to_value(content).unwrap();
         let _ = use_resource(move || {
-            let ev = event.clone();
+            let ev = source.clone();
             let mut s = s.clone();
             let v = v.clone();
             async move {

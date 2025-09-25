@@ -7,6 +7,7 @@ use minijinja::Environment;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, json, to_value};
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default, JsonSchema)]
 pub struct Attrs {
@@ -118,6 +119,9 @@ pub enum Bind {
         #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
         kind: Option<JsKind>,
     },
+    Target {
+        target: String,
+    },
     Variable {
         variable: String,
         #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
@@ -153,8 +157,8 @@ pub struct Layout {
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<Attrs>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub bind: Option<Bind>,
+    #[serde(skip_serializing_if = "HashMap::is_empty")]
+    pub bind: HashMap<String, Bind>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub value: Option<Value>,
     #[serde(skip_serializing_if = "Option::is_none")]

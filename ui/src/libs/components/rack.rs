@@ -46,14 +46,14 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
     let css = merge_css_class(&mut css, &layout);
 
     let item: ItemContainer = layout.item.clone().context("item")?.into();
-    let Bind::Event { event, .. } = layout.bind.as_ref().context("data")? else {
+    let Bind::Source { source, .. } = layout.bind.get("value").context("data")? else {
         return Err(RenderError::Aborted(CapturedError::from_str("no event")?));
     };
     let attrs = layout.attrs.as_ref().context("attrs")?;
 
     let store = use_context::<Store>();
     let c = store.list.read();
-    let c = c.get(event).cloned().unwrap_or_else(Vec::new);
+    let c = c.get(source).cloned().unwrap_or_else(Vec::new);
     let r = c.iter().enumerate().map(|(idx, child)| {
         let key = child.id.clone().unwrap_or(idx.to_string());
         let layout = item.select(child);

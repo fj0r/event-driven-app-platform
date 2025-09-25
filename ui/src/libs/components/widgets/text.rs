@@ -22,8 +22,8 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
             ..Layout::default()
         }
     };
-    if let Some(Bind::Event { event, .. }) = &layout.read().bind {
-        let event_data = store.data.read().get(event).cloned();
+    if let Some(Bind::Source { source, .. }) = layout.read().bind.get("value") {
+        let event_data = store.data.read().get(source).cloned();
         if let Some(event_layout) = event_data {
             txt_layout = event_layout
         }
