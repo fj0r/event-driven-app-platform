@@ -25,7 +25,7 @@ pub fn Button(layout: Layout) -> Element {
     if let Some(Bind::Submit {
         signal: Some(mut s),
         ..
-    }) = layout.bind.get("value").cloned()
+    }) = layout.bind.and_then(|x| x.get("value").cloned())
     {
         let v = s.read().as_bool().unwrap();
         let mut css = vec!["button", "shadow"];

@@ -20,7 +20,8 @@ pub fn Input(layout: Layout) -> Element {
 
     let (bind_type, key, kind, signal) = layout
         .bind
-        .get("value")
+        .as_ref()
+        .and_then(|x| x.get("value"))
         .cloned()
         .and_then(|x| match x {
             Bind::Field {
@@ -29,7 +30,7 @@ pub fn Input(layout: Layout) -> Element {
                 payload: _,
                 signal,
             } => Some(("field", field, kind, signal)),
-            Bind::Source { source, kind } => Some(("event", source, kind, None)),
+            Bind::Target { target, kind } => Some(("event", target, kind, None)),
             Bind::Variable { variable, kind } => Some(("variable", variable, kind, None)),
             _ => Some(("", "".to_string(), Default::default(), None)),
         })

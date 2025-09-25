@@ -16,7 +16,7 @@ struct Message {
 type FormScope = HashMap<String, (Signal<Value>, Option<Value>)>;
 
 fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
-    match layout.bind.get("value") {
+    match layout.bind.as_ref().and_then(|x| x.get("value")) {
         Some(Bind::Field {
             field,
             kind,
@@ -49,18 +49,28 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
 
             let s = use_signal(|| v);
             scope.insert(field.to_string(), (s, payload.clone()));
-            layout.bind.insert("value".to_owned(), Bind::Field {
-                field: field.to_string(),
-                kind,
-                payload: None,
-                signal: Some(s),
-            });
+            let mut nv = HashMap::new();
+            nv.insert(
+                "value".to_owned(),
+                Bind::Field {
+                    field: field.to_string(),
+                    kind,
+                    payload: None,
+                    signal: Some(s),
+                },
+            );
+            layout.bind = Some(nv);
         }
         Some(Bind::Submit { .. }) => {
-            layout.bind.insert("value".to_owned(), Bind::Submit {
-                submit: true,
-                signal: Some(confirm),
-            });
+            let mut nv = HashMap::new();
+            nv.insert(
+                "value".to_owned(),
+                Bind::Submit {
+                    submit: true,
+                    signal: Some(confirm),
+                },
+            );
+            layout.bind = Some(nv);
         }
         _ => {}
     };
@@ -96,7 +106,7 @@ pub fn Form(layout: Layout) -> Element {
         }
     });
 
-    let lc = layout.bind.get("value").cloned();
+    let lc = layout.bind.as_ref().and_then(|x| x.get("value")).cloned();
     if let Some(Bind::Source { source, .. }) = lc {
         let s = use_context::<Store>();
         let mut content = HashMap::new();
