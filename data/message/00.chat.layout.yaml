@@ -11,26 +11,30 @@ data:
         class: nogrow
     children:
       - type: text
-        value: chat with **AI**
+        bind:
+          value:
+            default: chat with **AI**
+          source: login
         attrs:
           class: shadow nogrow
           format: md
-        bind:
-          event: login
       - type: form
         bind:
-          event: login
+          value:
+            target: login
         children:
           - type: button
-            value: LOGIN
             bind:
-                submit: true
+              value:
+                default: LOGIN
+            submit: true
   - type: rack
     attrs:
       class: box c as gap scrolly
       scroll: true
     bind:
-      event: chat
+      value:
+        source: chat
     item:
     - type: case
       attrs:

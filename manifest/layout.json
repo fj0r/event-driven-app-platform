@@ -9,13 +9,15 @@
     "children": [
       {
         "type": "text",
-        "value": "chat with **AI**",
+        "bind": {
+          "value": {
+            "default": "chat with **AI**",
+            "source": "login"
+          }
+        },
         "attrs": {
           "class": "shadow nogrow",
           "format": "md"
-        },
-        "bind": {
-          "event": "login"
         }
       },
       {
@@ -25,7 +27,9 @@
           "scroll": true
         },
         "bind": {
-          "event": "chat"
+          "value": {
+            "source": "chat"
+          }
         },
         "item": [
           {
@@ -59,7 +63,9 @@
               {
                 "type": "input",
                 "bind": {
-                  "event": "message"
+                  "value": {
+                    "target": "message"
+                  }
                 }
               }
             ]

@@ -6,32 +6,25 @@ data:
   type: case
   children:
   - type: text
-    value: chat ****
+    bind:
+      value:
+        default: chat ****
+        source: login
     attrs:
       class: box shadow nogrow
       format: md
-    bind:
-      event: login
   - type: case
     attrs:
       horizontal: true
     children:
-    - type: case
+    - type: menu
       attrs:
         class: --channel i jc box nogrow
-      children:
-      - type: text
-        value: hello
-        bind:
-          event: channel
-      - type: text
-        value: world
-        bind:
-          event: channel
-      - type: text
-        value: chat
-        bind:
-          event: channel
+      bind:
+        value:
+          target: channel
+        options:
+          source: channel
     - type: case
       attrs:
         class: f
@@ -41,7 +34,8 @@ data:
           class: --message box c as gap scrolly
           scroll: true
         bind:
-          event: chat
+          value:
+            source: chat
         item:
         - type: case
           attrs:
@@ -61,4 +55,5 @@ data:
           children:
           - type: input
             bind:
-              event: message
+              value:
+                target: message

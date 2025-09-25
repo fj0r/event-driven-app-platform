@@ -113,8 +113,8 @@ impl JsKind {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(untagged)]
 pub enum Bind {
-    Event {
-        event: String,
+    Source {
+        source: String,
         #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
         kind: Option<JsKind>,
     },
