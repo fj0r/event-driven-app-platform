@@ -115,26 +115,38 @@ impl JsKind {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(untagged)]
+pub enum BindClass {
+    Source {
+        source: String,
+    },
+    Target {
+        target: String,
+    },
+    Variable {
+        vairable: String,
+    },
+    Field {
+        field: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        payload: Option<Value>,
+    },
+    Submit {
+        submit: bool,
+        #[allow(dead_code)]
+        #[serde(skip)]
+        signal: Option<Signal<Value>>,
+    },
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct Bind {
+    #[serde(flatten)]
+    class: BindClass,
     #[serde(skip_serializing_if = "Option::is_none")]
     default: Option<Value>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    source: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    target: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    variable: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    field: Option<String>,
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     kind: Option<JsKind>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    payload: Option<Value>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    submit: Option<bool>,
-    #[allow(dead_code)]
-    #[serde(skip)]
-    signal: Option<Signal<Value>>,
 }
 
 fn kind_empty() -> String {

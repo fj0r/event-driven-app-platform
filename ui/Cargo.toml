@@ -10,7 +10,6 @@ edition = "2024"
 anyhow = "1.0.97"
 tracing-wasm = "0.2.1"
 dioxus = { version = "0.7.0-rc.0", features = ["macro", "web"] }
-#dioxus = { version = "0.6.3", features = ["macro", "web"] }
 futures = "0.3.31"
 gloo-net = "0.6.0"
 js-sys = "0.3.77"
