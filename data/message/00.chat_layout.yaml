@@ -6,12 +6,13 @@ data:
   type: case
   children:
   - type: text
-    value: chat ****
+    bind:
+      value:
+        default: chat ****
+        source: login
     attrs:
       class: box shadow nogrow
       format: md
-    bind:
-      event: login
   - type: case
     attrs:
       horizontal: true
@@ -21,11 +22,17 @@ data:
         class: --channel i jc box nogrow
       children:
       - type: text
-        value: hello
+        bind:
+          value:
+            default: hello
       - type: text
-        value: world
+        bind:
+          value:
+            default: world
       - type: text
-        value: chat
+        bind:
+          value:
+            default: chat
     - type: case
       attrs:
         class: f

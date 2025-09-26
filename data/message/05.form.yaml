@@ -3,14 +3,16 @@ event: chat
 data:
     type: form
     bind:
-      event: confirm
+      target: confirm
     attrs:
         class: gap md
     children:
       - type: text
         attrs:
             class: i ac
-        value: confirm order
+        bind:
+          value:
+            default: confirm order
       - type: text
         bind:
             event: test
@@ -23,12 +25,14 @@ data:
                 horizontal: true
             children:
               - type: input
-                value: name
                 bind:
+                  value:
+                    default: name
                     field: name
               - type: input
-                value: age
                 bind:
+                  value:
+                    default: age
                     field: age
           - type: case
             attrs:
@@ -51,10 +55,11 @@ data:
                 bind:
                     variable: test
       - type: button
-        value: confirm
         attrs:
             oneshot: false
         bind:
+          value:
+            default: confirm
             submit: true
 
 

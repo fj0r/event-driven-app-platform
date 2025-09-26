@@ -12,11 +12,14 @@ children:
             class: box border shadow
           children:
             - type: text
-              value: child of box
+              bind:
+                value:
+                  default: child of box
         - type: text
-          value: 123
           bind:
-              event: test-data
+            value:
+              default: 123
+              source: test-data
     - type: rack
       bind:
           event: chat
@@ -27,25 +30,29 @@ children:
     - type: case
       children:
         - type: text
-          value: lv 1
           bind:
+            value:
+              default: lv 1
               event: test-data
         - type: case
           children:
             - type: text
-              value: lv 2
+              bind:
+                value:
+                  default: lv 2
             - type: case
               children:
                 - type: case
                   children:
                 - type: text
-                  value: lv 3
+                  bind:
+                    value:
+                      default: lv 3
     - type: input
       bind:
           upload: true
           event: message
     - type: button
       bind:
-          upload: true
-          event: ok
-      value: "Count"
+        value: "Count"
+        target: ok

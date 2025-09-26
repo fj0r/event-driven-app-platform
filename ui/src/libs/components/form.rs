@@ -107,7 +107,7 @@ pub fn Form(layout: Layout) -> Element {
     });
 
     let lc = layout.bind.as_ref().and_then(|x| x.get("value")).cloned();
-    if let Some(Bind::Source { source, .. }) = lc {
+    if let Some(Bind::Target { target, .. }) = lc {
         let s = use_context::<Store>();
         let mut content = HashMap::new();
         for (k, v) in &data {
@@ -120,7 +120,7 @@ pub fn Form(layout: Layout) -> Element {
         //dioxus_logger::tracing::info!("{payload:?}");
         let v = to_value(content).unwrap();
         let _ = use_resource(move || {
-            let ev = source.clone();
+            let ev = target.clone();
             let mut s = s.clone();
             let v = v.clone();
             async move {

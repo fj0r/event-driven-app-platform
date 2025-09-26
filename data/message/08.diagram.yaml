@@ -2,8 +2,10 @@ action: join
 event: chat
 data:
   type: diagram
-  value: |-
-    sequenceDiagram
-        Alice->>John: Hello John, how are you?
-        John-->>Alice: Great!
-        Alice-)John: See you later!
+  bind:
+    value:
+      default: |-
+        sequenceDiagram
+            Alice->>John: Hello John, how are you?
+            John-->>Alice: Great!
+            Alice-)John: See you later!

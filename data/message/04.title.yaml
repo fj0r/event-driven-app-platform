@@ -2,4 +2,6 @@ action: set
 event: title
 data:
     type: text
-    value: "**hello**"
+    bind:
+      value:
+        default: "**hello**"

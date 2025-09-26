@@ -5,8 +5,12 @@ data:
     #type: case
     render:
         name: segment
-        value:
-            rank: 5
-            payload:
-              type: text
-              value: who are you?
+        bind:
+          value:
+            default:
+              rank: 5
+              payload:
+                type: text
+                bind:
+                  value:
+                    default: who are you?

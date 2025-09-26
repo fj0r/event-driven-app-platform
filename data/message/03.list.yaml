@@ -4,4 +4,6 @@ data:
     type: case
     children:
       - type: text
-        value: who are you?
+        bind:
+          value:
+            default: who are you?

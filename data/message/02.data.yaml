@@ -3,5 +3,6 @@ event: test-data
 data:
     type: text
     bind:
-        event: user-message
-    value: guide
+      value:
+        default: guide
+        source: user-message

@@ -4,7 +4,9 @@ data:
     class: gap md
   children:
   - type: text
-    value: confirm order
+    bind:
+      value:
+        default: confirm order
   - attrs:
       class: gap md
     children:
@@ -19,102 +21,139 @@ data:
               attrs:
                   desc: ccacc
                   height: 1em
-              value: https://github.com/luser/keep-calm-and-call-clone/blob/master/keep-calm-and-call-clone.png?raw=true
+              bind:
+                value:
+                  default: https://github.com/luser/keep-calm-and-call-clone/blob/master/keep-calm-and-call-clone.png?raw=true
           - type: th
             children:
             - type: text
-              value: b
+              bind:
+                value:
+                  default: b
           - type: th
             children:
             - type: text
-              value: c
+              bind:
+                value:
+                  default: c
           - type: th
             children:
             - type: text
-              value: d
+              bind:
+                value:
+                  default: d
           - type: th
             children:
             - type: text
-              value: e
+              bind:
+                value:
+                  default: e
       - type: tbody
         children:
         - children:
           - children:
             - bind:
-                field: s
-                type: string
-                payload:
+                value:
+                  default: '853736'
+                  field: s
+                  type: string
+                  payload:
                     a: 1
                     b:
-                        c: 2
+                      c: 2
               type: input
-              value: '853736'
             type: td
           - children:
             - type: text
-              value: a1
+              bind:
+                value:
+                  default: a1
             type: td
           - children:
             - type: text
-              value: 2.25
+              bind:
+                value:
+                  default: 2.25
             type: td
           - children:
             - type: text
-              value: a2
+              bind:
+                value:
+                  default: a2
             type: td
           - children:
             - type: text
-              value: a3
+              bind:
+                value:
+                  default: a3
             type: td
           type: tr
         - children:
           - children:
             - bind:
-                field: b
-                type: bool
+                value:
+                  default: false
+                  field: b
+                  type: bool
               type: input
-              value: false
             type: td
           - children:
             - type: text
-              value: b1
+              bind:
+                value:
+                  default: b1
             type: td
           - children:
             - type: text
-              value: 0.31
+              bind:
+                value:
+                  default: 0.31
             type: td
           - children:
             - type: text
-              value: b2
+              bind:
+                value:
+                  default: b2
             type: td
           - children:
             - type: text
-              value: b3
+              bind:
+                value:
+                  default: b3
             type: td
           type: tr
         - children:
           - children:
             - bind:
-                field: n
-                type: number
+                value:
+                  default: 9
+                  field: n
+                  type: number
               type: input
-              value: 9
             type: td
           - children:
             - type: text
-              value: c1
+              bind:
+                value:
+                  default: c1
             type: td
           - children:
             - type: text
-              value: 33.83
+              bind:
+                value:
+                  default: 33.83
             type: td
           - children:
             - type: text
-              value: c2
+              bind:
+                value:
+                  default: c2
             type: td
           - children:
             - type: text
-              value: c3
+              bind:
+                value:
+                  default: c3
             type: td
           type: tr
       type: table
@@ -122,11 +161,13 @@ data:
   - attrs:
       oneshot: false
     bind:
-      submit: true
+      value:
+        default: confirm
+        submit: true
     type: button
-    value: confirm
   bind:
-    event: confirm
+    value:
+      target: confirm
   id: null
   type: form
 event: chat

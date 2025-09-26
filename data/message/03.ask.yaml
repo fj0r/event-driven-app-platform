@@ -2,4 +2,6 @@ action: join
 event: chat
 data:
     type: text
-    value: who are you?
+    bind:
+      value:
+        default: who are you?

@@ -2,8 +2,10 @@ action: join
 event: chat
 data:
   type: chart
-  value: {
-    series: [44, 55, 13, 33],
-    labels: ['Apple', 'Mango', 'Orange', 'Watermelon'],
-    chart: {type: "pie"}
-  }
+  bind:
+    value:
+      default: {
+        series: [44, 55, 13, 33],
+        labels: ['Apple', 'Mango', 'Orange', 'Watermelon'],
+        chart: {type: "pie"}
+      }

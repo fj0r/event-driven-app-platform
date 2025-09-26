@@ -11,7 +11,9 @@ data:
     - attrs:
         class: i ac box border
       type: text
-      value: confirm order
+      bind:
+        value:
+          default: confirm order
     - attrs:
         class: gap md
       children:
@@ -20,23 +22,33 @@ data:
           - children:
             - children:
               - type: text
-                value: ''
+                bind:
+                  value:
+                    default: ''
               type: th
             - children:
               - type: text
-                value: ''
+                bind:
+                  value:
+                    default: ''
               type: th
             - children:
               - type: text
-                value: Name
+                bind:
+                  value:
+                    default: Name
               type: th
             - children:
               - type: text
-                value: Price
+                bind:
+                  value:
+                    default: Price
               type: th
             - children:
               - type: text
-                value: Description
+                bind:
+                  value:
+                    default: Description
               type: th
             type: tr
           type: thead
@@ -44,85 +56,112 @@ data:
           - children:
             - children:
               - bind:
-                  field: '853736'
-                  type: number
+                  value:
+                    default: 1
+                    field: '853736'
+                    type: number
                 type: input
-                value: 1
               type: td
             - children:
               - attrs:
                   desc: '853736'
                   height: 2em
                 type: image
-                value: https://i.xinminghui.com/goods/202302/source_img/202302270408590.JPG
+                bind:
+                  value:
+                    default: https://i.xinminghui.com/goods/202302/source_img/202302270408590.JPG
               type: td
             - children:
               - type: text
-                value: Honeywell 901 Mask Headband Color Box
+                bind:
+                  value:
+                    default: Honeywell 901 Mask Headband Color Box
               type: td
             - children:
               - type: text
-                value: 2.25
+                bind:
+                  value:
+                    default: 2.25
               type: td
             - children:
               - type: text
-                value: Efficient filtration, headband design, comfortable to wear
+                bind:
+                  value:
+                    default: Efficient filtration, headband design, comfortable to wear
               type: td
             type: tr
           - children:
             - children:
               - bind:
-                  field: '56459'
-                  type: number
+                  value:
+                    default: 1
+                    field: '56459'
+                    type: number
                 type: input
-                value: 1
               type: td
             - children:
               - attrs:
                   desc: '56459'
                   height: 2em
                 type: image
-                value: https://i.xinminghui.com/goods/202103/source_img/20210318040905696.jpg
+                bind:
+                  value:
+                    default: https://i.xinminghui.com/goods/202103/source_img/20210318040905696.jpg
               type: td
             - children:
               - type: text
-                value: TECHGONG Medical Disposable Mask
+                bind:
+                  value:
+                    default: TECHGONG Medical Disposable Mask
               type: td
             - children:
               - type: text
-                value: 0.31
+                bind:
+                  value:
+                    default: 0.31
               type: td
             - children:
               - type: text
-                value: Medical grade protection, disposable use, convenient and hygienic
+                bind:
+                  value:
+                    default: Medical grade protection, disposable use, convenient and hygienic
               type: td
             type: tr
           - children:
             - children:
               - bind:
-                  field: '934900'
-                  type: number
+                  value:
+                    default: 1
+                    field: '934900'
+                    type: number
                 type: input
-                value: 1
               type: td
             - children:
               - attrs:
                   desc: '934900'
                   height: 2em
                 type: image
-                value: https://i.xinminghui.com/goods/202501/source_img/202501150324492.png
+                bind:
+                  value:
+                    default: https://i.xinminghui.com/goods/202501/source_img/202501150324492.png
               type: td
             - children:
               - type: text
-                value: Simei Jia Disposable Activated Carbon Mask
+                bind:
+                  value:
+                    default: Simei Jia Disposable Activated Carbon Mask
               type: td
             - children:
               - type: text
-                value: 33.83
+                bind:
+                  value:
+                    default: 33.83
               type: td
             - children:
               - type: text
-                value: Activated carbon filtration, odor absorption, suitable for sensitive individuals
+                bind:
+                  value:
+                    default: Activated carbon filtration, odor absorption, suitable for sensitive individuals
               type: td
             type: tr
           type: tbody
@@ -131,9 +170,10 @@ data:
     - attrs:
         oneshot: true
       bind:
-        submit: true
+        value:
+          default: confirm
+          submit: true
       type: button
-      value: confirm
     bind:
       event: confirm
     id: QQucja82kxbHPGLozJWdbk

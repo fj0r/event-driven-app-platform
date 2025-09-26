@@ -4,6 +4,7 @@ children:
     - type: case
       attrs:
         class: box border shadow
-      value: 123
       bind:
-          event: test-data
+        value:
+          default: 123
+          source: test-data
