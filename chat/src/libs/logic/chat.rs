@@ -4,6 +4,7 @@ use content::{Content, Influx, Method};
 use layout::{Attrs, Layout, Settings};
 use std::default::Default;
 use std::fmt::Debug;
+use maplit::hashmap;
 
 pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender<T>) -> Result<()> {
     let ChatMessage {
@@ -32,7 +33,9 @@ pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender
                     }),
                     ..Default::default()
                 }),
-                value: Some(d.to_owned()),
+                bind: Some(hashmap! {
+                    "value" => d.to_owned()
+                }),
                 ..Default::default()
             },
             method: Method::Concat,

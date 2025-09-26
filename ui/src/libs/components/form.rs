@@ -5,6 +5,7 @@ use super::super::store::Store;
 use super::{Dynamic, Frame};
 use dioxus::prelude::*;
 use layout::{Bind, JsKind, Layout, Settings};
+use maplit::hashmap;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -49,28 +50,22 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
 
             let s = use_signal(|| v);
             scope.insert(field.to_string(), (s, payload.clone()));
-            let mut nv = HashMap::new();
-            nv.insert(
-                "value".to_owned(),
-                Bind::Field {
+            layout.bind = Some(hashmap! {
+                "value".to_owned() => Bind::Field {
                     field: field.to_string(),
                     kind,
                     payload: None,
                     signal: Some(s),
                 },
-            );
-            layout.bind = Some(nv);
+            });
         }
         Some(Bind::Submit { .. }) => {
-            let mut nv = HashMap::new();
-            nv.insert(
-                "value".to_owned(),
-                Bind::Submit {
+            layout.bind = Some(hashmap! {
+                "value".to_owned() => Bind::Submit {
                     submit: true,
                     signal: Some(confirm),
                 },
-            );
-            layout.bind = Some(nv);
+            });
         }
         _ => {}
     };

@@ -1,4 +1,7 @@
-use dioxus::prelude::*;
+use dioxus::{
+    html::{button::value, track::default},
+    prelude::*,
+};
 use itertools::{
     EitherOrBoth::{Both, Left, Right},
     Itertools,
@@ -112,39 +115,26 @@ impl JsKind {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
-#[serde(untagged)]
-pub enum Bind {
-    Source {
-        source: String,
-        #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
-        kind: Option<JsKind>,
-    },
-    Target {
-        target: String,
-        #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
-        kind: Option<JsKind>,
-    },
-    Variable {
-        variable: String,
-        #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
-        kind: Option<JsKind>,
-    },
-    Field {
-        field: String,
-        #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
-        kind: Option<JsKind>,
-        #[serde(skip_serializing_if = "Option::is_none")]
-        payload: Option<Value>,
-        #[allow(dead_code)]
-        #[serde(skip)]
-        signal: Option<Signal<Value>>,
-    },
-    Submit {
-        submit: bool,
-        #[allow(dead_code)]
-        #[serde(skip)]
-        signal: Option<Signal<Value>>,
-    },
+pub struct Bind {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    default: Option<Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    source: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    target: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    variable: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    field: Option<String>,
+    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
+    kind: Option<JsKind>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    payload: Option<Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    submit: Option<bool>,
+    #[allow(dead_code)]
+    #[serde(skip)]
+    signal: Option<Signal<Value>>,
 }
 
 fn kind_empty() -> String {
@@ -161,8 +151,6 @@ pub struct Layout {
     pub attrs: Option<Attrs>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bind: Option<HashMap<String, Bind>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub value: Option<Value>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub render: Option<Render>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -226,8 +214,8 @@ impl Layout {
         }
     }
 
-    pub fn merge(&mut self, op: &(impl LayoutOp + ?Sized), rhs: Self) {
-        op.merge(self, &rhs);
+    pub fn merge(&mut self, op: &(impl LayoutOp + ?Sized), mut rhs: Self) {
+        op.merge(self, &mut rhs);
         if let Some(rchildren) = rhs.children {
             if let Some(children) = &mut self.children {
                 let children = children
@@ -251,127 +239,124 @@ impl Layout {
 }
 
 pub trait LayoutOp {
-    fn merge(&self, lhs: &mut Layout, rhs: &Layout);
+    fn merge_value(l: &mut Value, r: &Value) -> Option<Value>;
+    fn merge(&self, lhs: &mut Layout, rhs: &mut Layout) {
+        match (&mut lhs.bind, &mut rhs.bind) {
+            (Some(l), Some(r)) => {
+                let nv = l
+                    .into_iter()
+                    .chain(r)
+                    .fold(HashMap::new(), |mut m, (k, v)| {
+                        m.entry(k.to_owned())
+                            .and_modify(|old: &mut Bind| {
+                                let nd = match (&mut old.default, &v.default) {
+                                    (Some(x), Some(y)) => Self::merge_value(x, y),
+                                    (Some(x), None) => Some(x.clone()),
+                                    (None, Some(y)) => Some(y.clone()),
+                                    (None, None) => None,
+                                };
+                                old.default = nd;
+                            })
+                            .or_insert(v.to_owned());
+                        m
+                    });
+                Some(nv)
+            }
+            (Some(l), None) => Some(l.to_owned()),
+            (None, Some(y)) => Some(y.to_owned()),
+            (None, None) => None,
+        };
+    }
 }
 
 pub struct Concat;
 impl LayoutOp for Concat {
-    fn merge(&self, lhs: &mut Layout, rhs: &Layout) {
-        let data = match &mut lhs.value {
-            Some(x) => {
-                if let Some(r) = &rhs.value {
-                    let y = match (x, r) {
-                        (Value::Number(x), Value::Number(r)) => {
-                            json!(x.as_f64().unwrap() + r.as_f64().unwrap())
-                        }
-                        (Value::Bool(x), Value::Bool(r)) => {
-                            json!(*x || *r)
-                        }
-                        (Value::String(x), Value::String(r)) => {
-                            x.push_str(r);
-                            json!(x)
-                        }
-                        (Value::Object(x), Value::Object(r)) => {
-                            for (k, v) in r {
-                                x.entry(k)
-                                    .and_modify(|x| *x = v.clone())
-                                    .or_insert_with(|| v.clone());
-                            }
-                            json!(x)
-                        }
-                        (Value::Array(x), Value::Array(r)) => {
-                            json!([x.clone(), r.clone()].concat())
-                        }
-                        _ => r.clone(),
-                    };
-                    Some(y)
-                } else {
-                    Some(x.clone())
-                }
+    fn merge_value(x: &mut Value, y: &Value) -> Option<Value> {
+        let n = match (x, y) {
+            (Value::Number(x), Value::Number(r)) => {
+                json!(x.as_f64().unwrap() + r.as_f64().unwrap())
             }
-            None => rhs.value.clone(),
+            (Value::Bool(x), Value::Bool(r)) => {
+                json!(*x || *r)
+            }
+            (Value::String(x), Value::String(r)) => {
+                x.push_str(&r);
+                json!(x)
+            }
+            (Value::Object(x), Value::Object(r)) => {
+                for (k, v) in r {
+                    x.entry(k)
+                        .and_modify(|x| *x = v.clone())
+                        .or_insert_with(|| v.clone());
+                }
+                json!(x)
+            }
+            (Value::Array(x), Value::Array(r)) => {
+                json!([x.clone(), r.clone()].concat())
+            }
+            _ => y.clone(),
         };
-        lhs.value = data;
+        Some(n)
     }
 }
 
 pub struct Delete;
 impl LayoutOp for Delete {
-    fn merge(&self, lhs: &mut Layout, rhs: &Layout) {
-        let data = match &mut lhs.value {
-            Some(x) => {
-                if let Some(r) = &rhs.value {
-                    let y = match (x, r) {
-                        (Value::Number(x), Value::Number(r)) => {
-                            json!(x.as_f64().unwrap() - r.as_f64().unwrap())
-                        }
-                        (Value::Bool(x), Value::Bool(r)) => {
-                            json!(*x && *r)
-                        }
-                        (Value::String(x), Value::String(r)) => {
-                            json!(x.replace(r, ""))
-                        }
-                        (Value::String(x), Value::Number(r)) => {
-                            let l = x.len();
-                            let s = r.as_u64().unwrap() as usize;
-                            let e = if s >= l { 0 } else { l.saturating_sub(s) };
-                            json!(x[..e])
-                        }
-                        (Value::Object(x), Value::Object(r)) => {
-                            for (k, _v) in r {
-                                if x.contains_key(k) {
-                                    x.remove(k);
-                                };
-                            }
-                            json!(x)
-                        }
-                        (Value::Array(x), Value::Array(_r)) => {
-                            json!(x)
-                        }
-                        _ => lhs.value.clone().unwrap_or_else(|| r.clone()),
-                    };
-                    Some(y)
-                } else {
-                    Some(x.clone())
-                }
+    fn merge_value(x: &mut Value, y: &Value) -> Option<Value> {
+        let n = match (x, y) {
+            (Value::Number(x), Value::Number(r)) => {
+                json!(x.as_f64().unwrap() - r.as_f64().unwrap())
             }
-            None => rhs.value.clone(),
+            (Value::Bool(x), Value::Bool(r)) => {
+                json!(*x && *r)
+            }
+            (Value::String(x), Value::String(r)) => {
+                json!(x.replace(r, ""))
+            }
+            (Value::String(x), Value::Number(r)) => {
+                let l = x.len();
+                let s = r.as_u64().unwrap() as usize;
+                let e = if s >= l { 0 } else { l.saturating_sub(s) };
+                json!(x[..e])
+            }
+            (Value::Object(x), Value::Object(r)) => {
+                for (k, _v) in r {
+                    if x.contains_key(k) {
+                        x.remove(k);
+                    };
+                }
+                json!(x)
+            }
+            (Value::Array(x), Value::Array(_r)) => {
+                json!(x)
+            }
+            _ => y.clone(),
         };
-        lhs.value = data;
+        Some(n)
     }
 }
 
 pub struct Replace;
 impl LayoutOp for Replace {
-    fn merge(&self, lhs: &mut Layout, rhs: &Layout) {
-        let data = match &lhs.value {
-            Some(x) => {
-                if let Some(r) = &rhs.value {
-                    let y = match (x, r) {
-                        (Value::Number(_x), Value::Number(r)) => {
-                            json!(r.as_f64().unwrap())
-                        }
-                        (Value::Bool(_x), Value::Bool(r)) => {
-                            json!(*r)
-                        }
-                        (Value::String(_x), Value::String(r)) => {
-                            json!(r)
-                        }
-                        (Value::Object(_x), Value::Object(r)) => {
-                            json!(r)
-                        }
-                        (Value::Array(_x), Value::Array(r)) => {
-                            json!(r)
-                        }
-                        _ => r.clone(),
-                    };
-                    Some(y)
-                } else {
-                    Some(x.clone())
-                }
+    fn merge_value(x: &mut Value, r: &Value) -> Option<Value> {
+        let y = match (x, r) {
+            (Value::Number(_x), Value::Number(r)) => {
+                json!(r.as_f64().unwrap())
             }
-            None => rhs.value.clone(),
+            (Value::Bool(_x), Value::Bool(r)) => {
+                json!(*r)
+            }
+            (Value::String(_x), Value::String(r)) => {
+                json!(r)
+            }
+            (Value::Object(_x), Value::Object(r)) => {
+                json!(r)
+            }
+            (Value::Array(_x), Value::Array(r)) => {
+                json!(r)
+            }
+            _ => r.clone(),
         };
-        lhs.value = data;
+        Some(y)
     }
 }
