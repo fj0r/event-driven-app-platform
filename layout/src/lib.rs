@@ -248,7 +248,7 @@ impl Layout {
 }
 
 pub trait LayoutOp {
-    fn merge_value(l: &mut Value, r: &Value) -> Option<Value>;
+    fn merge_value(&self, l: &mut Value, r: &Value) -> Option<Value>;
     fn merge(&self, lhs: &mut Layout, rhs: &mut Layout) {
         match (&mut lhs.bind, &mut rhs.bind) {
             (Some(l), Some(r)) => {
@@ -259,7 +259,7 @@ pub trait LayoutOp {
                         m.entry(k.to_owned())
                             .and_modify(|old: &mut Bind| {
                                 let nd = match (&mut old.default, &v.default) {
-                                    (Some(x), Some(y)) => Self::merge_value(x, y),
+                                    (Some(x), Some(y)) => self.merge_value(x, y),
                                     (Some(x), None) => Some(x.clone()),
                                     (None, Some(y)) => Some(y.clone()),
                                     (None, None) => None,
@@ -280,7 +280,7 @@ pub trait LayoutOp {
 
 pub struct Concat;
 impl LayoutOp for Concat {
-    fn merge_value(x: &mut Value, y: &Value) -> Option<Value> {
+    fn merge_value(&self, x: &mut Value, y: &Value) -> Option<Value> {
         let n = match (x, y) {
             (Value::Number(x), Value::Number(r)) => {
                 json!(x.as_f64().unwrap() + r.as_f64().unwrap())
@@ -311,7 +311,7 @@ impl LayoutOp for Concat {
 
 pub struct Delete;
 impl LayoutOp for Delete {
-    fn merge_value(x: &mut Value, y: &Value) -> Option<Value> {
+    fn merge_value(&self, x: &mut Value, y: &Value) -> Option<Value> {
         let n = match (x, y) {
             (Value::Number(x), Value::Number(r)) => {
                 json!(x.as_f64().unwrap() - r.as_f64().unwrap())
@@ -347,7 +347,7 @@ impl LayoutOp for Delete {
 
 pub struct Replace;
 impl LayoutOp for Replace {
-    fn merge_value(x: &mut Value, r: &Value) -> Option<Value> {
+    fn merge_value(&self, x: &mut Value, r: &Value) -> Option<Value> {
         let y = match (x, r) {
             (Value::Number(_x), Value::Number(r)) => {
                 json!(r.as_f64().unwrap())
