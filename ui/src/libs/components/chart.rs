@@ -1,10 +1,10 @@
 use dioxus::prelude::*;
-use layout::Layout;
+use layout::{Layout, Bind};
 
 #[component]
 pub fn Chart(id: String, layout: Layout) -> Element {
     let eid = id.clone();
-    if let Some(val) = layout.value {
+    if let Some(val) = layout.bind.and_then(|x| x.get("value")) {
         use_effect(move || {
             let js = format!(
                 r#"

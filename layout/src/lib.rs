@@ -139,11 +139,11 @@ pub enum BindClass {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct Bind {
     #[serde(flatten)]
-    class: BindClass,
+    pub class: BindClass,
     #[serde(skip_serializing_if = "Option::is_none")]
-    default: Option<Value>,
+    pub default: Option<Value>,
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
-    kind: Option<JsKind>,
+    pub kind: Option<JsKind>,
 }
 
 fn kind_empty() -> String {
