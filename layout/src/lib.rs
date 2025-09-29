@@ -111,7 +111,7 @@ impl JsKind {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(untagged)]
 pub enum BindClass {
     Source {
@@ -127,6 +127,9 @@ pub enum BindClass {
         field: String,
         #[serde(skip_serializing_if = "Option::is_none")]
         payload: Option<Value>,
+        #[allow(dead_code)]
+        #[serde(skip)]
+        signal: Option<Signal<Value>>,
     },
     Submit {
         submit: bool,
@@ -134,9 +137,11 @@ pub enum BindClass {
         #[serde(skip)]
         signal: Option<Signal<Value>>,
     },
+    #[default]
+    Empty
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct Bind {
     #[serde(flatten)]
     pub class: BindClass,

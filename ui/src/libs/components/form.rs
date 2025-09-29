@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use super::super::store::Store;
 use super::{Dynamic, Frame};
 use dioxus::prelude::*;
-use layout::{Bind, JsKind, Layout, Settings};
+use layout::{Bind, BindClass, JsKind, Layout, Settings};
 use maplit::hashmap;
 use serde::{Deserialize, Serialize};
 
@@ -18,32 +18,31 @@ type FormScope = HashMap<String, (Signal<Value>, Option<Value>)>;
 
 fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
     match layout.bind.as_ref().and_then(|x| x.get("value")) {
-        Some(Bind::Field {
-            field,
+        Some(Bind {
+            default,
             kind,
-            payload,
-            signal: _,
+            class:
+                BindClass::Field {
+                    field,
+                    payload,
+                    signal: _,
+                },
         }) => {
             let kind = kind.clone();
             let v = match kind {
                 Some(JsKind::number) => {
-                    let n = layout
-                        .value
+                    let n = default
                         .as_ref()
                         .and_then(|x| x.as_f64())
                         .unwrap_or(0 as f64);
                     to_value(n).unwrap()
                 }
                 Some(JsKind::bool) => {
-                    let b = layout
-                        .value
-                        .as_ref()
-                        .and_then(|x| x.as_bool())
-                        .unwrap_or(false);
+                    let b = default.as_ref().and_then(|x| x.as_bool()).unwrap_or(false);
                     to_value(b).unwrap()
                 }
                 _ => {
-                    let s = layout.value.as_ref().and_then(|x| x.as_str()).unwrap_or("");
+                    let s = default.as_ref().and_then(|x| x.as_str()).unwrap_or("");
                     to_value(s).unwrap()
                 }
             };
@@ -51,19 +50,29 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
             let s = use_signal(|| v);
             scope.insert(field.to_string(), (s, payload.clone()));
             layout.bind = Some(hashmap! {
-                "value".to_owned() => Bind::Field {
-                    field: field.to_string(),
+                "value".to_owned() => Bind {
                     kind,
-                    payload: None,
-                    signal: Some(s),
+                    default: None,
+                    class: BindClass::Field {
+                        field: field.to_string(),
+                        payload: None,
+                        signal: Some(s),
+                    },
                 },
             });
         }
-        Some(Bind::Submit { .. }) => {
+        Some(Bind {
+            default: _,
+            kind: _,
+            class: BindClass::Submit { .. },
+        }) => {
             layout.bind = Some(hashmap! {
-                "value".to_owned() => Bind::Submit {
-                    submit: true,
-                    signal: Some(confirm),
+                "value".to_owned() => Bind {
+                    class: BindClass::Submit {
+                        submit: true,
+                        signal: Some(confirm),
+                    },
+                    ..Default::default()
                 },
             });
         }
