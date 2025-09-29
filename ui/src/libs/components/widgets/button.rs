@@ -8,7 +8,7 @@ pub fn Button(layout: Layout) -> Element {
         .bind
         .as_ref()
         .and_then(|x| x.get("value"))
-        .and_then(|x| x.default)
+        .and_then(|x| x.default.clone())
         .unwrap_or(to_value("Ok").unwrap())
         .as_str()
         .unwrap()
