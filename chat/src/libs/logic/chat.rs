@@ -1,10 +1,10 @@
 use super::super::handler::{ArcShared, ChatMessage, Envelope, Sender};
 use anyhow::Result;
 use content::{Content, Influx, Method};
-use layout::{Attrs, Layout, Settings};
+use layout::{Attrs, Bind, Layout, Settings};
+use maplit::hashmap;
 use std::default::Default;
 use std::fmt::Debug;
-use maplit::hashmap;
 
 pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender<T>) -> Result<()> {
     let ChatMessage {
@@ -34,7 +34,10 @@ pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender
                     ..Default::default()
                 }),
                 bind: Some(hashmap! {
-                    "value" => d.to_owned()
+                    "value".to_owned() => Bind {
+                        default: Some(d.to_owned()),
+                        ..Default::default()
+                    }
                 }),
                 ..Default::default()
             },
