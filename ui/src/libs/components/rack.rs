@@ -2,7 +2,7 @@ use super::super::store::Store;
 use super::utils::merge_css_class;
 use super::{Dynamic, Frame};
 use dioxus::{CapturedError, prelude::*};
-use layout::{Bind, Layout, Settings};
+use layout::{Bind, BindVariant, Layout, Settings};
 use std::collections::hash_map::HashMap;
 use std::str::FromStr;
 
@@ -46,7 +46,10 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
     let css = merge_css_class(&mut css, &layout);
 
     let item: ItemContainer = layout.item.clone().context("item")?.into();
-    let Bind::Source { source, .. } = layout
+    let Bind {
+        variant: BindVariant::Source { source },
+        ..
+    } = layout
         .bind
         .as_ref()
         .and_then(|x| x.get("value"))

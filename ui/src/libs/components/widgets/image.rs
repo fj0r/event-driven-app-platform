@@ -3,7 +3,11 @@ use layout::{Layout, Settings};
 
 #[component]
 pub fn Img(layout: Layout, children: Element) -> Element {
-    if let Some(src) = &layout.value
+    if let Some(src) = &layout
+        .bind
+        .as_ref()
+        .and_then(|x| x.get("value"))
+        .and_then(|x| x.default.clone())
         && let Some(src) = src.as_str()
         && let Some(x) = layout.attrs
     {

@@ -1,7 +1,8 @@
 use super::super::super::store::Store;
 use super::super::utils::merge_css_class;
 use dioxus::prelude::*;
-use layout::{Bind, Layout, Settings};
+use layout::{Bind, BindVariant, Layout, Settings};
+use maplit::hashmap;
 use markdown::{Options, to_html_with_options};
 use std::sync::LazyLock;
 
@@ -15,22 +16,31 @@ pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
     let store = use_context::<Store>();
 
     let mut txt_layout = {
-        let value = layout.read().value.clone();
+        let value = layout.read().bind.clone();
         Layout {
             kind: "Text".to_string(),
-            value,
+            bind: value,
             ..Layout::default()
         }
     };
-    if let Some(Bind::Source { source, .. }) =
-        layout.read().bind.as_ref().and_then(|x| x.get("value"))
+
+    if let Some(Bind {
+        variant: BindVariant::Source { source },
+        ..
+    }) = layout.read().bind.as_ref().and_then(|x| x.get("value"))
     {
         let event_data = store.data.read().get(source).cloned();
         if let Some(event_layout) = event_data {
             txt_layout = event_layout
         }
     };
-    let text_content = if let Some(json_data) = txt_layout.value {
+
+    let text_content = if let Some(json_data) = txt_layout
+        .bind
+        .as_ref()
+        .and_then(|x| x.get("value"))
+        .and_then(|x| x.default.clone())
+    {
         if json_data.is_string() {
             json_data.as_str().unwrap().to_owned()
         } else {

@@ -27,9 +27,9 @@ pub fn Fold(layout: Layout, children: Element) -> Element {
     let show = use_signal(|| {
         layout
             .bind
-            .clone()
-            .and_then(|x| x.get("value").cloned())
-            .and_then(|x| x.default)
+            .as_ref()
+            .and_then(|x| x.get("value"))
+            .and_then(|x| x.default.clone())
             .and_then(|x| x.as_bool())
             .unwrap_or_default()
     });

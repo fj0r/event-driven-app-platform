@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use super::super::store::Store;
 use super::{Dynamic, Frame};
 use dioxus::prelude::*;
-use layout::{Bind, BindClass, JsKind, Layout, Settings};
+use layout::{Bind, BindVariant, JsKind, Layout, Settings};
 use maplit::hashmap;
 use serde::{Deserialize, Serialize};
 
@@ -21,8 +21,8 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
         Some(Bind {
             default,
             kind,
-            class:
-                BindClass::Field {
+            variant:
+                BindVariant::Field {
                     field,
                     payload,
                     signal: _,
@@ -53,7 +53,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
                 "value".to_owned() => Bind {
                     kind,
                     default: None,
-                    class: BindClass::Field {
+                    variant: BindVariant::Field {
                         field: field.to_string(),
                         payload: None,
                         signal: Some(s),
@@ -64,11 +64,11 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
         Some(Bind {
             default: _,
             kind: _,
-            class: BindClass::Submit { .. },
+            variant: BindVariant::Submit { .. },
         }) => {
             layout.bind = Some(hashmap! {
                 "value".to_owned() => Bind {
-                    class: BindClass::Submit {
+                    variant: BindVariant::Submit {
                         submit: true,
                         signal: Some(confirm),
                     },
@@ -111,7 +111,11 @@ pub fn Form(layout: Layout) -> Element {
     });
 
     let lc = layout.bind.as_ref().and_then(|x| x.get("value")).cloned();
-    if let Some(Bind::Target { target, .. }) = lc {
+    if let Some(Bind {
+        variant: BindVariant::Target { target },
+        ..
+    }) = lc
+    {
         let s = use_context::<Store>();
         let mut content = HashMap::new();
         for (k, v) in &data {

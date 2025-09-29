@@ -1,7 +1,8 @@
 use super::super::super::store::Store;
 use super::super::utils::merge_css_class;
 use dioxus::prelude::*;
-use layout::{Bind, JsKind, Layout};
+use layout::{Bind, BindVariant, JsKind, Layout};
+use maplit::hashmap;
 use serde_json::{Value, to_value};
 use std::ops::Deref;
 use std::rc::Rc;
@@ -24,14 +25,21 @@ pub fn Input(layout: Layout) -> Element {
         .and_then(|x| x.get("value"))
         .cloned()
         .and_then(|x| match x {
-            Bind::Field {
-                field,
+            Bind {
+                variant: BindVariant::Field { field, signal, .. },
                 kind,
-                payload: _,
-                signal,
+                ..
             } => Some(("field", field, kind, signal)),
-            Bind::Target { target, kind } => Some(("event", target, kind, None)),
-            Bind::Variable { variable, kind } => Some(("variable", variable, kind, None)),
+            Bind {
+                variant: BindVariant::Target { target },
+                kind,
+                ..
+            } => Some(("event", target, kind, None)),
+            Bind {
+                variant: BindVariant::Variable { variable },
+                kind,
+                ..
+            } => Some(("variable", variable, kind, None)),
             _ => Some(("", "".to_string(), Default::default(), None)),
         })
         .unwrap();
@@ -57,7 +65,9 @@ pub fn Input(layout: Layout) -> Element {
                 s1.set(
                     k3.deref(),
                     Layout {
-                        value: Some(parsed_value),
+                        bind: Some(hashmap! {
+                            "value".to_owned() => Bind { default: Some(parsed_value), ..Default::default() }
+                        }),
                         ..Default::default()
                     },
                 );

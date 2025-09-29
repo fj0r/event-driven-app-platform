@@ -113,7 +113,7 @@ impl JsKind {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(untagged)]
-pub enum BindClass {
+pub enum BindVariant {
     Source {
         source: String,
     },
@@ -121,7 +121,7 @@ pub enum BindClass {
         target: String,
     },
     Variable {
-        vairable: String,
+        variable: String,
     },
     Field {
         field: String,
@@ -144,7 +144,7 @@ pub enum BindClass {
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct Bind {
     #[serde(flatten)]
-    pub class: BindClass,
+    pub variant: BindVariant,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub default: Option<Value>,
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]

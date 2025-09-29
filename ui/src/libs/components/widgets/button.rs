@@ -1,11 +1,14 @@
 use dioxus::prelude::*;
-use layout::{Bind, Layout, Settings};
+use layout::{Bind, BindVariant, Layout, Settings};
 use serde_json::{Value, to_value};
 
 #[component]
 pub fn Button(layout: Layout) -> Element {
     let t = layout
-        .value
+        .bind
+        .as_ref()
+        .and_then(|x| x.get("value"))
+        .and_then(|x| x.default)
         .unwrap_or(to_value("Ok").unwrap())
         .as_str()
         .unwrap()
@@ -22,8 +25,11 @@ pub fn Button(layout: Layout) -> Element {
         })
         .unwrap_or(false);
 
-    if let Some(Bind::Submit {
-        signal: Some(mut s),
+    if let Some(Bind {
+        variant: BindVariant::Submit {
+            signal: Some(mut s),
+            ..
+        },
         ..
     }) = layout.bind.and_then(|x| x.get("value").cloned())
     {

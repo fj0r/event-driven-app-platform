@@ -6,8 +6,9 @@ pub fn Chart(id: String, layout: Layout) -> Element {
     let eid = id.clone();
     if let Some(val) = layout
         .bind
-        .and_then(|x| x.get("value").cloned())
-        .and_then(|x| x.default)
+        .as_ref()
+        .and_then(|x| x.get("value"))
+        .and_then(|x| x.default.clone())
     {
         use_effect(move || {
             let js = format!(
