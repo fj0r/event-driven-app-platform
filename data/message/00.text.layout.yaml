@@ -1,9 +1,11 @@
 action: create
-type: case
-attrs:
+event: ''
+data:
+  type: case
+  attrs:
     horizontal: true
     class: box
-children:
+  children:
     - type: test
     - type: case
       children:
@@ -22,7 +24,8 @@ children:
               source: test-data
     - type: rack
       bind:
-          event: chat
+        value:
+          source: chat
       item:
           - type: case
             attrs:
@@ -33,7 +36,7 @@ children:
           bind:
             value:
               default: lv 1
-              event: test-data
+              source: test-data
         - type: case
           children:
             - type: text
@@ -50,9 +53,10 @@ children:
                       default: lv 3
     - type: input
       bind:
-          upload: true
-          event: message
+        value:
+          target: message
     - type: button
       bind:
-        value: "Count"
-        target: ok
+        value:
+          default: "Count"
+          target: ok

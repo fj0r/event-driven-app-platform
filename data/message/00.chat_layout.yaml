@@ -42,7 +42,8 @@ data:
           class: --message box c as gap scrolly
           scroll: true
         bind:
-          event: chat
+          value:
+            source: chat
         item:
         - type: case
           attrs:
@@ -62,4 +63,5 @@ data:
           children:
           - type: input
             bind:
-              event: message
+              value:
+                target: message

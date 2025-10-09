@@ -1,6 +1,8 @@
 action: create
-type: case
-children:
+event: ''
+data:
+  type: case
+  children:
     - type: case
       attrs:
         class: box border shadow
