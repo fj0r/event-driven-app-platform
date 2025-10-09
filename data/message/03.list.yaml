@@ -6,4 +6,4 @@ data:
       - type: text
         bind:
           value:
-            default: who are you?
+            default: (case)who are you?

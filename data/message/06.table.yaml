@@ -56,7 +56,7 @@ data:
                 value:
                   default: '853736'
                   field: s
-                  type: string
+                  type: text
                   payload:
                     a: 1
                     b:

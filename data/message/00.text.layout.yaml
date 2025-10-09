@@ -23,6 +23,7 @@ data:
               default: 123
               source: test-data
     - type: rack
+      attrs: {}
       bind:
         value:
           source: chat
