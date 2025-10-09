@@ -14,7 +14,7 @@ data:
         bind:
           value:
             default: chat with **AI**
-          source: login
+            source: login
         attrs:
           class: shadow nogrow
           format: md
@@ -54,7 +54,9 @@ data:
       children:
       - type: input
         bind:
-          event: history
+          value:
+            target: history
       - type: input
         bind:
-          event: echo
+          value:
+            target: echo

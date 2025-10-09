@@ -3,7 +3,8 @@ event: chat
 data:
     type: form
     bind:
-      target: confirm
+      value:
+        target: confirm
     attrs:
         class: gap md
     children:
@@ -15,6 +16,7 @@ data:
             default: confirm order
       - type: text
         bind:
+          value:
             event: test
       - type: case
         attrs:
@@ -41,10 +43,12 @@ data:
               - type: input
                 name: gender
                 bind:
+                  value:
                     field: gender
               - type: input
                 name: phone
                 bind:
+                  value:
                     field: phone
           - type: case
             attrs:
@@ -53,6 +57,7 @@ data:
               - type: input
                 name: var
                 bind:
+                  value:
                     variable: test
       - type: button
         attrs:
