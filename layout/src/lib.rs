@@ -111,7 +111,7 @@ impl JsKind {
     }
 }
 
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(untagged)]
 pub enum BindVariant {
     Source {
@@ -137,9 +137,15 @@ pub enum BindVariant {
         #[serde(skip)]
         signal: Option<Signal<Value>>,
     },
-    #[default]
-    Empty
+    Default {}
 }
+
+impl Default for BindVariant {
+    fn default() -> Self {
+        BindVariant::Default {}
+    }
+}
+
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct Bind {

@@ -1,7 +1,7 @@
 use super::super::handler::{ArcShared, ChatMessage, Envelope, Sender};
 use anyhow::Result;
 use content::{Content, Influx, Method};
-use layout::{Attrs, Bind, Layout, Settings};
+use layout::{Attrs, Bind, BindVariant, Layout, Settings};
 use maplit::hashmap;
 use std::default::Default;
 use std::fmt::Debug;
@@ -19,6 +19,7 @@ pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender
     let users = s.db.list_channel_account(3).await;
     dbg!(&users);
 
+
     if let Some(content) = content.as_object()
         && let Some(d) = content.get("data")
     {
@@ -35,6 +36,7 @@ pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender
                 }),
                 bind: Some(hashmap! {
                     "value".to_owned() => Bind {
+                        variant: BindVariant::Default {},
                         default: Some(d.to_owned()),
                         ..Default::default()
                     }
