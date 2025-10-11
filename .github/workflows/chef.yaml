@@ -42,9 +42,20 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-edap
           restore-keys: |
-            ${{ runner.os }}-buildx-
+            ${{ runner.os }}-buildx-edap
+
+      - name: Get PR head commit title
+        id: commit
+        run: |
+          MESSAGE=$(git log -1 --pretty=%s ${{ github.event.pull_request.head.sha }})
+          echo "message=$MESSAGE" >> "$GITHUB_OUTPUT"
+
+      - name: Clean cache
+        if: ${{ contains(steps.commit.outputs.message, '🗑️') }}
+        run: |
+          rm -rf /tmp/.buildx-cache
 
       - name: Extract Docker metadata
         id: meta
