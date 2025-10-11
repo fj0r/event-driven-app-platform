@@ -1,15 +1,11 @@
+use super::utils::use_default;
 use dioxus::prelude::*;
 use layout::Layout;
 
 #[component]
 pub fn Chart(id: String, layout: Layout) -> Element {
     let eid = id.clone();
-    if let Some(val) = layout
-        .bind
-        .as_ref()
-        .and_then(|x| x.get("value"))
-        .and_then(|x| x.default.clone())
-    {
+    if let Some(val) = use_default(&layout) {
         use_effect(move || {
             let js = format!(
                 r#"

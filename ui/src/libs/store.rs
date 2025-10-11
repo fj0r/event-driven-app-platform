@@ -89,9 +89,9 @@ fn dispatch(
             let e = x.event;
             let d = &x.data;
             let vs: &dyn LayoutOp = match x.method {
-                Method::Replace => &Replace as &dyn LayoutOp,
-                Method::Concat => &Concat as &dyn LayoutOp,
-                Method::Delete => &Delete as &dyn LayoutOp,
+                Method::Replace => &Replace,
+                Method::Concat => &Concat,
+                Method::Delete => &Delete,
             };
             if let Some(_id) = &d.id {
                 let mut l = list.write();

@@ -7,6 +7,6 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 #[component]
-pub fn Menu(layout: Layout, children: Element) -> Element {
+pub fn Popup(layout: Layout, children: Element) -> Element {
     rsx!()
 }

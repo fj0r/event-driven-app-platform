@@ -1,4 +1,6 @@
+use dioxus::prelude::*;
 use layout::Layout;
+use serde_json::{Value, json};
 
 pub fn merge_css_class<'a>(css: &'a mut Vec<&'a str>, layout: &'a Layout) -> &'a mut Vec<&'a str> {
     let mut v = ["box", "case", "rack", "text", "tab", "menu"].contains(&layout.kind.as_str());
@@ -16,4 +18,12 @@ pub fn merge_css_class<'a>(css: &'a mut Vec<&'a str>, layout: &'a Layout) -> &'a
         css.push("v");
     }
     css
+}
+
+pub fn use_default<'a>(layout: &'a Layout) -> Option<Value> {
+    layout
+        .bind
+        .as_ref()
+        .and_then(|x| x.get("value"))
+        .and_then(|x| x.default.clone())
 }

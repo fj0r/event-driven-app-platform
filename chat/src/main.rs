@@ -44,10 +44,12 @@ async fn main() -> Result<()> {
     let hc = reqwest::Client::new();
     macro_rules! init_req {
         ($($k: ident),* $(,)?) => {
-            $(let _ = hc.post(base_url.join(stringify!($k))?)
+            $(
+                let r = hc.post(base_url.join(stringify!($k))?)
                 .json(&cfg.$k)
                 .send()
                 .await;
+                info!("init hook {} [{}]", stringify!($k), &r?.status());
             )*
         };
     }

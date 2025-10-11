@@ -7,6 +7,7 @@ use sqlx::{
     types::chrono::{DateTime, NaiveDateTime, Utc},
 };
 use std::ops::Deref;
+use tracing::error;
 
 type Executor = Pool<Postgres>;
 type Result<T> = std::result::Result<T, Error>;
@@ -71,6 +72,7 @@ impl Model {
             let id: &str = r.try_get("id")?;
             Ok((id.to_string(), name.to_string()))
         } else {
+            error!("insert session failed: {}", session_id);
             Err(Error::RowNotFound)
         }
     }
