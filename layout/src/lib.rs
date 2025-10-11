@@ -137,7 +137,7 @@ pub enum BindVariant {
         #[serde(skip)]
         signal: Option<Signal<Value>>,
     },
-    Default {}
+    Default {},
 }
 
 impl Default for BindVariant {
@@ -145,7 +145,6 @@ impl Default for BindVariant {
         BindVariant::Default {}
     }
 }
-
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct Bind {

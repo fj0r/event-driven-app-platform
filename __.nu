@@ -135,7 +135,7 @@ export def 'ui up' [] {
 export def 'ui build' [] {
     cd ui
     rm -rf target/dx/ui/release/web/public/
-    ^dx build --platform web --release
+    ^dx build --web --release
     dust target/dx/ui/release/web/public/
 }
 
