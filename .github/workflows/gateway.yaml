@@ -1,0 +1,80 @@
+name: gateway
+
+on:
+  push:
+    branches: [ release ]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: fj0r/edap
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    # if: ${{ startsWith(github.event.head_commit.message, '🏗️') }}
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: fj0r
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-edap
+          restore-keys: |
+            ${{ runner.os }}-buildx-edap
+
+      - name: Get PR head commit title
+        id: commit
+        run: |
+          MESSAGE=$(git log -1 --pretty=%s ${{ github.event.pull_request.head.sha }})
+          echo "message=$MESSAGE" >> "$GITHUB_OUTPUT"
+
+      - name: Clean cache
+        if: ${{ contains(steps.commit.outputs.message, '🗑️') }}
+        run: |
+          rm -rf /tmp/.buildx-cache
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build
+        uses: docker/build-push-action@v4
+        with:
+          file: docker/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:lastest
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      - name: Move cache
+        # 临时解决缓存大小问题【turn0search3】
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache

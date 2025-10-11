@@ -187,7 +187,7 @@ export def 'chat up' [
 }
 
 export def 'chat build' [] {
-    cargo build --release --bin gateway
+    cargo build --release --bin chat
 }
 
 export def 'gw up' [
