@@ -55,7 +55,7 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
         .and_then(|x| x.get("value"))
         .context("data")?
     else {
-        return Err(RenderError::Aborted(CapturedError::from_str("no event")?));
+        return Err(RenderError::Error(CapturedError::from_display("no event")));
     };
     let attrs = layout.attrs.as_ref().context("attrs")?;
 
