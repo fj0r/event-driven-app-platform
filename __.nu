@@ -470,7 +470,7 @@ export def 'iggy up' [
     }
 }
 
-export def 'docker up' [
+export def 'gw-container up' [
     --external: string@cmpl-external = 'localhost'
 ] {
     let image = 'ghcr.io/fj0r/edap:lastest'
@@ -479,11 +479,29 @@ export def 'docker up' [
         --name edap
         --rm -it
         -p 3001:3000
-        -e $"GATEWAY_QUEUE_EVENT_BROKER=[($external):19092]"
-        -e $"GATEWAY_QUEUE_PUSH_BROKER=[($external):19092]"
+        -e $"GATEWAY_QUEUE_OUTGO_BROKER=[($external):19092]"
+        -e $"GATEWAY_QUEUE_INCOME_BROKER=[($external):19092]"
         -w /app
         $image
         /app/gateway
+    ]
+}
+
+export def 'chat-container up' [
+    --external: string@cmpl-external = 'localhost'
+] {
+    let image = 'ghcr.io/fj0r/edap:chat'
+    ^$env.CNTRCTL pull $image
+    ^$env.CNTRCTL run ...[
+        --name edap
+        --rm -it
+        -p 3001:3000
+        -e $"CHAT_QUEUE_OUTGO_BROKER=[($external):19092]"
+        -e $"CHAT_QUEUE_INCOME_BROKER=[($external):19092]"
+        -e $"CHAT_DATABASE_HOST=($external)"
+        -w /app
+        $image
+        /app/chat
     ]
 }
 
