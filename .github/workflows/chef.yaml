@@ -1,11 +1,11 @@
-name: chat
+name: chef
 
 on:
-  workflow_run:
-    workflows: [ chef ]
+  push:
     branches: [ release ]
-    types:
-      - completed
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ]
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -16,6 +16,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    # if: ${{ startsWith(github.event.head_commit.message, '🏗️') }}
     permissions:
       contents: read
       packages: write
@@ -45,6 +46,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-edap
 
+      - name: Get PR head commit title
+        id: commit
+        run: |
+          MESSAGE=$(git log -1 --pretty=%s ${{ github.event.pull_request.head.sha }})
+          echo "message=$MESSAGE" >> "$GITHUB_OUTPUT"
+
+      - name: Clean cache
+        if: ${{ contains(steps.commit.outputs.message, '🗑️') }}
+        run: |
+          rm -rf /tmp/.buildx-cache
+
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v4
@@ -54,9 +66,15 @@ jobs:
       - name: Build
         uses: docker/build-push-action@v4
         with:
-          file: docker/chat.Dockerfile
+          file: docker/chef.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:chat
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:chef
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      - name: Move cache
+        # 临时解决缓存大小问题【turn0search3】
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
