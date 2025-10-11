@@ -478,7 +478,7 @@ export def 'gw-container up' [
     ^$env.CNTRCTL run ...[
         --name edap-gateway
         --rm -it
-        -p 3001:3000
+        -p 3000:3000
         -e $"GATEWAY_QUEUE_OUTGO_BROKER=[($external):19092]"
         -e $"GATEWAY_QUEUE_INCOME_BROKER=[($external):19092]"
         -w /app
@@ -492,13 +492,15 @@ export def 'chat-container up' [
 ] {
     let image = 'ghcr.io/fj0r/edap:chat'
     ^$env.CNTRCTL pull $image
+    let config = mktemp -t --suffix chat
+    open -r chat.toml
+    | str replace -a localhost $external
+    | save -f $config
     ^$env.CNTRCTL run ...[
         --name edap-chat
         --rm -it
         -p 3003:3003
-        -e $"CHAT_QUEUE_OUTGO_BROKER=[($external):19092]"
-        -e $"CHAT_QUEUE_INCOME_BROKER=[($external):19092]"
-        -e $"CHAT_DATABASE_HOST=($external)"
+        -v $"($config):/app/chat.toml"
         -w /app
         $image
         /app/chat
