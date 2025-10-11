@@ -63,8 +63,16 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            lock:
+              - 'Cargo.lock'
+
       - name: Build
         uses: docker/build-push-action@v4
+        if: steps.changes.outputs.lock == 'true'
         with:
           file: docker/chef.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
