@@ -1,4 +1,4 @@
-FROM docker pull ghcr.io/fj0r/edap:chef AS builder
+FROM ghcr.io/fj0r/edap:chef AS builder
 WORKDIR /app
 # Build application
 COPY . .
