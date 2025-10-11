@@ -727,7 +727,6 @@ name = "content"
 version = "0.1.0"
 dependencies = [
  "chrono",
- "layout",
  "serde",
  "serde_derive",
  "serde_json",
@@ -7837,4 +7836,3 @@ dependencies = [
  "syn 2.0.106",
  "winnow 0.7.13",
 ]
-

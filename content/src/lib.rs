@@ -1,5 +1,4 @@
 use chrono::{DateTime, Utc};
-use layout::Layout;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -15,15 +14,15 @@ impl Default for Created {
 type Session = String;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct Message {
+pub struct Message<T> {
     pub sender: Session,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub created: Option<Created>,
-    pub content: Content,
+    pub content: Content<T>,
 }
 
-impl From<(Session, Content)> for Message {
-    fn from(value: (Session, Content)) -> Self {
+impl<T> From<(Session, Content<T>)> for Message<T> {
+    fn from(value: (Session, Content<T>)) -> Self {
         Message {
             sender: value.0,
             created: Some(Created::default()),
@@ -42,18 +41,18 @@ pub struct Outflow {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[serde(tag = "action")]
-pub enum Content {
+pub enum Content<T> {
     #[serde(rename = "create")]
-    Create(Influx),
+    Create(Influx<T>),
 
     #[serde(rename = "tmpl")]
     Tmpl(InfluxTmpl),
 
     #[serde(rename = "set")]
-    Set(Influx),
+    Set(Influx<T>),
 
     #[serde(rename = "join")]
-    Join(Influx),
+    Join(Influx<T>),
 
     #[serde(rename = "empty")]
     #[default]
@@ -83,9 +82,9 @@ impl Default for Method {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
-pub struct Influx {
+pub struct Influx<T> {
     pub event: String,
-    pub data: Layout,
+    pub data: T,
     #[serde(default)]
     pub method: Method,
     #[serde(skip_serializing_if = "Option::is_none")]

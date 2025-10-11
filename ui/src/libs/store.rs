@@ -45,7 +45,7 @@ impl Store {
 }
 
 fn dispatch(
-    act: Message,
+    act: Message<Layout>,
     layout: &mut Signal<Layout>,
     data: &mut Signal<HashMap<String, Layout>>,
     list: &mut Signal<HashMap<String, Vec<Layout>>>,
@@ -127,7 +127,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
     let mut list = use_signal::<HashMap<String, Vec<Layout>>>(HashMap::new);
 
     use_memo(move || {
-        let act = serde_json::from_str::<Message>(&x()).unwrap_or_else(|y| {
+        let act = serde_json::from_str::<Message<Layout>>(&x()).unwrap_or_else(|y| {
             dioxus::logger::tracing::info!("{:?} => {:?}", y, &x());
             Message::default()
         });
