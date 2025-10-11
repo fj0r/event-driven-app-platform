@@ -1,5 +1,4 @@
-mod lib;
-use lib::Layout;
+use layout::Layout;
 use schemars::schema_for;
 
 fn main() -> Result<(), &'static dyn std::error::Error> {

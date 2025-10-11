@@ -1,15 +1,18 @@
+#[cfg(feature = "ui")]
 use dioxus::prelude::*;
 use itertools::{
     EitherOrBoth::{Both, Left, Right},
     Itertools,
 };
 use minijinja::Environment;
+#[cfg(feature = "schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, json, to_value};
 use std::collections::HashMap;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Attrs {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<String>,
@@ -23,7 +26,8 @@ pub struct Attrs {
     pub settings: Option<Settings>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 #[serde(untagged)]
 pub enum Settings {
     Container(Container),
@@ -60,19 +64,22 @@ pub enum Settings {
     },
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub enum Container {
     #[allow(non_camel_case_types)]
     grid(Map<String, Value>),
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Render {
     pub name: String,
     pub data: Value,
 }
 
-#[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub enum JsKind {
     #[allow(non_camel_case_types)]
     bool,
@@ -111,7 +118,8 @@ impl JsKind {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 #[serde(untagged)]
 pub enum BindVariant {
     Source {
@@ -127,12 +135,14 @@ pub enum BindVariant {
         field: String,
         #[serde(skip_serializing_if = "Option::is_none")]
         payload: Option<Value>,
+        #[cfg(feature = "ui")]
         #[allow(dead_code)]
         #[serde(skip)]
         signal: Option<Signal<Value>>,
     },
     Submit {
         submit: bool,
+        #[cfg(feature = "ui")]
         #[allow(dead_code)]
         #[serde(skip)]
         signal: Option<Signal<Value>>,
@@ -146,7 +156,8 @@ impl Default for BindVariant {
     }
 }
 
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Bind {
     #[serde(flatten)]
     pub variant: BindVariant,
@@ -160,7 +171,9 @@ fn kind_empty() -> String {
     "empty".to_string()
 }
 
-#[derive(Debug, Clone, PartialEq, Props, Serialize, Deserialize, Default, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "ui", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Layout {
     #[serde(rename = "type", default = "kind_empty")]
     pub kind: String,
@@ -222,7 +235,9 @@ impl Layout {
                     *self = x;
                 }
                 Err(x) => {
-                    dioxus_logger::tracing::info!("{x:?}");
+                    if cfg!(feature = "ui") {
+                        dioxus_logger::tracing::info!("{x:?}");
+                    }
                 }
             }
         }

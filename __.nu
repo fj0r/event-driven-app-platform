@@ -517,8 +517,7 @@ export def clippy [dir] {
 }
 
 export def jsonschema [] {
-    cd layout
-    cargo run --bin schema
+    cargo run --example jsonschema --features=schema
 }
 
 export def benchmark [n: int] {
