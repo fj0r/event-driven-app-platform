@@ -1,4 +1,5 @@
 use super::utils::merge_css_class;
+use super::utils::use_default;
 use dioxus::prelude::*;
 use layout::{Container as Ct, Layout, Settings};
 
@@ -42,11 +43,7 @@ pub fn Group(layout: Layout, children: Element) -> Element {
 pub fn Path(layout: Layout, children: Element) -> Element {
     let mut css = vec!["path"];
     let css = merge_css_class(&mut css, &layout);
-    if let Some(x) = layout
-        .bind
-        .as_ref()
-        .and_then(|x| x.get("value"))
-        .and_then(|x| x.default.clone())
+    if let Some(x) = use_default(&layout)
         && let Some(d) = x.as_str()
     {
         rsx! {

@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use layout::Layout;
+use layout::{Bind, BindVariant, Layout, Settings};
 use serde_json::{Value, json};
 
 pub fn merge_css_class<'a>(css: &'a mut Vec<&'a str>, layout: &'a Layout) -> &'a mut Vec<&'a str> {
@@ -26,4 +26,16 @@ pub fn use_default<'a>(layout: &'a Layout) -> Option<Value> {
         .as_ref()
         .and_then(|x| x.get("value"))
         .and_then(|x| x.default.clone())
+}
+
+pub fn use_source_id<'a>(layout: &'a Layout) -> Option<&'a String> {
+    if let Bind {
+        variant: BindVariant::Source { source },
+        ..
+    } = layout.bind.as_ref().and_then(|x| x.get("value"))?
+    {
+        Some(source)
+    } else {
+        None
+    }
 }

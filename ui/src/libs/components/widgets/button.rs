@@ -1,14 +1,11 @@
+use super::super::utils::use_default;
 use dioxus::prelude::*;
 use layout::{Bind, BindVariant, Layout, Settings};
 use serde_json::{Value, to_value};
 
 #[component]
 pub fn Button(layout: Layout) -> Element {
-    let t = layout
-        .bind
-        .as_ref()
-        .and_then(|x| x.get("value"))
-        .and_then(|x| x.default.clone())
+    let t = use_default(&layout)
         .unwrap_or(to_value("Ok").unwrap())
         .as_str()
         .unwrap()

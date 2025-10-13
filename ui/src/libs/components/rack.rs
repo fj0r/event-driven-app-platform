@@ -1,5 +1,6 @@
 use super::super::store::Store;
 use super::utils::merge_css_class;
+use super::utils::use_source_id;
 use super::{Dynamic, Frame};
 use dioxus::{CapturedError, prelude::*};
 use layout::{Bind, BindVariant, Layout, Settings};
@@ -46,15 +47,7 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
     let css = merge_css_class(&mut css, &layout);
 
     let item: ItemContainer = layout.item.clone().context("item")?.into();
-    let Bind {
-        variant: BindVariant::Source { source },
-        ..
-    } = layout
-        .bind
-        .as_ref()
-        .and_then(|x| x.get("value"))
-        .context("data")?
-    else {
+    let Some(source) = use_source_id(&layout) else {
         return Err(RenderError::Error(CapturedError::from_display("no event")));
     };
     let attrs = layout.attrs.as_ref().context("attrs")?;

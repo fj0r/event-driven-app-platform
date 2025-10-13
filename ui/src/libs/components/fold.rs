@@ -1,5 +1,6 @@
 use super::Frame;
 use super::utils::merge_css_class;
+use super::utils::use_default;
 use dioxus::prelude::*;
 use layout::{Layout, Settings};
 
@@ -25,11 +26,7 @@ pub fn Fold(layout: Layout, children: Element) -> Element {
 
     let item = layout.item.as_ref().context("item")?[0].clone();
     let show = use_signal(|| {
-        layout
-            .bind
-            .as_ref()
-            .and_then(|x| x.get("value"))
-            .and_then(|x| x.default.clone())
+        use_default(&layout)
             .and_then(|x| x.as_bool())
             .unwrap_or_default()
     });

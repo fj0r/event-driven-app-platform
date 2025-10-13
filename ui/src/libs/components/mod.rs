@@ -9,6 +9,5 @@ pub mod fold;
 pub mod form;
 pub mod rack;
 pub mod svg;
-pub mod types;
 pub mod utils;
 pub mod widgets;
