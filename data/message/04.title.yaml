@@ -1,5 +1,6 @@
 action: set
-event: title
+method: concat
+event: login
 data:
     type: text
     bind:

@@ -6,16 +6,15 @@ use markdown::{Options, to_html_with_options};
 use std::sync::LazyLock;
 
 #[component]
-pub fn Text(layout: ReadSignal<Layout>) -> Element {
+pub fn Text(layout: Layout) -> Element {
     let mut css = vec!["text", "txt"];
 
-    let layout_cloned = layout();
-    let css = merge_css_class(&mut css, &layout_cloned);
+    let css = merge_css_class(&mut css, &layout);
 
     let store = use_context::<Store>();
 
     let mut txt_layout = {
-        let value = layout.read().bind.clone();
+        let value = layout.bind.clone();
         Layout {
             kind: "Text".to_string(),
             bind: value,
@@ -26,7 +25,7 @@ pub fn Text(layout: ReadSignal<Layout>) -> Element {
     if let Some(Bind {
         variant: BindVariant::Source { source },
         ..
-    }) = layout.read().bind.as_ref().and_then(|x| x.get("value"))
+    }) = layout.bind.as_ref().and_then(|x| x.get("value"))
     {
         let event_data = store.data.read().get(source).cloned();
         if let Some(event_layout) = event_data {
@@ -56,7 +55,7 @@ pub fn Text(layout: ReadSignal<Layout>) -> Element {
             .collect()
     });
 
-    if let Some(attrs) = layout.read().clone().attrs
+    if let Some(attrs) = layout.clone().attrs
         && let Some(Settings::Text {
             format: text_format,
         }) = attrs.settings
