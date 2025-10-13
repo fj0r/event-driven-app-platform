@@ -258,9 +258,7 @@ impl Layout {
                     .zip_longest(rchildren)
                     .map(|x| match x {
                         Both(l, r) => {
-                            info!("{op:?} {:?}", &r);
                             l.merge(op, r);
-                            info!("l {l:?}");
                             l.clone()
                         }
                         Left(l) => l.clone(),
@@ -278,7 +276,7 @@ impl Layout {
 pub trait LayoutOp: Debug {
     fn merge_value(&self, l: &mut Value, r: &Value) -> Option<Value>;
     fn merge(&self, lhs: &mut Layout, rhs: &mut Layout) {
-        match (&mut lhs.bind, &mut rhs.bind) {
+        lhs.bind = match (&mut lhs.bind, &mut rhs.bind) {
             (Some(l), Some(r)) => {
                 let nv = l
                     .into_iter()
