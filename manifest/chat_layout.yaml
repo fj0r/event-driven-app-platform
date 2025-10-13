@@ -17,7 +17,7 @@ data:
     attrs:
       horizontal: true
     children:
-    - type: menu
+    - type: select
       attrs:
         class: --channel i jc box nogrow
       bind:

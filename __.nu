@@ -160,6 +160,21 @@ export def 'ui border flashing' [] {
     }
 }
 
+
+export def 'ui message concat' [] {
+    for _ in 1.. {
+        send 02.concat.yaml
+        sleep 0.8sec
+    }
+}
+
+export def 'ui message replace' [] {
+    for _ in 1.. {
+        send 02.replace.yaml
+        sleep 0.8sec
+    }
+}
+
 export def 'ui export css' [] {
     use git *
     use git/shortcut.nu *

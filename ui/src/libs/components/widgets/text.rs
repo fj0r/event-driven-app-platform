@@ -1,8 +1,7 @@
-use super::super::super::store::Store;
+use crate::libs::store::Store;
 use crate::libs::hooks::merge_css_class;
 use dioxus::prelude::*;
 use layout::{Bind, BindVariant, Layout, Settings};
-use maplit::hashmap;
 use markdown::{Options, to_html_with_options};
 use std::sync::LazyLock;
 

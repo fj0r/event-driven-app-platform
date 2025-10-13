@@ -10,6 +10,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, json, to_value};
 use std::collections::HashMap;
+use std::fmt::Debug;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
@@ -248,7 +249,7 @@ impl Layout {
         }
     }
 
-    pub fn merge(&mut self, op: &(impl LayoutOp + ?Sized), mut rhs: Self) {
+    pub fn merge(&mut self, op: &(impl LayoutOp + Debug + ?Sized), mut rhs: Self) {
         op.merge(self, &mut rhs);
         if let Some(rchildren) = rhs.children {
             if let Some(children) = &mut self.children {
@@ -257,7 +258,9 @@ impl Layout {
                     .zip_longest(rchildren)
                     .map(|x| match x {
                         Both(l, r) => {
+                            info!("{op:?} {:?}", &r);
                             l.merge(op, r);
+                            info!("l {l:?}");
                             l.clone()
                         }
                         Left(l) => l.clone(),
@@ -272,7 +275,7 @@ impl Layout {
     }
 }
 
-pub trait LayoutOp {
+pub trait LayoutOp: Debug {
     fn merge_value(&self, l: &mut Value, r: &Value) -> Option<Value>;
     fn merge(&self, lhs: &mut Layout, rhs: &mut Layout) {
         match (&mut lhs.bind, &mut rhs.bind) {
@@ -303,6 +306,7 @@ pub trait LayoutOp {
     }
 }
 
+#[derive(Debug)]
 pub struct Concat;
 impl LayoutOp for Concat {
     fn merge_value(&self, x: &mut Value, y: &Value) -> Option<Value> {
@@ -328,12 +332,15 @@ impl LayoutOp for Concat {
             (Value::Array(x), Value::Array(r)) => {
                 json!([x.clone(), r.clone()].concat())
             }
-            _ => y.clone(),
+            _ => {
+                y.clone()
+            },
         };
         Some(n)
     }
 }
 
+#[derive(Debug)]
 pub struct Delete;
 impl LayoutOp for Delete {
     fn merge_value(&self, x: &mut Value, y: &Value) -> Option<Value> {
@@ -370,6 +377,7 @@ impl LayoutOp for Delete {
     }
 }
 
+#[derive(Debug)]
 pub struct Replace;
 impl LayoutOp for Replace {
     fn merge_value(&self, x: &mut Value, r: &Value) -> Option<Value> {

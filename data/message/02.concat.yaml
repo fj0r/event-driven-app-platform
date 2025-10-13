@@ -1,0 +1,16 @@
+action: join
+method: concat
+event: chat
+data:
+  type: case
+  id: ""
+  attrs:
+    class: f v gap xxx md
+  children:
+  - type: text
+    attrs:
+      format: md
+      class: clear
+    bind:
+      value:
+        default: "."

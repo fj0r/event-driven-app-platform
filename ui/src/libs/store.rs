@@ -7,6 +7,7 @@ use layout::{Bind, Concat, Delete, Layout, LayoutOp, Replace};
 use minijinja::{AutoEscape, Environment};
 use serde_json::{Value, to_string};
 use std::borrow::Borrow;
+use dioxus::logger::tracing::info;
 use std::collections::HashMap;
 use std::str;
 use std::sync::{LazyLock, RwLock};
@@ -96,14 +97,14 @@ fn dispatch(
             if let Some(_id) = &d.id {
                 let mut l = list.write();
                 let list = l.entry(e).or_default();
-                let mut mg = false;
+                let mut is_merge = false;
                 for i in list.iter_mut() {
                     if i.cmp_id(d) {
-                        mg = true;
+                        is_merge = true;
                         i.merge(vs, d.clone());
                     }
                 }
-                if !mg {
+                if !is_merge {
                     list.push(d.clone());
                 }
             } else {
@@ -131,6 +132,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
             dioxus::logger::tracing::info!("{:?} => {:?}", y, &x());
             Message::default()
         });
+        //info!("{:?}", act);
         dispatch(act, &mut layout, &mut data, &mut list);
     });
 

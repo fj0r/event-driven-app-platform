@@ -1,8 +1,0 @@
-action: set
-event: test-data
-data:
-    type: text
-    bind:
-      value:
-        default: guide
-        source: user-message
