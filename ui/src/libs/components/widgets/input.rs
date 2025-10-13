@@ -1,5 +1,5 @@
 use super::super::super::store::Store;
-use super::super::utils::merge_css_class;
+use crate::libs::hooks::merge_css_class;
 use dioxus::prelude::*;
 use layout::{Bind, BindVariant, JsKind, Layout};
 use maplit::hashmap;

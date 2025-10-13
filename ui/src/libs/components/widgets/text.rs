@@ -1,5 +1,5 @@
 use super::super::super::store::Store;
-use super::super::utils::merge_css_class;
+use crate::libs::hooks::merge_css_class;
 use dioxus::prelude::*;
 use layout::{Bind, BindVariant, Layout, Settings};
 use maplit::hashmap;
@@ -7,7 +7,7 @@ use markdown::{Options, to_html_with_options};
 use std::sync::LazyLock;
 
 #[component]
-pub fn Text(layout: ReadOnlySignal<Layout>) -> Element {
+pub fn Text(layout: ReadSignal<Layout>) -> Element {
     let mut css = vec!["text", "txt"];
 
     let layout_cloned = layout();

@@ -1,7 +1,6 @@
-use super::super::store::Store;
-use super::utils::merge_css_class;
-use super::utils::use_default;
 use super::{Dynamic, Frame};
+use crate::libs::hooks::{merge_css_class, use_default};
+use crate::libs::store::Store;
 use dioxus::prelude::*;
 use layout::Layout;
 

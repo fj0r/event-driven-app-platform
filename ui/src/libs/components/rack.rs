@@ -1,7 +1,6 @@
 use super::super::store::Store;
-use super::utils::merge_css_class;
-use super::utils::use_source_id;
 use super::{Dynamic, Frame};
+use crate::libs::hooks::{merge_css_class, use_source_id};
 use dioxus::{CapturedError, prelude::*};
 use layout::{Bind, BindVariant, Layout, Settings};
 use std::collections::hash_map::HashMap;

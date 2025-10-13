@@ -1,4 +1,4 @@
-use super::utils::merge_css_class;
+use crate::libs::hooks::merge_css_class;
 use dioxus::prelude::*;
 use layout::{Container as Ct, Layout, Settings};
 
