@@ -488,7 +488,7 @@ export def 'iggy up' [
 export def 'gw-container up' [
     --external: string@cmpl-external = 'localhost'
 ] {
-    let image = 'ghcr.io/fj0r/edap:lastest'
+    let image = 'ghcr.io/fj0r/edap:gateway'
     ^$env.CNTRCTL pull $image
     ^$env.CNTRCTL run ...[
         --name edap-gateway
@@ -523,9 +523,9 @@ export def 'chat-container up' [
 }
 
 export def 'update images' [] {
-    let images = ['fj0r/edap:lastest', 'fj0r/edap:chat' ]
+    let images = ['fj0r/edap:gateway', 'fj0r/edap:chat' ]
     for i in $images {
-        dpl $"ghcr.lizzie.fun/($i)" --rename "ghcr.io/($i)"
+        dpl $"ghcr.lizzie.fun/($i)" --rename $"ghcr.io/($i)"
     }
 }
 
