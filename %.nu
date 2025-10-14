@@ -1,5 +1,5 @@
 const WORKDIR = path self .
-const CFG = path self __.toml
+const CFG = path self %.toml
 const GW = path self gateway.toml
 const CHAT = path self chat.toml
 
