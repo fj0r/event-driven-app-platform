@@ -20,7 +20,7 @@ markdown = "1.0.0"
 web-sys = "0.3.77"
 serde = { version = "1.0.219", features = ["derive", "serde_derive"] }
 chrono = { version = "0.4.41", features = ["serde"] }
-layout = { path = "../layout", features = ["ui"] }
+layout = { path = "../layout", features = ["dioxus"] }
 content = { path = "../content"}
 maplit = "1.0.2"
 

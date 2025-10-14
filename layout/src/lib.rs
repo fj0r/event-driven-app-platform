@@ -1,4 +1,4 @@
-#[cfg(feature = "ui")]
+#[cfg(feature = "dioxus")]
 use dioxus::prelude::*;
 use itertools::{
     EitherOrBoth::{Both, Left, Right},
@@ -136,14 +136,14 @@ pub enum BindVariant {
         field: String,
         #[serde(skip_serializing_if = "Option::is_none")]
         payload: Option<Value>,
-        #[cfg(feature = "ui")]
+        #[cfg(feature = "dioxus")]
         #[allow(dead_code)]
         #[serde(skip)]
         signal: Option<Signal<Value>>,
     },
     Submit {
         submit: bool,
-        #[cfg(feature = "ui")]
+        #[cfg(feature = "dioxus")]
         #[allow(dead_code)]
         #[serde(skip)]
         signal: Option<Signal<Value>>,
@@ -173,7 +173,7 @@ fn kind_empty() -> String {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
-#[cfg_attr(feature = "ui", derive(Props))]
+#[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Layout {
     #[serde(rename = "type", default = "kind_empty")]
@@ -236,8 +236,8 @@ impl Layout {
                     *self = x;
                 }
                 Err(x) => {
-                    if cfg!(feature = "ui") {
-                        dioxus_logger::tracing::info!("{x:?}");
+                    if cfg!(feature = "dioxus") {
+                        dioxus::logger::tracing::info!("{x:?}");
                     }
                 }
             }
