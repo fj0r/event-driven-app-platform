@@ -1,6 +1,6 @@
+use crate::libs::store::Store;
 use dioxus::prelude::*;
 use layout::{Bind, BindVariant, Layout, Settings};
-use crate::libs::store::Store;
 use serde_json::{Value, json};
 
 pub fn merge_css_class<'a>(css: &'a mut Vec<&'a str>, layout: &'a Layout) -> &'a mut Vec<&'a str> {
@@ -44,5 +44,4 @@ pub fn use_source_id<'a>(layout: &'a Layout) -> Option<&'a String> {
 pub fn use_source<'a>(layout: &'a Layout) -> Option<Signal<Value>> {
     let default = use_default(layout);
     unimplemented!()
-
 }

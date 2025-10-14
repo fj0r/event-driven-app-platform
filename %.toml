@@ -1,0 +1,19 @@
+[dx]
+port = 3001
+[server]
+host = 'localhost:3000'
+[redpanda]
+admin = 'localhost:18082'
+
+[[hooks.ai.greet]]
+disable = false
+endpoint = "http://localhost:3000/debug/render/layout.json"
+accept = "application/json"
+
+[[hooks.ai.greet]]
+disable = false
+path = "user.json"
+
+[[hooks.ai.greet]]
+disable = false
+path = "segment.tmpl.json"

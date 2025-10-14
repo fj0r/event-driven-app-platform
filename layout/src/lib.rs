@@ -330,9 +330,7 @@ impl LayoutOp for Concat {
             (Value::Array(x), Value::Array(r)) => {
                 json!([x.clone(), r.clone()].concat())
             }
-            _ => {
-                y.clone()
-            },
+            _ => y.clone(),
         };
         Some(n)
     }
