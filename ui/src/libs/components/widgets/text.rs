@@ -6,8 +6,8 @@ use markdown::{Options, to_html_with_options};
 use std::sync::LazyLock;
 
 #[component]
-pub fn Text(layout: Layout) -> Element {
-    let mut css = vec!["text", "txt"];
+pub fn Text(id: String, layout: Layout) -> Element {
+    let mut css = vec!["text", "txt", &id];
 
     let css = merge_css_class(&mut css, &layout);
 

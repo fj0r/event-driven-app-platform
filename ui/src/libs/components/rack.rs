@@ -56,6 +56,7 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
     let c = c.get(source).cloned().unwrap_or_else(Vec::new);
     let r = c.iter().enumerate().map(|(idx, child)| {
         let key = child.id.clone().unwrap_or(idx.to_string());
+        // dioxus::logger::tracing::info!("{key:?}");
         let layout = item.select(child);
         if let Some(layout) = layout {
             let x = rsx! {

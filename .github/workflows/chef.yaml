@@ -82,6 +82,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
 
       - name: Move cache
+        if: steps.changes.outputs.lock == 'true'
         # 临时解决缓存大小问题【turn0search3】
         run: |
           rm -rf /tmp/.buildx-cache

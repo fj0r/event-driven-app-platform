@@ -10,37 +10,32 @@ use dioxus::prelude::*;
 use layout::Layout;
 
 use std::sync::{LazyLock, Mutex};
-static RACK_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
-static CHART_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
-static DIAGRAM_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
+static COMPONENT_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
 
 #[component]
 pub fn Dynamic(layout: Layout, children: Element) -> Element {
+    let mut tc = COMPONENT_ID.lock().unwrap();
+    *tc += 1;
+    let id = format!("={}=", *tc);
+
     let c = {
         match layout.kind.as_str() {
-            "case" => rsx!(Case { layout: layout, {children} }),
-            "fold" => rsx!(Fold { layout: layout, {children} }),
+            "case" => {
+                rsx!(Case { id: id, layout: layout, {children} })
+            }
+            "fold" => rsx!(Fold { id: id, layout: layout, {children} }),
             "switch" => rsx!(Switch { layout: layout, {children} }),
             "rack" => {
-                let mut tc = RACK_ID.lock().unwrap();
-                *tc += 1;
-                let id = format!("rack-{}", *tc);
                 rsx!(Rack { id: id, layout: layout, {children} })
             }
             "form" => rsx!(Form { layout: layout }),
             "chart" => {
-                let mut tc = CHART_ID.lock().unwrap();
-                *tc += 1;
-                let id = format!("chart-{}", *tc);
                 rsx!(Chart {
                     id: id,
                     layout: layout
                 })
             }
             "diagram" => {
-                let mut tc = DIAGRAM_ID.lock().unwrap();
-                *tc += 1;
-                let id = format!("diagram-{}", *tc);
                 rsx!(Diagram {
                     id: id,
                     layout: layout
@@ -49,7 +44,12 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
             "input" => rsx!(Input { layout: layout }),
             "select" => rsx!(Select { layout: layout, {children} }),
             "popup" => rsx!(Popup { layout: layout, {children} }),
-            "text" => rsx!(Text { layout: layout }),
+            "text" => {
+                rsx!(Text {
+                    id: id,
+                    layout: layout
+                })
+            }
             "button" => rsx!(Button { layout: layout }),
             "image" => rsx!(Img { layout: layout }),
             "svg" => rsx! (Svg { layout: layout, {children} }),

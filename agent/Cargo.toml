@@ -2,7 +2,3 @@
 name = "agent"
 version = "0.1.0"
 edition = "2024"
-
-[dependencies]
-rig-core = "0.21.0"
-rig-surrealdb = "0.1.18"

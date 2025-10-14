@@ -4,8 +4,8 @@ use dioxus::prelude::*;
 use layout::{Layout, Settings};
 
 #[component]
-pub fn Fold(layout: Layout, children: Element) -> Element {
-    let mut css = vec!["g"];
+pub fn Fold(id: String, layout: Layout, children: Element) -> Element {
+    let mut css = vec!["g", &id];
     let css = merge_css_class(&mut css, &layout);
 
     let Some((replace_header, _float_body)) = layout.attrs.as_ref().map(|x| {
