@@ -61,8 +61,8 @@ pub fn Text(id: String, layout: Layout) -> Element {
         }) = attrs.settings
         && (*MDFMT).contains(&text_format)
     {
-        let v = text_content.clone();
-        if let Ok(md_html) = to_html_with_options(&v, &Options::gfm()) {
+        let v = &text_content;
+        if let Ok(md_html) = to_html_with_options(v, &Options::gfm()) {
             css.push("markdown");
             return rsx! {
                 div {
