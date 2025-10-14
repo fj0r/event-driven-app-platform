@@ -522,6 +522,13 @@ export def 'chat-container up' [
     ]
 }
 
+export def 'update images' [] {
+    let images = ['fj0r/edap:lastest', 'fj0r/edap:chat' ]
+    for i in $images {
+        dpl $"ghcr.lizzie.fun/($i)" --rename "ghcr.io/($i)"
+    }
+}
+
 export def 'test render' [] {
     curl -H 'Content-Type: application/json' -X POST http://localhost:3000/debug/render/user.json -d'{"info": {"username": "test"}}'
 }
