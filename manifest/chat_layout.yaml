@@ -16,6 +16,7 @@ data:
   - type: case
     attrs:
       horizontal: true
+      class: shrink
     children:
     - type: select
       attrs:
@@ -27,7 +28,7 @@ data:
           source: channel
     - type: case
       attrs:
-        class: f
+        class: shrink
       children:
       - type: rack
         attrs:
