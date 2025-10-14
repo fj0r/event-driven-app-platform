@@ -486,7 +486,7 @@ export def 'iggy up' [
 }
 
 export def 'gw-container up' [
-    --external: string@cmpl-external = 'localhost'
+    --external: string@cmpl-external = 'host.docker.internal'
 ] {
     let image = 'ghcr.io/fj0r/edap:gateway'
     ^$env.CNTRCTL pull $image
@@ -503,7 +503,7 @@ export def 'gw-container up' [
 }
 
 export def 'chat-container up' [
-    --external: string@cmpl-external = 'localhost'
+    --external: string@cmpl-external = 'host.docker.internal'
 ] {
     let image = 'ghcr.io/fj0r/edap:chat'
     ^$env.CNTRCTL pull $image
@@ -540,6 +540,11 @@ export def clippy [dir] {
 
 export def jsonschema [] {
     cargo run --example jsonschema --features=schema
+}
+
+export def gen-type [] {
+    jsonschema
+    | quicktype -s schema -l python --pydantic-base-model --python-version 3.7
 }
 
 export def benchmark [n: int] {
