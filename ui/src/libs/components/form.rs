@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use super::super::store::Store;
 use super::{Dynamic, Frame};
 use dioxus::prelude::*;
-use layout::{Bind, BindVariant, JsKind, Layout, Settings};
+use layout::{Bind, BindVariant, JsType, Layout, Settings};
 use maplit::hashmap;
 use serde::{Deserialize, Serialize};
 
@@ -20,7 +20,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
     match layout.bind.as_ref().and_then(|x| x.get("value")) {
         Some(Bind {
             default,
-            kind,
+            r#type: kind,
             variant:
                 BindVariant::Field {
                     field,
@@ -30,14 +30,14 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
         }) => {
             let kind = kind.clone();
             let v = match kind {
-                Some(JsKind::number) => {
+                Some(JsType::number) => {
                     let n = default
                         .as_ref()
                         .and_then(|x| x.as_f64())
                         .unwrap_or(0 as f64);
                     to_value(n).unwrap()
                 }
-                Some(JsKind::bool) => {
+                Some(JsType::bool) => {
                     let b = default.as_ref().and_then(|x| x.as_bool()).unwrap_or(false);
                     to_value(b).unwrap()
                 }
@@ -51,7 +51,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
             scope.insert(field.to_string(), (s, payload.clone()));
             layout.bind = Some(hashmap! {
                 "value".to_owned() => Bind {
-                    kind,
+                    r#type: kind,
                     default: None,
                     variant: BindVariant::Field {
                         field: field.to_string(),
@@ -63,7 +63,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
         }
         Some(Bind {
             default: _,
-            kind: _,
+            r#type: _,
             variant: BindVariant::Submit { .. },
         }) => {
             layout.bind = Some(hashmap! {

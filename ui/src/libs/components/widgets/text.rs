@@ -4,6 +4,7 @@ use dioxus::prelude::*;
 use layout::{Bind, BindVariant, Layout, Settings};
 use markdown::{Options, to_html_with_options};
 use std::sync::LazyLock;
+use crate::libs::hooks::use_value;
 
 #[component]
 pub fn Text(id: String, layout: Layout) -> Element {
@@ -33,11 +34,7 @@ pub fn Text(id: String, layout: Layout) -> Element {
         }
     };
 
-    let text_content = if let Some(json_data) = txt_layout
-        .bind
-        .as_ref()
-        .and_then(|x| x.get("value"))
-        .and_then(|x| x.default.clone())
+    let text_content = use_value(&layout, Default::default())
     {
         if json_data.is_string() {
             json_data.as_str().unwrap().to_owned()

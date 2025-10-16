@@ -1,13 +1,13 @@
 use super::super::super::store::Store;
 use crate::libs::hooks::merge_css_class;
 use dioxus::prelude::*;
-use layout::{Bind, BindVariant, JsKind, Layout};
+use layout::{Bind, BindVariant, JsType, Layout};
 use maplit::hashmap;
 use serde_json::{Value, to_value};
 use std::ops::Deref;
 use std::rc::Rc;
 
-fn default_option_jskind(v: &Option<JsKind>) -> Value {
+fn default_option_jskind(v: &Option<JsType>) -> Value {
     v.as_ref()
         .map(|x| x.default_value())
         .unwrap_or_else(|| to_value("").unwrap())
@@ -27,17 +27,17 @@ pub fn Input(layout: Layout) -> Element {
         .and_then(|x| match x {
             Bind {
                 variant: BindVariant::Field { field, signal, .. },
-                kind,
+                r#type: kind,
                 ..
             } => Some(("field", field, kind, signal)),
             Bind {
                 variant: BindVariant::Target { target },
-                kind,
+                r#type: kind,
                 ..
             } => Some(("event", target, kind, None)),
             Bind {
                 variant: BindVariant::Variable { variable },
-                kind,
+                r#type: kind,
                 ..
             } => Some(("variable", variable, kind, None)),
             _ => Some(("", "".to_string(), Default::default(), None)),
@@ -54,8 +54,8 @@ pub fn Input(layout: Layout) -> Element {
     let oninput = move |event: Event<FormData>| {
         let event_value = event.value();
         let parsed_value = match *k1 {
-            Some(JsKind::bool) => to_value(event_value == "true"),
-            Some(JsKind::number) => to_value(event_value.parse::<f64>().unwrap()),
+            Some(JsType::bool) => to_value(event_value == "true"),
+            Some(JsType::number) => to_value(event_value.parse::<f64>().unwrap()),
             _ => to_value(event_value),
         }
         .unwrap();
@@ -101,24 +101,24 @@ pub fn Input(layout: Layout) -> Element {
     };
 
     match *kind {
-        Some(JsKind::number) => {
+        Some(JsType::number) => {
             let v = slot.read().as_f64();
             rsx! {
                 input {
                     class: css.join(" "),
-                    type: JsKind::input_type(&JsKind::number),
+                    type: JsType::input_type(&JsType::number),
                     value: v,
                     oninput: oninput,
                     onkeydown: onkeydown
                 }
             }
         }
-        Some(JsKind::bool) => {
+        Some(JsType::bool) => {
             let v = slot.read().as_bool();
             rsx! {
                 input {
                     class: css.join(" "),
-                    type: JsKind::input_type(&JsKind::bool),
+                    type: JsType::input_type(&JsType::bool),
                     value: v,
                     oninput: oninput,
                     onkeydown: onkeydown
@@ -130,7 +130,7 @@ pub fn Input(layout: Layout) -> Element {
             rsx! {
                 input {
                     class: css.join(" "),
-                    type: JsKind::input_type(&x),
+                    type: JsType::input_type(&x),
                     value: v,
                     oninput: oninput,
                     onkeydown: onkeydown
@@ -142,7 +142,7 @@ pub fn Input(layout: Layout) -> Element {
             rsx! {
                 input {
                     class: css.join(" "),
-                    type: JsKind::input_type(&JsKind::text),
+                    type: JsType::input_type(&JsType::text),
                     value: v,
                     oninput: oninput,
                     onkeydown: onkeydown

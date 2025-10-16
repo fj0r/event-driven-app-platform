@@ -81,7 +81,7 @@ pub struct Render {
 
 #[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
-pub enum JsKind {
+pub enum JsType {
     #[allow(non_camel_case_types)]
     bool,
     #[allow(non_camel_case_types)]
@@ -97,7 +97,7 @@ pub enum JsKind {
     submit,
 }
 
-impl JsKind {
+impl JsType {
     pub fn input_type(&self) -> &'static str {
         match self {
             Self::bool => "checkbox",
@@ -164,8 +164,8 @@ pub struct Bind {
     pub variant: BindVariant,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub default: Option<Value>,
-    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
-    pub kind: Option<JsKind>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub r#type: Option<JsType>,
 }
 
 fn kind_empty() -> String {
