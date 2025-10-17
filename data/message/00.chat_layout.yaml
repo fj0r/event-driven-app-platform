@@ -58,4 +58,5 @@ data:
             bind:
               value:
                 target: message
+                #default: textarea
 

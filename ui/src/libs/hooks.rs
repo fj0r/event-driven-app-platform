@@ -44,6 +44,24 @@ pub fn use_source_id<'a>(layout: &'a Layout) -> Option<&'a String> {
     }
 }
 
+pub fn use_source_list<'a>(layout: &'a Layout, key: &'a str) -> Option<Vec<Layout>> {
+    let store = use_context::<Store>();
+    let s = store.list.read();
+    if let Some(x) = layout.bind.as_ref()
+        && let Some(Bind {
+            variant: BindVariant::Source { source },
+            default: _,
+            r#type: _kind,
+        }) = x.get(key)
+        && let list = s.get(source)
+        && list.is_some()
+    {
+        list.cloned()
+    } else {
+        Some(Vec::new())
+    }
+}
+
 pub fn use_source<'a>(layout: &'a Layout, key: &'a str) -> Option<Value> {
     let store = use_context::<Store>();
     let s = store.data.read();
