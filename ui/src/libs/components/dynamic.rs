@@ -62,6 +62,12 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
                     layout: layout
                 })
             }
+            "textarea" => {
+                rsx!(TextArea {
+                    id: id,
+                    layout: layout
+                })
+            }
             "button" => rsx!(Button { layout: layout }),
             "image" => rsx!(Img { layout: layout }),
             "svg" => rsx! (Svg { layout: layout, {children} }),

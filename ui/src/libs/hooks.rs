@@ -75,7 +75,22 @@ pub fn use_source_value(layout: &Layout) -> Option<Value> {
 }
 
 pub fn use_target<'a>(layout: &'a Layout, key: &'a str) -> Signal<Value> {
-    todo!()
+    let signal = use_signal::<Value>(|| Default::default());
+    if let Some(x) = layout.bind.as_ref()
+        && let Some(Bind {
+            variant: BindVariant::Target { target },
+            default: _,
+            r#type: _,
+        }) = x.get(key)
+    {
+        let target = target.clone();
+        use_resource(move || {
+            let target = target.clone();
+            let mut store = use_context::<Store>();
+            async move { store.send(target, None, signal()).await }
+        });
+    };
+    return signal;
 }
 
 pub fn use_target_value(layout: &Layout) -> Signal<Value> {

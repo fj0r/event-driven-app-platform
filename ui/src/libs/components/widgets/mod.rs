@@ -12,5 +12,7 @@ pub mod table;
 pub use table::*;
 pub mod text;
 pub use text::Text;
+pub mod textarea;
+pub use textarea::TextArea;
 pub mod x;
 pub use x::*;
