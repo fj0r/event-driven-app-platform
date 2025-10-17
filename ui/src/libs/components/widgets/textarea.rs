@@ -11,6 +11,7 @@ pub fn TextArea(id: String, layout: Layout) -> Element {
     let value = use_source_value(&layout);
     let mut slot = use_signal(|| value.unwrap_or_else(|| Default::default()));
     let mut signal = use_target_value(&layout);
+
     let oninput = move |event: Event<FormData>| {
         slot.set(to_value(event.value()).unwrap());
     };
@@ -19,13 +20,16 @@ pub fn TextArea(id: String, layout: Layout) -> Element {
         async move {
             if ev.data.key() == Key::Enter {
                 signal.set(slot());
+                slot.set(Default::default());
             }
         }
     };
 
+    let value = slot.read().as_str().unwrap_or("").to_string();
     rsx! {
         input {
             class: css.join(" "),
+            value: value,
             oninput: oninput,
             onkeydown: onkeydown
         }

@@ -84,9 +84,10 @@ pub fn use_target<'a>(layout: &'a Layout, key: &'a str) -> Signal<Value> {
         }) = x.get(key)
     {
         let target = target.clone();
+        let store = use_context::<Store>();
         use_resource(move || {
             let target = target.clone();
-            let mut store = use_context::<Store>();
+            let mut store = store.clone();
             async move { store.send(target, None, signal()).await }
         });
     };
