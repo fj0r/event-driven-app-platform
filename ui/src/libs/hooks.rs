@@ -44,23 +44,7 @@ pub fn use_source_id<'a>(layout: &'a Layout) -> Option<&'a String> {
     }
 }
 
-#[derive(PartialEq, Eq)]
-pub struct BindKey(String);
-
-impl Default for BindKey {
-    fn default() -> Self {
-        BindKey("value".to_string())
-    }
-}
-
-impl Deref for BindKey {
-    type Target = String;
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-pub fn use_value<'a>(layout: &'a Layout, key: BindKey) -> Option<Value> {
+pub fn use_source<'a>(layout: &'a Layout, key: &'a str) -> Option<Value> {
     let store = use_context::<Store>();
     let s = store.data.read();
     let value = if let Some(x) = layout.bind.as_ref()
@@ -68,7 +52,7 @@ pub fn use_value<'a>(layout: &'a Layout, key: BindKey) -> Option<Value> {
             variant: BindVariant::Source { source },
             default: _,
             r#type: _kind,
-        }) = x.get(key.deref())
+        }) = x.get(key)
         && let data = s.get(source)
         && data.is_some()
     {
@@ -78,10 +62,22 @@ pub fn use_value<'a>(layout: &'a Layout, key: BindKey) -> Option<Value> {
     };
     if let Some(layout) = value
         && let Some(bind) = &layout.bind
-        && let Some(value) = bind.get(key.deref())
+        && let Some(value) = bind.get(key)
     {
         value.default.clone()
     } else {
         None
     }
+}
+
+pub fn use_source_value(layout: &Layout) -> Option<Value> {
+    use_source(layout, "value")
+}
+
+pub fn use_target<'a>(layout: &'a Layout, key: &'a str) -> Signal<Value> {
+    todo!()
+}
+
+pub fn use_target_value(layout: &Layout) -> Signal<Value> {
+    use_target(layout, "value")
 }

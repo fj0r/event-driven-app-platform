@@ -1,5 +1,5 @@
 use crate::libs::hooks::merge_css_class;
-use crate::libs::hooks::use_value;
+use crate::libs::hooks::use_source_value;
 use dioxus::prelude::*;
 use layout::{Bind, BindVariant, Layout, Settings};
 use markdown::{Options, to_html_with_options};
@@ -11,7 +11,7 @@ pub fn Text(id: String, layout: Layout) -> Element {
 
     let css = merge_css_class(&mut css, &layout);
 
-    let text_content = if let Some(json_data) = use_value(&layout, Default::default()) {
+    let text_content = if let Some(json_data) = use_source_value(&layout) {
         if json_data.is_string() {
             json_data.as_str().unwrap().to_owned()
         } else {
