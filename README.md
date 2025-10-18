@@ -1,32 +1,32 @@
 # event-driven-app-platform
 
 ```nu
-use __.nu
-__ serve --rpk
+use %.nu
+% serve --rpk
 ```
 
 or
 
 gateway
 ```nu
-use __.nu
-__ rpk up
-__ gw up
+use %.nu
+% rpk up
+% gw up
 ```
 
 ui
 ```nu
-use __.nu
-__ ui up
+use %.nu
+% ui up
 ```
 
 
 ## chat
 ```nu
-use __.nu
-__ pg up
-__ pg migrate
-__ chat up
+use %.nu
+% pg up
+% pg migrate
+% chat up
 ```
 
 # Design
