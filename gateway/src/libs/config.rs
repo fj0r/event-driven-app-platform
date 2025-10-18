@@ -59,11 +59,6 @@ fn default_accept() -> String {
 
 pub type HookMap = HashMap<String, Hooks>;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Login {
-    pub endpoint: String,
-}
-
 pub const ASSETS_PATH: &str = "manifest";
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]

@@ -42,18 +42,10 @@ async fn main() -> Result<()> {
 
     let base_url = Url::parse(&cfg.gateway.base_url)?;
     let hc = reqwest::Client::new();
-    macro_rules! init_req {
-        ($($k: ident),* $(,)?) => {
-            $(
-                let r = hc.post(base_url.join(stringify!($k))?)
-                .json(&cfg.$k)
-                .send()
-                .await;
-                info!("init hook {} [{}]", stringify!($k), &r?.status());
-            )*
-        };
+    for (k, v) in &cfg.hooks {
+        let r = hc.post(base_url.join(k)?).json(v).send().await;
+        info!("init hook {} [{}]", k, &r?.status());
     }
-    init_req![login, logout, greet];
 
     let client = connx(&cfg.database).await?;
     let shared = Shared::new(Model(client));

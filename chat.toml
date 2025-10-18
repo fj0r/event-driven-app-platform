@@ -26,31 +26,35 @@ passwd = 'chat'
 [gateway]
 base_url = "http://localhost:3000/config/hooks/"
 
-[login]
+[hooks.login]
 endpoint = "http://localhost:3003/v1/login?layout=true"
 accept = "application/json"
 
-[logout]
+[hooks.logout]
 endpoint = "http://localhost:3003/v1/logout?layout=true"
 accept = "application/json"
 
-[[greet]]
+[[hooks.greet]]
 endpoint = "http://localhost:3003/v1/yaml/chat_layout.yaml"
 accept = "application/json"
 
-[[greet]]
+[[hooks.greet]]
 disable = true
 path = "user.json"
 
-[[greet]]
+[[hooks.greet]]
 disable = false
 endpoint = "http://localhost:3003/v1/channel?layout=true"
 accept = "application/json"
 
-[[greet]]
+[[hooks.greet]]
 disable = false
 endpoint = "http://localhost:3003/v1/history?layout=true"
 accept = "application/json"
 
-[[greet]]
+[[hooks.greet]]
 path = "segment.tmpl.json"
+
+[[hooks.channel]]
+endpoint = "http://localhost:3003/v1/channel?layout=true"
+accept = "application/json"

@@ -6,6 +6,7 @@ use figment::{
 use kafka::config::Queue;
 use serde::{Deserialize, Serialize};
 use serde_with::{OneOrMany, serde_as};
+use std::collections::HashMap;
 use std::ops::Deref;
 
 #[derive(Debug, Deserialize, Clone)]
@@ -110,6 +111,8 @@ impl<'a> IntoIterator for &'a Hooks {
     }
 }
 
+pub type HookMap = HashMap<String, Hooks>;
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Gateway {
     pub base_url: String,
@@ -123,9 +126,7 @@ pub struct Config {
     pub database: Database,
     pub trace: Log,
     pub gateway: Gateway,
-    pub login: Hooks,
-    pub logout: Hooks,
-    pub greet: Hooks,
+    pub hooks: HookMap,
 }
 
 impl Config {
