@@ -9,7 +9,8 @@ use axum::{
     routing::{get, post},
 };
 use content::{Content, Influx, Message, Method};
-use layout::{Attrs, Layout, Settings};
+use layout::{Attrs, Bind, BindVariant, Layout, Settings};
+use maplit::hashmap;
 use message::session::SessionInfo;
 use serde::Deserialize;
 use serde_json::{Map, Value, json};
@@ -59,23 +60,35 @@ async fn channel(
     opts: Query<Opts>,
     State(db): State<Db>,
     Json(session): Json<SessionInfo>,
-) -> HttpResult<Json<Vec<Channel>>> {
+) -> HttpResult<Json<Value>> {
     let channel = db.list_channel((&session.id).into()).await?;
     if let Some(layout) = opts.layout
         && layout
     {
-        let content = Content::Set(Influx {
-            event: "channel".into(),
-            channel: None,
-            method: Method::Replace,
-            data: Layout {
-                kind: "text".into(),
-                ..Default::default()
-            },
-        });
-        Ok(Json(serde_json::to_value(&content)?))
+        let content: Vec<_> = vec!["1", "2", "3"]
+            .iter()
+            .map(|x| {
+                Content::Join(Influx {
+                    event: "channel".into(),
+                    channel: None,
+                    method: Method::Replace,
+                    data: Layout {
+                        kind: "text".into(),
+                        bind: Some(hashmap! {
+                            "value".to_owned() => Bind {
+                                variant: BindVariant::Default {  },
+                                default: Some(serde_json::to_value(x).unwrap()),
+                                ..Default::default()
+                            }
+                        }),
+                        ..Default::default()
+                    },
+                })
+            })
+            .collect();
+        Ok(Json(serde_json::to_value(content)?))
     } else {
-        Ok(Json(channel))
+        Ok(Json(serde_json::to_value(channel)?))
     }
 }
 

@@ -54,6 +54,7 @@ fn get_value_event(v: &Value) -> Option<&str> {
         let r = m.get("event").and_then(|x| x.as_str());
         return r;
     };
+    tracing::info!("get_value_event failed: {:?}", v);
     None
 }
 
