@@ -50,71 +50,62 @@ fn dispatch(
     data: &mut Signal<HashMap<String, Layout>>,
     list: &mut Signal<HashMap<String, Vec<Layout>>>,
 ) {
-    match act {
-        Message {
-            content: Content::Tmpl(x),
-            ..
-        } => {
-            let n = x.name;
-            let d = x.data;
-            let _ = TMPL
-                .write()
-                .expect("write TMPL failed")
-                .add_template_owned(n, d);
-        }
-        Message {
-            content: Content::Create(mut x),
-            ..
-        } => {
-            let env = TMPL.read().expect("read TMPL failed");
-            x.data.render(&env);
-            layout.set(x.data)
-        }
-        Message {
-            content: Content::Set(x),
-            ..
-        } => {
-            let e = x.event;
-            let mut d = x.data;
-            let env = TMPL.read().expect("read TMPL failed");
-            d.render(&env);
-            data.write().insert(e, d);
-        }
-        Message {
-            content: Content::Join(mut x),
-            ..
-        } => {
-            let env = TMPL.read().expect("read TMPL failed");
-            x.data.render(&env);
-            let e = x.event;
-            let d = &x.data;
-            let vs: &dyn LayoutOp = match x.method {
-                Method::Replace => &Replace,
-                Method::Concat => &Concat,
-                Method::Delete => &Delete,
-            };
-            if let Some(_id) = &d.id {
-                let mut l = list.write();
-                let list = l.entry(e).or_default();
-                let mut is_merge = false;
-                for i in list.iter_mut() {
-                    if i.cmp_id(d) {
-                        is_merge = true;
-                        i.merge(vs, d.clone());
-                    }
-                }
-                if !is_merge {
-                    list.push(d.clone());
-                }
-            } else {
-                list.write().entry(e).or_default().push(d.clone());
+    let Message {
+        sender: _,
+        created: _,
+        content,
+    } = act;
+    for c in content {
+        match c {
+            Content::Tmpl(x) => {
+                let n = x.name;
+                let d = x.data;
+                let _ = TMPL
+                    .write()
+                    .expect("write TMPL failed")
+                    .add_template_owned(n, d);
             }
+            Content::Create(mut x) => {
+                let env = TMPL.read().expect("read TMPL failed");
+                x.data.render(&env);
+                layout.set(x.data)
+            }
+            Content::Set(x) => {
+                let e = x.event;
+                let mut d = x.data;
+                let env = TMPL.read().expect("read TMPL failed");
+                d.render(&env);
+                data.write().insert(e, d);
+            }
+            Content::Join(mut x) => {
+                let env = TMPL.read().expect("read TMPL failed");
+                x.data.render(&env);
+                let e = x.event;
+                let d = &x.data;
+                let vs: &dyn LayoutOp = match x.method {
+                    Method::Replace => &Replace,
+                    Method::Concat => &Concat,
+                    Method::Delete => &Delete,
+                };
+                if let Some(_id) = &d.id {
+                    let mut l = list.write();
+                    let list = l.entry(e).or_default();
+                    let mut is_merge = false;
+                    for i in list.iter_mut() {
+                        if i.cmp_id(d) {
+                            is_merge = true;
+                            i.merge(vs, d.clone());
+                        }
+                    }
+                    if !is_merge {
+                        list.push(d.clone());
+                    }
+                } else {
+                    list.write().entry(e).or_default().push(d.clone());
+                }
+            }
+            Content::Empty => {}
         }
-        Message {
-            sender: _,
-            content: Content::Empty,
-            created: _,
-        } => {}
     }
 }
 
@@ -126,14 +117,12 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
     let mut data = use_signal::<HashMap<String, Layout>>(HashMap::new);
     let mut list = use_signal::<HashMap<String, Vec<Layout>>>(HashMap::new);
 
-    use_memo(move || {
-        let act = serde_json::from_str::<Message<Layout>>(&x()).unwrap_or_else(|y| {
-            dioxus::logger::tracing::info!("{:?} => {:?}", y, &x());
-            Message::default()
-        });
-        //info!("{:?}", act);
-        dispatch(act, &mut layout, &mut data, &mut list);
-    });
+    use_memo(
+        move || match serde_json::from_str::<Message<Layout>>(&x()) {
+            Ok(act) => dispatch(act, &mut layout, &mut data, &mut list),
+            Err(err) => dioxus::logger::tracing::info!("deserialize from_str error {:?}", err),
+        },
+    );
 
     Ok(Store {
         ws,

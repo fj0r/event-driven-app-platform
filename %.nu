@@ -50,7 +50,7 @@ export def send [
     file:string@cmpl-data
     --receiver(-r): list<string>@receiver = []
     --sender(-s): string = 'unknown'
-    --patch(-p): record = {}
+    --patch(-p): any = {}
     --full
     --rpk
     --topic(-t):string@"rpk topic list" = "push"
