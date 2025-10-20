@@ -1,0 +1,8 @@
+action: join
+event: channel
+data:
+  type: text
+  bind:
+    value:
+      default: alice
+

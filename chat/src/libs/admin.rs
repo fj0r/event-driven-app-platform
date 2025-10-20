@@ -56,12 +56,27 @@ async fn join_chan(
 }
 
 async fn channel(
-    _opts: Query<Opts>,
+    opts: Query<Opts>,
     State(db): State<Db>,
     Json(session): Json<SessionInfo>,
 ) -> HttpResult<Json<Vec<Channel>>> {
     let channel = db.list_channel((&session.id).into()).await?;
-    Ok(Json(channel))
+    if let Some(layout) = opts.layout
+        && layout
+    {
+        let content = Content::Set(Influx {
+            event: "channel".into(),
+            channel: None,
+            method: Method::Replace,
+            data: Layout {
+                kind: "text".into(),
+                ..Default::default()
+            },
+        });
+        Ok(Json(serde_json::to_value(&content)?))
+    } else {
+        Ok(Json(channel))
+    }
 }
 
 async fn history(
@@ -69,7 +84,6 @@ async fn history(
     State(db): State<Db>,
     Json(session): Json<SessionInfo>,
 ) -> HttpResult<Json<Value>> {
-    info!("history: {:?}", session);
     if let Some(layout) = opts.layout
         && layout
     {

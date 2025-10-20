@@ -5,15 +5,14 @@ use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;
 use layout::{Bind, Concat, Delete, Layout, LayoutOp, Replace};
-use minijinja::{AutoEscape, Environment};
+use minijinja::Environment;
 use serde_json::{Value, to_string};
-use std::borrow::Borrow;
 use std::collections::HashMap;
 use std::str;
 use std::sync::{LazyLock, RwLock};
 
 static TMPL: LazyLock<RwLock<Environment>> = LazyLock::new(|| {
-    let mut env = Environment::new();
+    let env = Environment::new();
     //env.set_auto_escape_callback(|_| AutoEscape::Json);
     RwLock::new(env)
 });
