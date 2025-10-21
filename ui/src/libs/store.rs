@@ -117,12 +117,19 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
     let mut data = use_signal::<HashMap<String, Layout>>(HashMap::new);
     let mut list = use_signal::<HashMap<String, Vec<Layout>>>(HashMap::new);
 
-    use_memo(
-        move || match serde_json::from_str::<Message<Layout>>(&x()) {
-            Ok(act) => dispatch(act, &mut layout, &mut data, &mut list),
-            Err(err) => dioxus::logger::tracing::info!("deserialize from_str error {:?}", err),
-        },
-    );
+    use_memo(move || {
+        let act = &x();
+        if !act.is_empty() {
+            match serde_json::from_str::<Message<Layout>>(act) {
+                Ok(act) => dispatch(act, &mut layout, &mut data, &mut list),
+                Err(err) => dioxus::logger::tracing::info!(
+                    "deserialize from_str error {:?}\n\n{:?}",
+                    err,
+                    act
+                ),
+            }
+        }
+    });
 
     Ok(Store {
         ws,

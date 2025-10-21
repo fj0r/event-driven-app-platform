@@ -48,7 +48,7 @@ endpoint = "http://localhost:3003/v1/channel?layout=true"
 accept = "application/json"
 
 [[hooks.greet]]
-disable = false
+disable = true
 endpoint = "http://localhost:3003/v1/history?layout=true"
 accept = "application/json"
 

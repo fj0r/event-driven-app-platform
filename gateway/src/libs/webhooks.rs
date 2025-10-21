@@ -26,7 +26,7 @@ pub async fn handle_hook<T>(
     tmpls: Arc<Tmpls<'_>>,
 ) -> Result<T, HookError>
 where
-    T: for<'de> Deserialize<'de>,
+    T: for<'de> Deserialize<'de> + Debug,
 {
     if hook.disable {
         return Err(HookError::Disabled);

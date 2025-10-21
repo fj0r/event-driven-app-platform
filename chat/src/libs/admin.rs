@@ -97,6 +97,7 @@ async fn history(
     State(db): State<Db>,
     Json(session): Json<SessionInfo>,
 ) -> HttpResult<Json<Value>> {
+    info!(">> history: {:?}", &session);
     if let Some(layout) = opts.layout
         && layout
     {
