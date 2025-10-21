@@ -126,6 +126,7 @@ pub async fn handle_ws<T>(
             let value = serde_json::from_str(text)?;
             let chat_msg: T = (sid.clone(), value).into();
 
+            // TODO: process messages in batches?
             if let Some(ev) = chat_msg.event()
                 && hooks.contains_key(ev)
                 && let Some(wh) = hooks.get(ev)

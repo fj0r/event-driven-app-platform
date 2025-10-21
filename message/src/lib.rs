@@ -54,6 +54,8 @@ fn get_value_event(v: &Value) -> Option<&str> {
         let r = m.get("event").and_then(|x| x.as_str());
         return r;
     };
+    // TODO: For now, messages coming from the UI are not batched, and perhaps never will be. We will not process them in batches at this time.
+    // SEE: gateway/src/libs/websocket.rs:129
     tracing::info!("get_value_event failed: {:?}", v);
     None
 }
