@@ -49,7 +49,7 @@ impl Model {
         Ok(v)
     }
 
-    pub async fn login(&self, session_id: &str, _token: Option<&str>) -> Result<(String, String)> {
+    pub async fn login(&self, token: &str) -> Result<(String, String)> {
         let mut s = query(indoc! {
             "
             with a as (
@@ -65,14 +65,14 @@ impl Model {
             select a.name, s.id from a, s;
             "
         })
-        .bind(session_id)
+        .bind(token)
         .fetch(self.deref());
         if let Some(r) = s.try_next().await? {
             let name: &str = r.try_get("name")?;
             let id: &str = r.try_get("id")?;
             Ok((id.to_string(), name.to_string()))
         } else {
-            error!("insert session failed: {}", session_id);
+            error!("insert session failed: {}", token);
             Err(Error::RowNotFound)
         }
     }

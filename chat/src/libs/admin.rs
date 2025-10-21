@@ -130,18 +130,30 @@ async fn yaml(opts: Query<Opts>, Path(name): Path<String>) -> HttpResult<Json<se
     Ok(Json(v))
 }
 
+#[derive(Debug, Deserialize)]
+pub struct LoginOpts {
+    pub key: Option<String>,
+}
+
 async fn login(
-    _opts: Query<Opts>,
+    opts: Query<LoginOpts>,
     State(db): State<Db>,
     Json(mut payload): Json<Map<String, Value>>,
 ) -> HttpResult<Json<SessionInfo>> {
-    let uuid = ShortUuid::generate().to_string();
-    let token = payload.get("token").and_then(|x| x.as_str());
-    let (id, name) = db.login(&uuid, token).await?;
-    info!("login {}: {}", id, name);
+    let tk = match &opts.key {
+        Some(key) => key,
+        None => "token",
+    };
+    let token = if let Some(token) = payload.get(tk) {
+        token.as_str().unwrap_or("").to_string()
+    } else {
+        ShortUuid::generate().to_string()
+    };
+    let (id, name) = db.login(&token).await?;
+    info!("login {}: {}\n  token: {:?}", id, name, &token);
     payload.insert("username".into(), name.into());
     Ok(Json(SessionInfo {
-        id: uuid.as_str().into(),
+        id: id.as_str().into(),
         info: payload,
     }))
 }
