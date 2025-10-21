@@ -6,14 +6,32 @@ use libs::store::{Store, use_store};
 use tracing_wasm::WASMLayerConfigBuilder;
 
 static STORE: GlobalSignal<Store> = Global::new(|| {
-    let d = web_sys::window().unwrap().document().unwrap();
-    let url = d
-        .query_selector("#main")
-        .ok()
-        .and_then(|x| x)
-        .and_then(|u| u.get_attribute("data-host"))
-        .unwrap_or_else(|| d.location().unwrap().host().unwrap());
-    let url = format!("ws://{}/channel", url);
+    let doc = web_sys::window().unwrap().document().unwrap();
+    let loc = doc.location().unwrap();
+    let mut host = "".to_owned();
+    let mut token = None;
+    if let Ok(Some(ele)) = doc.query_selector("#main") {
+        if let Some(h) = ele.get_attribute("data-host") {
+            host = h;
+        } else {
+            host = loc.host().unwrap();
+        };
+
+        if let Ok(href) = loc.href()
+            && let Ok(href) = web_sys::Url::new(&href)
+            && let Some(t) = href.search_params().get("token")
+        {
+            token = Some(t);
+        } else if let Some(t) = ele.get_attribute("data-token") {
+            token = Some(t);
+        };
+    };
+    let query = if let Some(token) = token {
+        format!("?token={}", &token)
+    } else {
+        "".to_owned()
+    };
+    let url = format!("ws://{}/channel{}", host, query);
     use_store(&url).expect("connecting failed")
 });
 
