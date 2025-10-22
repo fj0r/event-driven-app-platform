@@ -4,5 +4,5 @@ data:
   type: text
   bind:
     value:
-      default: alice
+      default: "***"
 

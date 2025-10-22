@@ -11,7 +11,7 @@ pub fn Select(layout: Layout, children: Element) -> Element {
     let mut css = vec!["select", "shadow"];
     let css = merge_css_class(&mut css, &layout);
     let value = use_source_value(&layout);
-    let option = use_source_list(&layout, "option");
+    let option = use_source_list(&layout, "options");
     let mut slot = use_signal(|| value.unwrap_or_else(|| Default::default()));
     let mut signal = use_target_value(&layout);
     if let Some(option) = option {
@@ -27,7 +27,7 @@ pub fn Select(layout: Layout, children: Element) -> Element {
         rsx! {
             div {
                 class: css.join(" "),
-
+                {children}
             }
         }
     } else {
