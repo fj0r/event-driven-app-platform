@@ -15,6 +15,7 @@ use message::session::SessionInfo;
 use serde::Deserialize;
 use serde_json::{Map, Value, json};
 use short_uuid::ShortUuid;
+use std::borrow::Cow;
 use std::path::Path as OsPath;
 use tracing::info;
 
@@ -146,9 +147,9 @@ async fn login(
         None => "token",
     };
     let token = if let Some(token) = payload.get(tk) {
-        token.as_str().unwrap_or("").to_string()
+        Cow::Borrowed(token.as_str().unwrap_or(""))
     } else {
-        ShortUuid::generate().to_string()
+        Cow::Owned(ShortUuid::generate().to_string())
     };
     let (id, name) = db.login(&token).await?;
     info!("login {}: {}\n  token: {:?}", id, name, &token);
