@@ -42,6 +42,7 @@ accept = "application/json"
 disable = true
 path = "user.json"
 
+# channel-list
 [[hooks.greet]]
 disable = false
 endpoint = "http://localhost:3003/v1/channel?layout=true"
@@ -55,6 +56,12 @@ accept = "application/json"
 [[hooks.greet]]
 path = "segment.tmpl.json"
 
-[[hooks.channel]]
+[[hooks.channel-join]]
+disable = true
+endpoint = "http://localhost:3003/v1/channel?layout=true"
+accept = "application/json"
+
+[[hooks.channel-select]]
+disable = true
 endpoint = "http://localhost:3003/v1/channel?layout=true"
 accept = "application/json"

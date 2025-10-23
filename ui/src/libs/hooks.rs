@@ -109,10 +109,16 @@ pub fn use_target<'a>(layout: &'a Layout, key: &'a str) -> Signal<Value> {
     {
         let ev = event.clone();
         let store = use_context::<Store>();
+        let silent = silent.clone();
         use_resource(move || {
-            let target = ev.clone();
+            let ev = ev.clone();
             let mut store = store.clone();
-            async move { store.send(target, None, signal()).await }
+            let s = signal();
+            async move {
+                if !silent {
+                    store.send(ev, None, s).await
+                }
+            }
         });
     };
     return signal;

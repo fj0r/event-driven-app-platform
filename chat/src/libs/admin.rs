@@ -70,7 +70,7 @@ async fn channel(
             .iter()
             .map(|x| {
                 Content::Join(Influx {
-                    event: "channel".into(),
+                    event: "channel-list".into(),
                     channel: None,
                     method: Method::Replace,
                     data: Layout {
@@ -108,7 +108,7 @@ async fn history(
         && layout
     {
         let content = Content::Join(Influx {
-            event: "chat/history".into(),
+            event: "chat-history".into(),
             channel: None,
             data: Layout {
                 kind: "text".into(),
