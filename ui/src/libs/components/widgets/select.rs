@@ -3,7 +3,7 @@ use crate::libs::hooks::{
     merge_css_class, use_source, use_source_list, use_source_value, use_target_value,
 };
 use dioxus::prelude::*;
-use layout::{Bind, JsType, Layout};
+use layout::{Bind, JsType, Layout, classify::Classify};
 use maplit::hashmap;
 use serde_json::{Value, to_value};
 
@@ -25,7 +25,7 @@ pub fn Select(layout: Layout, children: Element) -> Element {
             let value = value();
             if value == key {
                 let mut child = child.clone();
-                // TODO: child.attrs
+                child.add_class("selected");
                 rsx! {
                     Frame {
                         key: "{key}",

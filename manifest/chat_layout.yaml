@@ -24,6 +24,7 @@ data:
       bind:
         value:
           target: channel
+          default: '2'
         options:
           source: channel
     - type: case

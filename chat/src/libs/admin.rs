@@ -75,6 +75,11 @@ async fn channel(
                     method: Method::Replace,
                     data: Layout {
                         kind: "text".into(),
+                        id: Some(x.to_string()),
+                        attrs: Some(Attrs {
+                            class: Some("box".to_string()),
+                            ..Default::default()
+                        }),
                         bind: Some(hashmap! {
                             "value".to_owned() => Bind {
                                 variant: BindVariant::Default {  },
