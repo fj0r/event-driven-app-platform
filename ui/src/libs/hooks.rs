@@ -96,15 +96,21 @@ pub fn use_target<'a>(layout: &'a Layout, key: &'a str) -> Signal<Value> {
     let signal = use_signal::<Value>(|| Default::default());
     if let Some(x) = layout.bind.as_ref()
         && let Some(Bind {
-            variant: BindVariant::Target { target },
+            // TODO: variable
+            variant:
+                BindVariant::Target {
+                    event,
+                    target,
+                    silent,
+                },
             default: _,
             r#type: _,
         }) = x.get(key)
     {
-        let target = target.clone();
+        let ev = event.clone();
         let store = use_context::<Store>();
         use_resource(move || {
-            let target = target.clone();
+            let target = ev.clone();
             let mut store = store.clone();
             async move { store.send(target, None, signal()).await }
         });

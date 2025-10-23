@@ -31,15 +31,15 @@ pub fn Input(layout: Layout) -> Element {
                 ..
             } => Some(("field", field, kind, signal)),
             Bind {
-                variant: BindVariant::Target { target },
+                variant:
+                    BindVariant::Target {
+                        event,
+                        target,
+                        silent,
+                    },
                 r#type: kind,
                 ..
-            } => Some(("event", target, kind, None)),
-            Bind {
-                variant: BindVariant::Variable { variable },
-                r#type: kind,
-                ..
-            } => Some(("variable", variable, kind, None)),
+            } => Some(("event", event, kind, None)),
             _ => Some(("", "".to_string(), Default::default(), None)),
         })
         .unwrap();

@@ -55,9 +55,9 @@ data:
     - type: input
       bind:
         value:
-          target: message
+          event: message
     - type: button
       bind:
         value:
           default: "Count"
-          target: ok
+          event: ok

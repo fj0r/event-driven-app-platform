@@ -112,7 +112,12 @@ pub fn Form(layout: Layout) -> Element {
 
     let lc = layout.bind.as_ref().and_then(|x| x.get("value")).cloned();
     if let Some(Bind {
-        variant: BindVariant::Target { target },
+        variant:
+            BindVariant::Target {
+                event,
+                target,
+                silent,
+            },
         ..
     }) = lc
     {
@@ -128,7 +133,7 @@ pub fn Form(layout: Layout) -> Element {
         //dioxus_logger::tracing::info!("{payload:?}");
         let v = to_value(content).unwrap();
         let _ = use_resource(move || {
-            let ev = target.clone();
+            let ev = event.clone();
             let mut s = s.clone();
             let v = v.clone();
             async move {

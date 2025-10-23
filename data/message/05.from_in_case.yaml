@@ -176,7 +176,7 @@ data:
       type: button
     bind:
       value:
-        target: confirm
+        event: confirm
     id: QQucja82kxbHPGLozJWdbk
     type: form
   id: QQucja82kxbHPGLozJWdbk

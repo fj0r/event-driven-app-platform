@@ -167,7 +167,7 @@ data:
     type: button
   bind:
     value:
-      target: confirm
+      event: confirm
   id: null
   type: form
 event: chat

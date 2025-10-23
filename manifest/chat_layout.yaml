@@ -23,7 +23,7 @@ data:
         class: --channel i jc box nogrow
       bind:
         value:
-          target: channel
+          event: channel
           default: '2'
         options:
           source: channel
@@ -58,4 +58,4 @@ data:
           - type: input
             bind:
               value:
-                target: message
+                event: message

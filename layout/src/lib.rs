@@ -120,6 +120,10 @@ impl JsType {
     }
 }
 
+fn default_target() -> String {
+    "".to_string()
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 #[serde(untagged)]
@@ -128,10 +132,11 @@ pub enum BindVariant {
         source: String,
     },
     Target {
-        target: String,
-    },
-    Variable {
-        variable: String,
+        event: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        target: Option<String>,
+        #[serde(default = "Default::default")]
+        silent: bool,
     },
     Field {
         field: String,

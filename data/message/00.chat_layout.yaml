@@ -23,7 +23,7 @@ data:
         class: --channel i jc box nogrow
       bind:
         value:
-          target: channel
+          event: channel
         options:
           source: channel
     - type: case
@@ -57,7 +57,7 @@ data:
           - type: textarea
             bind:
               value:
-                target: message
+                event: message
               placeholder:
                 default: send message.
 

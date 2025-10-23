@@ -21,7 +21,7 @@ data:
       - type: form
         bind:
           value:
-            target: login
+            event: login
         children:
           - type: button
             bind:
@@ -55,8 +55,8 @@ data:
       - type: input
         bind:
           value:
-            target: history
+            event: history
       - type: input
         bind:
           value:
-            target: echo
+            event: echo
