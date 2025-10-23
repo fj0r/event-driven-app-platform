@@ -1,4 +1,4 @@
-use crate::libs::hooks::merge_css_class;
+use crate::libs::hooks::use_common_css;
 use crate::libs::hooks::{use_source, use_source_value};
 use dioxus::prelude::*;
 use layout::{Bind, BindVariant, Layout, Settings};
@@ -9,7 +9,7 @@ use std::sync::LazyLock;
 pub fn Text(id: String, layout: Layout) -> Element {
     let mut css = vec!["text", "txt", &id];
 
-    let css = merge_css_class(&mut css, &layout);
+    use_common_css(&mut css, &layout);
 
     let text_content = if let Some(json_data) = use_source_value(&layout) {
         if json_data.is_string() {

@@ -1,10 +1,9 @@
 use super::super::store::Store;
 use super::{Dynamic, Frame};
-use crate::libs::hooks::{merge_css_class, use_source_id};
+use crate::libs::hooks::{use_common_css, use_source_id};
 use dioxus::{CapturedError, prelude::*};
-use layout::{Bind, BindVariant, Layout, Settings};
+use layout::{Layout, Settings};
 use std::collections::hash_map::HashMap;
-use std::str::FromStr;
 
 struct ItemContainer {
     default: Option<Layout>,
@@ -43,7 +42,7 @@ impl ItemContainer {
 #[component]
 pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
     let mut css = vec!["rack", "f"];
-    let css = merge_css_class(&mut css, &layout);
+    use_common_css(&mut css, &layout);
 
     let item: ItemContainer = layout.item.clone().context("item")?.into();
     let Some(source) = use_source_id(&layout) else {

@@ -16,7 +16,7 @@ fn default_option_jskind(v: &Option<JsKind>) -> Value {
 pub fn Input(layout: Layout) -> Element {
     let store = use_context::<Store>();
     let mut css = vec!["input", "f", "shadow"];
-    let css = merge_css_class(&mut css, &layout);
+    merge_css_class(&mut css, &layout);
 
     return match &layout.bind {
         Some(Bind::Field {

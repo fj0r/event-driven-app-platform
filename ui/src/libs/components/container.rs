@@ -1,4 +1,4 @@
-use crate::libs::hooks::merge_css_class;
+use crate::libs::hooks::use_common_css;
 use dioxus::prelude::*;
 use layout::{Container as Ct, Layout, Settings};
 
@@ -25,7 +25,7 @@ pub fn Case(id: String, layout: Layout, children: Element) -> Element {
             css.push("f");
         }
     };
-    let css = merge_css_class(&mut css, &layout);
+    use_common_css(&mut css, &layout);
 
     rsx! {
         div {
@@ -39,7 +39,7 @@ pub fn Case(id: String, layout: Layout, children: Element) -> Element {
 #[component]
 pub fn Switch(layout: Layout, children: Element) -> Element {
     let mut css = vec!["switch", "f"];
-    let css = merge_css_class(&mut css, &layout);
+    use_common_css(&mut css, &layout);
     rsx! {
         div {
             class: css.join(" "),

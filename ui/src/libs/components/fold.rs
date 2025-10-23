@@ -1,12 +1,12 @@
 use super::Frame;
-use crate::libs::hooks::{merge_css_class, use_default};
+use crate::libs::hooks::{use_common_css, use_default};
 use dioxus::prelude::*;
 use layout::{Layout, Settings};
 
 #[component]
 pub fn Fold(id: String, layout: Layout, children: Element) -> Element {
     let mut css = vec!["g", &id];
-    let css = merge_css_class(&mut css, &layout);
+    use_common_css(&mut css, &layout);
 
     let Some((replace_header, _float_body)) = layout.attrs.as_ref().map(|x| {
         let x = if let Some(Settings::Fold {

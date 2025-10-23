@@ -1,5 +1,5 @@
 use super::super::super::store::Store;
-use crate::libs::hooks::merge_css_class;
+use crate::libs::hooks::use_common_css;
 use dioxus::prelude::*;
 use layout::{Bind, BindVariant, JsType, Layout};
 use maplit::hashmap;
@@ -17,7 +17,7 @@ fn default_option_jskind(v: &Option<JsType>) -> Value {
 pub fn Input(layout: Layout) -> Element {
     let store = use_context::<Store>();
     let mut css = vec!["input", "f", "shadow"];
-    let css = merge_css_class(&mut css, &layout);
+    use_common_css(&mut css, &layout);
 
     let (bind_type, key, kind, signal) = layout
         .bind

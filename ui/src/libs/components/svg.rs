@@ -1,11 +1,11 @@
-use crate::libs::hooks::{merge_css_class, use_default};
+use crate::libs::hooks::{use_common_css, use_default};
 use dioxus::prelude::*;
-use layout::{Container as Ct, Layout, Settings};
+use layout::{Layout, Settings};
 
 #[component]
 pub fn Svg(layout: Layout, children: Element) -> Element {
     let mut css = vec!["svg"];
-    let css = merge_css_class(&mut css, &layout);
+    use_common_css(&mut css, &layout);
     rsx! {
         svg {
             class: css.join(" "),
@@ -17,7 +17,7 @@ pub fn Svg(layout: Layout, children: Element) -> Element {
 #[component]
 pub fn Group(layout: Layout, children: Element) -> Element {
     let mut css = vec!["group"];
-    let css = merge_css_class(&mut css, &layout);
+    use_common_css(&mut css, &layout);
 
     let mut style = String::new();
     if let Some(x) = &layout.attrs
@@ -41,7 +41,7 @@ pub fn Group(layout: Layout, children: Element) -> Element {
 #[component]
 pub fn Path(layout: Layout, children: Element) -> Element {
     let mut css = vec!["path"];
-    let css = merge_css_class(&mut css, &layout);
+    use_common_css(&mut css, &layout);
     if let Some(x) = use_default(&layout)
         && let Some(d) = x.as_str()
     {

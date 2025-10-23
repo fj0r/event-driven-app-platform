@@ -1,6 +1,6 @@
 use crate::libs::components::Frame;
 use crate::libs::hooks::{
-    merge_css_class, use_source, use_source_list, use_source_value, use_target_value,
+    use_common_css, use_source, use_source_list, use_source_value, use_target_value,
 };
 use dioxus::prelude::*;
 use layout::{Bind, JsType, Layout, classify::Classify};
@@ -10,7 +10,7 @@ use serde_json::{Value, to_value};
 #[component]
 pub fn Select(layout: Layout, children: Element) -> Element {
     let mut css = vec!["select", "shadow"];
-    let css = merge_css_class(&mut css, &layout);
+    use_common_css(&mut css, &layout);
     let option = use_source_list(&layout, "options");
     let value = use_source_value(&layout);
     let mut value = use_signal(|| {

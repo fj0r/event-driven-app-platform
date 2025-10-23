@@ -1,12 +1,12 @@
-use super::{Dynamic, Frame};
-use crate::libs::hooks::{merge_css_class, use_default};
-use crate::libs::store::Store;
+use crate::libs::hooks::{use_common_css, use_default};
 use dioxus::prelude::*;
 use layout::Layout;
 
 #[component]
 pub fn Diagram(id: String, layout: Layout) -> Element {
     let eid = id.clone();
+    let mut css = vec!["diagram"];
+    use_common_css(&mut css, &layout);
     if let Some(x) = use_default(&layout)
         && let Some(y) = x.as_str()
     {
@@ -22,6 +22,7 @@ pub fn Diagram(id: String, layout: Layout) -> Element {
         rsx! {
             div {
                 id: id,
+                class: css.join(" "),
                 {val}
             }
         }

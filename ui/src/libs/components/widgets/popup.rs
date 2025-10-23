@@ -1,4 +1,4 @@
-use crate::libs::hooks::merge_css_class;
+use crate::libs::hooks::use_common_css;
 use dioxus::prelude::*;
 use layout::{Bind, JsType, Layout};
 use serde_json::{Value, to_value};

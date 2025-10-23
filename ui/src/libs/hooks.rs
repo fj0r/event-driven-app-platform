@@ -1,12 +1,12 @@
 use crate::libs::store::Store;
+#[allow(unused_imports)]
+use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
-use layout::{Bind, BindVariant, Layout, Settings};
-use maplit::hashmap;
-use serde_json::{Value, json};
+use layout::{Bind, BindVariant, Layout};
+use serde_json::Value;
 use std::default::Default;
-use std::ops::Deref;
 
-pub fn merge_css_class<'a>(css: &'a mut Vec<&'a str>, layout: &'a Layout) -> &'a mut Vec<&'a str> {
+pub fn use_common_css<'a, 'b: 'a>(css: &'a mut Vec<&'b str>, layout: &'b Layout) {
     let mut v = ["box", "case", "rack", "text", "tab", "menu"].contains(&layout.kind.as_str());
     if let Some(a) = layout.attrs.as_ref() {
         if let Some(h) = a.horizontal {
@@ -21,7 +21,6 @@ pub fn merge_css_class<'a>(css: &'a mut Vec<&'a str>, layout: &'a Layout) -> &'a
     if v {
         css.push("v");
     }
-    css
 }
 
 pub fn use_default<'a>(layout: &'a Layout) -> Option<Value> {
@@ -110,13 +109,21 @@ pub fn use_target<'a>(layout: &'a Layout, key: &'a str) -> Signal<Value> {
         let ev = event.clone();
         let store = use_context::<Store>();
         let silent = silent.clone();
+        let mut init = use_signal(|| true);
         use_resource(move || {
             let ev = ev.clone();
             let mut store = store.clone();
             let s = signal();
             async move {
-                if !silent {
-                    store.send(ev, None, s).await
+                if init() {
+                    info!("{:?}", init());
+                    init.set(false);
+                    info!("{:?}", init());
+                } else {
+                    info!("{:?}", 2);
+                    if !silent {
+                        store.send(ev, None, s).await;
+                    }
                 }
             }
         });

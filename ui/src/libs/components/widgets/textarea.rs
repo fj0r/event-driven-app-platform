@@ -1,13 +1,13 @@
-use crate::libs::hooks::merge_css_class;
+use crate::libs::hooks::use_common_css;
 use crate::libs::hooks::{use_source, use_source_value, use_target_value};
 use dioxus::prelude::*;
-use layout::{Bind, BindVariant, Layout, Settings};
+use layout::Layout;
 use serde_json::to_value;
 
 #[component]
 pub fn TextArea(id: String, layout: Layout) -> Element {
     let mut css = vec!["textarea", "shadow"];
-    let css = merge_css_class(&mut css, &layout);
+    use_common_css(&mut css, &layout);
     let value = use_source_value(&layout);
     let mut slot = use_signal(|| value.unwrap_or_else(|| Default::default()));
     let mut signal = use_target_value(&layout);
