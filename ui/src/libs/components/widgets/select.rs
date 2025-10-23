@@ -4,23 +4,40 @@ use crate::libs::hooks::{
 };
 use dioxus::prelude::*;
 use layout::{Bind, JsType, Layout};
+use maplit::hashmap;
 use serde_json::{Value, to_value};
 
 #[component]
 pub fn Select(layout: Layout, children: Element) -> Element {
     let mut css = vec!["select", "shadow"];
     let css = merge_css_class(&mut css, &layout);
-    let value = use_source_value(&layout);
     let option = use_source_list(&layout, "options");
-    let mut slot = use_signal(|| value.unwrap_or_else(|| Default::default()));
+    let value = use_source_value(&layout);
+    let mut value = use_signal(|| {
+        value
+            .and_then(|v| v.as_str().map(String::from))
+            .unwrap_or("".to_string())
+    });
     let mut signal = use_target_value(&layout);
     if let Some(option) = option {
         let children = option.iter().enumerate().map(|(idx, child)| {
             let key = child.id.clone().unwrap_or(idx.to_string());
-            rsx! {
-                Frame {
-                    key: "{key}",
-                    layout: child.clone()
+            let value = value();
+            if value == key {
+                let mut child = child.clone();
+                // TODO: child.attrs
+                rsx! {
+                    Frame {
+                        key: "{key}",
+                        layout: child
+                    }
+                }
+            } else {
+                rsx! {
+                    Frame {
+                        key: "{key}",
+                        layout: child.clone()
+                    }
                 }
             }
         });

@@ -11,6 +11,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, json, to_value};
 use std::collections::HashMap;
 use std::fmt::Debug;
+#[cfg(feature = "classify")]
+pub mod classify;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
