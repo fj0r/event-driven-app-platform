@@ -4,7 +4,10 @@ use content::{Content, Message, Method, Outflow};
 use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;
-use layout::{Bind, Concat, Delete, Layout, LayoutOp, Replace};
+use layout::{
+    Layout,
+    merge::{Concat, Delete, LayoutOp, Replace},
+};
 use minijinja::Environment;
 use serde_json::{Value, to_string};
 use std::collections::HashMap;

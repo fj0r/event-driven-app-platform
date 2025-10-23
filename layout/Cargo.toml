@@ -16,6 +16,8 @@ regex = { version = "1", optional = true }
 dioxus = ["dep:dioxus"]
 schema = ["dep:schemars"]
 classify = ["dep:regex"]
+merge = []
+render = []
 
 [[example]]
 name = "jsonschema"
