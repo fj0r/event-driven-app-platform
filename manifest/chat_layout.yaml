@@ -23,10 +23,10 @@ data:
         class: --channel i jc box nogrow
       bind:
         value:
-          event: channel-select
+          event: channel::select
           default: '2'
         options:
-          source: channel-list
+          source: channel::list
     - type: case
       attrs:
         class: shrink

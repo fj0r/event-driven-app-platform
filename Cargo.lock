@@ -530,6 +530,7 @@ dependencies = [
  "tracing-serde",
  "tracing-subscriber",
  "url",
+ "urlencoding",
 ]
 
 [[package]]

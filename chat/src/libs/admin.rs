@@ -70,7 +70,7 @@ async fn channel(
             .iter()
             .map(|x| {
                 Content::Join(Influx {
-                    event: "channel-list".into(),
+                    event: "channel::list".into(),
                     channel: None,
                     method: Method::Replace,
                     data: Layout {

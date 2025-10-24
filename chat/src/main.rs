@@ -19,6 +19,7 @@ use libs::db::Model;
 use libs::handler::{ChatMessage, Envelope, handler};
 use libs::logic::*;
 use url::Url;
+use urlencoding::encode;
 
 async fn is_ready() -> HttpResult<Json<Value>> {
     Ok(axum::Json("ok".into())).into()
@@ -43,7 +44,7 @@ async fn main() -> Result<()> {
     let base_url = Url::parse(&cfg.gateway.base_url)?;
     let hc = reqwest::Client::new();
     for (k, v) in &cfg.hooks {
-        let r = hc.post(base_url.join(k)?).json(v).send().await;
+        let r = hc.post(base_url.join(&encode(k))?).json(v).send().await;
         info!("init hook {} [{}]", k, &r?.status());
     }
 
