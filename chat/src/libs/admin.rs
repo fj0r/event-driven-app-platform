@@ -8,7 +8,7 @@ use axum::{
     extract::{Path, Query, State},
     routing::{get, post},
 };
-use content::{Content, Influx, Message, Method};
+use content::{Content, Influx, Method};
 use layout::{Attrs, Bind, BindVariant, Layout, Settings};
 use maplit::hashmap;
 use message::session::SessionInfo;
@@ -19,6 +19,7 @@ use std::borrow::Cow;
 use std::path::Path as OsPath;
 use tracing::info;
 
+#[allow(dead_code)]
 #[derive(Deserialize)]
 pub struct Opts {
     pub layout: Option<bool>,
