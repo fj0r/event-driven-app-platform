@@ -814,7 +814,11 @@ td {
 
 .select {
     & > * {
-        border-radius: calc(var(--round) / 2);
+        cursor: pointer;
+        transition: all 0.3s ease-in-out 0s;
+        &:hover {
+            background-color: var(--secondary);
+        }
     }
     & .selected {
         background: var(--secondary);

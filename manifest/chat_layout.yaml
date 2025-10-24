@@ -18,15 +18,24 @@ data:
       horizontal: true
       class: shrink
     children:
-    - type: select
-      attrs:
-        class: --channel i jc box nogrow
-      bind:
-        value:
-          event: channel::select
-          default: '2'
-        options:
-          source: channel::list
+    - type: case
+      children:
+      - type: text
+        attrs:
+          format: md
+          class: box
+        bind:
+          value:
+            default: '##### channel'
+      - type: select
+        attrs:
+          class: --channel i jc nogrow
+        bind:
+          value:
+            event: channel::select
+            default: '2'
+          options:
+            source: channel::list
     - type: case
       attrs:
         class: shrink

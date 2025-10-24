@@ -5,7 +5,7 @@ use layout::{Layout, classify::Classify};
 
 #[component]
 pub fn Select(layout: Layout, children: Element) -> Element {
-    let mut css = vec!["select", "shadow"];
+    let mut css = vec!["select"];
     use_common_css(&mut css, &layout);
     let option = use_source_list(&layout, "options");
     let value = use_source_value(&layout);
@@ -19,8 +19,9 @@ pub fn Select(layout: Layout, children: Element) -> Element {
         let children = option.iter().enumerate().map(|(idx, child)| {
             let key = child.id.clone().unwrap_or(idx.to_string());
             let value = value();
+            let mut child = child.clone();
+            child.add_class("f nogrow s ax box");
             if value == key {
-                let mut child = child.clone();
                 child.add_class("selected");
                 rsx! {
                     Frame {
@@ -32,7 +33,7 @@ pub fn Select(layout: Layout, children: Element) -> Element {
                 rsx! {
                     Frame {
                         key: "{key}",
-                        layout: child.clone()
+                        layout: child
                     }
                 }
             }
