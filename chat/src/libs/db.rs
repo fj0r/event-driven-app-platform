@@ -90,7 +90,7 @@ impl Model {
     }
 }
 
-#[derive(Debug, Serialize, FromRow)]
+#[derive(Debug, Serialize, Default, FromRow)]
 pub struct Channel {
     pub id: i32,
     pub name: String,

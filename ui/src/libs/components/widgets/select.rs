@@ -2,6 +2,7 @@ use crate::libs::components::Frame;
 use crate::libs::hooks::{use_common_css, use_source_list, use_source_value, use_target_value};
 use dioxus::prelude::*;
 use layout::{Layout, classify::Classify};
+use serde_json::{Value, to_value};
 
 #[component]
 pub fn Select(layout: Layout, children: Element) -> Element {
@@ -14,7 +15,8 @@ pub fn Select(layout: Layout, children: Element) -> Element {
             .and_then(|v| v.as_str().map(String::from))
             .unwrap_or("".to_string())
     });
-    let signal = use_target_value(&layout);
+    let mut signal = use_target_value(&layout);
+    let mkclick = |value: Value| move |_: MouseEvent| signal.set(value.clone());
     if let Some(option) = option {
         let children = option.iter().enumerate().map(|(idx, child)| {
             let key = child.id.clone().unwrap_or(idx.to_string());
@@ -24,16 +26,25 @@ pub fn Select(layout: Layout, children: Element) -> Element {
             if value == key {
                 child.add_class("selected");
                 rsx! {
-                    Frame {
-                        key: "{key}",
-                        layout: child
+                    div {
+                        Frame {
+                            key: "{key}",
+                            layout: child
+                        }
                     }
                 }
             } else {
+                let v = match to_value(&key) {
+                    Ok(v) => v,
+                    Err(_) => to_value("").unwrap(),
+                };
                 rsx! {
-                    Frame {
-                        key: "{key}",
-                        layout: child
+                    div {
+                        onclick: mkclick(v),
+                        Frame {
+                            key: "{key}",
+                            layout: child
+                        }
                     }
                 }
             }

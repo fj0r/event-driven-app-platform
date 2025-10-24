@@ -11,6 +11,7 @@ use message::{
     session::{Session, SessionInfo},
 };
 use serde::{Deserialize, Serialize};
+use serde_json::to_string;
 use serde_json::{Map, Value};
 use std::fmt::Debug;
 use std::sync::Arc;
@@ -135,16 +136,16 @@ pub async fn handle_ws<T>(
                     if h.disable {
                         continue;
                     }
-                    if let Ok(r) = webhook_post(&h.variant, chat_msg.clone()).await {
-                        let _ = tx.send(r);
-                    } else {
-                        context.insert("event".into(), ev.into());
-                        let t = tmpls
-                            .get_template("webhook_error.json")
-                            .unwrap()
-                            .render(&context)
-                            .unwrap();
-                        let _ = tx.send(serde_json::from_str(&t)?);
+                    match webhook_post(&h.variant, chat_msg.clone()).await {
+                        Ok(r) => {
+                            let _ = tx.send(r);
+                        }
+                        Err(e) => {
+                            context.insert("event".into(), ev.into());
+                            context.insert("error".into(), e.to_string().into());
+                            let t = tmpls.get_template("webhook_error.json")?.render(&context)?;
+                            let _ = tx.send(serde_json::from_str(&t)?);
+                        }
                     }
                 }
             } else {

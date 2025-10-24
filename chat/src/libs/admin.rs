@@ -40,13 +40,46 @@ async fn user(
     Ok(Json(x))
 }
 
-async fn create_chan(
-    _opts: Query<Opts>,
+async fn select_chan(
+    opts: Query<Opts>,
     State(db): State<Db>,
-    Json(create): Json<CreateChan>,
-) -> HttpResult<Json<Channel>> {
-    let chan = db.create_channel(&create).await?;
-    Ok(Json(chan))
+    Json(select): Json<Value>,
+) -> HttpResult<Json<Value>> {
+    let chan = Channel::default();
+    info!("select_chan {:?}", &select);
+    if let Some(layout) = opts.layout
+        && layout
+    {
+        let content: Vec<_> = vec!["1", "2", "4"]
+            .iter()
+            .map(|x| {
+                Content::Join(Influx {
+                    event: "channel::list".into(),
+                    channel: None,
+                    method: Method::Replace,
+                    data: Layout {
+                        kind: "text".into(),
+                        id: Some(x.to_string()),
+                        attrs: Some(Attrs {
+                            class: Some("box".to_string()),
+                            ..Default::default()
+                        }),
+                        bind: Some(hashmap! {
+                            "value".to_owned() => Bind {
+                                variant: BindVariant::Default {  },
+                                default: Some(serde_json::to_value(x).unwrap()),
+                                ..Default::default()
+                            }
+                        }),
+                        ..Default::default()
+                    },
+                })
+            })
+            .collect();
+        Ok(Json(serde_json::to_value(content)?))
+    } else {
+        Ok(Json(serde_json::to_value(chan)?))
+    }
 }
 
 async fn join_chan(
@@ -182,8 +215,8 @@ pub fn data_router() -> Router<Shared> {
         .route("/logout", post(logout))
         .route("/yaml/{name}", post(yaml))
         .route("/channel", post(channel))
+        .route("/channel/select", post(select_chan))
         .route("/channel/join", post(join_chan))
-        .route("/channel/create", post(create_chan))
         .route("/history", post(history))
         .route("/users", get(users))
         .route("/user/{user}", get(user))
