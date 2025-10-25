@@ -40,7 +40,7 @@ data:
             source: channel::list
     - type: case
       attrs:
-        class: shrink
+        class: main shrink
       children:
       - type: rack
         attrs:
