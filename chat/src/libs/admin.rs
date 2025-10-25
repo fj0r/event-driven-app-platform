@@ -50,7 +50,7 @@ async fn select_chan(
     if let Some(layout) = opts.layout
         && layout
     {
-        let content: Vec<_> = vec!["1", "2", "4"]
+        let mut content: Vec<_> = vec!["1", "4", "5", "6"]
             .iter()
             .map(|x| {
                 Content::Join(Influx {

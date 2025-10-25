@@ -11,7 +11,7 @@ use message::{
     session::{Session, SessionInfo},
 };
 use serde::{Deserialize, Serialize};
-use serde_json::to_string;
+use serde_json::to_value;
 use serde_json::{Map, Value};
 use std::fmt::Debug;
 use std::sync::Arc;
@@ -136,9 +136,9 @@ pub async fn handle_ws<T>(
                     if h.disable {
                         continue;
                     }
-                    match webhook_post(&h.variant, chat_msg.clone()).await {
+                    match webhook_post(&h.variant, to_value(&chat_msg)?).await {
                         Ok(r) => {
-                            let _ = tx.send(r);
+                            let _ = tx.send((sid.clone(), r).into());
                         }
                         Err(e) => {
                             context.insert("event".into(), ev.into());

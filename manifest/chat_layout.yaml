@@ -19,6 +19,8 @@ data:
       class: shrink
     children:
     - type: case
+      attrs:
+        class: leftside
       children:
       - type: text
         attrs:
