@@ -11,9 +11,9 @@ pub fn Select(layout: Layout, children: Element) -> Element {
     let layout = Rc::new(layout);
     use_common_css(&mut css, &layout);
     let option = use_source_list(&layout, "options");
-    let value = use_source_value(&layout);
-    let value = use_signal(|| {
-        value
+    let current = use_source_value(&layout);
+    let mut current = use_signal(|| {
+        current
             .and_then(|v| v.as_str().map(String::from))
             .unwrap_or("".to_string())
     });
@@ -22,15 +22,18 @@ pub fn Select(layout: Layout, children: Element) -> Element {
         move |_: MouseEvent| {
             let emitter = use_target_value(&layout);
             emitter.map(|x| x(value.clone()));
+            if let Some(v) = value.as_str() {
+                current.set(v.to_string());
+            }
         }
     };
     if let Some(option) = option {
         let children = option.iter().enumerate().map(|(idx, child)| {
             let key = child.id.clone().unwrap_or(idx.to_string());
-            let value = value();
+            let current = current();
             let mut child = child.clone();
             child.add_class("f nogrow s ax box");
-            if value == key {
+            if current == key {
                 child.add_class("selected");
                 rsx! {
                     div {
