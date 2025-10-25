@@ -11,7 +11,7 @@ data:
         default: chat ****
         source: login
     attrs:
-      class: box shadow nogrow
+      class: header box shadow nogrow
       format: md
   - type: case
     attrs:
@@ -20,7 +20,7 @@ data:
     children:
     - type: case
       attrs:
-        class: leftside
+        class: leftside nogrow
       children:
       - type: text
         attrs:
