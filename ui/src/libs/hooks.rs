@@ -6,7 +6,7 @@ use layout::{Bind, BindVariant, Layout};
 use serde_json::Value;
 
 pub fn use_common_css<'a, 'b: 'a>(css: &'a mut Vec<&'b str>, layout: &'b Layout) {
-    let mut v = ["box", "case", "rack", "text", "tab", "menu"].contains(&layout.kind.as_str());
+    let mut v = ["box", "case", "rack", "text", "tab", "select"].contains(&layout.kind.as_str());
     if let Some(a) = layout.attrs.as_ref() {
         if let Some(h) = a.horizontal {
             if h {

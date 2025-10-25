@@ -7,7 +7,7 @@ use std::rc::Rc;
 
 #[component]
 pub fn Select(layout: Layout, children: Element) -> Element {
-    let mut css = vec!["select"];
+    let mut css = vec!["select", "f"];
     let layout = Rc::new(layout);
     use_common_css(&mut css, &layout);
     let option = use_source_list(&layout, "options");
