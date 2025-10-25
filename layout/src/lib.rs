@@ -120,10 +120,6 @@ impl JsType {
     }
 }
 
-fn default_target() -> String {
-    "".to_string()
-}
-
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 #[serde(untagged)]

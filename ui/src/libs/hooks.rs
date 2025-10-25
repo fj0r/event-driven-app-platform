@@ -4,7 +4,6 @@ use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
 use layout::{Bind, BindVariant, Layout};
 use serde_json::Value;
-use std::default::Default;
 
 pub fn use_common_css<'a, 'b: 'a>(css: &'a mut Vec<&'b str>, layout: &'b Layout) {
     let mut v = ["box", "case", "rack", "text", "tab", "menu"].contains(&layout.kind.as_str());
@@ -91,46 +90,36 @@ pub fn use_source_value(layout: &Layout) -> Option<Value> {
     use_source(layout, "value")
 }
 
-pub fn use_target<'a>(layout: &'a Layout, key: &'a str) -> Signal<Value> {
-    let signal = use_signal::<Value>(|| Default::default());
+pub fn use_target<'a>(layout: &'a Layout, key: &'a str) -> Option<impl Fn(Value)> {
     if let Some(x) = layout.bind.as_ref()
         && let Some(Bind {
             // TODO: variable
             variant:
                 BindVariant::Target {
                     event,
-                    target,
+                    target: _,
                     silent,
                 },
             default: _,
             r#type: _,
         }) = x.get(key)
     {
-        let ev = event.clone();
-        let store = use_context::<Store>();
         let silent = silent.clone();
-        let mut init = use_signal(|| true);
-        use_resource(move || {
-            let ev = ev.clone();
-            let mut store = store.clone();
-            let s = signal();
-            async move {
-                if init() {
-                    info!("{:?}", init());
-                    init.set(false);
-                    info!("{:?}", init());
-                } else {
-                    info!("{:?}", 2);
-                    if !silent {
-                        store.send(ev, None, s).await;
-                    }
+        let fun = move |val| {
+            let ev = event.clone();
+            let mut store = use_context::<Store>();
+            spawn(async move {
+                if !silent {
+                    store.send(ev, None, val).await;
                 }
-            }
-        });
-    };
-    return signal;
+            });
+        };
+        Some(fun)
+    } else {
+        None
+    }
 }
 
-pub fn use_target_value(layout: &Layout) -> Signal<Value> {
+pub fn use_target_value(layout: &Layout) -> Option<impl Fn(Value)> {
     use_target(layout, "value")
 }

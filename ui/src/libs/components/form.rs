@@ -115,8 +115,8 @@ pub fn Form(layout: Layout) -> Element {
         variant:
             BindVariant::Target {
                 event,
-                target,
-                silent,
+                target: _,
+                silent: _,
             },
         ..
     }) = lc

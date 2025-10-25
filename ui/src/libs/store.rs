@@ -1,6 +1,7 @@
 use super::ws::{WebSocketHandle, use_web_socket};
 use anyhow::Result;
 use content::{Content, Message, Method, Outflow};
+#[allow(unused_imports)]
 use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;

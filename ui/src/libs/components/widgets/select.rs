@@ -15,8 +15,10 @@ pub fn Select(layout: Layout, children: Element) -> Element {
             .and_then(|v| v.as_str().map(String::from))
             .unwrap_or("".to_string())
     });
-    let mut signal = use_target_value(&layout);
-    let mkclick = |value: Value| move |_: MouseEvent| signal.set(value.clone());
+    let mut emitter = use_target_value(&layout);
+    let mkclick = |value: Value| move |_: MouseEvent| emitter.map(|x| x(value.clone()));
+    let x = async || ();
+    let y = || async {};
     if let Some(option) = option {
         let children = option.iter().enumerate().map(|(idx, child)| {
             let key = child.id.clone().unwrap_or(idx.to_string());
