@@ -94,24 +94,16 @@ pub fn use_target<'a>(layout: &'a Layout, key: &'a str) -> Option<impl Fn(Value)
     if let Some(x) = layout.bind.as_ref()
         && let Some(Bind {
             // TODO: variable
-            variant:
-                BindVariant::Target {
-                    event,
-                    target: _,
-                    silent,
-                },
+            variant: BindVariant::Event { event },
             default: _,
             r#type: _,
         }) = x.get(key)
     {
-        let silent = silent.clone();
         let fun = move |val| {
             let ev = event.clone();
             let mut store = use_context::<Store>();
             spawn(async move {
-                if !silent {
-                    store.send(ev, None, val).await;
-                }
+                store.send(ev, None, val).await;
             });
         };
         Some(fun)

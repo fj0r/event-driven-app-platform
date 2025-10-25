@@ -128,11 +128,10 @@ pub enum BindVariant {
         source: String,
     },
     Target {
+        target: String,
+    },
+    Event {
         event: String,
-        #[serde(skip_serializing_if = "Option::is_none")]
-        target: Option<String>,
-        #[serde(default = "Default::default")]
-        silent: bool,
     },
     Field {
         field: String,

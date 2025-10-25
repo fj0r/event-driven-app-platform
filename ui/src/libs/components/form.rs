@@ -112,12 +112,7 @@ pub fn Form(layout: Layout) -> Element {
 
     let lc = layout.bind.as_ref().and_then(|x| x.get("value")).cloned();
     if let Some(Bind {
-        variant:
-            BindVariant::Target {
-                event,
-                target: _,
-                silent: _,
-            },
+        variant: BindVariant::Event { event },
         ..
     }) = lc
     {

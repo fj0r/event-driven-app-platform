@@ -31,12 +31,7 @@ pub fn Input(layout: Layout) -> Element {
                 ..
             } => Some(("field", field, kind, signal)),
             Bind {
-                variant:
-                    BindVariant::Target {
-                        event,
-                        target: _,
-                        silent: _,
-                    },
+                variant: BindVariant::Event { event },
                 r#type: kind,
                 ..
             } => Some(("event", event, kind, None)),
