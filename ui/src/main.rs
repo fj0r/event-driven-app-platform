@@ -51,6 +51,7 @@ fn App() -> Element {
 
     rsx! {
         document::Style { href: asset!("/assets/main.css") }
+        document::Style { href: asset!("/assets/custom.css") }
         // document::Script { src: asset!("/assets/apexcharts.min.js") }
         // document::Script { src: asset!("/assets/mermaid.min.js") }
         Frame {

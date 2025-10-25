@@ -1,0 +1,30 @@
+/*** CUSTOM {{{ ***/
+.markdown {
+  & img {
+      max-width: var(--img-max-width);
+  }
+}
+
+.header {
+    background-color: oklch(from var(--primary) calc(l + 0.2) c h);
+}
+
+.leftside {
+    background-color: var(--secondary);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.select {
+    & > * > * {
+        cursor: pointer;
+        transition: all 0.3s ease-in-out 0s;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+        &:hover {
+            background-color: var(--secondary);
+        }
+    }
+    & .selected {
+        background: var(--secondary);
+    }
+}
+/* }}} */
