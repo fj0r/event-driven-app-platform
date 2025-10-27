@@ -117,14 +117,16 @@ pub fn Form(layout: Layout) -> Element {
     }) = lc
     {
         let s = use_context::<Store>();
-        let mut content = HashMap::new();
-        for (k, v) in &data {
-            let d = Message {
-                data: v.0(),
-                payload: v.1.clone(),
-            };
-            content.insert(k.to_owned(), d);
-        }
+        let content: HashMap<String, Message> = data
+            .iter()
+            .map(|(k, v)| {
+                let d = Message {
+                    data: v.0(),
+                    payload: v.1.clone(),
+                };
+                (k.to_owned(), d)
+            })
+            .collect();
         //dioxus_logger::tracing::info!("{payload:?}");
         let v = to_value(content).unwrap();
         let _ = use_resource(move || {
