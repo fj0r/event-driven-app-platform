@@ -13,6 +13,33 @@ use serde_json::{Map, Value, to_value};
 use std::collections::HashMap;
 use std::fmt::Debug;
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub enum DirH {
+    #[allow(non_camel_case_types)]
+    left(String),
+    #[allow(non_camel_case_types)]
+    right(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub enum DirV {
+    #[allow(non_camel_case_types)]
+    top(String),
+    #[allow(non_camel_case_types)]
+    bottom(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub struct Direction {
+    #[serde(flatten)]
+    pub h: DirH,
+    #[serde(flatten)]
+    pub v: DirV,
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Attrs {
@@ -26,6 +53,9 @@ pub struct Attrs {
     #[serde(flatten)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub settings: Option<Settings>,
+    #[serde(flatten)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub position: Option<Direction>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

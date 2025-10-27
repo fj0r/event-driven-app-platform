@@ -11,8 +11,16 @@ use std::rc::Rc;
 pub fn Float(layout: Layout, children: Element) -> Element {
     let mut css = vec!["float", "f"];
     use_common_css(&mut css, &layout);
+    let style = if let Some(attr) = &layout.attrs
+        && let Some(pos) = &attr.position
+    {
+        pos.into_position()
+    } else {
+        "".to_owned()
+    };
     rsx! {
         div {
+            style: style,
             class: css.join(" "),
             {children}
         }

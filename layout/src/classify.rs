@@ -1,4 +1,4 @@
-use super::{Attrs, Layout};
+use super::{Attrs, DirH, DirV, Direction, Layout};
 use regex::Regex;
 use std::convert::AsRef;
 
@@ -55,5 +55,19 @@ impl Classify for Layout {
             attr.delete_class(class);
         }
         self
+    }
+}
+
+impl Direction {
+    pub fn into_position(&self) -> String {
+        let h = match &self.h {
+            DirH::right(r) => format!("right: {};", r),
+            DirH::left(l) => format!("left: {};", l),
+        };
+        let v = match &self.v {
+            DirV::top(t) => format!("top: {};", t),
+            DirV::bottom(b) => format!("bottom: {};", b),
+        };
+        vec![h, v].join(" ")
     }
 }
