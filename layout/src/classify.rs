@@ -1,4 +1,4 @@
-use super::{Attrs, DirH, DirV, Direction, Layout};
+use super::{Attrs, Direction, Layout, PosH, PosV, Position};
 use regex::Regex;
 use std::convert::AsRef;
 
@@ -58,16 +58,27 @@ impl Classify for Layout {
     }
 }
 
-impl Direction {
+impl Position {
     pub fn into_position(&self) -> String {
         let h = match &self.h {
-            DirH::right(r) => format!("right: {};", r),
-            DirH::left(l) => format!("left: {};", l),
+            PosH::right(r) => format!("right: {};", r),
+            PosH::left(l) => format!("left: {};", l),
         };
         let v = match &self.v {
-            DirV::top(t) => format!("top: {};", t),
-            DirV::bottom(b) => format!("bottom: {};", b),
+            PosV::top(t) => format!("top: {};", t),
+            PosV::bottom(b) => format!("bottom: {};", b),
         };
         vec![h, v].join(" ")
+    }
+}
+
+impl Direction {
+    pub fn into_flex(&self) -> String {
+        match &self {
+            Direction::D => format!("flex-direction: column"),
+            Direction::U => format!("flex-direction: column-reverse"),
+            Direction::R => format!("flex-direction: row"),
+            Direction::L => format!("flex-direction: row-reverse"),
+        }
     }
 }

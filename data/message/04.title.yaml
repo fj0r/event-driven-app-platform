@@ -2,7 +2,7 @@ action: set
 method: concat
 event: login
 data:
-    type: text
-    bind:
-      value:
-        default: "**hello**"
+  type: text
+  bind:
+    value:
+      default: "**hello**"

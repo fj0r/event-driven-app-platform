@@ -826,4 +826,13 @@ td {
 .float {
     position: absolute;
 }
+
+.popup {
+    & > .body {
+        display: none;
+    }
+    &:hover > .body {
+        display: flex;
+    }
+}
 /* }}} */

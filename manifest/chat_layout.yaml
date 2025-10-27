@@ -8,7 +8,7 @@ data:
   - type: text
     bind:
       value:
-        default: chat ****
+        default: **chat**
         source: login
     attrs:
       class: --header nogrow
@@ -42,21 +42,54 @@ data:
       attrs:
         class: main shrink
       children:
-      - type: rack
-        attrs:
-          class: --message box c as gap scrolly
-          scroll: true
-        bind:
-          value:
-            source: chat
-        item:
-        - type: case
+      - type: case
+        children:
+        - type: rack
           attrs:
-            class: nogrow s ae accent box border round shadow
-            selector: ask
-        - type: case
+            class: --message box c as gap scrolly
+            scroll: true
+          bind:
+            value:
+              source: chat
+          item:
+          - type: case
+            attrs:
+              class: nogrow s ae accent box border round shadow
+              selector: ask
+          - type: case
+            attrs:
+              class: nogrow s ax box border round shadow
+        - type: float
           attrs:
-            class: nogrow s ax box border round shadow
+            bottom: '0.2rem'
+            left: '1rem'
+          children:
+          - type: popup
+            attrs:
+              class: box border round shadow primary
+              direction: U
+            bind:
+              value:
+                source: cart
+            children:
+            - type: text
+              bind:
+                value:
+                  default: cart
+            - type: case
+              children:
+              - type: text
+                bind:
+                  value:
+                    default: a
+              - type: text
+                bind:
+                  value:
+                    default: b
+              - type: text
+                bind:
+                  value:
+                    default: c
       - type: case
         attrs:
           class: --input nogrow box

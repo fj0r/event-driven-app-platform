@@ -61,10 +61,13 @@ data:
               class: nogrow s ax box border round shadow
         - type: float
           attrs:
-            bottom: '0'
+            bottom: '0.2rem'
             left: '1rem'
           children:
           - type: popup
+            attrs:
+              class: box border round shadow primary
+              direction: U
             bind:
               value:
                 source: cart
@@ -73,10 +76,20 @@ data:
               bind:
                 value:
                   default: cart
-            - type: text
-              bind:
-                value:
-                  default: cart
+            - type: case
+              children:
+              - type: text
+                bind:
+                  value:
+                    default: a
+              - type: text
+                bind:
+                  value:
+                    default: b
+              - type: text
+                bind:
+                  value:
+                    default: c
       - type: case
         attrs:
           class: --input nogrow box
