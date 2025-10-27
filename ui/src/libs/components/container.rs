@@ -4,7 +4,7 @@ use layout::{Container as Ct, Layout, Settings};
 
 #[component]
 pub fn Case(id: String, layout: Layout, children: Element) -> Element {
-    let mut css = vec!["case", &id];
+    let mut css = vec!["case", "f", &id];
     let mut style = String::new();
     if let Some(a) = &layout.attrs {
         let mut f = true;

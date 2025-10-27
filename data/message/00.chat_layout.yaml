@@ -42,25 +42,40 @@ data:
       attrs:
         class: main shrink
       children:
-      - type: rack
-        attrs:
-          class: --message box c as gap scrolly
-          scroll: true
-        bind:
-          value:
-            source: chat
-        item:
-        - type: case
+      - type: case
+        children:
+        - type: rack
           attrs:
-            class: nogrow s ae accent box border round shadow
-            selector: ask
-        - type: case
+            class: --message box c as gap scrolly
+            scroll: true
+          bind:
+            value:
+              source: chat
+          item:
+          - type: case
+            attrs:
+              class: nogrow s ae accent box border round shadow
+              selector: ask
+          - type: case
+            attrs:
+              class: nogrow s ax box border round shadow
+        - type: float
           attrs:
-            class: nogrow s ax box border round shadow
-      - type: popup
-        bind:
-          value:
-            source: cart
+            class: --cart-container
+          children:
+          - type: popup
+            bind:
+              value:
+                source: cart
+            children:
+            - type: text
+              bind:
+                value:
+                  default: cart
+            - type: text
+              bind:
+                value:
+                  default: cart
       - type: case
         attrs:
           class: --input nogrow box
