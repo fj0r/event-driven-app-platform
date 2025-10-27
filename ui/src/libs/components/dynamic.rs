@@ -1,8 +1,10 @@
 use super::chart::Chart;
 use super::container::*;
 use super::diagram::Diagram;
+use super::float::Float;
 use super::fold::Fold;
 use super::form::Form;
+use super::popup::Popup;
 use super::rack::Rack;
 use super::svg::*;
 use super::widgets::*;
@@ -56,6 +58,7 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
             "input" => rsx!(Input { layout: layout }),
             "select" => rsx!(Select { layout: layout, {children} }),
             "popup" => rsx!(Popup { layout: layout, {children} }),
+            "float" => rsx!(Float { layout: layout, {children} }),
             "text" => {
                 rsx!(Text {
                     id: id,

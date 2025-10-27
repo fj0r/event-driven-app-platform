@@ -11,24 +11,36 @@ data:
         default: chat ****
         source: login
     attrs:
-      class: box shadow nogrow
+      class: --header nogrow
       format: md
   - type: case
     attrs:
       horizontal: true
-      class: shrink
+      class: --body shrink border round
     children:
-    - type: select
-      attrs:
-        class: --channel i jc box nogrow
-      bind:
-        value:
-          event: channel
-        options:
-          source: channel
     - type: case
       attrs:
-        class: shrink
+        class: --leftside nogrow
+      children:
+      - type: text
+        attrs:
+          format: md
+          class: box
+        bind:
+          value:
+            default: '**channel**'
+      - type: select
+        attrs:
+          class: --channel i jc nogrow
+        bind:
+          value:
+            event: channel::select
+            default: '2'
+          options:
+            source: channel::list
+    - type: case
+      attrs:
+        class: main shrink
       children:
       - type: rack
         attrs:
@@ -40,11 +52,15 @@ data:
         item:
         - type: case
           attrs:
-            class: nogrow s ae accent box border shadow
+            class: nogrow s ae accent box border round shadow
             selector: ask
         - type: case
           attrs:
-            class: nogrow s ax box border shadow
+            class: nogrow s ax box border round shadow
+      - type: popup
+        bind:
+          value:
+            source: cart
       - type: case
         attrs:
           class: --input nogrow box
@@ -54,10 +70,7 @@ data:
           attrs:
             horizontal: true
           children:
-          - type: textarea
+          - type: input
             bind:
               value:
                 event: message
-              placeholder:
-                default: send message.
-
