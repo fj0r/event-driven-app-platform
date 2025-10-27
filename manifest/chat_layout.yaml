@@ -11,16 +11,16 @@ data:
         default: chat ****
         source: login
     attrs:
-      class: header box shadow nogrow
+      class: --header nogrow
       format: md
   - type: case
     attrs:
       horizontal: true
-      class: shrink
+      class: --body shrink border round
     children:
     - type: case
       attrs:
-        class: leftside nogrow
+        class: --leftside nogrow
       children:
       - type: text
         attrs:
@@ -28,7 +28,7 @@ data:
           class: box
         bind:
           value:
-            default: '##### channel'
+            default: '**channel**'
       - type: select
         attrs:
           class: --channel i jc nogrow
@@ -52,11 +52,11 @@ data:
         item:
         - type: case
           attrs:
-            class: nogrow s ae accent box border shadow
+            class: nogrow s ae accent box border round shadow
             selector: ask
         - type: case
           attrs:
-            class: nogrow s ax box border shadow
+            class: nogrow s ax box border round shadow
       - type: case
         attrs:
           class: --input nogrow box
