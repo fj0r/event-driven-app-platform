@@ -81,6 +81,7 @@ pub struct Settings {
     pub queue: Queue,
     pub hooks: HookMap,
     pub trace: Log,
+    pub login_with_cookie: bool,
 }
 
 impl Settings {

@@ -20,8 +20,8 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --fg: #fff;
-    --bg: #111;
+    --fg: oklch(0.98 0 0);
+    --bg: oklch(0.15 0 0);
   }
 }
 html {

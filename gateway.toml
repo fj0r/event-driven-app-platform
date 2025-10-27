@@ -1,3 +1,4 @@
+login_with_cookie = true
 [trace]
 format = 'compact'
 

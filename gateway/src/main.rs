@@ -6,6 +6,7 @@ use axum::{
     http::{Response, StatusCode},
     routing::get,
 };
+use axum_extra::extract::cookie::CookieJar;
 use kafka::split_mq;
 use libs::config::{ASSETS_PATH, Config, LogFormat, Settings};
 use libs::shared::{Sender, StateChat};
@@ -69,12 +70,19 @@ async fn main() -> Result<()> {
             "/channel",
             get(
                 |ws: WebSocketUpgrade,
-                 Query(q): Query<Map<String, Value>>,
+                 Query(mut q): Query<Map<String, Value>>,
+                 jar: CookieJar,
                  State(state): State<StateChat<Sender>>| async move {
                     let s = state.settings.read().await;
+                    let login_with_cookie = s.login_with_cookie;
                     let login = &s.hooks.get("login").cloned().unwrap()[0];
                     let logout = s.hooks.get("logout").unwrap()[0].clone();
                     drop(s);
+
+                    if login_with_cookie {
+                        let cookie: Value = jar.iter().map(|c| (c.name(), c.value())).collect();
+                        q.insert("Cookie".to_owned(), cookie);
+                    }
 
                     let Ok(a) = handle_hook(&login, &q, tmpls.clone()).await else {
                         return Response::builder()

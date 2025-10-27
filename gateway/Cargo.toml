@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 anyhow = "1.0.100"
 axum = { version = "0.8.6", features = ["ws", "macros"] }
+axum-extra = { version = "0.10", features = ["cookie"] }
 futures = { version = "0.3.31" }
 rdkafka = { version = "0.37", features = ["cmake-build"] }
 libc = "0.2.177"

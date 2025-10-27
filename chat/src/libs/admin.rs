@@ -191,7 +191,10 @@ async fn login(
         Cow::Owned(ShortUuid::generate().to_string())
     };
     let (id, name) = db.login(&token).await?;
-    info!("login {}: {}\n  token: {:?}", id, name, &token);
+    info!(
+        "login {}: {}\ntoken : {:?}\n{:?}",
+        id, name, &token, payload
+    );
     payload.insert("username".into(), name.into());
     Ok(Json(SessionInfo {
         id: id.as_str().into(),
