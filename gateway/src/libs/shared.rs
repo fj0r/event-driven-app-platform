@@ -15,6 +15,7 @@ use std::{
     },
     ops::Deref,
 };
+use time::OffsetDateTime;
 use tokio::sync::{RwLock, mpsc::UnboundedSender};
 
 #[derive(Clone, Debug)]
@@ -100,6 +101,8 @@ pub type Info = Map<String, Value>;
 #[derive(Debug, Clone)]
 pub struct Client<T> {
     pub sender: T,
+    //pub last_activity: OffsetDateTime,
+    pub created: OffsetDateTime,
     pub info: Info,
 }
 

@@ -15,6 +15,7 @@ use serde_json::to_value;
 use serde_json::{Map, Value};
 use std::fmt::Debug;
 use std::sync::Arc;
+use time::OffsetDateTime;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::sync::{Mutex, RwLock};
 
@@ -72,6 +73,7 @@ pub async fn handle_ws<T>(
         Client {
             sender: tx.clone(),
             info: session.info.clone(),
+            created: OffsetDateTime::now_utc(),
         },
     );
     drop(s);
