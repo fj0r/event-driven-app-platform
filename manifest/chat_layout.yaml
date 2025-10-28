@@ -8,7 +8,7 @@ data:
   - type: text
     bind:
       value:
-        default: **chat**
+        default: '**chat**'
         source: login
     attrs:
       class: --header nogrow

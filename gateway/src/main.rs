@@ -3,7 +3,7 @@ use anyhow::{Ok as Okk, Result, bail};
 use axum::{
     Router,
     extract::{Query, State, ws::WebSocketUpgrade},
-    http::{Response, StatusCode},
+    http::{HeaderMap, Response, StatusCode},
     routing::get,
 };
 use axum_extra::extract::cookie::CookieJar;
