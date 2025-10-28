@@ -23,4 +23,8 @@
         background-color: transparent;
     }
 }
+
+.--cart {
+    border-radius: 2rem;
+}
 /* }}} */
