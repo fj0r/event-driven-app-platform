@@ -68,14 +68,17 @@ pub async fn handle_ws<T>(
     let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<T>();
 
     let mut s = state.session.write().await;
-    s.insert(
+    if let Some(old) = s.insert(
         session.id.clone(),
         Client {
             sender: tx.clone(),
             info: session.info.clone(),
             created: OffsetDateTime::now_utc(),
         },
-    );
+    ) {
+        // TODO: proactively close ws
+        drop(old);
+    };
     drop(s);
 
     tracing::info!("Connection opened for {}", &session.id);
