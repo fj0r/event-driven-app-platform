@@ -18,7 +18,9 @@
 }
 
 .--leftside {
-    background-color: var(--secondary);
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+    background-color: oklch(from var(--secondary) calc(l + 0.05) c h);
+    & * {
+        background-color: transparent;
+    }
 }
 /* }}} */
