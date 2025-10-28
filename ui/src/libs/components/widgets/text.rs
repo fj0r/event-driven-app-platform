@@ -7,7 +7,7 @@ use std::sync::LazyLock;
 
 #[component]
 pub fn Text(id: String, layout: Layout) -> Element {
-    let mut css = vec!["text", "txt", &id];
+    let mut css = vec!["text", &id];
 
     use_common_css(&mut css, &layout);
 

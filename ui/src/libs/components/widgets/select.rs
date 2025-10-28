@@ -32,12 +32,11 @@ pub fn Select(layout: Layout, children: Element) -> Element {
             let key = child.id.clone().unwrap_or(idx.to_string());
             let current = current();
             let mut child = child.clone();
-            child.add_class("f nogrow s ax box");
+            child.add_class("f as-stretch");
             if current == key {
                 child.add_class("selected");
                 rsx! {
                     div {
-                        class: "f",
                         Frame {
                             key: "{key}",
                             layout: child
@@ -51,7 +50,6 @@ pub fn Select(layout: Layout, children: Element) -> Element {
                 };
                 rsx! {
                     div {
-                        class: "f",
                         onclick: mkclick(v),
                         Frame {
                             key: "{key}",

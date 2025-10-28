@@ -1,11 +1,7 @@
-#![allow(unused_imports)]
 use crate::libs::components::Frame;
-use crate::libs::hooks::{use_common_css, use_source_value};
+use crate::libs::hooks::use_common_css;
 use dioxus::prelude::*;
-use layout::{Bind, JsType, Layout};
-use serde_json::{Value, to_value};
-use std::ops::Deref;
-use std::rc::Rc;
+use layout::Layout;
 
 #[component]
 pub fn Popup(layout: Layout, children: Element) -> Element {
