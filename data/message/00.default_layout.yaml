@@ -30,7 +30,7 @@ data:
             submit: true
   - type: rack
     attrs:
-      class: box c as gap scrolly
+      class: box ac-start gap scrolly
       scroll: true
     bind:
       value:
@@ -38,11 +38,11 @@ data:
     item:
     - type: case
       attrs:
-        class: box border shadow nogrow s ae accent
+        class: box border shadow nogrow as-end accent
         selector: ask
     - type: case
       attrs:
-        class: box border shadow nogrow s as
+        class: box border shadow nogrow as-start
   - type: case
     attrs:
       class: nogrow box

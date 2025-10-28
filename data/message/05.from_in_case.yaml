@@ -9,7 +9,7 @@ data:
       class: gap md
     children:
     - attrs:
-        class: i ac box border
+        class: ai-center box border
       type: text
       bind:
         value:

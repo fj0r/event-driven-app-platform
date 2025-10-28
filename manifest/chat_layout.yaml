@@ -31,7 +31,7 @@ data:
             default: '**channel**'
       - type: select
         attrs:
-          class: --channel i jc nogrow
+          class: --channel ji-center nogrow
         bind:
           value:
             event: channel::select
@@ -46,7 +46,7 @@ data:
         children:
         - type: rack
           attrs:
-            class: --message box c as gap scrolly
+            class: --message box ac-start gap scrolly
             scroll: true
           bind:
             value:
@@ -54,11 +54,11 @@ data:
           item:
           - type: case
             attrs:
-              class: nogrow s ae accent box border round shadow
+              class: nogrow as-end accent box border round shadow
               selector: ask
           - type: case
             attrs:
-              class: nogrow s ax box border round shadow
+              class: nogrow as-stretch box border round shadow
         - type: float
           attrs:
             bottom: '0.2rem'

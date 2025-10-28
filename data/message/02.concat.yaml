@@ -5,7 +5,7 @@ data:
   type: case
   id: ""
   attrs:
-    class: f v gap xxx md
+    class: f col gap xxx md
   children:
   - type: text
     attrs:

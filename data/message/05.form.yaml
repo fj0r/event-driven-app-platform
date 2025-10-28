@@ -10,7 +10,7 @@ data:
     children:
       - type: text
         attrs:
-            class: i ac
+            class: ai-center
         bind:
           value:
             default: confirm order

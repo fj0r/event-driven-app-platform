@@ -18,7 +18,7 @@ pub fn use_common_css<'a, 'b: 'a>(css: &'a mut Vec<&'b str>, layout: &'b Layout)
         }
     }
     if v {
-        css.push("v");
+        css.push("col");
     }
 }
 
