@@ -1,4 +1,4 @@
-use super::{Attrs, Direction, Layout, PosH, PosV, Position};
+use super::{Attrs, Direction, Layout, PosH, PosV, Position, Size};
 use regex::Regex;
 use std::convert::AsRef;
 
@@ -80,5 +80,18 @@ impl Direction {
             Direction::R => format!("flex-direction: row"),
             Direction::L => format!("flex-direction: row-reverse"),
         }
+    }
+}
+
+impl Size {
+    pub fn into_style(&self) -> String {
+        let mut s = String::new();
+        if let Some(h) = &self.height {
+            s.push_str(&format!("height: {};", h));
+        };
+        if let Some(w) = &self.width {
+            s.push_str(&format!("width: {};", w));
+        };
+        s
     }
 }

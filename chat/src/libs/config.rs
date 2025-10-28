@@ -3,6 +3,7 @@ use figment::{
     Figment, Result,
     providers::{Env, Format, Toml},
 };
+use indexmap::IndexMap;
 use kafka::config::Queue;
 use serde::{Deserialize, Serialize};
 use serde_with::{OneOrMany, serde_as};
@@ -111,7 +112,7 @@ impl<'a> IntoIterator for &'a Hooks {
     }
 }
 
-pub type HookMap = HashMap<String, Hooks>;
+pub type HookMap = IndexMap<String, Hooks>;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Gateway {

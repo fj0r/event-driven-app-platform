@@ -49,6 +49,13 @@ pub enum Direction {
     R,
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub struct Size {
+    pub width: Option<String>,
+    pub height: Option<String>,
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Attrs {
@@ -67,6 +74,9 @@ pub struct Attrs {
     pub position: Option<Position>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub direction: Option<Direction>,
+    #[serde(flatten)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub size: Option<Size>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

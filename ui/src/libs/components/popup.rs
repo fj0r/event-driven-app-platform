@@ -27,12 +27,13 @@ pub fn Popup(layout: Layout, children: Element) -> Element {
                 class: css.join(" "),
                 style: style,
                 div {
+                    class: "f",
                     Frame {
                         layout: placeholder.clone()
                     }
                 }
                 div {
-                    class: "body",
+                    class: "f body",
                     Frame {
                         layout: modal.clone()
                     }

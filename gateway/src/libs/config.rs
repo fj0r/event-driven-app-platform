@@ -2,6 +2,7 @@ use figment::{
     Figment, Result,
     providers::{Env, Format, Toml},
 };
+use indexmap::IndexMap;
 use kafka::config::Queue;
 use notify::{Event, RecursiveMode, Result as ResultN, Watcher, recommended_watcher};
 use serde::{Deserialize, Serialize};
@@ -57,7 +58,7 @@ fn default_accept() -> String {
     "application/json".to_owned()
 }
 
-pub type HookMap = HashMap<String, Hooks>;
+pub type HookMap = IndexMap<String, Hooks>;
 
 pub const ASSETS_PATH: &str = "manifest";
 

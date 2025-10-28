@@ -6,8 +6,16 @@ use layout::{Layout, Settings};
 pub fn Svg(layout: Layout, children: Element) -> Element {
     let mut css = vec!["svg"];
     use_common_css(&mut css, &layout);
+    let style = if let Some(a) = &layout.attrs
+        && let Some(s) = &a.size
+    {
+        s.into_style()
+    } else {
+        "".to_owned()
+    };
     rsx! {
         svg {
+            style: style,
             class: css.join(" "),
             {children}
         }

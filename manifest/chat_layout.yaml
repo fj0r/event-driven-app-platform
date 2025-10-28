@@ -72,10 +72,9 @@ data:
               value:
                 source: cart
             children:
-            - type: text
-              bind:
-                value:
-                  default: cart
+            - render:
+                name: cart
+                data: []
             - type: case
               children:
               - type: text

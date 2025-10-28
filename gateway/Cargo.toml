@@ -32,3 +32,4 @@ listenfd = "1.0.2"
 message = { path = "../message" }
 kafka = { path = "../kafka" }
 bon = "3.8.1"
+indexmap = { version = "2.12.0", features = ["serde"] }

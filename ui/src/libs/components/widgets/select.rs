@@ -37,6 +37,7 @@ pub fn Select(layout: Layout, children: Element) -> Element {
                 child.add_class("selected");
                 rsx! {
                     div {
+                        class: "f",
                         Frame {
                             key: "{key}",
                             layout: child
@@ -50,6 +51,7 @@ pub fn Select(layout: Layout, children: Element) -> Element {
                 };
                 rsx! {
                     div {
+                        class: "f",
                         onclick: mkclick(v),
                         Frame {
                             key: "{key}",

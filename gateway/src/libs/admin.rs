@@ -8,6 +8,7 @@ use axum::{
     response::{IntoResponse, Response},
     routing::{get, post},
 };
+use indexmap::IndexMap;
 use kafka::Created;
 use message::{
     Envelope,
@@ -157,7 +158,7 @@ pub fn debug_router() -> Router<StateChat<Sender>> {
 
 async fn list_hook(
     State(settings): State<Arw<Settings>>,
-) -> HttpResult<(StatusCode, Json<HashMap<String, Hooks>>)> {
+) -> HttpResult<(StatusCode, Json<IndexMap<String, Hooks>>)> {
     let s = settings.read().await.clone();
     Ok((StatusCode::OK, Json(s.hooks)))
 }

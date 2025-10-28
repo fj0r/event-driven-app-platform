@@ -66,16 +66,15 @@ data:
           children:
           - type: popup
             attrs:
-              class: box border round shadow primary
+              class: --cart box border shadow primary
               direction: U
             bind:
               value:
                 source: cart
             children:
-            - type: text
-              bind:
-                value:
-                  default: cart
+            - render:
+                name: cart
+                data: []
             - type: case
               children:
               - type: text
