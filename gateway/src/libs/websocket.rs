@@ -19,6 +19,7 @@ use std::sync::Arc;
 use time::OffsetDateTime;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::sync::{Mutex, RwLock};
+use tokio_util::sync::CancellationToken;
 
 /* TODO:
 use std::async_iter;
@@ -63,30 +64,31 @@ pub async fn handle_ws<T>(
         + Send
         + 'static,
 {
-    let setting1 = settings.read().await;
+    let setting_reader = settings.read().await;
     let (mut sender, mut receiver) = socket.split();
 
     let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<T>();
-    let (term_tx, mut term_rx) = tokio::sync::mpsc::channel(1);
+    let cancel = CancellationToken::new();
 
-    let mut s = state.session.write().await;
     let new_client = Client {
         sender: tx.clone(),
-        term: term_tx,
+        cancel: cancel.clone(),
         info: session.info.clone(),
         created: OffsetDateTime::now_utc(),
     };
-    match s.entry(session.id.clone()) {
-        Entry::Occupied(mut e) => {
-            let g = e.get_mut();
-            let _ = g.term.send(true).await;
-            *g = new_client;
-        }
-        Entry::Vacant(e) => {
-            e.insert(new_client);
+    {
+        let mut s = state.session.write().await;
+        match s.entry(session.id.clone()) {
+            Entry::Occupied(mut e) => {
+                let g = e.get_mut();
+                g.cancel.cancel();
+                *g = new_client;
+            }
+            Entry::Vacant(e) => {
+                e.insert(new_client);
+            }
         }
     }
-    drop(s);
 
     tracing::info!("Connection opened for {}", &session.id);
 
@@ -94,7 +96,7 @@ pub async fn handle_ws<T>(
     context.insert("session_id".into(), session.id.clone().into());
     context.insert("info".into(), Value::Object(session.info.clone()));
 
-    if let Some(greet) = setting1.hooks.get("greet") {
+    if let Some(greet) = setting_reader.hooks.get("greet") {
         for g in greet.iter() {
             match handle_greet::<T>(g, &context, tmpls.clone()).await {
                 Ok(payload) => {
@@ -111,8 +113,23 @@ pub async fn handle_ws<T>(
         }
     }
 
-    let replaced = Arc::new(Mutex::new(false));
-    let r1 = replaced.clone();
+    let sid_cloned = session.id.clone();
+    let r_state = state.clone();
+    let r_token = cancel.clone();
+
+    tokio::spawn(async move {
+        r_token.cancelled().await;
+
+        let mut s = r_state.session.write().await;
+        if let Some(client) = s.get(&sid_cloned) {
+            if client.cancel.is_cancelled() {
+                // tracing::info!(".......");
+                s.remove(&sid_cloned);
+            }
+        }
+    });
+
+    let cancel = cancel.clone();
     let mut send_task = tokio::spawn(async move {
         loop {
             tokio::select! {
@@ -127,21 +144,20 @@ pub async fn handle_ws<T>(
                         break;
                     }
                 },
-                Some(_) = term_rx.recv() => {
-                    *r1.lock().await = true;
-                    let _ = sender.close().await;
+                _ = cancel.cancelled() => {
+                    break;
                 },
                 else => {}
             }
         }
+        let _ = sender.close().await;
         Okk(())
     });
 
     let sid_cloned = session.id.clone();
-    let hooks = setting1.hooks.clone();
-    drop(setting1); // release lock
+    let hooks = setting_reader.hooks.clone();
+    drop(setting_reader); // release lock
     let mut recv_task = tokio::spawn(async move {
-        #[allow(unused_mut)]
         let mut sid = sid_cloned;
 
         while let Some(Ok(msg)) = receiver.next().await {
@@ -187,10 +203,6 @@ pub async fn handle_ws<T>(
     };
 
     tracing::info!("Connection closed for {}", &session.id);
-    if !*replaced.lock().await {
-        let mut s = state.session.write().await;
-        s.remove(&session.id);
-    };
 }
 
 use message::{ChatMessage, Envelope};

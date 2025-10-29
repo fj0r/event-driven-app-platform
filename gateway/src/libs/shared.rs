@@ -102,10 +102,11 @@ impl<T> Shared<T> {
 
 pub type Info = Map<String, Value>;
 
+use tokio_util::sync::CancellationToken;
 #[derive(Debug, Clone)]
 pub struct Client<T> {
     pub sender: T,
-    pub term: tokio::sync::mpsc::Sender<bool>,
+    pub cancel: CancellationToken,
     //pub last_activity: OffsetDateTime,
     pub created: OffsetDateTime,
     pub info: Info,
