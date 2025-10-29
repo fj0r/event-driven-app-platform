@@ -78,8 +78,9 @@ pub async fn handle_ws<T>(
     };
     match s.entry(session.id.clone()) {
         Entry::Occupied(mut e) => {
-            let _ = e.get().term.send(true).await;
-            *e.get_mut() = new_client;
+            let g = e.get_mut();
+            let _ = g.term.send(true).await;
+            *g = new_client;
         }
         Entry::Vacant(e) => {
             e.insert(new_client);
@@ -110,6 +111,8 @@ pub async fn handle_ws<T>(
         }
     }
 
+    let replaced = Arc::new(Mutex::new(false));
+    let r1 = replaced.clone();
     let mut send_task = tokio::spawn(async move {
         loop {
             tokio::select! {
@@ -125,6 +128,7 @@ pub async fn handle_ws<T>(
                     }
                 },
                 Some(_) = term_rx.recv() => {
+                    *r1.lock().await = true;
                     let _ = sender.close().await;
                 },
                 else => {}
@@ -183,8 +187,10 @@ pub async fn handle_ws<T>(
     };
 
     tracing::info!("Connection closed for {}", &session.id);
-    let mut s = state.session.write().await;
-    s.remove(&session.id);
+    if !*replaced.lock().await {
+        let mut s = state.session.write().await;
+        s.remove(&session.id);
+    };
 }
 
 use message::{ChatMessage, Envelope};
