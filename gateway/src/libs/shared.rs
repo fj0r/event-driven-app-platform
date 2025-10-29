@@ -57,6 +57,10 @@ impl<T> SessionManager<T> {
     pub fn entry(&mut self, k: Session) -> Entry<'_, Session, T> {
         self.map.entry(k)
     }
+
+    pub fn keys(&self) -> Vec<&Session> {
+        self.map.keys().collect()
+    }
 }
 
 pub type Arw<T> = Arc<RwLock<T>>;
@@ -101,6 +105,7 @@ pub type Info = Map<String, Value>;
 #[derive(Debug, Clone)]
 pub struct Client<T> {
     pub sender: T,
+    pub term: tokio::sync::mpsc::Sender<bool>,
     //pub last_activity: OffsetDateTime,
     pub created: OffsetDateTime,
     pub info: Info,

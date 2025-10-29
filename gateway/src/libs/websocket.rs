@@ -13,6 +13,7 @@ use message::{
 use serde::{Deserialize, Serialize};
 use serde_json::to_value;
 use serde_json::{Map, Value};
+use std::collections::hash_map::Entry;
 use std::fmt::Debug;
 use std::sync::Arc;
 use time::OffsetDateTime;
@@ -66,19 +67,24 @@ pub async fn handle_ws<T>(
     let (mut sender, mut receiver) = socket.split();
 
     let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<T>();
+    let (term_tx, mut term_rx) = tokio::sync::mpsc::channel(1);
 
     let mut s = state.session.write().await;
-    if let Some(old) = s.insert(
-        session.id.clone(),
-        Client {
-            sender: tx.clone(),
-            info: session.info.clone(),
-            created: OffsetDateTime::now_utc(),
-        },
-    ) {
-        // TODO: proactively close ws
-        drop(old);
+    let new_client = Client {
+        sender: tx.clone(),
+        term: term_tx,
+        info: session.info.clone(),
+        created: OffsetDateTime::now_utc(),
     };
+    match s.entry(session.id.clone()) {
+        Entry::Occupied(mut e) => {
+            let _ = e.get().term.send(true).await;
+            *e.get_mut() = new_client;
+        }
+        Entry::Vacant(e) => {
+            e.insert(new_client);
+        }
+    }
     drop(s);
 
     tracing::info!("Connection opened for {}", &session.id);
@@ -105,15 +111,23 @@ pub async fn handle_ws<T>(
     }
 
     let mut send_task = tokio::spawn(async move {
-        while let Some(msg) = rx.recv().await {
-            let text = serde_json::to_string(&msg)?;
-            // to ws client
-            if sender
-                .send(axum::extract::ws::Message::Text(text.into()))
-                .await
-                .is_err()
-            {
-                break;
+        loop {
+            tokio::select! {
+                Some(msg) = rx.recv() => {
+                    let text = serde_json::to_string(&msg)?;
+                    // to ws client
+                    if sender
+                        .send(axum::extract::ws::Message::Text(text.into()))
+                        .await
+                        .is_err()
+                    {
+                        break;
+                    }
+                },
+                Some(_) = term_rx.recv() => {
+                    let _ = sender.close().await;
+                },
+                else => {}
             }
         }
         Okk(())
