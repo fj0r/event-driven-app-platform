@@ -72,7 +72,7 @@ pub async fn handle_ws<T>(
     let mut s = state.session.write().await;
     let new_client = Client {
         sender: tx.clone(),
-        term: term_tx,
+        term: term_tx.clone(),
         info: session.info.clone(),
         created: OffsetDateTime::now_utc(),
     };
@@ -128,12 +128,13 @@ pub async fn handle_ws<T>(
                     }
                 },
                 Some(_) = term_rx.recv() => {
-                    *r1.lock().await = true;
-                    let _ = sender.close().await;
+                    break;
                 },
                 else => {}
             }
         }
+        *r1.lock().await = true;
+        let _ = sender.close().await;
         Okk(())
     });
 
@@ -182,13 +183,16 @@ pub async fn handle_ws<T>(
     });
 
     tokio::select! {
-        _ = &mut recv_task => recv_task.abort(),
+        _ = &mut recv_task => {
+            let _ = term_tx.send(true).await;
+        },
         _ = &mut send_task => send_task.abort(),
     };
 
     tracing::info!("Connection closed for {}", &session.id);
     if !*replaced.lock().await {
         let mut s = state.session.write().await;
+        tracing::info!("Remove session: {}", &session.id);
         s.remove(&session.id);
     };
 }
