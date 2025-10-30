@@ -8,7 +8,7 @@ use axum::{
 };
 use axum_extra::extract::cookie::CookieJar;
 use kafka::split_mq;
-use libs::config::{ASSETS_PATH, Config, LogFormat, Settings};
+use libs::config::{ASSETS_PATH, Config, LiveConfig, LogFormat};
 use libs::shared::{Sender, StateChat};
 use libs::template::Tmpls;
 use libs::websocket::{handle_ws, send_to_ws};
@@ -26,14 +26,14 @@ use tracing_subscriber::{
 #[tokio::main]
 async fn main() -> Result<()> {
     #[allow(unused_mut)]
-    let mut config = Config::new()?;
+    let mut config = LiveConfig::new()?;
     // config.listen().await.unwrap();
     dbg!(&config.data);
 
-    let settings = Settings::new()?;
+    let config = Config::new()?;
     // console_subscriber::init();
     let filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"));
-    match &settings.trace.format {
+    match &config.trace.format {
         LogFormat::compact => {
             registry().with(layer().compact()).with(filter).init();
         }
@@ -42,13 +42,13 @@ async fn main() -> Result<()> {
         }
     };
 
-    let settings = Arc::new(RwLock::new(settings));
-    //dbg!(&settings);
+    let config = Arc::new(RwLock::new(config));
+    //dbg!(&config);
     let tmpls: Arc<Tmpls<'static>> = Arc::new(Tmpls::new(ASSETS_PATH).unwrap());
 
-    let shared = StateChat::<Sender>::new(settings.clone());
+    let shared = StateChat::<Sender>::new(config.clone());
 
-    let queue = settings.read().await.queue.clone();
+    let queue = config.read().await.queue.clone();
 
     let (outgo_tx, income_rx) = if !queue.disable {
         split_mq(queue).await
@@ -73,7 +73,7 @@ async fn main() -> Result<()> {
                  Query(mut q): Query<Map<String, Value>>,
                  jar: CookieJar,
                  State(state): State<StateChat<Sender>>| async move {
-                    let s = state.settings.read().await;
+                    let s = state.config.read().await;
                     let login_with_cookie = s.login_with_cookie;
                     let login = &s.hooks.get("login").cloned().unwrap()[0];
                     let logout = s.hooks.get("logout").unwrap()[0].clone();
@@ -91,7 +91,7 @@ async fn main() -> Result<()> {
                             .unwrap();
                     };
                     ws.on_upgrade(async move |socket| {
-                        handle_ws(socket, tx, state, settings, tmpls.clone(), &a).await;
+                        handle_ws(socket, tx, state, config, tmpls.clone(), &a).await;
                         let _ = handle_hook::<Value>(&logout, &a.into(), tmpls.clone()).await;
                     })
                 },

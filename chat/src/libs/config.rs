@@ -7,7 +7,6 @@ use indexmap::IndexMap;
 use kafka::config::Queue;
 use serde::{Deserialize, Serialize};
 use serde_with::{OneOrMany, serde_as};
-use std::collections::HashMap;
 use std::ops::Deref;
 
 #[derive(Debug, Deserialize, Clone)]

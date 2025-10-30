@@ -1,4 +1,4 @@
-use super::config::Settings;
+use super::config::Config;
 use axum::extract::FromRef;
 use kafka::Created;
 use message::{
@@ -69,7 +69,7 @@ pub type Arw<T> = Arc<RwLock<T>>;
 pub struct Shared<T> {
     pub session: Arw<SessionManager<T>>,
     pub count: Arw<SessionCount>,
-    pub settings: Arw<Settings>,
+    pub config: Arw<Config>,
 }
 
 impl<T: Clone> FromRef<Shared<T>> for Arw<SessionManager<T>> {
@@ -84,18 +84,18 @@ impl<T> FromRef<Shared<T>> for Arw<SessionCount> {
     }
 }
 
-impl<T> FromRef<Shared<T>> for Arw<Settings> {
+impl<T> FromRef<Shared<T>> for Arw<Config> {
     fn from_ref(input: &Shared<T>) -> Self {
-        input.settings.clone()
+        input.config.clone()
     }
 }
 
 impl<T> Shared<T> {
-    pub fn new(settings: Arw<Settings>) -> Self {
+    pub fn new(config: Arw<Config>) -> Self {
         Shared {
             session: Arc::new(RwLock::new(SessionManager::new())),
             count: Arc::new(RwLock::new(SessionCount::default())),
-            settings,
+            config,
         }
     }
 }

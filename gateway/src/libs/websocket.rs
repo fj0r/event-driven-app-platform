@@ -1,4 +1,4 @@
-use super::config::{Hook, Settings};
+use super::config::{Config, Hook};
 use super::shared::{Client, StateChat};
 use super::template::Tmpls;
 use super::webhooks::{handle_hook, webhook_post};
@@ -50,7 +50,7 @@ pub async fn handle_ws<T>(
     socket: WebSocket,
     outgo_tx: UnboundedSender<T>,
     state: StateChat<UnboundedSender<T>>,
-    settings: Arc<RwLock<Settings>>,
+    config: Arc<RwLock<Config>>,
     tmpls: Arc<Tmpls<'static>>,
     session: &SessionInfo,
 ) where
@@ -63,7 +63,7 @@ pub async fn handle_ws<T>(
         + Send
         + 'static,
 {
-    let setting1 = settings.read().await;
+    let config_reader = config.read().await;
     let (mut sender, mut receiver) = socket.split();
 
     let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<T>();
@@ -94,7 +94,7 @@ pub async fn handle_ws<T>(
     context.insert("session_id".into(), session.id.clone().into());
     context.insert("info".into(), Value::Object(session.info.clone()));
 
-    if let Some(greet) = setting1.hooks.get("greet") {
+    if let Some(greet) = config_reader.hooks.get("greet") {
         for g in greet.iter() {
             match handle_greet::<T>(g, &context, tmpls.clone()).await {
                 Ok(payload) => {
@@ -139,8 +139,8 @@ pub async fn handle_ws<T>(
     });
 
     let sid_cloned = session.id.clone();
-    let hooks = setting1.hooks.clone();
-    drop(setting1); // release lock
+    let hooks = config_reader.hooks.clone();
+    drop(config_reader); // release lock
     let mut recv_task = tokio::spawn(async move {
         #[allow(unused_mut)]
         let mut sid = sid_cloned;
