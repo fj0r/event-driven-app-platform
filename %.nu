@@ -18,186 +18,6 @@ def wait-cmd [action -i: duration = 1sec  -t: string='waiting'] {
     }
 }
 
-module ui {
-    export def up [] {
-        let t = open $CFG | get dx
-        cd ui
-        ^dx serve --port $t.port
-    }
-
-    export def build [] {
-        cd ui
-        rm -rf target/dx/ui/release/web/public/
-        ^dx build --web --release
-        dust target/dx/ui/release/web/public/
-    }
-
-    export def 'border flashing' [] {
-        for _ in 1.. {
-            for i in [primary, disable, secondary, accent] {
-                sleep 0.2sec
-                send 00.chat.layout.yaml -p {
-                    data: {
-                        children: [
-                            {},
-                            {item:
-                                [
-                                    {},
-                                    {attrs: {class: $'box border shadow nogrow s as ($i)'}}
-                                ]
-                            }
-                        ]
-                    }
-                }
-            }
-        }
-    }
-
-
-
-    export def 'message concat' [] {
-        for _ in 1.. {
-            send 02.concat.yaml
-            sleep 0.8sec
-        }
-    }
-
-    export def 'message replace' [] {
-        for _ in 1.. {
-            send 02.replace.yaml
-            sleep 0.8sec
-        }
-    }
-
-    export def 'export css' [] {
-        use git *
-        use git/shortcut.nu *
-        use lg
-        lg level 1 'begin'
-        cp ui/assets/main.css ../ydncf/index.css
-        let msg = git-last-commit
-        let msg = $"($msg.message)\n\n($msg.body)"
-        cd ../ydncf
-        if (git-changes | is-not-empty) {
-            git add .
-            git commit -m $msg
-            git push
-        }
-        lg level 1 'end'
-    }
-}
-
-module hooks {
-    def cmpl-reg [] {
-        open $CFG | get hooks | columns
-    }
-
-    export def list [] {
-        let c = open $CFG | get server
-        http get $"http://($c.host)/config/hooks"
-    }
-
-    export def upload [name: string@cmpl-reg] {
-        let c = open $CFG
-        let d = $c | get hooks | get $name
-        let h = $c.server.host
-        for i in ($d | transpose k v) {
-            http post --allow-errors --content-type application/json $"http://($h)/config/hooks/($i.k)" $i.v
-        }
-    }
-}
-
-module chat {
-    export def up [
-        --pg
-    ] {
-        if $pg {
-            pg up
-        }
-        cargo run --bin chat
-    }
-
-    export def 'container up' [
-        --external: string@cmpl-external = 'host.docker.internal'
-    ] {
-        let image = 'ghcr.io/fj0r/edap:chat'
-        ^$env.CNTRCTL pull $image
-        let config = mktemp -t --suffix chat
-        open -r chat.toml
-        | str replace -a localhost $external
-        | save -f $config
-        ^$env.CNTRCTL run ...[
-            --name edap-chat
-            --rm -it
-            -p 3003:3003
-            -v $"($config):/app/chat.toml"
-            -w /app
-            $image
-            /app/chat
-        ]
-    }
-
-
-    export def build [] {
-        cargo build --release --bin chat
-    }
-}
-
-module gw {
-    export def up [
-        --rpk
-        --external: string@cmpl-external = 'localhost'
-    ] {
-        if $rpk {
-            rpk up --external $external
-        }
-        cargo run --bin gateway
-        watch gateway --glob **/*.rs -q {|op, path, newPath|
-            if $op not-in ['Write'] { return }
-
-            let x = ps -l | where command == target/debug/gateway
-            if ($x | is-not-empty) {
-                kill $x.pid
-            }
-            cargo run --bin gateway
-        }
-    }
-
-    export def 'container up' [
-        --external: string@cmpl-external = 'host.docker.internal'
-    ] {
-        let image = 'ghcr.io/fj0r/edap:gateway'
-        ^$env.CNTRCTL pull $image
-        ^$env.CNTRCTL run ...[
-            --name edap-gateway
-            --rm -it
-            -p 3000:3000
-            -e $"GATEWAY_QUEUE_OUTGO_BROKER=[($external):19092]"
-            -e $"GATEWAY_QUEUE_INCOME_BROKER=[($external):19092]"
-            -w /app
-            $image
-            /app/gateway
-        ]
-    }
-
-    export def build [] {
-        $env.RUSTFLAGS = "--cfg tokio_unstable"
-        cargo build --release --bin gateway
-    }
-
-    export def profile [] {
-        cargo profiler callgrind --bin target/release/gateway
-        kcachegrind callgrind.out
-        rm callgrind.out
-    }
-
-    export def client [] {
-        let c = open $CFG
-        websocat $"ws://($c.server.host)/channel"
-    }
-
-}
-
 module pg {
     export def cli [query? --db:string = 'chat'] {
         let q = $in
@@ -255,7 +75,7 @@ module pg {
         }
         let cfg = open $CHAT | get database
         dcr chat_db
-        pg start
+        start
         wait-cmd -t 'wait postgresql' {
             ^$env.CNTRCTL ...[
                 exec chat_db
@@ -381,7 +201,7 @@ module rpk  {
         --external: string@cmpl-external = 'localhost'
     ] {
         dcr redpanda
-        rpk start --external $external
+        start --external $external
 
         wait-cmd -t 'wait redpanda' {
             ^$env.CNTRCTL ...[
@@ -391,15 +211,15 @@ module rpk  {
         }
 
         let s = open $GW
-        rpk topic create $s.queue.outgo.topic
-        rpk topic create $s.queue.income.topic.0
+        topic create $s.queue.outgo.topic
+        topic create $s.queue.income.topic.0
 
         if $product {
-            rpk send --topic $s.queue.outgo.topic (open data/message/event.yaml)
+            send --topic $s.queue.outgo.topic (open data/message/event.yaml)
         }
 
         if $consume {
-            rpk consume $s.queue.outgo.topic
+            consume $s.queue.outgo.topic
         }
     }
 }
@@ -438,6 +258,189 @@ module iggy {
             ^$env.CNTRCTL ...$args
         }
     }
+}
+
+module ui {
+    export def up [] {
+        let t = open $CFG | get dx
+        cd ui
+        ^dx serve --port $t.port
+    }
+
+    export def build [] {
+        cd ui
+        rm -rf target/dx/ui/release/web/public/
+        ^dx build --web --release
+        dust target/dx/ui/release/web/public/
+    }
+
+    export def 'border flashing' [] {
+        for _ in 1.. {
+            for i in [primary, disable, secondary, accent] {
+                sleep 0.2sec
+                send 00.chat.layout.yaml -p {
+                    data: {
+                        children: [
+                            {},
+                            {item:
+                                [
+                                    {},
+                                    {attrs: {class: $'box border shadow nogrow s as ($i)'}}
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    export def 'message concat' [] {
+        for _ in 1.. {
+            send 02.concat.yaml
+            sleep 0.8sec
+        }
+    }
+
+    export def 'message replace' [] {
+        for _ in 1.. {
+            send 02.replace.yaml
+            sleep 0.8sec
+        }
+    }
+
+    export def 'export css' [] {
+        use git *
+        use git/shortcut.nu *
+        use lg
+        lg level 1 'begin'
+        cp ui/assets/main.css ../ydncf/index.css
+        let msg = git-last-commit
+        let msg = $"($msg.message)\n\n($msg.body)"
+        cd ../ydncf
+        if (git-changes | is-not-empty) {
+            git add .
+            git commit -m $msg
+            git push
+        }
+        lg level 1 'end'
+    }
+}
+
+module hooks {
+    def cmpl-reg [] {
+        open $CFG | get hooks | columns
+    }
+
+    export def list [] {
+        let c = open $CFG | get server
+        http get $"http://($c.host)/config/hooks"
+    }
+
+    export def upload [name: string@cmpl-reg] {
+        let c = open $CFG
+        let d = $c | get hooks | get $name
+        let h = $c.server.host
+        for i in ($d | transpose k v) {
+            http post --allow-errors --content-type application/json $"http://($h)/config/hooks/($i.k)" $i.v
+        }
+    }
+}
+
+module chat {
+    use pg
+    export def up [
+        --pg
+    ] {
+        if $pg {
+            pg up
+        }
+        cargo run --bin chat
+    }
+
+    export def 'container up' [
+        --external: string@cmpl-external = 'host.docker.internal'
+    ] {
+        let image = 'ghcr.io/fj0r/edap:chat'
+        ^$env.CNTRCTL pull $image
+        let config = mktemp -t --suffix chat
+        open -r chat.toml
+        | str replace -a localhost $external
+        | save -f $config
+        ^$env.CNTRCTL run ...[
+            --name edap-chat
+            --rm -it
+            -p 3003:3003
+            -v $"($config):/app/chat.toml"
+            -w /app
+            $image
+            /app/chat
+        ]
+    }
+
+
+    export def build [] {
+        cargo build --release --bin chat
+    }
+}
+
+module gw {
+    use rpk
+
+    export def up [
+        --rpk
+        --external: string@cmpl-external = 'localhost'
+    ] {
+        if $rpk {
+            rpk up --external $external
+        }
+        cargo run --bin gateway
+        watch gateway --glob **/*.rs -q {|op, path, newPath|
+            if $op not-in ['Write'] { return }
+
+            let x = ps -l | where command == target/debug/gateway
+            if ($x | is-not-empty) {
+                kill $x.pid
+            }
+            cargo run --bin gateway
+        }
+    }
+
+    export def 'container up' [
+        --external: string@cmpl-external = 'host.docker.internal'
+    ] {
+        let image = 'ghcr.io/fj0r/edap:gateway'
+        ^$env.CNTRCTL pull $image
+        ^$env.CNTRCTL run ...[
+            --name edap-gateway
+            --rm -it
+            -p 3000:3000
+            -e $"GATEWAY_QUEUE_OUTGO_BROKER=[($external):19092]"
+            -e $"GATEWAY_QUEUE_INCOME_BROKER=[($external):19092]"
+            -w /app
+            $image
+            /app/gateway
+        ]
+    }
+
+    export def build [] {
+        $env.RUSTFLAGS = "--cfg tokio_unstable"
+        cargo build --release --bin gateway
+    }
+
+    export def profile [] {
+        cargo profiler callgrind --bin target/release/gateway
+        kcachegrind callgrind.out
+        rm callgrind.out
+    }
+
+    export def client [] {
+        let c = open $CFG
+        websocat $"ws://($c.server.host)/channel"
+    }
+
 }
 
 module test { 

@@ -64,31 +64,11 @@ data:
             bottom: '0.2rem'
             left: '1rem'
           children:
-          - type: popup
-            attrs:
-              class: --cart box border shadow primary
-              direction: U
+          - type: placeholder
             bind:
               value:
-                source: cart
-            children:
-            - render:
-                name: cart
-                data: {}
-            - type: case
-              children:
-              - type: text
-                bind:
-                  value:
-                    default: a
-              - type: text
-                bind:
-                  value:
-                    default: b
-              - type: text
-                bind:
-                  value:
-                    default: c
+                source: float
+
       - type: case
         attrs:
           class: --input nogrow box
