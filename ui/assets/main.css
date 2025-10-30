@@ -820,11 +820,13 @@ td {
 }
 
 .fade-in-and-out {
-    animation-name: fadeInThenOut;
-    animation-duration: 0.6s;
-    animation-iteration-count: 1;
-    animation-fill-mode: forwards;
-    transition-timing-function: ease;
+    & > * {
+        animation-name: fadeInThenOut;
+        animation-duration: 0.6s;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+        transition-timing-function: ease;
+    }
 }
 /* }}} */
 /*** COMPONENTS ***/
