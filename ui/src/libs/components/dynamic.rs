@@ -29,7 +29,7 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
                 rsx!(Case { id: id, layout: layout, {children} })
             }
             "fold" => rsx!(Fold { id: id, layout: layout, {children} }),
-            "switch" => rsx!(Switch { layout: layout, {children} }),
+            "placeholder" => rsx!(Placeholder { layout: layout, {children} }),
             "rack" => {
                 let mut tc = RACK_ID.lock().unwrap();
                 *tc += 1;
