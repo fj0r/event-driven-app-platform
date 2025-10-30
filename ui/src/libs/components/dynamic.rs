@@ -16,6 +16,7 @@ static COMPONENT_ID: LazyLock<Mutex<u64>> = LazyLock::new(|| Mutex::new(0));
 static DIAGRAM_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
 static CHART_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
 static RACK_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
+static PLACEHOLDER_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
 
 #[component]
 pub fn Dynamic(layout: Layout, children: Element) -> Element {
@@ -29,7 +30,12 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
                 rsx!(Case { id: id, layout: layout, {children} })
             }
             "fold" => rsx!(Fold { id: id, layout: layout, {children} }),
-            "placeholder" => rsx!(Placeholder { layout: layout, {children} }),
+            "placeholder" => {
+                let mut tc = PLACEHOLDER_ID.lock().unwrap();
+                *tc += 1;
+                let id = format!("placeholder-{}", *tc);
+                rsx!(Placeholder {id, layout: layout, {children} })
+            }
             "rack" => {
                 let mut tc = RACK_ID.lock().unwrap();
                 *tc += 1;

@@ -39,7 +39,7 @@ pub fn Case(id: String, layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn Placeholder(layout: Layout, children: Element) -> Element {
+pub fn Placeholder(id: String, layout: Layout, children: Element) -> Element {
     let mut css = vec!["switch", "f"];
     use_common_css(&mut css, &layout);
     let store = use_context::<Store>();
@@ -52,8 +52,23 @@ pub fn Placeholder(layout: Layout, children: Element) -> Element {
         }) = x.get("value")
         && let Some(data) = s.get(source)
     {
+        let eid = id.clone();
+        use_effect(move || {
+            let js = format!(
+                r#"
+                let x = document.getElementById('{eid}');
+                x.classList.add('fade-in-and-out');
+                setTimeout(() => x.classList.remove('fade-in-and-out'), 1000);
+                "#
+            );
+            document::eval(&js);
+        });
         rsx! {
-            Frame { layout: data.clone() }
+            div {
+                id: id,
+                class: css.join(" "),
+                Frame { layout: data.clone() }
+            }
         }
     } else {
         rsx! {

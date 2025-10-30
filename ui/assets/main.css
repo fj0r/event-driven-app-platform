@@ -808,6 +808,25 @@ td {
   border-bottom: 0.05rem solid var(--fg);
 }
 /* }}} */
+/* {{{ animation */
+@keyframes fadeInThenOut {
+    0% {
+    }
+    50% {
+        background-color: var(--accent);
+    }
+    100% {
+    }
+}
+
+.fade-in-and-out {
+    animation-name: fadeInThenOut;
+    animation-duration: 0.6s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    transition-timing-function: ease;
+}
+/* }}} */
 /*** COMPONENTS ***/
 .select {
     & > * > * {
