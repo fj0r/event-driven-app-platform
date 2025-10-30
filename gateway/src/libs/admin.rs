@@ -16,7 +16,6 @@ use message::{
 };
 use minijinja::Environment;
 use serde_json::{Map, Value, from_str};
-use std::collections::HashMap;
 
 async fn send(
     State(session): State<Arwsc<Sender>>,
