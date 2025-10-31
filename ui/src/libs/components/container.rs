@@ -40,7 +40,7 @@ pub fn Case(id: String, layout: Layout, children: Element) -> Element {
 
 #[component]
 pub fn Placeholder(id: String, layout: Layout, children: Element) -> Element {
-    let mut css = vec!["switch", "f"];
+    let mut css = vec!["placeholder", "f"];
     use_common_css(&mut css, &layout);
     let store = use_context::<Store>();
     let s = store.data.read();
@@ -51,8 +51,10 @@ pub fn Placeholder(id: String, layout: Layout, children: Element) -> Element {
             r#type: _kind,
         }) = x.get("value")
         && let Some(data) = s.get(source)
+        && data.kind != "empty"
     {
         let eid = id.clone();
+        dioxus::logger::tracing::info!("{:?}", data);
         use_effect(move || {
             let js = format!(
                 r#"
@@ -73,6 +75,7 @@ pub fn Placeholder(id: String, layout: Layout, children: Element) -> Element {
     } else {
         rsx! {
             div {
+                id: id,
                 class: css.join(" "),
                 {children}
             }
