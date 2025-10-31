@@ -1,4 +1,5 @@
 ### gateway:
+- [ ] CBOR support
 - [x] MessageQueue separate into event and push.
   - The event queue is used for business logic.
   - The push queue is used to send messages to users
