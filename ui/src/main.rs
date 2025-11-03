@@ -2,10 +2,10 @@ mod libs;
 use dioxus::logger::tracing;
 use dioxus::prelude::*;
 use libs::components::*;
-use libs::store::{Store, use_store};
+use libs::store::{Status, use_status};
 use tracing_wasm::WASMLayerConfigBuilder;
 
-static STORE: GlobalSignal<Store> = Global::new(|| {
+static STATUS: GlobalSignal<Status> = Global::new(|| {
     let doc = web_sys::window().unwrap().document().unwrap();
     let loc = doc.location().unwrap();
     let mut host = "".to_owned();
@@ -32,7 +32,7 @@ static STORE: GlobalSignal<Store> = Global::new(|| {
         "".to_owned()
     };
     let url = format!("ws://{}/channel{}", host, query);
-    use_store(&url).expect("connecting failed")
+    use_status(&url).expect("connecting failed")
 });
 
 fn main() {
@@ -46,8 +46,8 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-    use_context_provider(|| STORE());
-    let layout = STORE().layout;
+    use_context_provider(|| STATUS());
+    let layout = STATUS().layout;
 
     rsx! {
         document::Style { href: asset!("/assets/main.css") }

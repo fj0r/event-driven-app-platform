@@ -1,4 +1,4 @@
-use crate::libs::store::Store;
+use crate::libs::store::Status;
 #[allow(unused_imports)]
 use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
@@ -43,7 +43,7 @@ pub fn use_source_id<'a>(layout: &'a Layout) -> Option<&'a String> {
 }
 
 pub fn use_source_list<'a>(layout: &'a Layout, key: &'a str) -> Option<Vec<Layout>> {
-    let store = use_context::<Store>();
+    let store = use_context::<Status>();
     let s = store.list.read();
     if let Some(x) = layout.bind.as_ref()
         && let Some(Bind {
@@ -61,7 +61,7 @@ pub fn use_source_list<'a>(layout: &'a Layout, key: &'a str) -> Option<Vec<Layou
 }
 
 pub fn use_source<'a>(layout: &'a Layout, key: &'a str) -> Option<Value> {
-    let store = use_context::<Store>();
+    let store = use_context::<Status>();
     let s = store.data.read();
     let value = if let Some(x) = layout.bind.as_ref()
         && let Some(Bind {
@@ -101,7 +101,7 @@ pub fn use_target<'a>(layout: &'a Layout, key: &'a str) -> Option<impl Fn(Value)
     {
         let fun = move |val| {
             let ev = event.clone();
-            let mut store = use_context::<Store>();
+            let mut store = use_context::<Status>();
             spawn(async move {
                 store.send(ev, None, val).await;
             });

@@ -1,4 +1,4 @@
-use super::super::store::Store;
+use super::super::store::Status;
 use super::{Dynamic, Frame};
 use crate::libs::hooks::{use_common_css, use_source_id};
 use dioxus::{CapturedError, prelude::*};
@@ -50,7 +50,7 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
     };
     let attrs = layout.attrs.as_ref().context("attrs")?;
 
-    let store = use_context::<Store>();
+    let store = use_context::<Status>();
     let c = store.list.read();
     let c = c.get(source).cloned().unwrap_or_else(Vec::new);
     let r = c.iter().enumerate().map(|(idx, child)| {

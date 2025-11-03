@@ -1,6 +1,6 @@
 use crate::libs::components::Frame;
 use crate::libs::hooks::use_common_css;
-use crate::libs::store::Store;
+use crate::libs::store::Status;
 use dioxus::prelude::*;
 use layout::{Bind, BindVariant, Container, Layout, Settings};
 
@@ -42,7 +42,7 @@ pub fn Case(id: String, layout: Layout, children: Element) -> Element {
 pub fn Placeholder(id: String, layout: Layout, children: Element) -> Element {
     let mut css = vec!["placeholder", "f"];
     use_common_css(&mut css, &layout);
-    let store = use_context::<Store>();
+    let store = use_context::<Status>();
     let s = store.data.read();
     if let Some(x) = layout.bind.as_ref()
         && let Some(Bind {

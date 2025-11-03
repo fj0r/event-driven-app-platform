@@ -1,4 +1,4 @@
-use super::super::super::store::Store;
+use super::super::super::store::Status;
 use crate::libs::hooks::use_common_css;
 use dioxus::prelude::*;
 use layout::{Bind, BindVariant, JsType, Layout};
@@ -15,7 +15,7 @@ fn default_option_jskind(v: &Option<JsType>) -> Value {
 
 #[component]
 pub fn Input(layout: Layout) -> Element {
-    let store = use_context::<Store>();
+    let store = use_context::<Status>();
     let mut css = vec!["input", "f", "shadow"];
     use_common_css(&mut css, &layout);
 

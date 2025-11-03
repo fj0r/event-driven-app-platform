@@ -1,5 +1,5 @@
 #![allow(unused_imports)]
-use super::super::super::store::Store;
+use super::super::super::store::Status;
 use super::super::dynamic::Dynamic;
 use crate::libs::hooks::*;
 use anyhow::Ok;

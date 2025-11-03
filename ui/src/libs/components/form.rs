@@ -1,7 +1,7 @@
 use serde_json::{Value, to_value};
 use std::collections::HashMap;
 
-use super::super::store::Store;
+use super::super::store::Status;
 use super::{Dynamic, Frame};
 use dioxus::prelude::*;
 use layout::{Bind, BindVariant, JsType, Layout, Settings};
@@ -116,7 +116,7 @@ pub fn Form(layout: Layout) -> Element {
         ..
     }) = lc
     {
-        let s = use_context::<Store>();
+        let s = use_context::<Status>();
         let content: HashMap<String, Message> = data
             .iter()
             .map(|(k, v)| {

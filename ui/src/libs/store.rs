@@ -22,14 +22,14 @@ static TMPL: LazyLock<RwLock<Environment>> = LazyLock::new(|| {
 });
 
 #[derive(Clone)]
-pub struct Store {
+pub struct Status {
     pub ws: WebSocketHandle,
     pub layout: Signal<Layout>,
     pub data: Signal<HashMap<String, Layout>>,
     pub list: Signal<HashMap<String, Vec<Layout>>>,
 }
 
-impl Store {
+impl Status {
     pub async fn send(&mut self, event: impl AsRef<str>, id: Option<String>, content: Value) {
         let x = Outflow {
             event: event.as_ref().to_string(),
@@ -113,7 +113,7 @@ fn dispatch(
     }
 }
 
-pub fn use_store(url: &str) -> Result<Store, JsError> {
+pub fn use_status(url: &str) -> Result<Status, JsError> {
     let ws = use_web_socket(url)?;
     let x = ws.message_texts();
 
@@ -135,7 +135,7 @@ pub fn use_store(url: &str) -> Result<Store, JsError> {
         }
     });
 
-    Ok(Store {
+    Ok(Status {
         ws,
         layout,
         data,
