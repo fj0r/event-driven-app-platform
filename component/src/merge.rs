@@ -1,4 +1,4 @@
-use super::{Bind, Layout};
+use super::{Bind, Component};
 use itertools::{
     EitherOrBoth::{Both, Left, Right},
     Itertools,
@@ -8,7 +8,7 @@ use serde_json::json;
 use std::collections::HashMap;
 use std::fmt::Debug;
 
-impl Layout {
+impl Component {
     pub fn merge(&mut self, op: &(impl LayoutOp + Debug + ?Sized), mut rhs: Self) {
         op.merge(self, &mut rhs);
         if let Some(rchildren) = rhs.children {

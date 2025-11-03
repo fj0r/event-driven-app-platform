@@ -20,5 +20,5 @@ merge = []
 render = []
 
 [[example]]
-name = "jsonschema"
+name = "componentschema"
 required-features = ["schema"]
