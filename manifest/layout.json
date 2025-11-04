@@ -35,14 +35,14 @@
           {
             "type": "case",
             "attrs": {
-              "class": "nogrow s ae accent box border shadow",
+              "class": "nogrow s ae accent box border round shadow",
               "selector": "ask"
             }
           },
           {
             "type": "case",
             "attrs": {
-              "class": "nogrow s ax box border shadow"
+              "class": "nogrow s ax box border round shadow"
             }
           }
         ]
