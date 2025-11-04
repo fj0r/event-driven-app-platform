@@ -11,6 +11,10 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 use std::num::ParseFloatError;
 
+pub trait Children {
+    fn get_children(&self) -> Option<&Vec<Component>>;
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Render {
@@ -110,8 +114,18 @@ pub struct Bind {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub struct ClassAttrs {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub class: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Placeholder {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<Component>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -119,6 +133,8 @@ pub struct Placeholder {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Chart {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<Component>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -126,6 +142,8 @@ pub struct Chart {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Diagram {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<Component>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -133,6 +151,8 @@ pub struct Diagram {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct FloatComp {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<Component>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -140,6 +160,8 @@ pub struct FloatComp {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct FoldComp {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<Component>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -147,6 +169,8 @@ pub struct FoldComp {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct FormComp {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<Component>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -154,6 +178,8 @@ pub struct FormComp {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Popup {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<Component>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -161,6 +187,16 @@ pub struct Popup {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Svg {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<Component>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub struct RackAttr {
+    #[serde(default)]
+    pub scroll: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -168,6 +204,24 @@ pub struct Svg {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Rack {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<RackAttr>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub render: Option<Render>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<Component>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub struct ButtonAttr {
+    #[serde(default)]
+    pub oneshot: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -175,6 +229,25 @@ pub struct Rack {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Button {
     pub r#type: String,
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ButtonAttr>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub struct ImageAttr {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub class: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub desc: Option<String>,
+    #[serde(default)]
+    pub thumb: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    width: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    height: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -182,6 +255,12 @@ pub struct Button {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Image {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ImageAttr>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -189,6 +268,11 @@ pub struct Image {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Input {
     pub r#type: String,
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ClassAttrs>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -196,6 +280,14 @@ pub struct Input {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Select {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ClassAttrs>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<Component>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -203,6 +295,18 @@ pub struct Select {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Table {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<Component>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub struct TextAttr {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub class: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub format: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -210,6 +314,12 @@ pub struct Table {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Text {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ClassAttrs>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -217,6 +327,12 @@ pub struct Text {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct TextArea {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ClassAttrs>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -271,4 +387,24 @@ pub enum Component {
     table(Table),
     text(Text),
     textarea(TextArea),
+}
+
+impl Children for Component {
+    fn get_children(&self) -> Option<&Vec<Component>> {
+        match self {
+            Component::placeholder(c) => c.children.as_ref(),
+            Component::case(c) => c.children.as_ref(),
+            Component::rack(c) => c.children.as_ref(),
+            Component::float(c) => c.children.as_ref(),
+            Component::fold(c) => c.children.as_ref(),
+            Component::popup(c) => c.children.as_ref(),
+            Component::table(c) => c.children.as_ref(),
+            Component::form(c) => c.children.as_ref(),
+            Component::select(c) => c.children.as_ref(),
+            Component::svg(c) => c.children.as_ref(),
+            Component::chart(c) => c.children.as_ref(),
+            Component::diagram(c) => c.children.as_ref(),
+            _ => None,
+        }
+    }
 }
