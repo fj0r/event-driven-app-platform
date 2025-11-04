@@ -12,7 +12,7 @@ use std::fmt::Debug;
 use std::num::ParseFloatError;
 
 pub trait Children {
-    fn get_children(&self) -> Option<&Vec<Component>>;
+    fn get_children(&self) -> &Option<Vec<Component>>;
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -125,6 +125,8 @@ pub struct ClassAttrs {
 pub struct Placeholder {
     pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ClassAttrs>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Component>>,
 }
 
@@ -133,6 +135,8 @@ pub struct Placeholder {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Chart {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ClassAttrs>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Component>>,
 }
@@ -143,6 +147,8 @@ pub struct Chart {
 pub struct Diagram {
     pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ClassAttrs>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Component>>,
 }
 
@@ -151,6 +157,8 @@ pub struct Diagram {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct FloatComp {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ClassAttrs>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Component>>,
 }
@@ -161,6 +169,8 @@ pub struct FloatComp {
 pub struct FoldComp {
     pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ClassAttrs>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Component>>,
 }
 
@@ -169,6 +179,8 @@ pub struct FoldComp {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct FormComp {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ClassAttrs>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Component>>,
 }
@@ -179,6 +191,8 @@ pub struct FormComp {
 pub struct Popup {
     pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ClassAttrs>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Component>>,
 }
 
@@ -187,6 +201,8 @@ pub struct Popup {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Svg {
     pub r#type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ClassAttrs>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Component>>,
 }
@@ -197,6 +213,8 @@ pub struct Svg {
 pub struct RackAttr {
     #[serde(default)]
     pub scroll: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub class: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -222,6 +240,8 @@ pub struct Rack {
 pub struct ButtonAttr {
     #[serde(default)]
     pub oneshot: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub class: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -390,21 +410,21 @@ pub enum Component {
 }
 
 impl Children for Component {
-    fn get_children(&self) -> Option<&Vec<Component>> {
+    fn get_children(&self) -> &Option<Vec<Component>> {
         match self {
-            Component::placeholder(c) => c.children.as_ref(),
-            Component::case(c) => c.children.as_ref(),
-            Component::rack(c) => c.children.as_ref(),
-            Component::float(c) => c.children.as_ref(),
-            Component::fold(c) => c.children.as_ref(),
-            Component::popup(c) => c.children.as_ref(),
-            Component::table(c) => c.children.as_ref(),
-            Component::form(c) => c.children.as_ref(),
-            Component::select(c) => c.children.as_ref(),
-            Component::svg(c) => c.children.as_ref(),
-            Component::chart(c) => c.children.as_ref(),
-            Component::diagram(c) => c.children.as_ref(),
-            _ => None,
+            Component::placeholder(c) => &c.children,
+            Component::case(c) => &c.children,
+            Component::rack(c) => &c.children,
+            Component::float(c) => &c.children,
+            Component::fold(c) => &c.children,
+            Component::popup(c) => &c.children,
+            Component::table(c) => &c.children,
+            Component::form(c) => &c.children,
+            Component::select(c) => &c.children,
+            Component::svg(c) => &c.children,
+            Component::chart(c) => &c.children,
+            Component::diagram(c) => &c.children,
+            _ => &None,
         }
     }
 }
