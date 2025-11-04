@@ -1,4 +1,6 @@
-use super::{Bind, Component};
+use crate::Children;
+
+use super::{Bind, Ch, Component};
 use itertools::{
     EitherOrBoth::{Both, Left, Right},
     Itertools,
@@ -9,11 +11,11 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 
 impl Component {
-    pub fn merge(&mut self, op: &(impl LayoutOp + Debug + ?Sized), mut rhs: Self) {
-        op.merge(self, &mut rhs);
-        if let Some(rchildren) = rhs.children {
-            if let Some(children) = &mut self.children {
-                let children = children
+    pub fn merge(&mut self, op: &(impl LayoutOp + Debug + ?Sized), rhs: &mut Self) {
+        op.merge(self, rhs);
+        if let Some(rchildren) = rhs.get_children() {
+            if let Some(children) = &mut self.get_children() {
+                let children: Vec<_> = children
                     .iter_mut()
                     .zip_longest(rchildren)
                     .map(|x| match x {
@@ -22,12 +24,12 @@ impl Component {
                             l.clone()
                         }
                         Left(l) => l.clone(),
-                        Right(r) => r,
+                        Right(r) => r.clone(),
                     })
                     .collect();
-                self.children = Some(children);
+                self.set_children(children);
             } else {
-                self.children = Some(rchildren);
+                self.set_children(rchildren.clone());
             }
         }
     }
@@ -35,8 +37,8 @@ impl Component {
 
 pub trait LayoutOp: Debug {
     fn merge_value(&self, l: &mut Value, r: &Value) -> Option<Value>;
-    fn merge(&self, lhs: &mut Layout, rhs: &mut Layout) {
-        lhs.bind = match (&mut lhs.bind, &mut rhs.bind) {
+    fn merge(&self, lhs: &mut Component, rhs: &mut Component) {
+        lhs.bind = match (lhs.get_bind(), rhs.get_bind()) {
             (Some(l), Some(r)) => {
                 let nv = l
                     .into_iter()

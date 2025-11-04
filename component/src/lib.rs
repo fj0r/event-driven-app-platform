@@ -3,6 +3,12 @@ use dioxus::prelude::*;
 use itertools::FoldWhile;
 #[cfg(feature = "schema")]
 use schemars::JsonSchema;
+#[cfg(feature = "classify")]
+pub mod classify;
+// #[cfg(feature = "merge")]
+pub mod merge;
+#[cfg(feature = "render")]
+pub mod render;
 
 use serde::ser::SerializeTupleStruct;
 use serde::{Deserialize, Serialize};
@@ -12,7 +18,9 @@ use std::fmt::Debug;
 use std::num::ParseFloatError;
 
 pub trait Children {
-    fn get_children(&self) -> &Option<Vec<Component>>;
+    fn get_children(&mut self) -> Option<&mut Vec<Component>>;
+    fn set_children(&mut self, component: Vec<Component>);
+    fn get_bind(&mut self) -> Option<&mut HashMap<String, Bind>>;
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -410,21 +418,56 @@ pub enum Component {
 }
 
 impl Children for Component {
-    fn get_children(&self) -> &Option<Vec<Component>> {
+    fn get_children(&mut self) -> Option<&mut Vec<Component>> {
         match self {
-            Component::placeholder(c) => &c.children,
-            Component::case(c) => &c.children,
-            Component::rack(c) => &c.children,
-            Component::float(c) => &c.children,
-            Component::fold(c) => &c.children,
-            Component::popup(c) => &c.children,
-            Component::table(c) => &c.children,
-            Component::form(c) => &c.children,
-            Component::select(c) => &c.children,
-            Component::svg(c) => &c.children,
-            Component::chart(c) => &c.children,
-            Component::diagram(c) => &c.children,
-            _ => &None,
+            Component::placeholder(c) => c.children.as_mut(),
+            Component::case(c) => c.children.as_mut(),
+            Component::rack(c) => c.children.as_mut(),
+            Component::float(c) => c.children.as_mut(),
+            Component::fold(c) => c.children.as_mut(),
+            Component::popup(c) => c.children.as_mut(),
+            Component::table(c) => c.children.as_mut(),
+            Component::form(c) => c.children.as_mut(),
+            Component::select(c) => c.children.as_mut(),
+            Component::svg(c) => c.children.as_mut(),
+            Component::chart(c) => c.children.as_mut(),
+            Component::diagram(c) => c.children.as_mut(),
+            _ => None,
+        }
+    }
+    fn set_children(&mut self, component: Vec<Component>) {
+        match self {
+            Component::placeholder(c) => c.children = Some(component),
+            Component::case(c) => c.children = Some(component),
+            Component::rack(c) => c.children = Some(component),
+            Component::float(c) => c.children = Some(component),
+            Component::fold(c) => c.children = Some(component),
+            Component::popup(c) => c.children = Some(component),
+            Component::table(c) => c.children = Some(component),
+            Component::form(c) => c.children = Some(component),
+            Component::select(c) => c.children = Some(component),
+            Component::svg(c) => c.children = Some(component),
+            Component::chart(c) => c.children = Some(component),
+            Component::diagram(c) => c.children = Some(component),
+            _ => {}
+        };
+    }
+
+    fn get_bind(&mut self) -> Option<&mut HashMap<String, Bind>> {
+        match self {
+            //Component::placeholder(c) => c.bind.as_mut(),
+            Component::case(c) => c.bind.as_mut(),
+            Component::rack(c) => c.bind.as_mut(),
+            //Component::float(c) => c.bind.as_mut(),
+            //Component::fold(c) => c.bind.as_mut(),
+            //Component::popup(c) => c.bind.as_mut(),
+            //Component::table(c) => c.bind.as_mut(),
+            //Component::form(c) => c.bind.as_mut(),
+            Component::select(c) => c.bind.as_mut(),
+            //Component::svg(c) => c.bind.as_mut(),
+            //Component::chart(c) => c.bind.as_mut(),
+            //Component::diagram(c) => c.bind.as_mut(),
+            _ => None,
         }
     }
 }

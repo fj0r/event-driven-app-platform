@@ -1,4 +1,4 @@
-use super::{Attrs, Direction, Layout, PosH, PosV, Position, Size};
+use super::{Attrs, Component, Direction, PosH, PosV, Position, Size};
 use regex::Regex;
 use std::convert::AsRef;
 
@@ -39,7 +39,7 @@ impl Classify for Attrs {
     }
 }
 
-impl Classify for Layout {
+impl Classify for Component {
     fn add_class(&mut self, class: impl AsRef<str>) -> &mut Self {
         if let Some(attr) = &mut self.attrs {
             attr.add_class(class);
