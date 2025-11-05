@@ -1,4 +1,4 @@
-use component::Component;
+use component::JsonComponent;
 use schemars::schema_for;
 
 fn main() -> Result<(), &'static dyn std::error::Error> {

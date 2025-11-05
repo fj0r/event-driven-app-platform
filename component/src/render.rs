@@ -1,9 +1,10 @@
-use super::Layout;
+use super::JsonComponent;
+use crate::ComponentProps;
 use minijinja::Environment;
 
-impl Layout {
+impl JsonComponent {
     pub fn render(&mut self, env: &Environment) {
-        if let Some(r) = &self.render {
+        if let Some(r) = self.get_render() {
             let n = &r.name;
             let cx = &r.data;
             let n = env
@@ -14,7 +15,7 @@ impl Layout {
                         .map_err(|e| format!("render failed: {} => {}", e, &cx))
                 })
                 .and_then(|t| {
-                    serde_json::from_str::<Layout>(&t)
+                    serde_json::from_str::<JsonComponent>(&t)
                         .map_err(|e| format!("deserialize failed: {} => {}", e, &t))
                 });
             match n {
@@ -28,7 +29,7 @@ impl Layout {
                 }
             }
         }
-        if let Some(cs) = &mut self.children {
+        if let Some(cs) = self.get_children() {
             for c in cs {
                 c.render(env);
             }

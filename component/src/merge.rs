@@ -1,6 +1,5 @@
-use crate::Children;
-
-use super::{Bind, Ch, Component};
+use super::{Bind, JsonComponent};
+use crate::ComponentProps;
 use itertools::{
     EitherOrBoth::{Both, Left, Right},
     Itertools,
@@ -10,7 +9,7 @@ use serde_json::json;
 use std::collections::HashMap;
 use std::fmt::Debug;
 
-impl Component {
+impl JsonComponent {
     pub fn merge(&mut self, op: &(impl LayoutOp + Debug + ?Sized), rhs: &mut Self) {
         op.merge(self, rhs);
         if let Some(rchildren) = rhs.get_children() {
@@ -37,8 +36,8 @@ impl Component {
 
 pub trait LayoutOp: Debug {
     fn merge_value(&self, l: &mut Value, r: &Value) -> Option<Value>;
-    fn merge(&self, lhs: &mut Component, rhs: &mut Component) {
-        lhs.bind = match (lhs.get_bind(), rhs.get_bind()) {
+    fn merge(&self, lhs: &mut JsonComponent, rhs: &mut JsonComponent) {
+        let bind = match (lhs.get_bind(), rhs.get_bind()) {
             (Some(l), Some(r)) => {
                 let nv = l
                     .into_iter()
@@ -63,6 +62,7 @@ pub trait LayoutOp: Debug {
             (None, Some(y)) => Some(y.to_owned()),
             (None, None) => None,
         };
+        lhs.set_bind(bind);
     }
 }
 
