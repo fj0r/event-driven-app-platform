@@ -588,7 +588,7 @@ export def clippy [dir] {
 }
 
 export def jsonschema [] {
-    cargo run --example jsonschema --features=schema
+    cargo run --example componentschema --features=schema
 }
 
 export def gen-type [] {
