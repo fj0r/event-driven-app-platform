@@ -29,6 +29,7 @@ proc = { path = "../proc" }
 message = { path = "../message" }
 content = { path = "../content" }
 layout = { path = "../layout" }
+component = { path = "../component" }
 url = "2.5.7"
 indoc = "2.0.7"
 async-fs = "2.2.0"

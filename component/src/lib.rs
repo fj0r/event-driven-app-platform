@@ -130,7 +130,6 @@ pub struct ClassAttrs {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Placeholder {
-    pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttrs>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -141,7 +140,6 @@ pub struct Placeholder {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Chart {
-    pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttrs>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -152,7 +150,6 @@ pub struct Chart {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Diagram {
-    pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttrs>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -163,7 +160,6 @@ pub struct Diagram {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct FloatComp {
-    pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttrs>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -174,7 +170,6 @@ pub struct FloatComp {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct FoldComp {
-    pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttrs>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -185,7 +180,6 @@ pub struct FoldComp {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct FormComp {
-    pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttrs>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -196,7 +190,6 @@ pub struct FormComp {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Popup {
-    pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttrs>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -207,7 +200,6 @@ pub struct Popup {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Svg {
-    pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttrs>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -228,7 +220,6 @@ pub struct RackAttr {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Rack {
-    pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -255,7 +246,6 @@ pub struct ButtonAttr {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Button {
-    pub r#type: String,
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ButtonAttr>,
@@ -281,7 +271,6 @@ pub struct ImageAttr {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Image {
-    pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -294,7 +283,6 @@ pub struct Image {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Input {
-    pub r#type: String,
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttrs>,
@@ -306,7 +294,6 @@ pub struct Input {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Select {
-    pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -321,7 +308,6 @@ pub struct Select {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Table {
-    pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<JsonComponent>>,
 }
@@ -340,7 +326,6 @@ pub struct TextAttr {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Text {
-    pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -353,7 +338,6 @@ pub struct Text {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct TextArea {
-    pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -371,14 +355,14 @@ pub struct CaseAttrs {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub horizontal: Option<bool>,
     #[allow(non_camel_case_types)]
-    pub grid: Map<String, Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub grid: Option<Map<String, Value>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Case {
-    pub r#type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]

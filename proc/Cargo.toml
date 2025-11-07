@@ -9,7 +9,7 @@ proc-macro = true
 [dependencies]
 colored = "3.0.0"
 proc-macro2 = { version = "1.0.103", features = ["span-locations"] }
-quote = "1.0.41"
+quote = "1.0.42"
 serde = "1.0.228"
 serde_json = "1.0.145"
-syn = { version = "2.0.108", features = ["extra-traits", "full"] }
+syn = { version = "2.0.109", features = ["extra-traits", "full"] }
