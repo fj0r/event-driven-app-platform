@@ -591,9 +591,13 @@ export def jsonschema [] {
     cargo run --example componentschema --features=schema
 }
 
+export def component_test [] {
+    cargo run --example scratch --features="scratch"
+}
+
 export def gen-type [] {
     jsonschema
-    | quicktype -s schema -l python --pydantic-base-model --python-version 3.7
+    | datamodel-codegen --output layout.py --input-file-type jsonschema --target-python-version 3.12
 }
 
 export def git-hooks [act ctx] {
