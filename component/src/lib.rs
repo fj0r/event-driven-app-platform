@@ -355,7 +355,8 @@ pub struct CaseAttrs {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub horizontal: Option<bool>,
     #[allow(non_camel_case_types)]
-    pub grid: Map<String, Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub grid: Option<Map<String, Value>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
