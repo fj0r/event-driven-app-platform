@@ -1,7 +1,7 @@
 use super::super::handler::{ArcShared, ChatMessage, Envelope, Sender};
 use anyhow::Result;
+use component::{Bind, BindVariant, JsonComponent as C, Text, TextAttr};
 use content::{Content, Influx, Method};
-use layout::{Attrs, Bind, BindVariant, Layout, Settings};
 use maplit::hashmap;
 use std::default::Default;
 use std::fmt::Debug;
@@ -25,12 +25,9 @@ pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender
         let content = Content::Join(Influx {
             event: "chat".into(),
             channel: None,
-            data: Layout {
-                kind: "text".into(),
-                attrs: Some(Attrs {
-                    settings: Some(Settings::Text {
-                        format: "md".into(),
-                    }),
+            data: C::text(Text {
+                attrs: Some(TextAttr {
+                    format: Some("md".to_string()),
                     ..Default::default()
                 }),
                 bind: Some(hashmap! {
@@ -41,7 +38,7 @@ pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender
                     }
                 }),
                 ..Default::default()
-            },
+            }),
             method: Method::Concat,
         });
         if let Ok(content) = serde_json::to_value(content) {
