@@ -527,6 +527,7 @@ dependencies = [
  "async-fs",
  "axum",
  "chrono",
+ "component",
  "content",
  "figment",
  "futures",
