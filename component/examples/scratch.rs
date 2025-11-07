@@ -29,7 +29,7 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
     });
     println!("{:?}", to_string(&a));
 
-    let chat_layout = read_to_string("examples/layout.json")?;
+    let chat_layout = read_to_string("component/examples/layout.json")?;
     let chat_layout: C = from_str(&chat_layout)?;
     println!("{:?}", &chat_layout);
 
