@@ -662,6 +662,7 @@ version = "0.1.0"
 dependencies = [
  "dioxus",
  "itertools",
+ "maplit",
  "minijinja",
  "regex",
  "schemars 1.1.0",
