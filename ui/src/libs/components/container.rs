@@ -5,8 +5,11 @@ use dioxus::prelude::*;
 use layout::{Bind, BindVariant, Container, Layout, Settings};
 
 #[component]
-pub fn Case(id: String, layout: Layout, children: Element) -> Element {
-    let mut css = vec!["case", "f", &id];
+pub fn Case(id: Option<String>, layout: Layout, children: Element) -> Element {
+    let mut css = vec!["case", "f"];
+    if let Some(id) = &id {
+        css.push(id);
+    }
     let mut style = String::new();
     if let Some(a) = &layout.attrs {
         let mut f = true;

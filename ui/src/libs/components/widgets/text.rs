@@ -6,9 +6,11 @@ use markdown::{Options, to_html_with_options};
 use std::sync::LazyLock;
 
 #[component]
-pub fn Text(id: String, layout: Layout) -> Element {
-    let mut css = vec!["text", &id];
-
+pub fn Text(id: Option<String>, layout: Layout) -> Element {
+    let mut css = vec!["text"];
+    if let Some(id) = &id {
+        css.push(id);
+    }
     use_common_css(&mut css, &layout);
 
     let text_content = if let Some(json_data) = use_source_value(&layout) {

@@ -4,8 +4,11 @@ use dioxus::prelude::*;
 use layout::{Layout, Settings};
 
 #[component]
-pub fn Fold(id: String, layout: Layout, children: Element) -> Element {
-    let mut css = vec!["g", &id];
+pub fn Fold(id: Option<String>, layout: Layout, children: Element) -> Element {
+    let mut css = vec!["g"];
+    if let Some(id) = &id {
+        css.push(id);
+    }
     use_common_css(&mut css, &layout);
 
     let Some((replace_header, _float_body)) = layout.attrs.as_ref().map(|x| {

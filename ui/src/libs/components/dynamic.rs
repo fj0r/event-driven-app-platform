@@ -20,9 +20,13 @@ static PLACEHOLDER_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
 
 #[component]
 pub fn Dynamic(layout: Layout, children: Element) -> Element {
-    let mut tc = COMPONENT_ID.lock().unwrap();
-    *tc += 1;
-    let id = format!("={}=", *tc);
+    let id = if cfg!(debug_assertions) {
+        let mut tc = COMPONENT_ID.lock().unwrap();
+        *tc += 1;
+        Some(format!("={}=", *tc))
+    } else {
+        None
+    };
 
     let c = {
         match layout.kind.as_str() {
