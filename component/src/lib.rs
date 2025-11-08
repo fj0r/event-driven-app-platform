@@ -2,7 +2,7 @@
 use dioxus::prelude::*;
 #[cfg(feature = "schema")]
 use schemars::JsonSchema;
-//#[cfg(feature = "classify")]
+#[cfg(feature = "classify")]
 pub mod classify;
 #[cfg(feature = "merge")]
 pub mod merge;
@@ -402,91 +402,79 @@ pub enum JsonComponent {
 
 impl ComponentProps for JsonComponent {
     fn get_children(&mut self) -> Option<&mut Vec<JsonComponent>> {
-        match self {
-            JsonComponent::placeholder(c) => c.children.as_mut(),
-            JsonComponent::case(c) => c.children.as_mut(),
-            JsonComponent::rack(c) => c.children.as_mut(),
-            JsonComponent::float(c) => c.children.as_mut(),
-            JsonComponent::fold(c) => c.children.as_mut(),
-            JsonComponent::popup(c) => c.children.as_mut(),
-            JsonComponent::table(c) => c.children.as_mut(),
-            JsonComponent::form(c) => c.children.as_mut(),
-            JsonComponent::select(c) => c.children.as_mut(),
-            JsonComponent::svg(c) => c.children.as_mut(),
-            JsonComponent::chart(c) => c.children.as_mut(),
-            JsonComponent::diagram(c) => c.children.as_mut(),
-            _ => None,
+        macro_rules! m {
+            ($s:ident => $($c: ident),* $(,)?) => {
+                match $s {
+                    $(JsonComponent::$c(c) => c.children.as_mut(),)*
+                    _ => None
+                }
+            };
         }
+        m![self =>
+            placeholder, case, rack, float, fold, popup,
+            table, form, select, svg, chart, diagram,
+        ]
     }
     fn set_children(&mut self, component: Vec<JsonComponent>) {
-        match self {
-            JsonComponent::placeholder(c) => c.children = Some(component),
-            JsonComponent::case(c) => c.children = Some(component),
-            JsonComponent::rack(c) => c.children = Some(component),
-            JsonComponent::float(c) => c.children = Some(component),
-            JsonComponent::fold(c) => c.children = Some(component),
-            JsonComponent::popup(c) => c.children = Some(component),
-            JsonComponent::table(c) => c.children = Some(component),
-            JsonComponent::form(c) => c.children = Some(component),
-            JsonComponent::select(c) => c.children = Some(component),
-            JsonComponent::svg(c) => c.children = Some(component),
-            JsonComponent::chart(c) => c.children = Some(component),
-            JsonComponent::diagram(c) => c.children = Some(component),
-            _ => {}
-        };
+        macro_rules! m {
+            ($s:ident, $p:ident => $($c: ident),* $(,)?) => {
+                match $s {
+                    $(JsonComponent::$c(c) => { c.children = Some($p) })*
+                    _ => {}
+                }
+            };
+        }
+        m![self, component =>
+            placeholder, case, rack, float, fold, popup,
+            table, form, select, svg, chart, diagram,
+        ];
     }
 
     fn get_bind(&mut self) -> Option<&mut HashMap<String, Bind>> {
-        match self {
-            //Component::placeholder(c) => c.bind.as_mut(),
-            JsonComponent::case(c) => c.bind.as_mut(),
-            JsonComponent::rack(c) => c.bind.as_mut(),
-            //Component::float(c) => c.bind.as_mut(),
-            //Component::fold(c) => c.bind.as_mut(),
-            //Component::popup(c) => c.bind.as_mut(),
-            //Component::table(c) => c.bind.as_mut(),
-            //Component::form(c) => c.bind.as_mut(),
-            JsonComponent::select(c) => c.bind.as_mut(),
-            //Component::svg(c) => c.bind.as_mut(),
-            //Component::chart(c) => c.bind.as_mut(),
-            //Component::diagram(c) => c.bind.as_mut(),
-            _ => None,
+        macro_rules! m {
+            ($s:ident => $($c: ident),* $(,)?) => {
+                match $s {
+                    $(JsonComponent::$c(c) => { c.bind.as_mut() })*
+                    _ => None
+                }
+            }
         }
+        m![self =>
+            case, rack, select,
+            // placeholder, float, fold, popup,
+            // table, form, svg, chart, diagram,
+        ]
     }
 
     fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>) {
-        match self {
-            //Component::placeholder(c) => c.bind = bind,
-            JsonComponent::case(c) => c.bind = bind,
-            JsonComponent::rack(c) => c.bind = bind,
-            //Component::float(c) => c.bind = bind,
-            //Component::fold(c) => c.bind = bind,
-            //Component::popup(c) => c.bind = bind,
-            //Component::table(c) => c.bind = bind,
-            //Component::form(c) => c.bind = bind,
-            JsonComponent::select(c) => c.bind = bind,
-            //Component::svg(c) => c.bind = bind,
-            //Component::chart(c) => c.bind = bind,
-            //Component::diagram(c) => c.bind = bind,
-            _ => {}
+        macro_rules! m {
+            ($s:ident, $p:ident => $($c: ident),* $(,)?) => {
+                match $s {
+                    $(JsonComponent::$c(c) => { c.bind = $p })*
+                    _ => {}
+                }
+            }
         }
+        m![ self, bind =>
+            case, rack, select,
+            // placeholder, float, fold, popup,
+            // table, form, svg, chart, diagram,
+        ]
     }
 
     fn get_render(&self) -> Option<&Render> {
-        match self {
-            //Component::placeholder(c) => None,
-            JsonComponent::case(c) => c.render.as_ref(),
-            JsonComponent::rack(c) => c.render.as_ref(),
-            //Component::float(c) => c.bind = bind,
-            //Component::fold(c) => c.bind = bind,
-            //Component::popup(c) => c.bind = bind,
-            //Component::table(c) => c.bind = bind,
-            //Component::form(c) => c.bind = bind,
-            //Component::select(c) => None,
-            //Component::svg(c) => c.bind = bind,
-            //Component::chart(c) => c.bind = bind,
-            //Component::diagram(c) => c.bind = bind,
-            _ => None,
+        macro_rules! m {
+            ($s:ident => $($c: ident),* $(,)?) => {
+                match $s {
+                    $(JsonComponent::$c(c) => c.render.as_ref(), )*
+                    _ => None
+                }
+            }
         }
+        m![ self =>
+            case, rack,
+            // placeholder, float, fold, popup,
+            // table, form, select, svg, chart, diagram,
+        ]
     }
 }
