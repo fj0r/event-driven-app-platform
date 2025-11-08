@@ -32,6 +32,8 @@ macro_rules! impl_classify {
                 fn add_class(&mut self, class: impl AsRef<str>) -> &mut Self {
                     if let Some(cls) = &mut self.class {
                         cls.push(class.as_ref().to_string());
+                    } else {
+                        self.class = Some(vec![class.as_ref().to_string()]);
                     };
                     self
                 }
