@@ -2,7 +2,7 @@
 use dioxus::prelude::*;
 #[cfg(feature = "schema")]
 use schemars::JsonSchema;
-#[cfg(feature = "classify")]
+//#[cfg(feature = "classify")]
 pub mod classify;
 #[cfg(feature = "merge")]
 pub mod merge;

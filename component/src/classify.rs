@@ -1,5 +1,4 @@
 use super::{ButtonAttr, CaseAttr, ClassAttr, ImageAttr, JsonComponent, RackAttr, TextAttr};
-use regex::Regex;
 use std::convert::AsRef;
 
 pub trait Classify {
@@ -7,40 +6,78 @@ pub trait Classify {
     fn delete_class(&mut self, class: impl AsRef<str>) -> &mut Self;
 }
 
-impl Classify for Option<ButtonAttr> {
+impl<T: Classify + Default> Classify for Option<T> {
     fn add_class(&mut self, class: impl AsRef<str>) -> &mut Self {
-        let attr = if let Some(attr) = self {
-            attr
+        if let Some(attr) = self {
+            attr.add_class(class);
         } else {
-            &mut ButtonAttr::default()
+            let mut n = T::default();
+            n.add_class(class);
+            *self = Some(n);
         };
-        let cls = if let Some(cls) = &mut attr.class {
-            cls
-        } else {
-            &mut "".to_owned()
+        self
+    }
+    fn delete_class(&mut self, class: impl AsRef<str>) -> &mut Self {
+        if let Some(attr) = self {
+            attr.delete_class(class);
         };
-        cls.push_str(class.as_ref());
         self
     }
 }
 
+macro_rules! impl_classify {
+    ($($type: ident),*) => {
+        $(
+            impl Classify for $type {
+                fn add_class(&mut self, class: impl AsRef<str>) -> &mut Self {
+                    if let Some(cls) = &mut self.class {
+                        cls.push(class.as_ref().to_string());
+                    };
+                    self
+                }
+                fn delete_class(&mut self, class: impl AsRef<str>) -> &mut Self {
+                    if let Some(cls) = &mut self.class {
+                        todo!()
+                    };
+                    self
+                }
+            }
+        )*
+    };
+}
+
+impl_classify![
+    ClassAttr, ButtonAttr, CaseAttr, ImageAttr, RackAttr, TextAttr
+];
+
 impl Classify for JsonComponent {
     fn add_class(&mut self, class: impl AsRef<str>) -> &mut Self {
         match self {
-            JsonComponent::button(c) => c.attrs.add_class(class),
-            JsonComponent::case(c) => c.attrs,
+            JsonComponent::button(c) => {
+                c.attrs.add_class(class);
+            }
+            JsonComponent::case(c) => {
+                c.attrs.add_class(class);
+            }
             _ => {}
         }
         self
     }
     fn delete_class(&mut self, class: impl AsRef<str>) -> &mut Self {
-        if let Some(attr) = &mut self.attrs {
-            attr.delete_class(class);
+        match self {
+            JsonComponent::button(c) => {
+                c.attrs.delete_class(class);
+            }
+            JsonComponent::case(c) => {
+                c.attrs.delete_class(class);
+            }
+            _ => {}
         }
         self
     }
 }
 
+/*
 impl Position {
     pub fn into_position(&self) -> String {
         let h = match &self.h {
@@ -78,3 +115,4 @@ impl Size {
         s
     }
 }
+*/
