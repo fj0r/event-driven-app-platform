@@ -56,27 +56,41 @@ impl_classify![
 
 impl Classify for JsonComponent {
     fn add_class(&mut self, class: impl AsRef<str>) -> &mut Self {
-        match self {
-            JsonComponent::button(c) => {
-                c.attrs.add_class(class);
-            }
-            JsonComponent::case(c) => {
-                c.attrs.add_class(class);
-            }
-            _ => {}
+        macro_rules! add_class {
+            ($s:ident , $cls:ident => $($c: ident),* $(,)?) => {
+                match $s {
+                    $(
+                        JsonComponent::$c(c) => {
+                            c.attrs.add_class($cls);
+                        }
+                    )*
+                    _ => {}
+                }
+            };
         }
+        add_class![ self, class =>
+            button, case, placeholder, chart, diagram, float, fold,
+            form, popup, svg, rack, image, input, select, text,
+        ];
         self
     }
     fn delete_class(&mut self, class: impl AsRef<str>) -> &mut Self {
-        match self {
-            JsonComponent::button(c) => {
-                c.attrs.delete_class(class);
-            }
-            JsonComponent::case(c) => {
-                c.attrs.delete_class(class);
-            }
-            _ => {}
+        macro_rules! delete_class {
+            ($s:ident , $cls:ident => $($c: ident),* $(,)?) => {
+                match $s {
+                    $(
+                        JsonComponent::$c(c) => {
+                            c.attrs.delete_class($cls);
+                        }
+                    )*
+                    _ => {}
+                }
+            };
         }
+        delete_class! [self, class =>
+            button, case, placeholder, chart, diagram, float, fold,
+            form, popup, svg, rack, image, input, select, text,
+        ];
         self
     }
 }
