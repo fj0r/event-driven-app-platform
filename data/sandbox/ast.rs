@@ -1,24 +1,11 @@
-//! Parse a Rust source file into a `syn::File` and print out a debug
-//! representation of the syntax tree.
-//!
-//! Use the following command from this directory to test this program by
-//! running it on its own source code:
-//!
-//!     cargo run -- src/main.rs
-//!
-//! The output will begin with:
-//!
-//!     File {
-//!         shebang: None,
-//!         attrs: [
-//!             Attribute {
-//!                 pound_token: Pound,
-//!                 style: AttrStyle::Inner(
-//!         ...
-//!     }
+//! ```cargo
+//! [dependencies]
+//! colored = "3.0.0"
+//! proc-macro2 = { version = "1.0.103", features = ["span-locations"] }
+//! syn = { version = "2.0.109", features = ["extra-traits", "full"] }
+//! ```
 
 use colored::Colorize;
-use serde_json::Value;
 use std::borrow::Cow;
 use std::env;
 use std::ffi::OsStr;
