@@ -38,8 +38,10 @@ macro_rules! impl_classify {
                     self
                 }
                 fn delete_class(&mut self, class: impl AsRef<str>) -> &mut Self {
-                    if let Some(cls) = &mut self.class {
-                        todo!()
+                    if let Some(cls) = &mut self.class
+                        && cls.contains(&class.as_ref().to_string()) {
+                        let ix = cls.iter().position(|x| x == &class.as_ref()).unwrap();
+                        cls.remove(ix);
                     };
                     self
                 }
