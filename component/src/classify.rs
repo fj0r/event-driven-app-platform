@@ -1,4 +1,4 @@
-use super::JsonComponent;
+use super::{ButtonAttr, CaseAttr, ClassAttr, ImageAttr, JsonComponent, RackAttr, TextAttr};
 use regex::Regex;
 use std::convert::AsRef;
 
@@ -7,14 +7,29 @@ pub trait Classify {
     fn delete_class(&mut self, class: impl AsRef<str>) -> &mut Self;
 }
 
+impl Classify for Option<ButtonAttr> {
+    fn add_class(&mut self, class: impl AsRef<str>) -> &mut Self {
+        let attr = if let Some(attr) = self {
+            attr
+        } else {
+            &mut ButtonAttr::default()
+        };
+        let cls = if let Some(cls) = &mut attr.class {
+            cls
+        } else {
+            &mut "".to_owned()
+        };
+        cls.push_str(class.as_ref());
+        self
+    }
+}
+
 impl Classify for JsonComponent {
     fn add_class(&mut self, class: impl AsRef<str>) -> &mut Self {
-        if let Some(attr) = &mut self.attrs {
-            attr.add_class(class);
-        } else {
-            let mut attr = Attrs::default();
-            attr.add_class(class);
-            self.attrs = Some(attr);
+        match self {
+            JsonComponent::button(c) => c.attrs.add_class(class),
+            JsonComponent::case(c) => c.attrs,
+            _ => {}
         }
         self
     }

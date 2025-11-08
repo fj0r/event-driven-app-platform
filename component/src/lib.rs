@@ -121,9 +121,9 @@ pub struct Bind {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
-pub struct ClassAttrs {
+pub struct ClassAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub class: Option<String>,
+    pub class: Option<Vec<String>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -131,7 +131,7 @@ pub struct ClassAttrs {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Placeholder {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttrs>,
+    pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<JsonComponent>>,
 }
@@ -141,7 +141,7 @@ pub struct Placeholder {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Chart {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttrs>,
+    pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<JsonComponent>>,
 }
@@ -151,7 +151,7 @@ pub struct Chart {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Diagram {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttrs>,
+    pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<JsonComponent>>,
 }
@@ -161,7 +161,7 @@ pub struct Diagram {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct FloatComp {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttrs>,
+    pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<JsonComponent>>,
 }
@@ -171,7 +171,7 @@ pub struct FloatComp {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct FoldComp {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttrs>,
+    pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<JsonComponent>>,
 }
@@ -181,7 +181,7 @@ pub struct FoldComp {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct FormComp {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttrs>,
+    pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<JsonComponent>>,
 }
@@ -191,7 +191,7 @@ pub struct FormComp {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Popup {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttrs>,
+    pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<JsonComponent>>,
 }
@@ -201,7 +201,7 @@ pub struct Popup {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Svg {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttrs>,
+    pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<JsonComponent>>,
 }
@@ -213,7 +213,7 @@ pub struct RackAttr {
     #[serde(default)]
     pub scroll: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub class: Option<String>,
+    pub class: Option<Vec<String>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -239,7 +239,7 @@ pub struct ButtonAttr {
     #[serde(default)]
     pub oneshot: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub class: Option<String>,
+    pub class: Option<Vec<String>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -256,7 +256,7 @@ pub struct Button {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct ImageAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub class: Option<String>,
+    pub class: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub desc: Option<String>,
     #[serde(default)]
@@ -285,7 +285,7 @@ pub struct Image {
 pub struct Input {
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttrs>,
+    pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bind: Option<HashMap<String, Bind>>,
 }
@@ -297,7 +297,7 @@ pub struct Select {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttrs>,
+    pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bind: Option<HashMap<String, Bind>>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -317,7 +317,7 @@ pub struct Table {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct TextAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub class: Option<String>,
+    pub class: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub format: Option<String>,
 }
@@ -341,7 +341,7 @@ pub struct TextArea {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttrs>,
+    pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bind: Option<HashMap<String, Bind>>,
 }
@@ -349,9 +349,9 @@ pub struct TextArea {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
-pub struct CaseAttrs {
+pub struct CaseAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub class: Option<String>,
+    pub class: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub horizontal: Option<bool>,
     #[allow(non_camel_case_types)]
@@ -366,7 +366,7 @@ pub struct Case {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<CaseAttrs>,
+    pub attrs: Option<CaseAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bind: Option<HashMap<String, Bind>>,
     #[serde(skip_serializing_if = "Option::is_none")]

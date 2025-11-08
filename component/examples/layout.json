@@ -1,6 +1,8 @@
 {
   "attrs": {
-    "class": "maximize"
+    "class": [
+      "maximize"
+    ]
   },
   "type": "case",
   "children": [
@@ -13,7 +15,10 @@
         }
       },
       "attrs": {
-        "class": "--header nogrow",
+        "class": [
+          "--header",
+          "nogrow"
+        ],
         "format": "md"
       }
     },
@@ -21,20 +26,30 @@
       "type": "case",
       "attrs": {
         "horizontal": true,
-        "class": "--body shrink border round"
+        "class": [
+          "--body",
+          "shrink",
+          "border",
+          "round"
+        ]
       },
       "children": [
         {
           "type": "case",
           "attrs": {
-            "class": "--leftside nogrow"
+            "class": [
+              "--leftside",
+              "nogrow"
+            ]
           },
           "children": [
             {
               "type": "text",
               "attrs": {
                 "format": "md",
-                "class": "box"
+                "class": [
+                  "box"
+                ]
               },
               "bind": {
                 "value": {
@@ -45,7 +60,11 @@
             {
               "type": "select",
               "attrs": {
-                "class": "--channel ji-center nogrow"
+                "class": [
+                  "--channel",
+                  "ji-center",
+                  "nogrow"
+                ]
               },
               "bind": {
                 "value": {
@@ -62,7 +81,10 @@
         {
           "type": "case",
           "attrs": {
-            "class": "main shrink"
+            "class": [
+              "main",
+              "shrink"
+            ]
           },
           "children": [
             {
@@ -71,7 +93,13 @@
                 {
                   "type": "rack",
                   "attrs": {
-                    "class": "--message box ac-start gap scrolly",
+                    "class": [
+                      "--message",
+                      "box",
+                      "ac-start",
+                      "gap",
+                      "scrolly"
+                    ],
                     "scroll": true
                   },
                   "bind": {
@@ -83,14 +111,29 @@
                     {
                       "type": "case",
                       "attrs": {
-                        "class": "nogrow as-end accent box border round shadow",
+                        "class": [
+                          "nogrow",
+                          "as-end",
+                          "accent",
+                          "box",
+                          "border",
+                          "round",
+                          "shadow"
+                        ],
                         "selector": "ask"
                       }
                     },
                     {
                       "type": "case",
                       "attrs": {
-                        "class": "nogrow as-stretch box border round shadow"
+                        "class": [
+                          "nogrow",
+                          "as-stretch",
+                          "box",
+                          "border",
+                          "round",
+                          "shadow"
+                        ]
                       }
                     }
                   ]
@@ -117,7 +160,11 @@
             {
               "type": "case",
               "attrs": {
-                "class": "--input nogrow box",
+                "class": [
+                  "--input",
+                  "nogrow",
+                  "box"
+                ],
                 "horizontal": true
               },
               "children": [

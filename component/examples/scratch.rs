@@ -1,4 +1,4 @@
-use component::{Bind, BindVariant, Case, Input, JsonComponent as C, Text, TextAttr};
+use component::{Bind, BindVariant, ButtonAttr, Case, Input, JsonComponent as C, Text, TextAttr};
 #[cfg(feature = "scratch")]
 use maplit::hashmap;
 use serde_json::{from_str, to_string};
@@ -10,7 +10,7 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
             C::text(Text {
                 attrs: Some(TextAttr {
                     format: Some("md".to_string()),
-                    ..Default::default()
+                    class: Some(vec!["f".to_string()]),
                 }),
                 ..Default::default()
             }),
