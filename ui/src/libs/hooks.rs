@@ -8,12 +8,10 @@ use serde_json::Value;
 pub fn use_common_css<'a, 'b: 'a>(css: &'a mut Vec<&'b str>, component: &'b JsonComponent) {
     let mut v = ["box", "case", "rack", "text", "tab", "select"].contains(&component.get_type());
     if let Some(a) = component.get_attrs() {
-        if let Some(h) = a.horizontal {
-            if h {
-                v = false;
-            }
+        if a.is_horizontal() {
+            v = false;
         }
-        if let Some(cc) = &a.class {
+        if let Some(cc) = a.get_class() {
             css.push(cc);
         }
     }

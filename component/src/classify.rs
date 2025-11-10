@@ -2,11 +2,20 @@ use super::{ButtonAttr, CaseAttr, ClassAttr, ImageAttr, JsonComponent, RackAttr,
 use std::convert::AsRef;
 
 pub trait Classify {
+    fn get_class(&self) -> Option<Vec<&str>>;
     fn add_class(&mut self, class: &str);
     fn delete_class(&mut self, class: &str);
+    fn is_horizontal(&self) -> bool;
 }
 
 impl<T: Classify + Default> Classify for Option<T> {
+    fn get_class(&self) -> Option<Vec<&str>> {
+        if let Some(attr) = self {
+            attr.get_class()
+        } else {
+            None
+        }
+    }
     fn add_class(&mut self, class: &str) {
         if let Some(attr) = self {
             attr.add_class(class);
@@ -20,6 +29,12 @@ impl<T: Classify + Default> Classify for Option<T> {
         if let Some(attr) = self {
             attr.delete_class(class);
         };
+    }
+    fn is_horizontal(&self) -> bool {
+        if let Some(attr) = self {
+            return attr.is_horizontal();
+        }
+        false
     }
 }
 
@@ -40,6 +55,9 @@ macro_rules! impl_classify {
                         let ix = cls.iter().position(|x| x == &class.as_ref()).unwrap();
                         cls.remove(ix);
                     };
+                }
+                fn is_horizontal(&self) -> bool {
+                    false
                 }
             }
         )*
@@ -86,6 +104,9 @@ impl Classify for JsonComponent {
             button, case, placeholder, chart, diagram, float, fold,
             form, popup, svg, rack, image, input, select, text,
         ];
+    }
+    fn is_horizontal(&self) -> bool {
+        false
     }
 }
 
