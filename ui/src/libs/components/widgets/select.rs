@@ -39,7 +39,7 @@ pub fn Select(layout: Layout, children: Element) -> Element {
                     div {
                         Frame {
                             key: "{key}",
-                            layout: child
+                            component: child
                         }
                     }
                 }
@@ -53,7 +53,7 @@ pub fn Select(layout: Layout, children: Element) -> Element {
                         onclick: mkclick(v),
                         Frame {
                             key: "{key}",
-                            layout: child
+                            component: child
                         }
                     }
                 }

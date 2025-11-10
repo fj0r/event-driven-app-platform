@@ -43,7 +43,7 @@ pub fn Fold(id: Option<String>, layout: Layout, children: Element) -> Element {
     } else {
         rsx! {
             div {
-                Frame { layout: item }
+                Frame { component: item }
             }
         }
     };

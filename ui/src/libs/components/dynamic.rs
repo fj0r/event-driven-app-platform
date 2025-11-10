@@ -8,8 +8,8 @@ use super::popup::Popup;
 use super::rack::Rack;
 use super::svg::*;
 use super::widgets::*;
+use component::{ComponentProps, JsonComponent};
 use dioxus::prelude::*;
-use layout::Layout;
 
 use std::sync::{LazyLock, Mutex};
 static COMPONENT_ID: LazyLock<Mutex<u64>> = LazyLock::new(|| Mutex::new(0));
@@ -19,7 +19,7 @@ static RACK_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
 static PLACEHOLDER_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
 
 #[component]
-pub fn Dynamic(layout: Layout, children: Element) -> Element {
+pub fn Dynamic(component: JsonComponent, children: Element) -> Element {
     let id = if cfg!(debug_assertions) {
         let mut tc = COMPONENT_ID.lock().unwrap();
         *tc += 1;
@@ -29,31 +29,31 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
     };
 
     let c = {
-        match layout.kind.as_str() {
+        match component.get_type() {
             "case" => {
-                rsx!(Case { id: id, layout: layout, {children} })
+                rsx!(Case { id: id, layout: component, {children} })
             }
-            "fold" => rsx!(Fold { id: id, layout: layout, {children} }),
+            "fold" => rsx!(Fold { id: id, layout: component, {children} }),
             "placeholder" => {
                 let mut tc = PLACEHOLDER_ID.lock().unwrap();
                 *tc += 1;
                 let id = format!("placeholder-{}", *tc);
-                rsx!(Placeholder {id, layout: layout, {children} })
+                rsx!(Placeholder {id, layout: component, {children} })
             }
             "rack" => {
                 let mut tc = RACK_ID.lock().unwrap();
                 *tc += 1;
                 let id = format!("rack-{}", *tc);
-                rsx!(Rack { id: id, layout: layout, {children} })
+                rsx!(Rack { id: id, layout: component, {children} })
             }
-            "form" => rsx!(Form { layout: layout }),
+            "form" => rsx!(Form { layout: component }),
             "chart" => {
                 let mut tc = CHART_ID.lock().unwrap();
                 *tc += 1;
                 let id = format!("chart-{}", *tc);
                 rsx!(Chart {
                     id: id,
-                    layout: layout
+                    layout: component
                 })
             }
             "diagram" => {
@@ -62,40 +62,40 @@ pub fn Dynamic(layout: Layout, children: Element) -> Element {
                 let id = format!("diagram-{}", *tc);
                 rsx!(Diagram {
                     id: id,
-                    layout: layout
+                    layout: component
                 })
             }
-            "input" => rsx!(Input { layout: layout }),
-            "select" => rsx!(Select { layout: layout, {children} }),
-            "popup" => rsx!(Popup { layout: layout, {children} }),
-            "float" => rsx!(Float { layout: layout, {children} }),
+            "input" => rsx!(Input { layout: component }),
+            "select" => rsx!(Select { layout: component, {children} }),
+            "popup" => rsx!(Popup { layout: component, {children} }),
+            "float" => rsx!(Float { layout: component, {children} }),
             "text" => {
                 rsx!(Text {
                     id: id,
-                    layout: layout
+                    layout: component
                 })
             }
             "textarea" => {
                 rsx!(TextArea {
                     id: id,
-                    layout: layout
+                    layout: component
                 })
             }
-            "button" => rsx!(Button { layout: layout }),
-            "image" => rsx!(Img { layout: layout }),
-            "svg" => rsx! (Svg { layout: layout, {children} }),
-            "group" => rsx! (Group { layout: layout, {children} }),
-            "path" => rsx!(Path { layout: layout }),
-            "table" => rsx! (TABLE { layout: layout, {children} }),
-            "thead" => rsx! (Thead { layout: layout, {children} }),
-            "tbody" => rsx! (Tbody { layout: layout, {children} }),
-            "tr" => rsx! (Tr { layout: layout, {children} }),
-            "th" => rsx! (Th { layout: layout, {children} }),
-            "td" => rsx! (Td { layout: layout, {children} }),
-            "x" => rsx!(X { layout: layout }),
+            "button" => rsx!(Button { layout: component }),
+            "image" => rsx!(Img { layout: component }),
+            "svg" => rsx! (Svg { layout: component, {children} }),
+            "group" => rsx! (Group { layout: component, {children} }),
+            "path" => rsx!(Path { layout: component }),
+            "table" => rsx! (TABLE { layout: component, {children} }),
+            "thead" => rsx! (Thead { layout: component, {children} }),
+            "tbody" => rsx! (Tbody { layout: component, {children} }),
+            "tr" => rsx! (Tr { layout: component, {children} }),
+            "th" => rsx! (Th { layout: component, {children} }),
+            "td" => rsx! (Td { layout: component, {children} }),
+            "x" => rsx!(X { layout: component }),
             "empty" => rsx!(),
             _ => {
-                let t = format!("{} unimplemented!\n{:?}", layout.kind, layout);
+                let t = format!("{} unimplemented!\n{:?}", component.get_type(), component);
                 rsx! { div { "{t}" } }
             }
         }

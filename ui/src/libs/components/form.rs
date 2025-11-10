@@ -106,7 +106,7 @@ pub fn Form(layout: Layout) -> Element {
     let children = layout.clone().children.unwrap_or_else(Vec::new);
     let children = children.into_iter().map(|c| {
         rsx! {
-            Frame { layout: c }
+            Frame { component: c }
         }
     });
 
@@ -146,7 +146,7 @@ pub fn Form(layout: Layout) -> Element {
     layout.kind = "case".to_owned();
     rsx! {
         Dynamic {
-            layout: layout,
+            component: layout,
             {children}
         }
     }

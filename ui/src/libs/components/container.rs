@@ -72,7 +72,7 @@ pub fn Placeholder(id: String, layout: Layout, children: Element) -> Element {
             div {
                 id: id,
                 class: css.join(" "),
-                Frame { layout: data.clone() }
+                Frame { component: data.clone() }
             }
         }
     } else {

@@ -60,7 +60,7 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
         if let Some(layout) = layout {
             let x = rsx! {
                 Frame {
-                    layout: child.clone()
+                    component: child.clone()
                 }
             };
             if c.len() - 1 == idx {
@@ -68,7 +68,7 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
                 rsx! {
                     Dynamic {
                         key: "{key}",
-                        layout: layout,
+                        component: layout,
                         {x}
                     }
                 }
@@ -76,7 +76,7 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
                 rsx! {
                     Dynamic {
                         key: "{key}",
-                        layout: layout,
+                        component: layout,
                         {x}
                     }
                 }
@@ -85,7 +85,7 @@ pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
             rsx! {
                 Frame {
                     key: "{key}",
-                    layout: child.clone()
+                    component: child.clone()
                 }
             }
         }

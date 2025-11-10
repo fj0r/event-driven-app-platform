@@ -55,7 +55,7 @@ fn App() -> Element {
         // document::Script { src: asset!("/assets/apexcharts.min.js") }
         // document::Script { src: asset!("/assets/mermaid.min.js") }
         Frame {
-            layout: layout()
+            component: layout()
         }
     }
 }
