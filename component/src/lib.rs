@@ -3,8 +3,10 @@ use dioxus::html::u::justify_self;
 use dioxus::prelude::*;
 #[cfg(feature = "schema")]
 use schemars::JsonSchema;
-#[cfg(feature = "classify")]
+//#[cfg(feature = "classify")]
 pub mod classify;
+//#[cfg(feature = "classify")]
+use classify::Classify;
 #[cfg(feature = "merge")]
 pub mod merge;
 #[cfg(feature = "render")]
@@ -16,9 +18,11 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 
 pub trait ComponentProps {
+    fn get_type(&self) -> &str;
     fn get_children(&mut self) -> Option<&mut Vec<JsonComponent>>;
     fn set_children(&mut self, component: Vec<JsonComponent>);
-    fn get_bind(&mut self) -> Option<&mut HashMap<String, Bind>>;
+    fn get_attrs(&self) -> Option<Box<dyn Classify>>;
+    fn get_bind(&self) -> Option<&HashMap<String, Bind>>;
     fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>);
     fn get_id(&self) -> &Option<String>;
     fn cmp_id(&self, other: &Self) -> bool;
@@ -476,11 +480,11 @@ impl ComponentProps for JsonComponent {
         ];
     }
 
-    fn get_bind(&mut self) -> Option<&mut HashMap<String, Bind>> {
+    fn get_bind(&self) -> Option<&HashMap<String, Bind>> {
         macro_rules! m {
             ($s:ident => $($c: ident),* $(,)?) => {
                 match $s {
-                    $(JsonComponent::$c(c) => { c.bind.as_mut() })*
+                    $(JsonComponent::$c(c) => { c.bind.as_ref() })*
                     _ => None
                 }
             }
@@ -521,6 +525,37 @@ impl ComponentProps for JsonComponent {
             case, rack,
             // placeholder, float, fold, popup,
             // table, form, select, svg, chart, diagram,
+        ]
+    }
+
+    fn get_type(&self) -> &str {
+        macro_rules! m {
+            ($s:ident => $($c: ident),* $(,)?) => {
+                match $s {
+                    $(JsonComponent::$c(_) => stringify!($c),)*
+                    _ => &"!"
+                }
+            };
+        }
+        m![self =>
+            placeholder, case, rack, float, fold, popup,
+            table, form, select, svg, chart, diagram,
+        ]
+    }
+
+    fn get_attrs(&self) -> Option<Box<dyn Classify>> {
+        macro_rules! m {
+            ($s:ident => $($c: ident),* $(,)?) => {
+                match $s {
+                    //$(JsonComponent::$c(c) => c.attrs.clone().map(|x| Box::new(x) as Box<dyn Classify>),)*
+                    $(JsonComponent::$c(c) => Some(Box::new(c.attrs.clone())) ,)*
+                    _ => None
+                }
+            };
+        }
+        m![self =>
+            placeholder, case, rack, float, fold, popup,
+            form, select, svg, chart, diagram,
         ]
     }
 }

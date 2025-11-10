@@ -2,12 +2,12 @@ use super::{ButtonAttr, CaseAttr, ClassAttr, ImageAttr, JsonComponent, RackAttr,
 use std::convert::AsRef;
 
 pub trait Classify {
-    fn add_class(&mut self, class: impl AsRef<str>) -> &mut Self;
-    fn delete_class(&mut self, class: impl AsRef<str>) -> &mut Self;
+    fn add_class(&mut self, class: &str);
+    fn delete_class(&mut self, class: &str);
 }
 
 impl<T: Classify + Default> Classify for Option<T> {
-    fn add_class(&mut self, class: impl AsRef<str>) -> &mut Self {
+    fn add_class(&mut self, class: &str) {
         if let Some(attr) = self {
             attr.add_class(class);
         } else {
@@ -15,13 +15,11 @@ impl<T: Classify + Default> Classify for Option<T> {
             n.add_class(class);
             *self = Some(n);
         };
-        self
     }
-    fn delete_class(&mut self, class: impl AsRef<str>) -> &mut Self {
+    fn delete_class(&mut self, class: &str) {
         if let Some(attr) = self {
             attr.delete_class(class);
         };
-        self
     }
 }
 
@@ -29,21 +27,19 @@ macro_rules! impl_classify {
     ($($type: ident),*) => {
         $(
             impl Classify for $type {
-                fn add_class(&mut self, class: impl AsRef<str>) -> &mut Self {
+                fn add_class(&mut self, class: &str) {
                     if let Some(cls) = &mut self.class {
-                        cls.push(class.as_ref().to_string());
+                        cls.push(class.to_string());
                     } else {
-                        self.class = Some(vec![class.as_ref().to_string()]);
+                        self.class = Some(vec![class.to_string()]);
                     };
-                    self
                 }
-                fn delete_class(&mut self, class: impl AsRef<str>) -> &mut Self {
+                fn delete_class(&mut self, class: &str) {
                     if let Some(cls) = &mut self.class
-                        && cls.contains(&class.as_ref().to_string()) {
+                        && cls.contains(&class.to_string()) {
                         let ix = cls.iter().position(|x| x == &class.as_ref()).unwrap();
                         cls.remove(ix);
                     };
-                    self
                 }
             }
         )*
@@ -55,7 +51,7 @@ impl_classify![
 ];
 
 impl Classify for JsonComponent {
-    fn add_class(&mut self, class: impl AsRef<str>) -> &mut Self {
+    fn add_class(&mut self, class: &str) {
         macro_rules! add_class {
             ($s:ident , $cls:ident => $($c: ident),* $(,)?) => {
                 match $s {
@@ -72,9 +68,8 @@ impl Classify for JsonComponent {
             button, case, placeholder, chart, diagram, float, fold,
             form, popup, svg, rack, image, input, select, text,
         ];
-        self
     }
-    fn delete_class(&mut self, class: impl AsRef<str>) -> &mut Self {
+    fn delete_class(&mut self, class: &str) {
         macro_rules! delete_class {
             ($s:ident , $cls:ident => $($c: ident),* $(,)?) => {
                 match $s {
@@ -91,7 +86,6 @@ impl Classify for JsonComponent {
             button, case, placeholder, chart, diagram, float, fold,
             form, popup, svg, rack, image, input, select, text,
         ];
-        self
     }
 }
 
