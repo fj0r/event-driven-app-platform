@@ -1,3 +1,4 @@
+use dioxus::html::u::justify_self;
 #[cfg(feature = "dioxus")]
 use dioxus::prelude::*;
 #[cfg(feature = "schema")]
@@ -19,6 +20,7 @@ pub trait ComponentProps {
     fn set_children(&mut self, component: Vec<JsonComponent>);
     fn get_bind(&mut self) -> Option<&mut HashMap<String, Bind>>;
     fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>);
+    fn get_id(&self) -> &Option<String>;
     fn get_render(&self) -> Option<&Render>;
 }
 
@@ -131,6 +133,8 @@ pub struct ClassAttr {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Placeholder {
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<JsonComponent>>,
@@ -140,6 +144,8 @@ pub struct Placeholder {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Chart {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -151,15 +157,7 @@ pub struct Chart {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Diagram {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttr>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub children: Option<Vec<JsonComponent>>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
-#[cfg_attr(feature = "dioxus", derive(Props))]
-#[cfg_attr(feature = "schema", derive(JsonSchema))]
-pub struct FloatComp {
+    pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -169,7 +167,9 @@ pub struct FloatComp {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
-pub struct FoldComp {
+pub struct Float {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -179,7 +179,21 @@ pub struct FoldComp {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
-pub struct FormComp {
+pub struct Fold {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ClassAttr>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<JsonComponent>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub struct Form {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -191,6 +205,8 @@ pub struct FormComp {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Popup {
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<JsonComponent>>,
@@ -200,6 +216,8 @@ pub struct Popup {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Svg {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -309,6 +327,8 @@ pub struct Select {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Table {
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<JsonComponent>>,
 }
 
@@ -377,7 +397,6 @@ pub struct Case {
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 #[serde(tag = "type")]
 pub enum JsonComponent {
@@ -385,9 +404,9 @@ pub enum JsonComponent {
     placeholder(Placeholder),
     chart(Chart),
     diagram(Diagram),
-    float(FloatComp),
-    fold(FoldComp),
-    form(FormComp),
+    float(Float),
+    fold(Fold),
+    form(Form),
     popup(Popup),
     svg(Svg),
     rack(Rack),
@@ -401,6 +420,20 @@ pub enum JsonComponent {
 }
 
 impl ComponentProps for JsonComponent {
+    fn get_id(&self) -> &Option<String> {
+        macro_rules! m {
+            ($s:ident => $($c: ident),* $(,)?) => {
+                match $s {
+                    $(JsonComponent::$c(c) => &c.id,)*
+                    _ => &None
+                }
+            };
+        }
+        m![self =>
+            placeholder, case, rack, float, fold, popup,
+            table, form, select, svg, chart, diagram,
+        ]
+    }
     fn get_children(&mut self) -> Option<&mut Vec<JsonComponent>> {
         macro_rules! m {
             ($s:ident => $($c: ident),* $(,)?) => {

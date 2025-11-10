@@ -10,7 +10,7 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 
 impl JsonComponent {
-    pub fn merge(&mut self, op: &(impl LayoutOp + Debug + ?Sized), rhs: &mut Self) {
+    pub fn merge(&mut self, op: &(impl ComponentOp + Debug + ?Sized), rhs: &mut Self) {
         op.merge(self, rhs);
         if let Some(rchildren) = rhs.get_children() {
             if let Some(children) = &mut self.get_children() {
@@ -34,7 +34,7 @@ impl JsonComponent {
     }
 }
 
-pub trait LayoutOp: Debug {
+pub trait ComponentOp: Debug {
     fn merge_value(&self, l: &mut Value, r: &Value) -> Option<Value>;
     fn merge(&self, lhs: &mut JsonComponent, rhs: &mut JsonComponent) {
         let bind = match (lhs.get_bind(), rhs.get_bind()) {
@@ -68,7 +68,7 @@ pub trait LayoutOp: Debug {
 
 #[derive(Debug)]
 pub struct Concat;
-impl LayoutOp for Concat {
+impl ComponentOp for Concat {
     fn merge_value(&self, x: &mut Value, y: &Value) -> Option<Value> {
         let n = match (x, y) {
             (Value::Number(x), Value::Number(r)) => {
@@ -100,7 +100,7 @@ impl LayoutOp for Concat {
 
 #[derive(Debug)]
 pub struct Delete;
-impl LayoutOp for Delete {
+impl ComponentOp for Delete {
     fn merge_value(&self, x: &mut Value, y: &Value) -> Option<Value> {
         let n = match (x, y) {
             (Value::Number(x), Value::Number(r)) => {
@@ -137,7 +137,7 @@ impl LayoutOp for Delete {
 
 #[derive(Debug)]
 pub struct Replace;
-impl LayoutOp for Replace {
+impl ComponentOp for Replace {
     fn merge_value(&self, x: &mut Value, r: &Value) -> Option<Value> {
         let y = match (x, r) {
             (Value::Number(_x), Value::Number(r)) => {
