@@ -2,9 +2,9 @@
 use dioxus::prelude::*;
 #[cfg(feature = "schema")]
 use schemars::JsonSchema;
-//#[cfg(feature = "classify")]
+#[cfg(feature = "classify")]
 pub mod classify;
-//#[cfg(feature = "classify")]
+#[cfg(feature = "classify")]
 use classify::Classify;
 #[cfg(feature = "merge")]
 pub mod merge;
@@ -20,7 +20,7 @@ pub trait ComponentProps {
     fn get_type(&self) -> &str;
     fn get_children(&mut self) -> Option<&mut Vec<JsonComponent>>;
     fn set_children(&mut self, component: Vec<JsonComponent>);
-    fn get_attrs(&self) -> Option<Box<dyn Classify>>;
+    fn get_attrs(&self) -> Option<&dyn Classify>;
     fn get_bind(&self) -> Option<&HashMap<String, Bind>>;
     fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>);
     fn get_id(&self) -> &Option<String>;
@@ -542,12 +542,12 @@ impl ComponentProps for JsonComponent {
         ]
     }
 
-    fn get_attrs(&self) -> Option<Box<dyn Classify>> {
+    fn get_attrs(&self) -> Option<&dyn Classify> {
         macro_rules! m {
             ($s:ident => $($c: ident),* $(,)?) => {
                 match $s {
-                    //$(JsonComponent::$c(c) => c.attrs.clone().map(|x| Box::new(x) as Box<dyn Classify>),)*
-                    $(JsonComponent::$c(c) => Some(Box::new(c.attrs.clone())) ,)*
+                    //$(JsonComponent::$c(c) => c.attrs.clone().map(|x| &x as &dyn Classify),)*
+                    $(JsonComponent::$c(c) => Some(&c.attrs) ,)*
                     _ => None
                 }
             };

@@ -2,18 +2,18 @@ use super::{ButtonAttr, CaseAttr, ClassAttr, ImageAttr, JsonComponent, RackAttr,
 use std::convert::AsRef;
 
 pub trait Classify {
-    fn get_class(&self) -> Option<Vec<&str>>;
+    fn get_class(&self) -> &Option<Vec<String>>;
     fn add_class(&mut self, class: &str);
     fn delete_class(&mut self, class: &str);
     fn is_horizontal(&self) -> bool;
 }
 
 impl<T: Classify + Default> Classify for Option<T> {
-    fn get_class(&self) -> Option<Vec<&str>> {
+    fn get_class(&self) -> &Option<Vec<String>> {
         if let Some(attr) = self {
             attr.get_class()
         } else {
-            None
+            &None
         }
     }
     fn add_class(&mut self, class: &str) {
@@ -42,6 +42,9 @@ macro_rules! impl_classify {
     ($($type: ident),*) => {
         $(
             impl Classify for $type {
+                fn get_class(&self) -> &Option<Vec<String>> {
+                    &self.class
+                }
                 fn add_class(&mut self, class: &str) {
                     if let Some(cls) = &mut self.class {
                         cls.push(class.to_string());
@@ -69,8 +72,22 @@ impl_classify![
 ];
 
 impl Classify for JsonComponent {
+    fn get_class(&self) -> &Option<Vec<String>> {
+        macro_rules! m {
+            ($s:ident => $($c: ident),* $(,)?) => {
+                match $s {
+                    $(JsonComponent::$c(c) =>  c.attrs.get_class(),)*
+                    _ => &None
+                }
+            }
+        }
+        m![ self =>
+            button, case, placeholder, chart, diagram, float, fold,
+            form, popup, svg, rack, image, input, select, text,
+        ]
+    }
     fn add_class(&mut self, class: &str) {
-        macro_rules! add_class {
+        macro_rules! m {
             ($s:ident , $cls:ident => $($c: ident),* $(,)?) => {
                 match $s {
                     $(
@@ -82,13 +99,13 @@ impl Classify for JsonComponent {
                 }
             };
         }
-        add_class![ self, class =>
+        m![ self, class =>
             button, case, placeholder, chart, diagram, float, fold,
             form, popup, svg, rack, image, input, select, text,
         ];
     }
     fn delete_class(&mut self, class: &str) {
-        macro_rules! delete_class {
+        macro_rules! m {
             ($s:ident , $cls:ident => $($c: ident),* $(,)?) => {
                 match $s {
                     $(
@@ -100,13 +117,24 @@ impl Classify for JsonComponent {
                 }
             };
         }
-        delete_class! [self, class =>
+        m! [self, class =>
             button, case, placeholder, chart, diagram, float, fold,
             form, popup, svg, rack, image, input, select, text,
         ];
     }
     fn is_horizontal(&self) -> bool {
-        false
+        macro_rules! m {
+            ($s:ident => $($c: ident),* $(,)?) => {
+                match $s {
+                    $(JsonComponent::$c(c) =>  c.attrs.is_horizontal(),)*
+                    _ => false
+                }
+            }
+        }
+        m![ self =>
+            button, case, placeholder, chart, diagram, float, fold,
+            form, popup, svg, rack, image, input, select, text,
+        ]
     }
 }
 

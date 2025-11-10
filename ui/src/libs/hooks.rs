@@ -12,7 +12,8 @@ pub fn use_common_css<'a, 'b: 'a>(css: &'a mut Vec<&'b str>, component: &'b Json
             v = false;
         }
         if let Some(cc) = a.get_class() {
-            css.push(cc);
+            let c = cc.iter().map(|x| &**x).collect::<Vec<_>>();
+            css.extend(c);
         }
     }
     if v {
