@@ -21,6 +21,7 @@ pub trait ComponentProps {
     fn get_bind(&mut self) -> Option<&mut HashMap<String, Bind>>;
     fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>);
     fn get_id(&self) -> &Option<String>;
+    fn cmp_id(&self, other: &Self) -> bool;
     fn get_render(&self) -> Option<&Render>;
 }
 
@@ -434,6 +435,17 @@ impl ComponentProps for JsonComponent {
             table, form, select, svg, chart, diagram,
         ]
     }
+
+    fn cmp_id(&self, other: &Self) -> bool {
+        let Some(id) = self.get_id() else {
+            return false;
+        };
+        let Some(oid) = other.get_id() else {
+            return false;
+        };
+        id == oid
+    }
+
     fn get_children(&mut self) -> Option<&mut Vec<JsonComponent>> {
         macro_rules! m {
             ($s:ident => $($c: ident),* $(,)?) => {
@@ -448,6 +460,7 @@ impl ComponentProps for JsonComponent {
             table, form, select, svg, chart, diagram,
         ]
     }
+
     fn set_children(&mut self, component: Vec<JsonComponent>) {
         macro_rules! m {
             ($s:ident, $p:ident => $($c: ident),* $(,)?) => {
