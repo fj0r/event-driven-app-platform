@@ -2,30 +2,17 @@ use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::{DeriveInput, parse_macro_input};
+mod classify;
+use classify::impl_classify_struct;
 
 #[proc_macro_derive(classify)]
 pub fn hello_derive(input: TokenStream) -> TokenStream {
     let input_stream2: TokenStream2 = input.into();
 
-    match impl_hello_derive(input_stream2) {
+    match impl_classify_struct(input_stream2) {
         Ok(output_stream2) => output_stream2.into(),
         Err(err) => err.into_compile_error().into(),
     }
-}
-
-fn impl_hello_derive(input: TokenStream2) -> syn::Result<TokenStream2> {
-    let ast: DeriveInput = syn::parse2(input)?;
-    let name = &ast.ident;
-
-    let g = quote! {
-        impl Hello for #name {
-            fn hello(&self) {
-                println!("Hello, my name is {}!", stringify!(#name));
-            }
-        }
-    };
-
-    Ok(g)
 }
 
 #[cfg(test)]
@@ -105,23 +92,11 @@ mod test_macro {
             }
         };
 
-        let output = impl_hello_derive(input.clone()).expect("Macro expansion failed");
+        let output = impl_classify_struct(input.clone()).expect("Macro expansion failed");
 
-        let expected = quote! {
-            impl Hello for Users {
-                fn hello(&self) {
-                    println!("Hello, my name is {}!", stringify!(Users));
-                }
-            }
-        };
-
-        let ast = format!("{:#?}", syn::parse2::<DeriveInput>(input).unwrap());
-        let _ = match std::fs::write("../data/out.ast", ast) {
-            Ok(_) => {}
-            Err(e) => {
-                assert_eq!("", format!("{:?}", e));
-            }
-        };
+        let ast = syn::parse2::<DeriveInput>(input).unwrap();
+        let _ = std::fs::write("../data/out.ast", format!("{:#?}", ast));
+        let _ = std::fs::write("../data/out.rs", format!("{:#}", output.to_string()));
 
         assert!(true);
     }
