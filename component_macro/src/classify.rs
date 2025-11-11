@@ -104,3 +104,42 @@ pub fn impl_classify_component(input: TokenStream2) -> syn::Result<TokenStream2>
 
     Ok(g)
 }
+
+pub fn impl_classify_variant(input: TokenStream2) -> syn::Result<TokenStream2> {
+    let ast: DeriveInput = syn::parse2(input)?;
+    let name = &ast.ident;
+    let mut r = Vec::new();
+    if let syn::Data::Enum(d) = &ast.data {
+        for i in &d.variants {
+            r.push(i.ident.clone());
+        }
+    }
+    Ok(quote! {
+        impl Classify for #name {
+            fn get_class(&self) -> &Option<Vec<String>> {
+                match self {
+                    #(#name::#r(c) => c.attrs.get_class()),*
+                    _ => &None
+                }
+            }
+            fn add_class(&mut self, class: &str) {
+                match self {
+                    #(#name::#r(c) => { c.attrs.add_class(class) }),*
+                    _ => {}
+                }
+            }
+            fn delete_class(&mut self, class: &str) {
+                match self {
+                    #(#name::#r(c) => { c.attrs.delete_class(class) }),*
+                    _ => {}
+                }
+            }
+            fn is_horizontal(&self) -> bool {
+                match self {
+                    #(#name::#r(c) => c.attrs.is_horizontal() ),*
+                    _ => false
+                }
+            }
+        }
+    })
+}
