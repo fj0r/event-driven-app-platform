@@ -1,20 +1,17 @@
 use crate::libs::components::Frame;
 use crate::libs::hooks::use_common_css;
 use crate::libs::store::Status;
-use component::{
-    Bind, BindVariant, Case as CaseComp, CaseAttr, ComponentProps, JsonComponent,
-    classify::Classify,
-};
+use component::{Bind, BindVariant, Case, CaseAttr, JsonComponent, Placeholder, ClassAttr};
 use dioxus::prelude::*;
 
 #[component]
-pub fn Case(id: Option<String>, component: CaseComp, children: Element) -> Element {
+pub fn case(id: Option<String>, component: Case, children: Element) -> Element {
     let mut css = vec!["case", "f"];
     if let Some(id) = &id {
         css.push(id);
     }
     let mut style = String::new();
-    if let CaseComp {
+    if let Case {
         id,
         attrs,
         bind,
@@ -55,12 +52,13 @@ pub fn Case(id: Option<String>, component: CaseComp, children: Element) -> Eleme
 }
 
 #[component]
-pub fn Placeholder(id: String, layout: Layout, children: Element) -> Element {
+pub fn placeholder(id: String, component: Placeholder, children: Element) -> Element {
     let mut css = vec!["placeholder", "f"];
-    use_common_css(&mut css, &layout);
+    use_common_css(&mut css, &component);
     let store = use_context::<Status>();
     let s = store.data.read();
-    if let Some(x) = layout.bind.as_ref()
+
+    if let Some(x) = component.bind.as_ref()
         && let Some(Bind {
             variant: BindVariant::Source { source },
             default: _,

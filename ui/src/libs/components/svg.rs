@@ -1,6 +1,6 @@
 use crate::libs::hooks::{use_common_css, use_default};
 use dioxus::prelude::*;
-use layout::{Layout, Settings};
+use component::{Layout, Settings};
 
 #[component]
 pub fn Svg(layout: Layout, children: Element) -> Element {

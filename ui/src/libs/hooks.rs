@@ -5,7 +5,7 @@ use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
 use serde_json::Value;
 
-pub fn use_common_css<'a, 'b: 'a>(css: &'a mut Vec<&'b str>, component: &'b impl Classify) {
+pub fn use_common_css<'a, 'b: 'a>(css: &'a mut Vec<&'b str>, component: &'b impl Classify + ComponentProps) {
     let mut v = ["box", "case", "rack", "text", "tab", "select"].contains(&component.get_type());
     if let Some(a) = component.get_attrs() {
         if a.is_horizontal() {

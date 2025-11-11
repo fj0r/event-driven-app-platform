@@ -31,14 +31,14 @@ pub fn Dynamic(component: JsonComponent, children: Element) -> Element {
     let c = {
         match component {
             JsonComponent::case(c) => {
-                rsx!(Case { id: id, component: c, {children} })
+                rsx!(case { id: id, component: c, {children} })
             }
             JsonComponent::fold(c) => rsx!(Fold { id: id, layout: c, {children} }),
             JsonComponent::placeholder(c) => {
                 let mut tc = PLACEHOLDER_ID.lock().unwrap();
                 *tc += 1;
                 let id = format!("placeholder-{}", *tc);
-                rsx!(Placeholder {id, layout: c, {children} })
+                rsx!(placeholder {id, layout: c, {children} })
             }
             JsonComponent::rack(c) => {
                 let mut tc = RACK_ID.lock().unwrap();

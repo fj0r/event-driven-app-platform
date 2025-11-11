@@ -24,7 +24,7 @@ pub trait ComponentProps {
     fn get_bind(&self) -> Option<&HashMap<String, Bind>>;
     fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>);
     fn get_id(&self) -> &Option<String>;
-    fn cmp_id(&self, other: &Self) -> bool;
+    //fn cmp_id(&self, other: &Self) -> bool;
     fn get_render(&self) -> Option<&Render>;
 }
 
@@ -524,6 +524,51 @@ pub enum JsonSvgComponent {
     path,
 }
 
+macro_rules! impl_component_props {
+    ($($type: ident),*) => {};
+}
+
+impl_component_props![];
+
+impl ComponentProps for Placeholder {
+    fn get_id(&self) -> &Option<String> {
+        &self.id
+    }
+    fn get_type(&self) -> &str {
+        "placeholder"
+    }
+    fn get_children(&mut self) -> Option<&mut Vec<JsonComponent>> {
+        self.children.as_mut()
+    }
+    fn set_children(&mut self, component: Vec<JsonComponent>) {
+        self.children = Some(component);
+    }
+    fn get_attrs(&self) -> Option<&dyn Classify> {
+        Some(&self.attrs)
+    }
+    fn get_bind(&self) -> Option<&HashMap<String, Bind>> {
+        //self.bind.as_ref()
+        None
+    }
+    fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>) {}
+    fn get_render(&self) -> Option<&Render> {
+        //self.render.as_ref()
+        None
+    }
+}
+
+impl JsonComponent {
+    fn cmp_id(&self, other: &Self) -> bool {
+        let Some(id) = self.get_id() else {
+            return false;
+        };
+        let Some(oid) = other.get_id() else {
+            return false;
+        };
+        id == oid
+    }
+}
+
 impl ComponentProps for JsonComponent {
     fn get_id(&self) -> &Option<String> {
         macro_rules! m {
@@ -538,16 +583,6 @@ impl ComponentProps for JsonComponent {
             placeholder, case, rack, float, fold, popup,
             table, form, select, svg, chart, diagram,
         ]
-    }
-
-    fn cmp_id(&self, other: &Self) -> bool {
-        let Some(id) = self.get_id() else {
-            return false;
-        };
-        let Some(oid) = other.get_id() else {
-            return false;
-        };
-        id == oid
     }
 
     fn get_children(&mut self) -> Option<&mut Vec<JsonComponent>> {

@@ -1,4 +1,4 @@
-use super::{ButtonAttr, Case, CaseAttr, ClassAttr, ImageAttr, JsonComponent, RackAttr, TextAttr};
+use super::*;
 use std::convert::AsRef;
 
 pub trait Classify {
@@ -92,7 +92,8 @@ macro_rules! impl_component_classify {
     };
 }
 
-impl_component_classify![Case];
+// TODO:
+impl_component_classify![Case, Placeholder];
 
 impl Classify for JsonComponent {
     fn get_class(&self) -> &Option<Vec<String>> {
