@@ -3,13 +3,13 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::{DeriveInput, parse_macro_input};
 mod classify;
-use classify::impl_classify_struct;
+use classify::impl_classify_component;
 
 #[proc_macro_derive(classify)]
 pub fn hello_derive(input: TokenStream) -> TokenStream {
     let input_stream2: TokenStream2 = input.into();
 
-    match impl_classify_struct(input_stream2) {
+    match impl_classify_component(input_stream2) {
         Ok(output_stream2) => output_stream2.into(),
         Err(err) => err.into_compile_error().into(),
     }
@@ -92,7 +92,7 @@ mod test_macro {
             }
         };
 
-        let output = impl_classify_struct(input.clone()).expect("Macro expansion failed");
+        let output = impl_classify_component(input.clone()).expect("Macro expansion failed");
 
         let ast = syn::parse2::<DeriveInput>(input).unwrap();
         let _ = std::fs::write("../data/out.ast", format!("{:#?}", ast));
