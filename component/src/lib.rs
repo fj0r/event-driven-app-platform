@@ -558,7 +558,7 @@ impl ComponentProps for Placeholder {
 }
 
 impl JsonComponent {
-    fn cmp_id(&self, other: &Self) -> bool {
+    pub fn cmp_id(&self, other: &Self) -> bool {
         let Some(id) = self.get_id() else {
             return false;
         };

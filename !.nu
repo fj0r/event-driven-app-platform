@@ -606,3 +606,7 @@ export def git-hooks [act ctx] {
         git add .
     }
 }
+
+export def 'test macro' [] {
+    cargo test -p component_macro test_macro
+}
