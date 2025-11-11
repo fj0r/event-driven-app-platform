@@ -3,7 +3,8 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::{DeriveInput, parse_macro_input};
 mod classify;
-use classify::impl_classify_component;
+use classify::{impl_classify_attrs, impl_classify_component};
+mod utils;
 
 #[proc_macro_derive(classify)]
 pub fn hello_derive(input: TokenStream) -> TokenStream {
@@ -23,7 +24,7 @@ mod test_macro {
 
     #[test]
     fn test_struct_hello() {
-        let input = quote! {
+        let input1 = quote! {
             #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
             #[cfg_attr(feature = "dioxus", derive(Props))]
             #[cfg_attr(feature = "schema", derive(JsonSchema))]
@@ -37,7 +38,7 @@ mod test_macro {
             }
         };
 
-        let input2 = quote! {
+        let input = quote! {
             #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
             #[cfg_attr(feature = "dioxus", derive(Props))]
             #[cfg_attr(feature = "schema", derive(JsonSchema))]
@@ -92,7 +93,7 @@ mod test_macro {
             }
         };
 
-        let output = impl_classify_component(input.clone()).expect("Macro expansion failed");
+        let output = impl_classify_attrs(input.clone()).expect("Macro expansion failed");
 
         let ast = syn::parse2::<DeriveInput>(input).unwrap();
         let _ = std::fs::write("../data/out.ast", format!("{:#?}", ast));
