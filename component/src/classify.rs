@@ -1,4 +1,4 @@
-use super::{ButtonAttr, CaseAttr, ClassAttr, ImageAttr, JsonComponent, RackAttr, TextAttr};
+use super::{ButtonAttr, Case, CaseAttr, ClassAttr, ImageAttr, JsonComponent, RackAttr, TextAttr};
 use std::convert::AsRef;
 
 pub trait Classify {
@@ -70,6 +70,29 @@ macro_rules! impl_classify {
 impl_classify![
     ClassAttr, ButtonAttr, CaseAttr, ImageAttr, RackAttr, TextAttr
 ];
+
+macro_rules! impl_component_classify {
+    ($($type: ident),*) => {
+        $(
+            impl Classify for $type {
+                fn get_class(&self) -> &Option<Vec<String>> {
+                    self.attrs.get_class()
+                }
+                fn add_class(&mut self, class: &str) {
+                    self.attrs.add_class(class);
+                }
+                fn delete_class(&mut self, class: &str) {
+                    self.attrs.delete_class(class);
+                }
+                fn is_horizontal(&self) -> bool {
+                    self.attrs.is_horizontal()
+                }
+            }
+        )*
+    };
+}
+
+impl_component_classify![Case];
 
 impl Classify for JsonComponent {
     fn get_class(&self) -> &Option<Vec<String>> {

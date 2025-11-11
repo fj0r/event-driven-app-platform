@@ -1,36 +1,49 @@
 use crate::libs::components::Frame;
 use crate::libs::hooks::use_common_css;
 use crate::libs::store::Status;
+use component::{
+    Bind, BindVariant, Case as CaseComp, CaseAttr, ComponentProps, JsonComponent,
+    classify::Classify,
+};
 use dioxus::prelude::*;
-use layout::{Bind, BindVariant, Container, Layout, Settings};
 
 #[component]
-pub fn Case(id: Option<String>, layout: Layout, children: Element) -> Element {
+pub fn Case(id: Option<String>, component: CaseComp, children: Element) -> Element {
     let mut css = vec!["case", "f"];
     if let Some(id) = &id {
         css.push(id);
     }
     let mut style = String::new();
-    if let Some(a) = &layout.attrs {
+    if let CaseComp {
+        id,
+        attrs,
+        bind,
+        render,
+        children,
+    } = &component
+    {
         let mut f = true;
-        if let Some(Settings::Container(c)) = &a.settings {
-            match &c {
-                Container::grid(g) => {
-                    f = false;
-                    css.push("g");
-                    style = g
-                        .iter()
-                        .map(|(k, v)| format!("{}: {};", k, v.as_str().unwrap()))
-                        .collect::<Vec<String>>()
-                        .join("\n");
-                }
-            }
-        };
-        if f {
-            css.push("f");
+        if let Some(CaseAttr {
+            class,
+            horizontal,
+            grid,
+        }) = attrs
+        {
+            if let Some(g) = grid {
+                f = false;
+                css.push("g");
+                style = g
+                    .iter()
+                    .map(|(k, v)| format!("{}: {};", k, v.as_str().unwrap()))
+                    .collect::<Vec<String>>()
+                    .join("\n");
+            };
+            if f {
+                css.push("f");
+            };
         }
     };
-    use_common_css(&mut css, &layout);
+    use_common_css(&mut css, &component);
 
     rsx! {
         div {

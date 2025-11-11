@@ -29,71 +29,57 @@ pub fn Dynamic(component: JsonComponent, children: Element) -> Element {
     };
 
     let c = {
-        match component.get_type() {
-            "case" => {
-                rsx!(Case { id: id, layout: component, {children} })
+        match component {
+            JsonComponent::case(c) => {
+                rsx!(Case { id: id, component: c, {children} })
             }
-            "fold" => rsx!(Fold { id: id, layout: component, {children} }),
-            "placeholder" => {
+            JsonComponent::fold(c) => rsx!(Fold { id: id, layout: c, {children} }),
+            JsonComponent::placeholder(c) => {
                 let mut tc = PLACEHOLDER_ID.lock().unwrap();
                 *tc += 1;
                 let id = format!("placeholder-{}", *tc);
-                rsx!(Placeholder {id, layout: component, {children} })
+                rsx!(Placeholder {id, layout: c, {children} })
             }
-            "rack" => {
+            JsonComponent::rack(c) => {
                 let mut tc = RACK_ID.lock().unwrap();
                 *tc += 1;
                 let id = format!("rack-{}", *tc);
-                rsx!(Rack { id: id, layout: component, {children} })
+                rsx!(Rack { id: id, layout: c, {children} })
             }
-            "form" => rsx!(Form { layout: component }),
-            "chart" => {
+            JsonComponent::form(c) => rsx!(Form { layout: c }),
+            JsonComponent::chart(c) => {
                 let mut tc = CHART_ID.lock().unwrap();
                 *tc += 1;
                 let id = format!("chart-{}", *tc);
-                rsx!(Chart {
-                    id: id,
-                    layout: component
-                })
+                rsx!(Chart { id: id, layout: c })
             }
-            "diagram" => {
+            JsonComponent::diagram(c) => {
                 let mut tc = DIAGRAM_ID.lock().unwrap();
                 *tc += 1;
                 let id = format!("diagram-{}", *tc);
-                rsx!(Diagram {
-                    id: id,
-                    layout: component
-                })
+                rsx!(Diagram { id: id, layout: c })
             }
-            "input" => rsx!(Input { layout: component }),
-            "select" => rsx!(Select { layout: component, {children} }),
-            "popup" => rsx!(Popup { layout: component, {children} }),
-            "float" => rsx!(Float { layout: component, {children} }),
-            "text" => {
-                rsx!(Text {
-                    id: id,
-                    layout: component
-                })
+            JsonComponent::input(c) => rsx!(Input { layout: c }),
+            JsonComponent::select(c) => rsx!(Select { layout: c, {children} }),
+            JsonComponent::popup(c) => rsx!(Popup { layout: c, {children} }),
+            JsonComponent::float(c) => rsx!(Float { layout: c, {children} }),
+            JsonComponent::text(c) => {
+                rsx!(Text { id: id, layout: c })
             }
-            "textarea" => {
-                rsx!(TextArea {
-                    id: id,
-                    layout: component
-                })
+            JsonComponent::textarea(c) => {
+                rsx!(TextArea { id: id, layout: c })
             }
-            "button" => rsx!(Button { layout: component }),
-            "image" => rsx!(Img { layout: component }),
-            "svg" => rsx! (Svg { layout: component, {children} }),
-            "group" => rsx! (Group { layout: component, {children} }),
-            "path" => rsx!(Path { layout: component }),
-            "table" => rsx! (TABLE { layout: component, {children} }),
-            "thead" => rsx! (Thead { layout: component, {children} }),
-            "tbody" => rsx! (Tbody { layout: component, {children} }),
-            "tr" => rsx! (Tr { layout: component, {children} }),
-            "th" => rsx! (Th { layout: component, {children} }),
-            "td" => rsx! (Td { layout: component, {children} }),
-            "x" => rsx!(X { layout: component }),
-            "empty" => rsx!(),
+            JsonComponent::button(c) => rsx!(Button { layout: c }),
+            JsonComponent::image(c) => rsx!(Img { layout: c }),
+            JsonComponent::svg(c) => rsx! (Svg { layout: c, {children} }),
+            JsonComponent::group(c) => rsx! (Group { layout: c, {children} }),
+            JsonComponent::path(c) => rsx!(Path { layout: c }),
+            JsonComponent::table(c) => rsx! (TABLE { layout: c, {children} }),
+            JsonComponent::thead(c) => rsx! (Thead { layout: c, {children} }),
+            JsonComponent::tbody(c) => rsx! (Tbody { layout: c, {children} }),
+            JsonComponent::tr(c) => rsx! (Tr { layout: c, {children} }),
+            JsonComponent::th(c) => rsx! (Th { layout: c, {children} }),
+            JsonComponent::td(c) => rsx! (Td { layout: c, {children} }),
             _ => {
                 let t = format!("{} unimplemented!\n{:?}", component.get_type(), component);
                 rsx! { div { "{t}" } }

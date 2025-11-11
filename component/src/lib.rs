@@ -231,6 +231,29 @@ pub struct Svg {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub struct Group {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ClassAttr>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<JsonComponent>>,
+}
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub struct Path {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attrs: Option<ClassAttr>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<JsonComponent>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct RackAttr {
     #[serde(default)]
     pub scroll: bool,
@@ -339,6 +362,56 @@ pub struct Table {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub struct Thead {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<JsonComponent>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub struct Tbody {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<JsonComponent>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub struct Tr {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<JsonComponent>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub struct Th {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<JsonComponent>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub struct Td {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<JsonComponent>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct TextAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
@@ -413,14 +486,42 @@ pub enum JsonComponent {
     form(Form),
     popup(Popup),
     svg(Svg),
+    group(Group),
+    path(Path),
     rack(Rack),
     button(Button),
     image(Image),
     input(Input),
     select(Select),
     table(Table),
+    thead(Thead),
+    tbody(Tbody),
+    tr(Tr),
+    th(Th),
+    td(Td),
     text(Text),
     textarea(TextArea),
+}
+
+#[allow(non_camel_case_types)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[serde(tag = "type")]
+pub enum JsonTableComponent {
+    thead,
+    tbody,
+    tr,
+    th,
+    td,
+}
+
+#[allow(non_camel_case_types)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[serde(tag = "type")]
+pub enum JsonSvgComponent {
+    group,
+    path,
 }
 
 impl ComponentProps for JsonComponent {
@@ -460,7 +561,8 @@ impl ComponentProps for JsonComponent {
         }
         m![self =>
             placeholder, case, rack, float, fold, popup,
-            table, form, select, svg, chart, diagram,
+            table, thead, tbody, tr, th, td,
+            form, select, svg, group, chart, diagram,
         ]
     }
 
@@ -475,7 +577,8 @@ impl ComponentProps for JsonComponent {
         }
         m![self, component =>
             placeholder, case, rack, float, fold, popup,
-            table, form, select, svg, chart, diagram,
+            table, thead, tbody, tr, th, td,
+            form, select, svg, group, chart, diagram,
         ];
     }
 
