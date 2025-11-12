@@ -6,6 +6,30 @@ use classify::{impl_classify_attrs, impl_classify_component, impl_classify_varia
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use props::{impl_component_props, impl_component_props_variant};
+use syn::{Data, DeriveInput, parse_macro_input};
+
+fn into_ts(result: syn::Result<TokenStream2>) -> TokenStream {
+    match result {
+        Ok(output_stream2) => output_stream2.into(),
+        Err(err) => err.into_compile_error().into(),
+    }
+}
+
+#[proc_macro_derive(ComponentProps)]
+pub fn component_props(input: TokenStream) -> TokenStream {
+    let ast = parse_macro_input!(input as DeriveInput);
+
+    match ast.data {
+        Data::Struct(_) => into_ts(impl_component_props(&ast)),
+        Data::Enum(_) => into_ts(impl_component_props_variant(&ast)),
+        _ => syn::Error::new(
+            ast.ident.span(),
+            "ComponentProps only supports structs and enums",
+        )
+        .to_compile_error()
+        .into(),
+    }
+}
 
 #[proc_macro_derive(ClassifyAttrs)]
 pub fn classify_attrs(input: TokenStream) -> TokenStream {
@@ -18,10 +42,20 @@ pub fn classify_attrs(input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_derive(ClassifyComponent)]
-pub fn hello_derive(input: TokenStream) -> TokenStream {
+pub fn classify_component(input: TokenStream) -> TokenStream {
     let input_stream2: TokenStream2 = input.into();
 
     match impl_classify_component(input_stream2) {
+        Ok(output_stream2) => output_stream2.into(),
+        Err(err) => err.into_compile_error().into(),
+    }
+}
+
+#[proc_macro_derive(ClassifyVariant)]
+pub fn classify_variant(input: TokenStream) -> TokenStream {
+    let input_stream2: TokenStream2 = input.into();
+
+    match impl_classify_variant(input_stream2) {
         Ok(output_stream2) => output_stream2.into(),
         Err(err) => err.into_compile_error().into(),
     }
@@ -36,7 +70,7 @@ mod test_macro {
 
     #[test]
     fn test_struct_hello() {
-        let _input = quote! {
+        let input = quote! {
             #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
             #[cfg_attr(feature = "dioxus", derive(Props))]
             #[cfg_attr(feature = "schema", derive(JsonSchema))]
@@ -60,7 +94,7 @@ mod test_macro {
             }
         };
 
-        let input = quote! {
+        let _input = quote! {
             #[allow(non_camel_case_types)]
             #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
             #[cfg_attr(feature = "schema", derive(JsonSchema))]
@@ -105,9 +139,9 @@ mod test_macro {
             }
         };
 
-        let output = impl_component_props_variant(input.clone()).expect("Macro expansion failed");
-
         let ast = syn::parse2::<DeriveInput>(input).unwrap();
+        let output = impl_component_props(&ast).expect("Macro expansion failed");
+
         let _ = std::fs::write("../data/out.ast", format!("{:#?}", ast));
         let _ = std::fs::write("../data/out.rs", format!("{:#}", output.to_string()));
 

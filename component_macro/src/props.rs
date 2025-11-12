@@ -3,11 +3,10 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::DeriveInput;
 
-pub fn impl_component_props(input: TokenStream2) -> syn::Result<TokenStream2> {
-    let ast: DeriveInput = syn::parse2(input)?;
+pub fn impl_component_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
     let name = &ast.ident;
 
-    let id = if struct_has_field(&ast, "id") {
+    let id = if struct_has_field(ast, "id") {
         quote! {
             fn get_id(&self) -> &Option<String> {
                 &self.id
@@ -105,13 +104,12 @@ pub fn impl_component_props(input: TokenStream2) -> syn::Result<TokenStream2> {
     })
 }
 
-pub fn impl_component_props_variant(input: TokenStream2) -> syn::Result<TokenStream2> {
-    let ast: DeriveInput = syn::parse2(input)?;
+pub fn impl_component_props_variant(ast: &DeriveInput) -> syn::Result<TokenStream2> {
     let name = &ast.ident;
     let mut r = Vec::new();
-    if let syn::Data::Enum(d) = ast.data {
-        for i in d.variants {
-            r.push(i.ident);
+    if let syn::Data::Enum(d) = &ast.data {
+        for i in &d.variants {
+            r.push(&i.ident);
         }
     }
     Ok(quote! {
