@@ -534,6 +534,7 @@ pub struct Case {
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
 #[serde(tag = "type")]
 pub enum JsonComponent {
     case(Case),
@@ -562,6 +563,20 @@ pub enum JsonComponent {
     textarea(TextArea),
 }
 
+#[cfg(feature = "props")]
+impl JsonComponent {
+    pub fn cmp_id(&self, other: &Self) -> bool {
+        let Some(id) = self.get_id() else {
+            return false;
+        };
+        let Some(oid) = other.get_id() else {
+            return false;
+        };
+        id == oid
+    }
+}
+
+/*
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
@@ -582,16 +597,4 @@ pub enum JsonSvgComponent {
     group,
     path,
 }
-
-#[cfg(feature = "props")]
-impl JsonComponent {
-    pub fn cmp_id(&self, other: &Self) -> bool {
-        let Some(id) = self.get_id() else {
-            return false;
-        };
-        let Some(oid) = other.get_id() else {
-            return false;
-        };
-        id == oid
-    }
-}
+*/
