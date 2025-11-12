@@ -1,13 +1,13 @@
 use crate::libs::hooks::{use_common_css, use_default};
+use component::Diagram;
 use dioxus::prelude::*;
-use layout::Layout;
 
 #[component]
-pub fn Diagram(id: String, layout: Layout) -> Element {
+pub fn diagram_(id: String, component: Diagram) -> Element {
     let eid = id.clone();
     let mut css = vec!["diagram"];
-    use_common_css(&mut css, &layout);
-    if let Some(x) = use_default(&layout)
+    use_common_css(&mut css, &component);
+    if let Some(x) = use_default(&component)
         && let Some(y) = x.as_str()
     {
         let val = y.to_string();

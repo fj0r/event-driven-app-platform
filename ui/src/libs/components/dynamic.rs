@@ -1,11 +1,11 @@
-use super::chart::Chart;
+use super::chart::chart_;
 use super::container::*;
-use super::diagram::Diagram;
-use super::float::Float;
-use super::fold::Fold;
-use super::form::Form;
-use super::popup::Popup;
-use super::rack::Rack;
+use super::diagram::diagram_;
+use super::float::float_;
+use super::fold::fold_;
+use super::form::form_;
+use super::popup::popup_;
+use super::rack::rack_;
 use super::svg::*;
 use super::widgets::*;
 use component::{ComponentProps, JsonComponent};
@@ -31,38 +31,44 @@ pub fn Dynamic(component: JsonComponent, children: Element) -> Element {
     let c = {
         match component {
             JsonComponent::case(c) => {
-                rsx!(case { id: id, component: c, {children} })
+                rsx!(case_ { id: id, component: c, {children} })
             }
-            JsonComponent::fold(c) => rsx!(Fold { id: id, layout: c, {children} }),
+            JsonComponent::fold(c) => rsx!(fold_ { id: id, layout: c, {children} }),
             JsonComponent::placeholder(c) => {
                 let mut tc = PLACEHOLDER_ID.lock().unwrap();
                 *tc += 1;
                 let id = format!("placeholder-{}", *tc);
-                rsx!(placeholder {id, layout: c, {children} })
+                rsx!(placeholder_ {id, component: c, {children} })
             }
             JsonComponent::rack(c) => {
                 let mut tc = RACK_ID.lock().unwrap();
                 *tc += 1;
                 let id = format!("rack-{}", *tc);
-                rsx!(Rack { id: id, layout: c, {children} })
+                rsx!(rack_ { id: id, layout: c, {children} })
             }
-            JsonComponent::form(c) => rsx!(Form { layout: c }),
+            JsonComponent::form(c) => rsx!(form_ { layout: c }),
             JsonComponent::chart(c) => {
                 let mut tc = CHART_ID.lock().unwrap();
                 *tc += 1;
                 let id = format!("chart-{}", *tc);
-                rsx!(Chart { id: id, layout: c })
+                rsx!(chart_ {
+                    id: id,
+                    component: c
+                })
             }
             JsonComponent::diagram(c) => {
                 let mut tc = DIAGRAM_ID.lock().unwrap();
                 *tc += 1;
                 let id = format!("diagram-{}", *tc);
-                rsx!(Diagram { id: id, layout: c })
+                rsx!(diagram_ {
+                    id: id,
+                    component: c
+                })
             }
             JsonComponent::input(c) => rsx!(Input { layout: c }),
             JsonComponent::select(c) => rsx!(Select { layout: c, {children} }),
-            JsonComponent::popup(c) => rsx!(Popup { layout: c, {children} }),
-            JsonComponent::float(c) => rsx!(Float { layout: c, {children} }),
+            JsonComponent::popup(c) => rsx!(popup_ { layout: c, {children} }),
+            JsonComponent::float(c) => rsx!(float_ { layout: c, {children} }),
             JsonComponent::text(c) => {
                 rsx!(Text { id: id, layout: c })
             }

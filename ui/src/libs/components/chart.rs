@@ -1,11 +1,11 @@
 use crate::libs::hooks::use_default;
+use component::{Chart, ClassAttr};
 use dioxus::prelude::*;
-use layout::Layout;
 
 #[component]
-pub fn Chart(id: String, layout: Layout) -> Element {
+pub fn chart_(id: String, component: Chart) -> Element {
     let eid = id.clone();
-    if let Some(val) = use_default(&layout) {
+    if let Some(val) = use_default(&component) {
         use_effect(move || {
             let js = format!(
                 r#"

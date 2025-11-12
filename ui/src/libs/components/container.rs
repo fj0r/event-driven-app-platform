@@ -1,11 +1,11 @@
 use crate::libs::components::Frame;
 use crate::libs::hooks::use_common_css;
 use crate::libs::store::Status;
-use component::{Bind, BindVariant, Case, CaseAttr, JsonComponent, Placeholder, ClassAttr};
+use component::{Bind, BindVariant, Case, CaseAttr, ComponentProps, Placeholder};
 use dioxus::prelude::*;
 
 #[component]
-pub fn case(id: Option<String>, component: Case, children: Element) -> Element {
+pub fn case_(id: Option<String>, component: Case, children: Element) -> Element {
     let mut css = vec!["case", "f"];
     if let Some(id) = &id {
         css.push(id);
@@ -52,20 +52,19 @@ pub fn case(id: Option<String>, component: Case, children: Element) -> Element {
 }
 
 #[component]
-pub fn placeholder(id: String, component: Placeholder, children: Element) -> Element {
+pub fn placeholder_(id: String, component: Placeholder, children: Element) -> Element {
     let mut css = vec!["placeholder", "f"];
     use_common_css(&mut css, &component);
     let store = use_context::<Status>();
     let s = store.data.read();
 
-    if let Some(x) = component.bind.as_ref()
+    if let Some(x) = component.get_bind()
         && let Some(Bind {
             variant: BindVariant::Source { source },
             default: _,
             r#type: _kind,
         }) = x.get("value")
         && let Some(data) = s.get(source)
-        && data.kind != "empty"
     {
         let eid = id.clone();
         dioxus::logger::tracing::info!("{:?}", data);
