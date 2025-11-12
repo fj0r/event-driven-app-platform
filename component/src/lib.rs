@@ -10,12 +10,17 @@ use classify::Classify;
 pub mod merge;
 #[cfg(feature = "render")]
 pub mod render;
+//#[cfg(feature = "props")]
+use component_macro::ComponentProperty;
+#[cfg(feature = "classify")]
+use component_macro::{ClassifyAttrs, ClassifyComponent};
 
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, to_value};
 use std::collections::HashMap;
 use std::fmt::Debug;
 
+//#[cfg(feature = "props")]
 pub trait ComponentProps {
     fn get_type(&self) -> &str;
     fn get_children(&mut self) -> Option<&mut Vec<JsonComponent>>;
@@ -127,6 +132,7 @@ pub struct Bind {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(any(feature = "props", feature = "classify"), derive(ClassifyAttrs))]
 pub struct ClassAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
@@ -135,6 +141,7 @@ pub struct ClassAttr {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
 pub struct Placeholder {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -254,6 +261,7 @@ pub struct Path {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(any(feature = "props", feature = "classify"), derive(ClassifyAttrs))]
 pub struct RackAttr {
     #[serde(default)]
     pub scroll: bool,
@@ -280,6 +288,7 @@ pub struct Rack {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(any(feature = "props", feature = "classify"), derive(ClassifyAttrs))]
 pub struct ButtonAttr {
     #[serde(default)]
     pub oneshot: bool,
@@ -299,6 +308,7 @@ pub struct Button {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(any(feature = "props", feature = "classify"), derive(ClassifyAttrs))]
 pub struct ImageAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
@@ -412,6 +422,7 @@ pub struct Td {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(any(feature = "props", feature = "classify"), derive(ClassifyAttrs))]
 pub struct TextAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
@@ -446,6 +457,7 @@ pub struct TextArea {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(any(feature = "props", feature = "classify"), derive(ClassifyAttrs))]
 pub struct CaseAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,

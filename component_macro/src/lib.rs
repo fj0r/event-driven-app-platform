@@ -15,7 +15,7 @@ fn into_ts(result: syn::Result<TokenStream2>) -> TokenStream {
     }
 }
 
-#[proc_macro_derive(ComponentProps)]
+#[proc_macro_derive(ComponentProperty)]
 pub fn component_props(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);
 
@@ -139,6 +139,7 @@ mod test_macro {
             }
         };
 
+        //let output = impl_classify_attrs(input.clone()).unwrap();
         let ast = syn::parse2::<DeriveInput>(input).unwrap();
         let output = impl_component_props(&ast).expect("Macro expansion failed");
 

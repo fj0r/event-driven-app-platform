@@ -658,6 +658,7 @@ dependencies = [
 name = "component"
 version = "0.1.0"
 dependencies = [
+ "component_macro",
  "dioxus",
  "itertools",
  "maplit",
