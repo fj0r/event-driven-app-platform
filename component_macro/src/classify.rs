@@ -3,38 +3,6 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::DeriveInput;
 
-/*
-impl<T: Classify> Classify for Option<T> {
-    fn get_class(&self) -> &Option<Vec<String>> {
-        if let Some(attr) = self {
-            attr.get_class()
-        } else {
-            &None
-        }
-    }
-    fn add_class(&mut self, class: &str) {
-        if let Some(attr) = self {
-            attr.add_class(class);
-        } else {
-            let mut n = T::default();
-            n.add_class(class);
-            *self = Some(n);
-        };
-    }
-    fn delete_class(&mut self, class: &str) {
-        if let Some(attr) = self {
-            attr.delete_class(class);
-        };
-    }
-    fn is_horizontal(&self) -> bool {
-        if let Some(attr) = self {
-            return attr.is_horizontal();
-        }
-        false
-    }
-}
-*/
-
 pub fn impl_classify_attrs(input: TokenStream2) -> syn::Result<TokenStream2> {
     let ast: DeriveInput = syn::parse2(input)?;
     let name = &ast.ident;

@@ -10,7 +10,7 @@ use classify::Classify;
 pub mod merge;
 #[cfg(feature = "render")]
 pub mod render;
-//#[cfg(feature = "props")]
+#[cfg(feature = "props")]
 use component_macro::ComponentProperty;
 #[cfg(feature = "classify")]
 use component_macro::{ClassifyAttrs, ClassifyComponent};
@@ -20,7 +20,7 @@ use serde_json::{Map, Value, to_value};
 use std::collections::HashMap;
 use std::fmt::Debug;
 
-//#[cfg(feature = "props")]
+#[cfg(feature = "props")]
 pub trait ComponentProps {
     fn get_type(&self) -> &str;
     fn get_children(&mut self) -> Option<&mut Vec<JsonComponent>>;
@@ -142,6 +142,7 @@ pub struct ClassAttr {
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 #[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Placeholder {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -154,6 +155,8 @@ pub struct Placeholder {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Chart {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -166,6 +169,8 @@ pub struct Chart {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Diagram {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -178,6 +183,8 @@ pub struct Diagram {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Float {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -190,6 +197,8 @@ pub struct Float {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Fold {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -202,6 +211,8 @@ pub struct Fold {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Form {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -214,6 +225,8 @@ pub struct Form {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Popup {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -226,6 +239,8 @@ pub struct Popup {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Svg {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -238,6 +253,8 @@ pub struct Svg {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Group {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -249,6 +266,8 @@ pub struct Group {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Path {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -272,6 +291,8 @@ pub struct RackAttr {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Rack {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -299,6 +320,8 @@ pub struct ButtonAttr {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Button {
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -325,6 +348,8 @@ pub struct ImageAttr {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Image {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -337,6 +362,8 @@ pub struct Image {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Input {
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -348,6 +375,8 @@ pub struct Input {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Select {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -362,6 +391,8 @@ pub struct Select {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Table {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -372,6 +403,8 @@ pub struct Table {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Thead {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -382,6 +415,8 @@ pub struct Thead {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Tbody {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -392,6 +427,8 @@ pub struct Tbody {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Tr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -402,6 +439,8 @@ pub struct Tr {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Th {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -412,6 +451,8 @@ pub struct Th {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Td {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -433,6 +474,8 @@ pub struct TextAttr {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Text {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -445,6 +488,8 @@ pub struct Text {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct TextArea {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -471,6 +516,8 @@ pub struct CaseAttr {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(ComponentProperty))]
+#[cfg_attr(feature = "classify", derive(ClassifyComponent))]
 pub struct Case {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -536,6 +583,7 @@ pub enum JsonSvgComponent {
     path,
 }
 
+#[cfg(feature = "props")]
 impl JsonComponent {
     pub fn cmp_id(&self, other: &Self) -> bool {
         let Some(id) = self.get_id() else {
