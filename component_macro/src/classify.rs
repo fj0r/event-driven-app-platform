@@ -1,7 +1,7 @@
 use crate::utils::struct_has_field;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
-use syn::{DeriveInput, parse_macro_input};
+use syn::DeriveInput;
 
 pub fn impl_classify_attrs(input: TokenStream2) -> syn::Result<TokenStream2> {
     let ast: DeriveInput = syn::parse2(input)?;
@@ -109,9 +109,9 @@ pub fn impl_classify_variant(input: TokenStream2) -> syn::Result<TokenStream2> {
     let ast: DeriveInput = syn::parse2(input)?;
     let name = &ast.ident;
     let mut r = Vec::new();
-    if let syn::Data::Enum(d) = &ast.data {
-        for i in &d.variants {
-            r.push(i.ident.clone());
+    if let syn::Data::Enum(d) = ast.data {
+        for i in d.variants {
+            r.push(i.ident);
         }
     }
     Ok(quote! {

@@ -1,12 +1,23 @@
-use proc_macro::TokenStream;
-use proc_macro2::TokenStream as TokenStream2;
-use quote::quote;
-use syn::{DeriveInput, parse_macro_input};
 mod classify;
-use classify::{impl_classify_attrs, impl_classify_component, impl_classify_variant};
+mod props;
 mod utils;
 
-#[proc_macro_derive(classify)]
+use classify::{impl_classify_attrs, impl_classify_component, impl_classify_variant};
+use proc_macro::TokenStream;
+use proc_macro2::TokenStream as TokenStream2;
+use props::{impl_component_props, impl_component_props_variant};
+
+#[proc_macro_derive(ClassifyAttrs)]
+pub fn classify_attrs(input: TokenStream) -> TokenStream {
+    let input_stream2: TokenStream2 = input.into();
+
+    match impl_classify_attrs(input_stream2) {
+        Ok(output_stream2) => output_stream2.into(),
+        Err(err) => err.into_compile_error().into(),
+    }
+}
+
+#[proc_macro_derive(ClassifyComponent)]
 pub fn hello_derive(input: TokenStream) -> TokenStream {
     let input_stream2: TokenStream2 = input.into();
 
@@ -20,11 +31,12 @@ pub fn hello_derive(input: TokenStream) -> TokenStream {
 mod test_macro {
     use super::*;
     use quote::quote;
+    use syn::DeriveInput;
     use syn::parse2;
 
     #[test]
     fn test_struct_hello() {
-        let input1 = quote! {
+        let _input = quote! {
             #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
             #[cfg_attr(feature = "dioxus", derive(Props))]
             #[cfg_attr(feature = "schema", derive(JsonSchema))]
@@ -38,7 +50,7 @@ mod test_macro {
             }
         };
 
-        let input2 = quote! {
+        let _input = quote! {
             #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
             #[cfg_attr(feature = "dioxus", derive(Props))]
             #[cfg_attr(feature = "schema", derive(JsonSchema))]
@@ -59,7 +71,7 @@ mod test_macro {
             }
         };
 
-        let input4 = quote! {
+        let _input = quote! {
             #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
             #[cfg_attr(feature = "schema", derive(JsonSchema))]
             #[serde(untagged)]
@@ -93,12 +105,29 @@ mod test_macro {
             }
         };
 
-        let output = impl_classify_variant(input.clone()).expect("Macro expansion failed");
+        let output = impl_component_props_variant(input.clone()).expect("Macro expansion failed");
 
         let ast = syn::parse2::<DeriveInput>(input).unwrap();
         let _ = std::fs::write("../data/out.ast", format!("{:#?}", ast));
         let _ = std::fs::write("../data/out.rs", format!("{:#}", output.to_string()));
 
         assert!(true);
+    }
+
+    #[test]
+    fn test_attribute_rename() {
+        use syn::ItemFn;
+        let input_args = quote! { value=1 };
+
+        let input_item = quote! {
+            #[xxx]
+            fn original_function() {
+                println!("{:?}", 123);
+            }
+        };
+
+        let expected_fn: ItemFn = parse2(input_item).expect("Failed to parse expected output");
+
+        let _ = std::fs::write("../data/itemfn.ast", format!("{:#?}", expected_fn));
     }
 }
