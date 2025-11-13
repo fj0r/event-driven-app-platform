@@ -43,11 +43,12 @@ fn gen_(ast: &syn::File, entry: &str) -> syn::Result<TokenStream2> {
         };
         let id = if x.has_id {
             let id = Ident::new(&format!("{}_id", &x.name).to_uppercase(), Span::call_site());
+            let fmt = format!("{}-{{}}", id);
             quote! {
                 static #id: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
                 let mut tc = #id.lock().unwrap();
                 *tc += 1;
-                let id = format!("#id-{}", *tc);
+                let id = format!(#fmt , *tc) ;
             }
         } else {
             quote! {}
