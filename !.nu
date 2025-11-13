@@ -607,6 +607,14 @@ export def git-hooks [act ctx] {
     }
 }
 
-export def 'test macro' [] {
-    cargo test -p component_macro test_macro
+module macro {
+    export def component [] {
+        cargo test -p component_macro test_macro
+    }
+
+    export def ui [] {
+        cargo test -p ui_macro
+    }
 }
+
+export use macro

@@ -21,7 +21,8 @@ web-sys = "0.3.82"
 serde = { version = "1.0.228", features = ["derive", "serde_derive"] }
 chrono = { version = "0.4.42", features = ["serde"] }
 component = { path = "../component", features = ["dioxus", "classify", "merge", "render"] }
-content = { path = "../content"}
+content = { path = "../content" }
+ui_macro = { path = "../ui_macro" }
 maplit = "1.0.2"
 
 [features]

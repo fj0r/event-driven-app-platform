@@ -6477,7 +6477,19 @@ dependencies = [
  "serde",
  "serde_json",
  "tracing-wasm",
+ "ui_macro",
  "web-sys",
+]
+
+[[package]]
+name = "ui_macro"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "colored",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.110",
 ]
 
 [[package]]

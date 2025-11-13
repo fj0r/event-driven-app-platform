@@ -10,6 +10,7 @@ use super::svg::*;
 use super::widgets::*;
 use component::{ComponentProps, JsonComponent};
 use dioxus::prelude::*;
+use ui_macro::gen_dispatch;
 
 use std::sync::{LazyLock, Mutex};
 static COMPONENT_ID: LazyLock<Mutex<u64>> = LazyLock::new(|| Mutex::new(0));
