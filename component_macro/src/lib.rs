@@ -6,7 +6,8 @@ use classify::{impl_classify_attrs, impl_classify_component, impl_classify_varia
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use props::{impl_component_props, impl_component_props_variant};
-use syn::{Data, DeriveInput, parse_macro_input};
+use quote::quote;
+use syn::{Data, DeriveInput, Item, parse_macro_input};
 
 fn into_ts(result: syn::Result<TokenStream2>) -> TokenStream {
     match result {
@@ -15,7 +16,7 @@ fn into_ts(result: syn::Result<TokenStream2>) -> TokenStream {
     }
 }
 
-#[proc_macro_derive(ComponentProperty)]
+#[proc_macro_derive(ComponentProperty, attributes(render_component))]
 pub fn component_props(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);
 
@@ -33,9 +34,9 @@ pub fn component_props(input: TokenStream) -> TokenStream {
 
 #[proc_macro_derive(ClassifyAttrs)]
 pub fn classify_attrs(input: TokenStream) -> TokenStream {
-    let input_stream2: TokenStream2 = input.into();
+    let ast = parse_macro_input!(input as DeriveInput);
 
-    match impl_classify_attrs(input_stream2) {
+    match impl_classify_attrs(&ast) {
         Ok(output_stream2) => output_stream2.into(),
         Err(err) => err.into_compile_error().into(),
     }
@@ -43,9 +44,9 @@ pub fn classify_attrs(input: TokenStream) -> TokenStream {
 
 #[proc_macro_derive(ClassifyComponent)]
 pub fn classify_component(input: TokenStream) -> TokenStream {
-    let input_stream2: TokenStream2 = input.into();
+    let ast = parse_macro_input!(input as DeriveInput);
 
-    match impl_classify_component(input_stream2) {
+    match impl_classify_component(&ast) {
         Ok(output_stream2) => output_stream2.into(),
         Err(err) => err.into_compile_error().into(),
     }
@@ -53,12 +54,18 @@ pub fn classify_component(input: TokenStream) -> TokenStream {
 
 #[proc_macro_derive(ClassifyVariant)]
 pub fn classify_variant(input: TokenStream) -> TokenStream {
-    let input_stream2: TokenStream2 = input.into();
+    let ast = parse_macro_input!(input as DeriveInput);
 
-    match impl_classify_variant(input_stream2) {
+    match impl_classify_variant(&ast) {
         Ok(output_stream2) => output_stream2.into(),
         Err(err) => err.into_compile_error().into(),
     }
+}
+
+#[proc_macro_attribute]
+pub fn render_component(_args: TokenStream, input: TokenStream) -> TokenStream {
+    let item = parse_macro_input!(input as Item);
+    quote! {#item}.into()
 }
 
 #[cfg(test)]
@@ -70,7 +77,7 @@ mod test_macro {
 
     #[test]
     fn test_struct_hello() {
-        let input = quote! {
+        let _input = quote! {
             #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
             #[cfg_attr(feature = "dioxus", derive(Props))]
             #[cfg_attr(feature = "schema", derive(JsonSchema))]
@@ -94,13 +101,14 @@ mod test_macro {
             }
         };
 
-        let _input = quote! {
+        let input = quote! {
             #[allow(non_camel_case_types)]
             #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
             #[cfg_attr(feature = "schema", derive(JsonSchema))]
             #[serde(tag = "type")]
             pub enum JsonComponent {
                 case(Case),
+                #[render_component(has_id = true)]
                 placeholder(Placeholder),
             }
         };

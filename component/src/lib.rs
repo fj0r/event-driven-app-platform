@@ -10,10 +10,10 @@ use classify::Classify;
 pub mod merge;
 #[cfg(feature = "render")]
 pub mod render;
-#[cfg(feature = "props")]
-use component_macro::ComponentProperty;
 #[cfg(feature = "classify")]
 use component_macro::{ClassifyAttrs, ClassifyComponent};
+#[cfg(feature = "props")]
+use component_macro::{ComponentProperty, render_component};
 
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, to_value};
@@ -538,16 +538,21 @@ pub struct Case {
 #[serde(tag = "type")]
 pub enum JsonComponent {
     case(Case),
+    #[render_component(has_id = true)]
     placeholder(Placeholder),
+    #[render_component(has_id = true)]
     chart(Chart),
+    #[render_component(has_id = true)]
     diagram(Diagram),
     float(Float),
+    #[render_component(has_id = true)]
     fold(Fold),
     form(Form),
     popup(Popup),
     svg(Svg),
     group(Group),
     path(Path),
+    #[render_component(has_id = true)]
     rack(Rack),
     button(Button),
     image(Image),

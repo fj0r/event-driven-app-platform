@@ -3,8 +3,7 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::DeriveInput;
 
-pub fn impl_classify_attrs(input: TokenStream2) -> syn::Result<TokenStream2> {
-    let ast: DeriveInput = syn::parse2(input)?;
+pub fn impl_classify_attrs(ast: &DeriveInput) -> syn::Result<TokenStream2> {
     let name = &ast.ident;
 
     let cls = if struct_has_field(&ast, "class") {
@@ -64,8 +63,7 @@ pub fn impl_classify_attrs(input: TokenStream2) -> syn::Result<TokenStream2> {
     })
 }
 
-pub fn impl_classify_component(input: TokenStream2) -> syn::Result<TokenStream2> {
-    let ast: DeriveInput = syn::parse2(input)?;
+pub fn impl_classify_component(ast: &DeriveInput) -> syn::Result<TokenStream2> {
     let name = &ast.ident;
 
     let g = if struct_has_field(&ast, "attrs") {
@@ -105,13 +103,12 @@ pub fn impl_classify_component(input: TokenStream2) -> syn::Result<TokenStream2>
     Ok(g)
 }
 
-pub fn impl_classify_variant(input: TokenStream2) -> syn::Result<TokenStream2> {
-    let ast: DeriveInput = syn::parse2(input)?;
+pub fn impl_classify_variant(ast: &DeriveInput) -> syn::Result<TokenStream2> {
     let name = &ast.ident;
     let mut r = Vec::new();
-    if let syn::Data::Enum(d) = ast.data {
-        for i in d.variants {
-            r.push(i.ident);
+    if let syn::Data::Enum(d) = &ast.data {
+        for i in &d.variants {
+            r.push(&i.ident);
         }
     }
     Ok(quote! {
