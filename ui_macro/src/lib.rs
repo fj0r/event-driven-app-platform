@@ -1,7 +1,7 @@
 use proc_macro::TokenStream;
 use proc_macro2::{Ident, Span, TokenStream as TokenStream2};
 use quote::quote;
-use std::{collections::HashMap, os::linux::net::TcpStreamExt};
+use std::collections::HashMap;
 use syn::{Error, parse_file, parse_macro_input};
 mod configlist;
 use configlist::ConfigList;
@@ -30,6 +30,12 @@ pub fn gen_dispatch(input: TokenStream) -> TokenStream {
             .into();
     };
 
+    let Some(object) = config.get("object") else {
+        return Error::new(Span::call_site(), "must provide object")
+            .into_compile_error()
+            .into();
+    };
+
     let txt = match read_to_string(file) {
         Ok(txt) => txt,
         Err(e) => {
@@ -43,7 +49,7 @@ pub fn gen_dispatch(input: TokenStream) -> TokenStream {
             .into();
     };
 
-    let Ok(m) = gen_match(&ast, entry) else {
+    let Ok(m) = gen_match(&ast, entry, object) else {
         return Error::new(Span::call_site(), "gen match failed")
             .into_compile_error()
             .into();
@@ -52,9 +58,10 @@ pub fn gen_dispatch(input: TokenStream) -> TokenStream {
     m.into()
 }
 
-fn gen_match(ast: &syn::File, entry: &str) -> syn::Result<TokenStream2> {
+fn gen_match(ast: &syn::File, entry: &str, object: &str) -> syn::Result<TokenStream2> {
     let info = walk(&ast);
     let ty = Ident::new(entry, Span::call_site());
+    let ob = Ident::new(object, Span::call_site());
     let CompInfo::Enum { fields } = info
         .get(entry)
         .ok_or(syn::Error::new(Span::call_site(), "no fields"))?
@@ -104,7 +111,7 @@ fn gen_match(ast: &syn::File, entry: &str) -> syn::Result<TokenStream2> {
     });
 
     Ok(quote! {
-        match component {
+        match #ob {
             #(#f),*
         }
     })
@@ -121,7 +128,7 @@ mod tests {
         let _ = std::fs::write("../data/component_def.ast", format!("{:#?}", ast));
         let info = walk(&ast);
         let _ = std::fs::write("../data/info.rs", format!("{:#?}", info));
-        let output = gen_match(&ast, "JsonComponent").unwrap();
+        let output = gen_match(&ast, "JsonComponent", "component").unwrap();
         let _ = std::fs::write("../data/dispatch_def.rs", format!("{}", output.to_string()));
     }
 }

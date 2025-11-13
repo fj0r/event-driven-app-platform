@@ -40,7 +40,7 @@ impl ItemContainer {
 }
 
 #[component]
-pub fn Rack(id: String, layout: Layout, children: Element) -> Element {
+pub fn rack_(id: String, layout: Layout, children: Element) -> Element {
     let mut css = vec!["rack", "f"];
     use_common_css(&mut css, &layout);
 

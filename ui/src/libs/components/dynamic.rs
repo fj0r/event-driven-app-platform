@@ -8,16 +8,12 @@ use super::popup::popup_;
 use super::rack::rack_;
 use super::svg::*;
 use super::widgets::*;
-use component::{ComponentProps, JsonComponent};
+use component::JsonComponent;
 use dioxus::prelude::*;
 use ui_macro::gen_dispatch;
 
 use std::sync::{LazyLock, Mutex};
 static COMPONENT_ID: LazyLock<Mutex<u64>> = LazyLock::new(|| Mutex::new(0));
-static DIAGRAM_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
-static CHART_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
-static RACK_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
-static PLACEHOLDER_ID: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
 
 #[component]
 pub fn Dynamic(component: JsonComponent, children: Element) -> Element {
@@ -32,7 +28,8 @@ pub fn Dynamic(component: JsonComponent, children: Element) -> Element {
     let c = {
         gen_dispatch! {
             file = "./component/src/lib.rs",
-            entry = "JsonComponent"
+            entry = "JsonComponent",
+            object = "component"
         }
     };
     rsx! {

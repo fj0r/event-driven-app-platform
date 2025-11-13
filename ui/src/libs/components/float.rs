@@ -8,7 +8,7 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 #[component]
-pub fn Float(layout: Layout, children: Element) -> Element {
+pub fn float_(layout: Layout, children: Element) -> Element {
     let mut css = vec!["float", "f"];
     use_common_css(&mut css, &layout);
     let style = if let Some(attr) = &layout.attrs

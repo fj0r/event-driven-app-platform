@@ -3,7 +3,7 @@ use dioxus::prelude::*;
 use layout::{Layout, Settings};
 
 #[component]
-pub fn Img(layout: Layout, children: Element) -> Element {
+pub fn img_(layout: Layout, children: Element) -> Element {
     if let Some(src) = use_default(&layout)
         && let Some(src) = src.as_str()
         && let Some(x) = layout.attrs

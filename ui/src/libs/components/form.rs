@@ -86,7 +86,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
 }
 
 #[component]
-pub fn Form(layout: Layout) -> Element {
+pub fn form_(layout: Layout) -> Element {
     // TODO: instant
     let _instant = layout
         .attrs

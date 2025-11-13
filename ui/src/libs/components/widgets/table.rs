@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 use layout::Layout;
 
 #[component]
-pub fn TABLE(layout: Layout, children: Element) -> Element {
+pub fn table_(layout: Layout, children: Element) -> Element {
     rsx! {
         table {
             {children}
@@ -11,7 +11,7 @@ pub fn TABLE(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn Thead(layout: Layout, children: Element) -> Element {
+pub fn thead_(layout: Layout, children: Element) -> Element {
     rsx! {
         thead {
             {children}
@@ -20,7 +20,7 @@ pub fn Thead(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn Tbody(layout: Layout, children: Element) -> Element {
+pub fn tbody_(layout: Layout, children: Element) -> Element {
     rsx! {
         tbody {
             {children}
@@ -29,7 +29,7 @@ pub fn Tbody(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn Tr(layout: Layout, children: Element) -> Element {
+pub fn tr_(layout: Layout, children: Element) -> Element {
     rsx! {
         tr {
             {children}
@@ -38,7 +38,7 @@ pub fn Tr(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn Th(layout: Layout, children: Element) -> Element {
+pub fn th_(layout: Layout, children: Element) -> Element {
     rsx! {
         th {
             {children}
@@ -47,7 +47,7 @@ pub fn Th(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn Td(layout: Layout, children: Element) -> Element {
+pub fn td_(layout: Layout, children: Element) -> Element {
     rsx! {
         td {
             {children}

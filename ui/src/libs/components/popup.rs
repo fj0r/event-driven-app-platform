@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 use layout::Layout;
 
 #[component]
-pub fn Popup(layout: Layout, children: Element) -> Element {
+pub fn popup_(layout: Layout, children: Element) -> Element {
     let mut css = vec!["popup", "f"];
     use_common_css(&mut css, &layout);
 

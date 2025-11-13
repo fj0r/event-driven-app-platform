@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 use layout::{Layout, Settings};
 
 #[component]
-pub fn Fold(id: Option<String>, layout: Layout, children: Element) -> Element {
+pub fn fold_(id: Option<String>, layout: Layout, children: Element) -> Element {
     let mut css = vec!["g"];
     if let Some(id) = &id {
         css.push(id);

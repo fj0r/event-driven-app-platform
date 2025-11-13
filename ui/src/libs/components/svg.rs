@@ -1,9 +1,9 @@
 use crate::libs::hooks::{use_common_css, use_default};
-use dioxus::prelude::*;
 use component::{Layout, Settings};
+use dioxus::prelude::*;
 
 #[component]
-pub fn Svg(layout: Layout, children: Element) -> Element {
+pub fn svg_(layout: Layout, children: Element) -> Element {
     let mut css = vec!["svg"];
     use_common_css(&mut css, &layout);
     let style = if let Some(a) = &layout.attrs
@@ -23,7 +23,7 @@ pub fn Svg(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn Group(layout: Layout, children: Element) -> Element {
+pub fn group_(layout: Layout, children: Element) -> Element {
     let mut css = vec!["group"];
     use_common_css(&mut css, &layout);
 
@@ -47,7 +47,7 @@ pub fn Group(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn Path(layout: Layout, children: Element) -> Element {
+pub fn path_(layout: Layout, children: Element) -> Element {
     let mut css = vec!["path"];
     use_common_css(&mut css, &layout);
     if let Some(x) = use_default(&layout)

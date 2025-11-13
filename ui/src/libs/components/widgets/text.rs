@@ -6,7 +6,7 @@ use markdown::{Options, to_html_with_options};
 use std::sync::LazyLock;
 
 #[component]
-pub fn Text(id: Option<String>, layout: Layout) -> Element {
+pub fn text_(id: Option<String>, layout: Layout) -> Element {
     let mut css = vec!["text"];
     if let Some(id) = &id {
         css.push(id);

@@ -14,7 +14,7 @@ fn default_option_jskind(v: &Option<JsType>) -> Value {
 }
 
 #[component]
-pub fn Input(layout: Layout) -> Element {
+pub fn input_(layout: Layout) -> Element {
     let store = use_context::<Status>();
     let mut css = vec!["input", "f", "shadow"];
     use_common_css(&mut css, &layout);

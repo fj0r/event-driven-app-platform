@@ -4,7 +4,7 @@ use layout::{Bind, BindVariant, Layout, Settings};
 use serde_json::{Value, to_value};
 
 #[component]
-pub fn Button(layout: Layout) -> Element {
+pub fn button_(layout: Layout) -> Element {
     let t = use_default(&layout)
         .unwrap_or(to_value("Ok").unwrap())
         .as_str()

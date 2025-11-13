@@ -6,7 +6,7 @@ use serde_json::to_value;
 use std::rc::Rc;
 
 #[component]
-pub fn TextArea(id: Option<String>, layout: Layout) -> Element {
+pub fn textarea_(id: Option<String>, layout: Layout) -> Element {
     let mut css = vec!["textarea", "shadow"];
     let layout = Rc::new(layout);
     use_common_css(&mut css, &layout);

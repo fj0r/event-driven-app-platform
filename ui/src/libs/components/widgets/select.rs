@@ -6,7 +6,7 @@ use serde_json::{Value, to_value};
 use std::rc::Rc;
 
 #[component]
-pub fn Select(layout: Layout, children: Element) -> Element {
+pub fn select_(layout: Layout, children: Element) -> Element {
     let mut css = vec!["select", "f"];
     let layout = Rc::new(layout);
     use_common_css(&mut css, &layout);
