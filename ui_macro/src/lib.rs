@@ -10,6 +10,14 @@ use walk::{CompInfo, walk};
 mod utils;
 use std::fs::read_to_string;
 
+macro_rules! bail {
+    ($($x: tt)*) => {
+        return Error::new(Span::call_site(), format!($($x)*))
+            .into_compile_error()
+            .into()
+    };
+}
+
 #[proc_macro]
 pub fn gen_dispatch(input: TokenStream) -> TokenStream {
     let config = parse_macro_input!(input as ConfigList)
@@ -18,41 +26,31 @@ pub fn gen_dispatch(input: TokenStream) -> TokenStream {
         .collect::<HashMap<_, _>>();
 
     let Some(file) = config.get("file") else {
-        return Error::new(Span::call_site(), "must provide file")
-            .into_compile_error()
-            .into();
+        bail!("must provide file");
     };
     println!("cargo:rerun-if-changed={}", file);
 
     let Some(entry) = config.get("entry") else {
-        return Error::new(Span::call_site(), "must provide entry")
-            .into_compile_error()
-            .into();
+        bail!("must provide entry");
     };
 
     let Some(object) = config.get("object") else {
-        return Error::new(Span::call_site(), "must provide object")
-            .into_compile_error()
-            .into();
+        bail!("must provide object");
     };
 
     let txt = match read_to_string(file) {
         Ok(txt) => txt,
         Err(e) => {
-            return Error::new(Span::call_site(), e).into_compile_error().into();
+            bail!("{}", e);
         }
     };
 
     let Ok(ast) = parse_file(&txt) else {
-        return Error::new(Span::call_site(), format!("parse {} failed", file))
-            .into_compile_error()
-            .into();
+        bail!("parse {} failed", file);
     };
 
     let Ok(m) = gen_match(&ast, entry, object) else {
-        return Error::new(Span::call_site(), "gen match failed")
-            .into_compile_error()
-            .into();
+        bail!("gen match failed");
     };
 
     m.into()
