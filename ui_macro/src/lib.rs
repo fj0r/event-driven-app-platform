@@ -15,7 +15,7 @@ pub fn gen_dispatch(input: TokenStream) -> TokenStream {
     quote! {}.into()
 }
 
-fn gen_(ast: &syn::File, entry: &str) -> syn::Result<TokenStream2> {
+fn gen_match(ast: &syn::File, entry: &str) -> syn::Result<TokenStream2> {
     let info = walk(&ast);
     let ty = Ident::new(entry, Span::call_site());
     let CompInfo::Enum { fields } = info
@@ -43,7 +43,7 @@ fn gen_(ast: &syn::File, entry: &str) -> syn::Result<TokenStream2> {
         };
         let id = if x.has_id {
             let id = Ident::new(&format!("{}_id", &x.name).to_uppercase(), Span::call_site());
-            let fmt = format!("{}-{{}}", id);
+            let fmt = format!("{}-{{}}", &x.name);
             quote! {
                 static #id: LazyLock<Mutex<u32>> = LazyLock::new(|| Mutex::new(0));
                 let mut tc = #id.lock().unwrap();
@@ -84,7 +84,7 @@ mod tests {
         let _ = std::fs::write("../data/component_def.ast", format!("{:#?}", ast));
         let info = walk(&ast);
         let _ = std::fs::write("../data/info.rs", format!("{:#?}", info));
-        let output = gen_(&ast, "JsonComponent").unwrap();
+        let output = gen_match(&ast, "JsonComponent").unwrap();
         let _ = std::fs::write("../data/dispatch_def.rs", format!("{}", output.to_string()));
     }
 }

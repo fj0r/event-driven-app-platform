@@ -1,7 +1,7 @@
 use crate::configlist::ConfigList;
 use crate::utils::{get_ident_from_type, struct_has_field};
-use quote::ToTokens;
 use std::collections::HashMap;
+use syn::Meta;
 
 #[derive(Debug)]
 pub struct Field {
@@ -48,10 +48,14 @@ pub fn walk(ast: &syn::File) -> HashMap<String, CompInfo> {
                             .attrs
                             .iter()
                             .map(|x| {
-                                let x = x.meta.to_token_stream();
-                                syn::parse2::<ConfigList>(x.into())
-                                    .unwrap_or_else(|_| ConfigList::default())
-                                    .0
+                                if let Meta::List(x) = &x.meta {
+                                    let tk = x.tokens.clone().into();
+                                    syn::parse2::<ConfigList>(tk)
+                                        .unwrap_or(ConfigList::default())
+                                        .0
+                                } else {
+                                    ConfigList::default().0
+                                }
                             })
                             .flatten()
                             .collect::<HashMap<_, _>>();
