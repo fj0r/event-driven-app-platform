@@ -1,18 +1,55 @@
-use std::collections::HashMap;
-
-use anyhow::anyhow;
 use proc_macro::TokenStream;
 use proc_macro2::{Ident, Span, TokenStream as TokenStream2};
 use quote::quote;
-use syn::parse_file;
+use std::{collections::HashMap, os::linux::net::TcpStreamExt};
+use syn::{Error, parse_file, parse_macro_input};
 mod configlist;
+use configlist::ConfigList;
 mod walk;
 use walk::{CompInfo, walk};
 mod utils;
+use std::fs::read_to_string;
 
 #[proc_macro]
 pub fn gen_dispatch(input: TokenStream) -> TokenStream {
-    quote! {}.into()
+    let config = parse_macro_input!(input as ConfigList)
+        .0
+        .into_iter()
+        .collect::<HashMap<_, _>>();
+
+    let Some(file) = config.get("file") else {
+        return Error::new(Span::call_site(), "must provide file")
+            .into_compile_error()
+            .into();
+    };
+    println!("cargo:rerun-if-changed={}", file);
+
+    let Some(entry) = config.get("entry") else {
+        return Error::new(Span::call_site(), "must provide entry")
+            .into_compile_error()
+            .into();
+    };
+
+    let txt = match read_to_string(file) {
+        Ok(txt) => txt,
+        Err(e) => {
+            return Error::new(Span::call_site(), e).into_compile_error().into();
+        }
+    };
+
+    let Ok(ast) = parse_file(&txt) else {
+        return Error::new(Span::call_site(), format!("parse {} failed", file))
+            .into_compile_error()
+            .into();
+    };
+
+    let Ok(m) = gen_match(&ast, entry) else {
+        return Error::new(Span::call_site(), "gen match failed")
+            .into_compile_error()
+            .into();
+    };
+
+    m.into()
 }
 
 fn gen_match(ast: &syn::File, entry: &str) -> syn::Result<TokenStream2> {
