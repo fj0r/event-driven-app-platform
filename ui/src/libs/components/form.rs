@@ -3,8 +3,8 @@ use std::collections::HashMap;
 
 use super::super::store::Status;
 use super::{Dynamic, Frame};
+use brick::{Bind, BindVariant, Form, JsType};
 use dioxus::prelude::*;
-use brick::{Bind, BindVariant, JsType, Form};
 use maplit::hashmap;
 use serde::{Deserialize, Serialize};
 
@@ -86,9 +86,9 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
 }
 
 #[component]
-pub fn form_(layout: Form) -> Element {
+pub fn form_(id: Option<String>, brick: Form, children: Element) -> Element {
     // TODO: instant
-    let _instant = layout
+    let _instant = brick
         .attrs
         .clone()
         .and_then(|x| {
@@ -102,15 +102,15 @@ pub fn form_(layout: Form) -> Element {
 
     let mut data: FormScope = HashMap::new();
     let confirm = use_signal(|| Value::Bool(false));
-    walk(&mut layout, &mut data, confirm);
-    let children = layout.clone().children.unwrap_or_else(Vec::new);
+    walk(&mut brick, &mut data, confirm);
+    let children = brick.clone().children.unwrap_or_else(Vec::new);
     let children = children.into_iter().map(|c| {
         rsx! {
             Frame { brick: c }
         }
     });
 
-    let lc = layout.bind.as_ref().and_then(|x| x.get("value")).cloned();
+    let lc = brick.bind.as_ref().and_then(|x| x.get("value")).cloned();
     if let Some(Bind {
         variant: BindVariant::Event { event },
         ..
@@ -143,10 +143,10 @@ pub fn form_(layout: Form) -> Element {
         });
     };
 
-    layout.kind = "case".to_owned();
+    brick.kind = "case".to_owned();
     rsx! {
         Dynamic {
-            brick: layout,
+            brick: brick,
             {children}
         }
     }

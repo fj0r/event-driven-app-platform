@@ -3,7 +3,7 @@ use brick::Chart;
 use dioxus::prelude::*;
 
 #[component]
-pub fn chart_(id: String, brick: Chart) -> Element {
+pub fn chart_(id: Option<String>, brick: Chart) -> Element {
     let eid = id.clone();
     if let Some(val) = use_default(&brick) {
         use_effect(move || {

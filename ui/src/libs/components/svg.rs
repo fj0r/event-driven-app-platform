@@ -23,7 +23,7 @@ pub fn svg_(id: Option<String>, brick: Svg, children: Element) -> Element {
 }
 
 #[component]
-pub fn group_(brick: Group, children: Element) -> Element {
+pub fn group_(id: Option<String>, brick: Group, children: Element) -> Element {
     let mut css = vec!["group"];
     use_common_css(&mut css, &brick);
 
@@ -47,7 +47,7 @@ pub fn group_(brick: Group, children: Element) -> Element {
 }
 
 #[component]
-pub fn path_(brick: Path, children: Element) -> Element {
+pub fn path_(id: Option<String>, brick: Path, children: Element) -> Element {
     let mut css = vec!["path"];
     use_common_css(&mut css, &brick);
     if let Some(x) = use_default(&brick)

@@ -4,7 +4,7 @@ use brick::Popup;
 use dioxus::prelude::*;
 
 #[component]
-pub fn popup_(id: String, brick: Popup, children: Element) -> Element {
+pub fn popup_(id: Option<String>, brick: Popup, children: Element) -> Element {
     let mut css = vec!["popup", "f"];
     use_common_css(&mut css, &brick);
 

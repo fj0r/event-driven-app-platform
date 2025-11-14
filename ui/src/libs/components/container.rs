@@ -52,21 +52,21 @@ pub fn case_(id: Option<String>, brick: Case, children: Element) -> Element {
 }
 
 #[component]
-pub fn placeholder_(id: String, component: Placeholder, children: Element) -> Element {
+pub fn placeholder_(id: Option<String>, brick: Placeholder, children: Element) -> Element {
     let mut css = vec!["placeholder", "f"];
-    use_common_css(&mut css, &component);
+    use_common_css(&mut css, &brick);
     let store = use_context::<Status>();
     let s = store.data.read();
 
-    if let Some(x) = component.get_bind()
+    if let Some(x) = brick.get_bind()
         && let Some(Bind {
             variant: BindVariant::Source { source },
             default: _,
             r#type: _kind,
         }) = x.get("value")
         && let Some(data) = s.get(source)
+        && let Some(eid) = id.clone()
     {
-        let eid = id.clone();
         dioxus::logger::tracing::info!("{:?}", data);
         use_effect(move || {
             let js = format!(
