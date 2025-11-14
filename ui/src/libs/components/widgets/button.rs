@@ -1,5 +1,5 @@
 use crate::libs::hooks::use_default;
-use brick::{Bind, BindVariant, Button};
+use brick::{Bind, BindVariant, BrickProps, Button, ButtonAttr};
 use dioxus::prelude::*;
 use serde_json::{Value, to_value};
 
@@ -13,13 +13,7 @@ pub fn button_(brick: Button) -> Element {
 
     let oneshot = brick
         .attrs
-        .and_then(|x| {
-            if let Some(Settings::Button { oneshot }) = x.settings {
-                Some(oneshot)
-            } else {
-                None
-            }
-        })
+        .and_then(|ButtonAttr { oneshot, .. }| Some(oneshot))
         .unwrap_or(false);
 
     if let Some(Bind {
@@ -28,7 +22,7 @@ pub fn button_(brick: Button) -> Element {
             ..
         },
         ..
-    }) = brick.bind.and_then(|x| x.get("value").cloned())
+    }) = brick.get_bind().and_then(|x| x.get("value").cloned())
     {
         let v = s.read().as_bool().unwrap();
         let mut css = vec!["button", "shadow"];

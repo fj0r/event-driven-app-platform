@@ -419,6 +419,8 @@ pub struct Button {
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ButtonAttr>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
