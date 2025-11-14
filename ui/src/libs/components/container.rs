@@ -11,34 +11,22 @@ pub fn case_(id: Option<String>, brick: Case, children: Element) -> Element {
         css.push(id);
     }
     let mut style = String::new();
-    if let Case {
-        id,
-        attrs,
-        bind,
-        render,
-        children,
-    } = &brick
-    {
-        let mut f = true;
-        if let Some(CaseAttr {
-            class,
-            horizontal,
-            grid,
-        }) = attrs
-        {
-            if let Some(g) = grid {
-                f = false;
-                css.push("g");
-                style = g
-                    .iter()
-                    .map(|(k, v)| format!("{}: {};", k, v.as_str().unwrap()))
-                    .collect::<Vec<String>>()
-                    .join("\n");
-            };
-            if f {
-                css.push("f");
-            };
-        }
+    let Case { attrs, .. } = &brick;
+
+    let mut f = true;
+    if let Some(CaseAttr { grid, .. }) = attrs {
+        if let Some(g) = grid {
+            f = false;
+            css.push("g");
+            style = g
+                .iter()
+                .map(|(k, v)| format!("{}: {};", k, v.as_str().unwrap()))
+                .collect::<Vec<String>>()
+                .join("\n");
+        };
+        if f {
+            css.push("f");
+        };
     };
     use_common_css(&mut css, &brick);
 

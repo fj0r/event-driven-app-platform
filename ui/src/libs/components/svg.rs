@@ -1,18 +1,17 @@
 use crate::libs::hooks::{use_common_css, use_default};
-use brick::{Brick, Group, Path, Svg};
+use brick::{Group, Path, SizeAttr, StyleAttr, Svg};
 use dioxus::prelude::*;
 
 #[component]
 pub fn svg_(id: Option<String>, brick: Svg, children: Element) -> Element {
     let mut css = vec!["svg"];
     use_common_css(&mut css, &brick);
-    let style = if let Some(a) = &brick.attrs
-        && let Some(s) = &a.size
-    {
-        s.into_style()
-    } else {
-        "".to_owned()
-    };
+
+    let style = brick
+        .attrs
+        .as_ref()
+        .map(|x| x.into_style())
+        .unwrap_or("".to_string());
     rsx! {
         svg {
             style: style,
@@ -29,11 +28,11 @@ pub fn group_(id: Option<String>, brick: Group, children: Element) -> Element {
 
     let mut style = String::new();
     if let Some(x) = &brick.attrs
-        && let Some(Settings::Svg { svg }) = &x.settings
+        && let Some(s) = &x.style
     {
-        style = svg
+        style = s
             .iter()
-            .map(|(k, v)| format!("{}: {};", k, v.as_str().unwrap()))
+            .map(|(k, v)| format!("{}: {};", k, v.as_str()))
             .collect::<Vec<String>>()
             .join("\n");
     };

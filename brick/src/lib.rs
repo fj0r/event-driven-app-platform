@@ -141,6 +141,81 @@ pub struct ClassAttr {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(any(feature = "props", feature = "classify"), derive(ClassifyAttrs))]
+pub struct SizeAttr {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub class: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub height: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub width: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub enum PosH {
+    #[allow(non_camel_case_types)]
+    left(String),
+    #[allow(non_camel_case_types)]
+    right(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub enum PosV {
+    #[allow(non_camel_case_types)]
+    top(String),
+    #[allow(non_camel_case_types)]
+    bottom(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(any(feature = "props", feature = "classify"), derive(ClassifyAttrs))]
+pub struct PositionAttr {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub class: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub h: Option<PosH>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub v: Option<PosV>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+pub enum Direction {
+    U,
+    D,
+    L,
+    R,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(any(feature = "props", feature = "classify"), derive(ClassifyAttrs))]
+pub struct DirectionAttr {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub class: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub direction: Option<Direction>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(any(feature = "props", feature = "classify"), derive(ClassifyAttrs))]
+pub struct StyleAttr {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub class: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub style: Option<HashMap<String, String>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 #[cfg_attr(feature = "props", derive(BrickProps))]
 #[cfg_attr(feature = "classify", derive(ClassifyBrick))]
 pub struct Placeholder {
@@ -241,7 +316,7 @@ pub struct Svg {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttr>,
+    pub attrs: Option<SizeAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
 }
@@ -255,7 +330,7 @@ pub struct Group {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttr>,
+    pub attrs: Option<StyleAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
 }
