@@ -6,11 +6,11 @@ use serde_json::to_value;
 use std::rc::Rc;
 
 #[component]
-pub fn textarea_(id: Option<String>, schema: TextArea) -> Element {
+pub fn textarea_(id: Option<String>, brick: TextArea) -> Element {
     let mut css = vec!["textarea", "shadow"];
-    let layout = Rc::new(schema);
-    use_common_css(&mut css, &layout);
-    let value = use_source_value(&layout);
+    let layout = Rc::new(brick);
+    use_common_css(&mut css, &brick);
+    let value = use_source_value(&brick);
     let mut slot = use_signal(|| value.unwrap_or_else(|| Default::default()));
 
     let placeholder = if let Some(d) = use_source(&layout, "placeholder") {

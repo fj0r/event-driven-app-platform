@@ -164,3 +164,22 @@ pub fn impl_brick_props_variant(ast: &DeriveInput) -> syn::Result<TokenStream2> 
         }
     })
 }
+
+pub fn impl_brick_wrap_variant(ast: &DeriveInput) -> syn::Result<TokenStream2> {
+    let name = &ast.ident;
+    let mut r = Vec::new();
+    if let syn::Data::Enum(d) = &ast.data {
+        for i in &d.variants {
+            let v = &i.ident;
+            r.push(quote! {
+                impl Wrap for Form {
+                    type Target = #name;
+                    fn wrap(self) -> Self::Target {
+                        Self::Target::#v(self)
+                    }
+                }
+            })
+        }
+    }
+    Ok(quote! {})
+}

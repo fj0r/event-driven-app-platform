@@ -5,14 +5,26 @@ mod utils;
 use classify::{impl_classify_attrs, impl_classify_brick, impl_classify_variant};
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
-use props::{impl_brick_props, impl_brick_props_variant};
+use props::{impl_brick_props, impl_brick_props_variant, impl_brick_wrap_variant};
 use quote::quote;
-use syn::{parse_macro_input, Data, DeriveInput, Item};
+use syn::{Data, DeriveInput, Item, parse_macro_input};
 
 fn into_ts(result: syn::Result<TokenStream2>) -> TokenStream {
     match result {
         Ok(output_stream2) => output_stream2.into(),
         Err(err) => err.into_compile_error().into(),
+    }
+}
+
+#[proc_macro_derive(Wrap)]
+pub fn brick_wrap(input: TokenStream) -> TokenStream {
+    let ast = parse_macro_input!(input as DeriveInput);
+
+    match ast.data {
+        Data::Enum(_) => into_ts(impl_brick_wrap_variant(&ast)),
+        _ => syn::Error::new(ast.ident.span(), "Wrap only supports enums")
+            .to_compile_error()
+            .into(),
     }
 }
 
@@ -72,8 +84,8 @@ pub fn info(_args: TokenStream, input: TokenStream) -> TokenStream {
 mod test_macro {
     use super::*;
     use quote::quote;
-    use syn::parse2;
     use syn::DeriveInput;
+    use syn::parse2;
 
     #[test]
     fn test_struct_hello() {

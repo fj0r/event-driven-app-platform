@@ -1,3 +1,5 @@
+#[cfg(feature = "props")]
+use dioxus::html::u::justify_self;
 #[cfg(feature = "dioxus")]
 use dioxus::prelude::*;
 #[cfg(feature = "schema")]
@@ -31,6 +33,12 @@ pub trait BrickProps {
     fn get_id(&self) -> &Option<String>;
     //fn cmp_id(&self, other: &Self) -> bool;
     fn get_render(&self) -> Option<&Render>;
+}
+
+#[cfg(feature = "props")]
+pub trait Wrap {
+    type Target;
+    fn wrap(self) -> Self::Target;
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]

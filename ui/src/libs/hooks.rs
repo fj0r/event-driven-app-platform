@@ -1,5 +1,5 @@
 use crate::libs::store::Status;
-use brick::{Bind, BindVariant, BrickProps, Brick, classify::Classify};
+use brick::{Bind, BindVariant, Brick, BrickProps, classify::Classify};
 #[allow(unused_imports)]
 use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
@@ -31,7 +31,7 @@ pub fn use_default<'a>(brick: &'a (impl Classify + BrickProps)) -> Option<Value>
         .and_then(|x| x.default.clone())
 }
 
-pub fn use_source_id<'a>(brick: &'a Brick) -> Option<&'a String> {
+pub fn use_source_id<'a>(brick: &'a (impl Classify + BrickProps)) -> Option<&'a String> {
     if let Bind {
         variant: BindVariant::Source { source },
         ..
@@ -44,7 +44,7 @@ pub fn use_source_id<'a>(brick: &'a Brick) -> Option<&'a String> {
 }
 
 pub fn use_source_list<'a>(
-    brick: &'a Brick,
+    brick: &'a (impl Classify + BrickProps),
     key: &'a str,
 ) -> Option<Vec<Brick>> {
     let store = use_context::<Status>();
@@ -64,7 +64,7 @@ pub fn use_source_list<'a>(
     }
 }
 
-pub fn use_source<'a>(brick: &'a Brick, key: &'a str) -> Option<Value> {
+pub fn use_source<'a>(brick: &'a (impl Classify + BrickProps), key: &'a str) -> Option<Value> {
     let store = use_context::<Status>();
     let s = store.data.read();
     let value = if let Some(x) = brick.get_bind()
@@ -78,7 +78,8 @@ pub fn use_source<'a>(brick: &'a Brick, key: &'a str) -> Option<Value> {
     {
         data
     } else {
-        Some(brick)
+        // TODO:
+        Some(brick as &Brick)
     };
     if let Some(comp) = value
         && let Some(bind) = &comp.get_bind()
@@ -90,11 +91,14 @@ pub fn use_source<'a>(brick: &'a Brick, key: &'a str) -> Option<Value> {
     }
 }
 
-pub fn use_source_value(brick: &Brick) -> Option<Value> {
+pub fn use_source_value(brick: &(impl Classify + BrickProps)) -> Option<Value> {
     use_source(brick, "value")
 }
 
-pub fn use_target<'a>(brick: &'a Brick, key: &'a str) -> Option<impl Fn(Value)> {
+pub fn use_target<'a>(
+    brick: &'a (impl Classify + BrickProps),
+    key: &'a str,
+) -> Option<impl Fn(Value)> {
     if let Some(x) = brick.get_bind()
         && let Some(Bind {
             // TODO: variable
@@ -116,6 +120,6 @@ pub fn use_target<'a>(brick: &'a Brick, key: &'a str) -> Option<impl Fn(Value)> 
     }
 }
 
-pub fn use_target_value(brick: &Brick) -> Option<impl Fn(Value)> {
+pub fn use_target_value(brick: &(impl Classify + BrickProps)) -> Option<impl Fn(Value)> {
     use_target(brick, "value")
 }
