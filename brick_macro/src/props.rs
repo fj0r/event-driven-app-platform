@@ -51,6 +51,20 @@ pub fn impl_brick_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
         }
     };
 
+    let item = if struct_has_field(&ast, "item") {
+        quote! {
+            fn get_item(&self) -> Option<&Vec<Brick>> {
+                self.children.as_ref()
+            }
+        }
+    } else {
+        quote! {
+            fn get_item(&self) -> Option<&Vec<Brick>> {
+                None
+            }
+        }
+    };
+
     let att = if struct_has_field(&ast, "attrs") {
         quote! {
             fn get_attrs(&self) -> Option<&dyn Classify> {
@@ -104,6 +118,7 @@ pub fn impl_brick_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
             #typ
             #att
             #bind
+            #item
             #render
             #child
         }
@@ -153,6 +168,12 @@ pub fn impl_brick_props_variant(ast: &DeriveInput) -> syn::Result<TokenStream2> 
             fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>) {
                 match self {
                     #(#name::#r(c) => { c.set_bind(bind) }),*
+                }
+            }
+
+            fn get_item(&self) -> Option<&Vec<Brick>> {
+                match self {
+                    #(#name::#r(c) => c.get_item()),*
                 }
             }
 

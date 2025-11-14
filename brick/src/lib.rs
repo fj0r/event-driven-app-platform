@@ -29,8 +29,8 @@ pub trait BrickProps {
     fn get_attrs(&self) -> Option<&dyn Classify>;
     fn get_bind(&self) -> Option<&HashMap<String, Bind>>;
     fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>);
+    fn get_item(&self) -> Option<&Vec<Brick>>;
     fn get_id(&self) -> &Option<String>;
-    //fn cmp_id(&self, other: &Self) -> bool;
     fn get_render(&self) -> Option<&Render>;
 }
 
@@ -275,15 +275,30 @@ pub struct Float {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(any(feature = "props", feature = "classify"), derive(ClassifyAttrs))]
+pub struct FoldAttr {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub class: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub replace_header: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub float_body: Option<bool>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 #[cfg_attr(feature = "props", derive(BrickProps))]
 #[cfg_attr(feature = "classify", derive(ClassifyBrick))]
 pub struct Fold {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttr>,
+    pub attrs: Option<FoldAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub item: Option<Vec<Brick>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]

@@ -1,7 +1,7 @@
 use super::Frame;
 use crate::libs::hooks::{use_common_css, use_default};
-use brick::Fold;
-use dioxus::prelude::*;
+use brick::{BrickProps, Fold, FoldAttr};
+use dioxus::{html::track::default, prelude::*};
 
 #[component]
 pub fn fold_(id: Option<String>, brick: Fold, children: Element) -> Element {
@@ -11,22 +11,15 @@ pub fn fold_(id: Option<String>, brick: Fold, children: Element) -> Element {
     }
     use_common_css(&mut css, &brick);
 
-    let Some((replace_header, _float_body)) = brick.attrs.as_ref().map(|x| {
-        let x = if let Some(Settings::Fold {
-            replace_header,
-            float_body,
-        }) = x.settings
-        {
-            (replace_header, float_body)
-        } else {
-            (false, false)
-        };
-        x
-    }) else {
-        unreachable!()
-    };
+    let (replace_header, _float_body) = brick.attrs.map(
+        |FoldAttr {
+             replace_header,
+             float_body,
+             ..
+         }| (replace_header.unwrap_or(false), float_body.unwrap_or(false)),
+    );
 
-    let item = brick.item.as_ref().context("item")?[0].clone();
+    let item = brick.get_item().context("item")?[0].clone();
     let show = use_signal(|| {
         use_default(&brick)
             .and_then(|x| x.as_bool())
