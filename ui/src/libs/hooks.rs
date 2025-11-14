@@ -24,14 +24,14 @@ where
     }
 }
 
-pub fn use_default<'a>(brick: &'a (impl Classify + BrickProps)) -> Option<Value> {
+pub fn use_default<'a>(brick: &'a impl BrickProps) -> Option<Value> {
     brick
         .get_bind()
         .and_then(|x| x.get("value"))
         .and_then(|x| x.default.clone())
 }
 
-pub fn use_source_id<'a>(brick: &'a (impl Classify + BrickProps)) -> Option<&'a String> {
+pub fn use_source_id<'a>(brick: &'a impl BrickProps) -> Option<&'a String> {
     if let Bind {
         variant: BindVariant::Source { source },
         ..
@@ -43,10 +43,7 @@ pub fn use_source_id<'a>(brick: &'a (impl Classify + BrickProps)) -> Option<&'a 
     }
 }
 
-pub fn use_source_list<'a>(
-    brick: &'a (impl Classify + BrickProps),
-    key: &'a str,
-) -> Option<Vec<Brick>> {
+pub fn use_source_list<'a>(brick: &'a impl BrickProps, key: &'a str) -> Option<Vec<Brick>> {
     let store = use_context::<Status>();
     let s = store.list.read();
     if let Some(x) = brick.get_bind()
@@ -64,10 +61,7 @@ pub fn use_source_list<'a>(
     }
 }
 
-pub fn use_source<'a>(
-    brick: &'a (impl Clone + Classify + BrickProps + Wrap<Target = Brick>),
-    key: &'a str,
-) -> Option<Value> {
+pub fn use_source<'a>(brick: &'a impl BrickProps, key: &'a str) -> Option<Value> {
     let store = use_context::<Status>();
     let s = store.data.read();
     let value = if let Some(x) = brick.get_bind()
@@ -79,9 +73,9 @@ pub fn use_source<'a>(
         && let data = s.get(source)
         && data.is_some()
     {
-        data.cloned()
+        data.map(|t| t as &dyn BrickProps)
     } else {
-        Some(brick.clone().wrap())
+        Some(brick as &dyn BrickProps)
     };
     if let Some(comp) = value
         && let Some(bind) = &comp.get_bind()
@@ -93,14 +87,11 @@ pub fn use_source<'a>(
     }
 }
 
-pub fn use_source_value(brick: &(impl Classify + BrickProps)) -> Option<Value> {
+pub fn use_source_value(brick: &impl BrickProps) -> Option<Value> {
     use_source(brick, "value")
 }
 
-pub fn use_target<'a>(
-    brick: &'a (impl Classify + BrickProps),
-    key: &'a str,
-) -> Option<impl Fn(Value)> {
+pub fn use_target<'a>(brick: &'a impl BrickProps, key: &'a str) -> Option<impl Fn(Value)> {
     if let Some(x) = brick.get_bind()
         && let Some(Bind {
             // TODO: variable
@@ -122,6 +113,6 @@ pub fn use_target<'a>(
     }
 }
 
-pub fn use_target_value(brick: &(impl Classify + BrickProps)) -> Option<impl Fn(Value)> {
+pub fn use_target_value(brick: &impl BrickProps) -> Option<impl Fn(Value)> {
     use_target(brick, "value")
 }
