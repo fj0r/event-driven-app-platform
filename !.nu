@@ -588,10 +588,10 @@ export def clippy [dir] {
 }
 
 export def jsonschema [] {
-    cargo run --example componentschema --features=schema
+    cargo run --example brickschema --features=schema
 }
 
-export def component_test [] {
+export def brick_test [] {
     cargo run --example scratch --features="scratch"
 }
 
@@ -608,8 +608,8 @@ export def git-hooks [act ctx] {
 }
 
 module macro {
-    export def component [] {
-        cargo test -p component_macro test_macro
+    export def brick [] {
+        cargo test -p brick_macro test_macro
     }
 
     export def ui [] {

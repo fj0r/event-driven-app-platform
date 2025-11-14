@@ -2,12 +2,12 @@ mod classify;
 mod props;
 mod utils;
 
-use classify::{impl_classify_attrs, impl_classify_component, impl_classify_variant};
+use classify::{impl_classify_attrs, impl_classify_brick, impl_classify_variant};
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
-use props::{impl_component_props, impl_component_props_variant};
+use props::{impl_brick_props, impl_brick_props_variant};
 use quote::quote;
-use syn::{Data, DeriveInput, Item, parse_macro_input};
+use syn::{parse_macro_input, Data, DeriveInput, Item};
 
 fn into_ts(result: syn::Result<TokenStream2>) -> TokenStream {
     match result {
@@ -16,16 +16,16 @@ fn into_ts(result: syn::Result<TokenStream2>) -> TokenStream {
     }
 }
 
-#[proc_macro_derive(ComponentProperty, attributes(render_component))]
-pub fn component_props(input: TokenStream) -> TokenStream {
+#[proc_macro_derive(BrickProps, attributes(render_brick))]
+pub fn brick_props(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);
 
     match ast.data {
-        Data::Struct(_) => into_ts(impl_component_props(&ast)),
-        Data::Enum(_) => into_ts(impl_component_props_variant(&ast)),
+        Data::Struct(_) => into_ts(impl_brick_props(&ast)),
+        Data::Enum(_) => into_ts(impl_brick_props_variant(&ast)),
         _ => syn::Error::new(
             ast.ident.span(),
-            "ComponentProps only supports structs and enums",
+            "BrickProps only supports structs and enums",
         )
         .to_compile_error()
         .into(),
@@ -42,11 +42,11 @@ pub fn classify_attrs(input: TokenStream) -> TokenStream {
     }
 }
 
-#[proc_macro_derive(ClassifyComponent)]
-pub fn classify_component(input: TokenStream) -> TokenStream {
+#[proc_macro_derive(ClassifyBrick)]
+pub fn classify_brick(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);
 
-    match impl_classify_component(&ast) {
+    match impl_classify_brick(&ast) {
         Ok(output_stream2) => output_stream2.into(),
         Err(err) => err.into_compile_error().into(),
     }
@@ -72,8 +72,8 @@ pub fn info(_args: TokenStream, input: TokenStream) -> TokenStream {
 mod test_macro {
     use super::*;
     use quote::quote;
-    use syn::DeriveInput;
     use syn::parse2;
+    use syn::DeriveInput;
 
     #[test]
     fn test_struct_hello() {
@@ -87,7 +87,7 @@ mod test_macro {
                 #[serde(skip_serializing_if = "Option::is_none")]
                 pub attrs: Option<ClassAttr>,
                 #[serde(skip_serializing_if = "Option::is_none")]
-                pub children: Option<Vec<JsonComponent>>,
+                pub children: Option<Vec<Brick>>,
             }
         };
 
@@ -106,9 +106,9 @@ mod test_macro {
             #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
             #[cfg_attr(feature = "schema", derive(JsonSchema))]
             #[serde(tag = "type")]
-            pub enum JsonComponent {
+            pub enum Brick {
                 case(Case),
-                #[render_component(has_id = true)]
+                #[render_brick(has_id = true)]
                 placeholder(Placeholder),
             }
         };
@@ -149,7 +149,7 @@ mod test_macro {
 
         //let output = impl_classify_attrs(input.clone()).unwrap();
         let ast = syn::parse2::<DeriveInput>(input).unwrap();
-        let output = impl_component_props(&ast).expect("Macro expansion failed");
+        let output = impl_brick_props(&ast).expect("Macro expansion failed");
 
         let _ = std::fs::write("../data/out.ast", format!("{:#?}", ast));
         let _ = std::fs::write("../data/out.rs", format!("{:#}", output.to_string()));

@@ -1,14 +1,14 @@
 use crate::libs::hooks::use_common_css;
 use crate::libs::hooks::{use_source, use_source_value, use_target_value};
+use component::TextArea;
 use dioxus::prelude::*;
-use layout::Layout;
 use serde_json::to_value;
 use std::rc::Rc;
 
 #[component]
-pub fn textarea_(id: Option<String>, layout: Layout) -> Element {
+pub fn textarea_(id: Option<String>, schema: TextArea) -> Element {
     let mut css = vec!["textarea", "shadow"];
-    let layout = Rc::new(layout);
+    let layout = Rc::new(schema);
     use_common_css(&mut css, &layout);
     let value = use_source_value(&layout);
     let mut slot = use_signal(|| value.unwrap_or_else(|| Default::default()));

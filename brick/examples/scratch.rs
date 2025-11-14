@@ -1,20 +1,20 @@
-use component::{Bind, BindVariant, ButtonAttr, Case, Input, JsonComponent as C, Text, TextAttr};
+use brick::{Bind, BindVariant, Brick, ButtonAttr, Case, Input, Text, TextAttr};
 #[cfg(feature = "scratch")]
 use maplit::hashmap;
 use serde_json::{from_str, to_string};
 use std::fs::read_to_string;
 
 fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
-    let a = C::case(Case {
+    let a = Brick::case(Case {
         children: Some(vec![
-            C::text(Text {
+            Brick::text(Text {
                 attrs: Some(TextAttr {
                     format: Some("md".to_string()),
                     class: Some(vec!["f".to_string()]),
                 }),
                 ..Default::default()
             }),
-            C::input(Input {
+            Brick::input(Input {
                 bind: Some(hashmap! {
                     "value".to_owned() => Bind {
                         variant: BindVariant::Default {},
@@ -29,8 +29,8 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
     });
     println!("{:?}", to_string(&a));
 
-    let chat_layout = read_to_string("component/examples/layout.json")?;
-    let chat_layout: C = from_str(&chat_layout)?;
+    let chat_layout = read_to_string("brick/examples/layout.json")?;
+    let chat_layout: Brick = from_str(&chat_layout)?;
     println!("{:?}", &chat_layout);
 
     Ok(())

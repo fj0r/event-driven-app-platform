@@ -408,6 +408,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "brick"
+version = "0.1.0"
+dependencies = [
+ "brick_macro",
+ "dioxus",
+ "itertools",
+ "maplit",
+ "minijinja",
+ "regex",
+ "schemars 1.1.0",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "brick_macro"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "colored",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.110",
+]
+
+[[package]]
 name = "bumpalo"
 version = "3.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -525,8 +551,8 @@ dependencies = [
  "anyhow",
  "async-fs",
  "axum",
+ "brick",
  "chrono",
- "component",
  "content",
  "figment",
  "futures",
@@ -652,32 +678,6 @@ checksum = "ba5a308b75df32fe02788e748662718f03fde005016435c444eea572398219fd"
 dependencies = [
  "bytes",
  "memchr",
-]
-
-[[package]]
-name = "component"
-version = "0.1.0"
-dependencies = [
- "component_macro",
- "dioxus",
- "itertools",
- "maplit",
- "minijinja",
- "regex",
- "schemars 1.1.0",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "component_macro"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "colored",
- "proc-macro2",
- "quote",
- "syn 2.0.110",
 ]
 
 [[package]]
@@ -6463,8 +6463,8 @@ name = "ui"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "brick",
  "chrono",
- "component",
  "content",
  "dioxus",
  "futures",

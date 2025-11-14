@@ -63,7 +63,7 @@ pub fn impl_classify_attrs(ast: &DeriveInput) -> syn::Result<TokenStream2> {
     })
 }
 
-pub fn impl_classify_component(ast: &DeriveInput) -> syn::Result<TokenStream2> {
+pub fn impl_classify_brick(ast: &DeriveInput) -> syn::Result<TokenStream2> {
     let name = &ast.ident;
 
     let g = if struct_has_field(&ast, "attrs") {

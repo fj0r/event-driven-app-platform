@@ -1,8 +1,8 @@
-use super::JsonComponent;
-use crate::ComponentProps;
+use super::Brick;
+use crate::BrickProps;
 use minijinja::Environment;
 
-impl JsonComponent {
+impl Brick {
     pub fn render(&mut self, env: &Environment) {
         if let Some(r) = self.get_render() {
             let n = &r.name;
@@ -15,7 +15,7 @@ impl JsonComponent {
                         .map_err(|e| format!("render failed: {} => {}", e, &cx))
                 })
                 .and_then(|t| {
-                    serde_json::from_str::<JsonComponent>(&t)
+                    serde_json::from_str::<Brick>(&t)
                         .map_err(|e| format!("deserialize failed: {} => {}", e, &t))
                 });
             match n {

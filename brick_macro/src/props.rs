@@ -3,7 +3,7 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::DeriveInput;
 
-pub fn impl_component_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
+pub fn impl_brick_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
     let name = &ast.ident;
 
     let id = if struct_has_field(ast, "id") {
@@ -28,19 +28,19 @@ pub fn impl_component_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
 
     let child = if struct_has_field(&ast, "children") {
         quote! {
-            fn get_children(&mut self) -> Option<&mut Vec<JsonComponent>> {
+            fn get_children(&mut self) -> Option<&mut Vec<Brick>> {
                 self.children.as_mut()
             }
-            fn set_children(&mut self, component: Vec<JsonComponent>) {
-                self.children = Some(component);
+            fn set_children(&mut self, brick: Vec<Brick>) {
+                self.children = Some(brick);
             }
         }
     } else {
         quote! {
-            fn get_children(&mut self) -> Option<&mut Vec<JsonComponent>> {
+            fn get_children(&mut self) -> Option<&mut Vec<Brick>> {
                 None
             }
-            fn set_children(&mut self, component: Vec<JsonComponent>) {
+            fn set_children(&mut self, brick: Vec<Brick>) {
             }
         }
     };
@@ -93,7 +93,7 @@ pub fn impl_component_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
     };
 
     Ok(quote! {
-        impl ComponentProps for #name {
+        impl BrickProps for #name {
             #id
             #typ
             #att
@@ -104,7 +104,7 @@ pub fn impl_component_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
     })
 }
 
-pub fn impl_component_props_variant(ast: &DeriveInput) -> syn::Result<TokenStream2> {
+pub fn impl_brick_props_variant(ast: &DeriveInput) -> syn::Result<TokenStream2> {
     let name = &ast.ident;
     let mut r = Vec::new();
     if let syn::Data::Enum(d) = &ast.data {
@@ -113,22 +113,22 @@ pub fn impl_component_props_variant(ast: &DeriveInput) -> syn::Result<TokenStrea
         }
     }
     Ok(quote! {
-        impl ComponentProps for #name {
+        impl BrickProps for #name {
             fn get_id(&self) -> &Option<String> {
                 match self {
                     #(#name::#r(c) => c.get_id()),*
                 }
             }
 
-            fn get_children(&mut self) -> Option<&mut Vec<JsonComponent>> {
+            fn get_children(&mut self) -> Option<&mut Vec<Brick>> {
                 match self {
                     #(#name::#r(c) => c.get_children()),*
                 }
             }
 
-            fn set_children(&mut self, component: Vec<JsonComponent>) {
+            fn set_children(&mut self, brick: Vec<Brick>) {
                 match self {
-                    #(#name::#r(c) => { c.set_children(component) }),*
+                    #(#name::#r(c) => { c.set_children(brick) }),*
                 }
             }
 

@@ -1,5 +1,5 @@
 [package]
-name = "component"
+name = "brick"
 version = "0.1.0"
 edition = "2024"
 
@@ -12,19 +12,19 @@ serde_json = "1.0.145"
 schemars = { version = "1.1.0", optional = true, features = ["chrono04"] }
 regex = { version = "1", optional = true }
 maplit = { version = "1.0.2", optional = true }
-component_macro = { path = "../component_macro", optional = true }
+brick_macro = { path = "../brick_macro", optional = true }
 
 [features]
 dioxus = ["dep:dioxus"]
 schema = ["dep:schemars"]
-classify = ["dep:regex", "dep:component_macro"]
-props = ["dep:component_macro"]
+classify = ["dep:regex", "dep:brick_macro"]
+props = ["dep:brick_macro"]
 merge = ["props"]
 render = ["props"]
 scratch = ["dep:maplit"]
 
 [[example]]
-name = "componentschema"
+name = "brickschema"
 required-features = ["schema", "props"]
 
 [[example]]
