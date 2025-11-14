@@ -1,6 +1,6 @@
 use crate::libs::components::Frame;
 use crate::libs::hooks::use_common_css;
-use brick::Popup;
+use brick::{BrickProps, Popup};
 use dioxus::prelude::*;
 
 #[component]
@@ -8,13 +8,9 @@ pub fn popup_(id: Option<String>, brick: Popup, children: Element) -> Element {
     let mut css = vec!["popup", "f"];
     use_common_css(&mut css, &brick);
 
-    let style = brick
-        .attrs
-        .as_ref()
-        .and_then(|x| x.direction.as_ref())
-        .map(|x| x.into_flex());
+    let style = brick.attrs.as_ref().map(|x| x.into_style());
 
-    if let Some(children) = &brick.children
+    if let Some(children) = brick.get_children()
         && let Some(placeholder) = children.get(0)
         && let Some(modal) = children.get(1)
     {

@@ -23,7 +23,8 @@ use std::fmt::Debug;
 #[cfg(feature = "props")]
 pub trait BrickProps {
     fn get_type(&self) -> &str;
-    fn get_children(&mut self) -> Option<&mut Vec<Brick>>;
+    fn get_children(&self) -> Option<&Vec<Brick>>;
+    fn borrow_children_mut(&mut self) -> Option<&mut Vec<Brick>>;
     fn set_children(&mut self, brick: Vec<Brick>);
     fn get_attrs(&self) -> Option<&dyn Classify>;
     fn get_bind(&self) -> Option<&HashMap<String, Bind>>;
@@ -308,7 +309,7 @@ pub struct Popup {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttr>,
+    pub attrs: Option<DirectionAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
 }

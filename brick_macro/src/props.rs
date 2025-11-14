@@ -28,7 +28,10 @@ pub fn impl_brick_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
 
     let child = if struct_has_field(&ast, "children") {
         quote! {
-            fn get_children(&mut self) -> Option<&mut Vec<Brick>> {
+            fn get_children(&self) -> Option<&Vec<Brick>> {
+                self.children.as_ref()
+            }
+            fn borrow_children_mut(&mut self) -> Option<&mut Vec<Brick>> {
                 self.children.as_mut()
             }
             fn set_children(&mut self, brick: Vec<Brick>) {
@@ -37,7 +40,10 @@ pub fn impl_brick_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
         }
     } else {
         quote! {
-            fn get_children(&mut self) -> Option<&mut Vec<Brick>> {
+            fn get_children(&self) -> Option<&Vec<Brick>> {
+                None
+            }
+            fn borrow_children_mut(&mut self) -> Option<&mut Vec<Brick>> {
                 None
             }
             fn set_children(&mut self, brick: Vec<Brick>) {
@@ -120,9 +126,15 @@ pub fn impl_brick_props_variant(ast: &DeriveInput) -> syn::Result<TokenStream2> 
                 }
             }
 
-            fn get_children(&mut self) -> Option<&mut Vec<Brick>> {
+            fn get_children(&self) -> Option<&Vec<Brick>> {
                 match self {
                     #(#name::#r(c) => c.get_children()),*
+                }
+            }
+
+            fn borrow_children_mut(&mut self) -> Option<&mut Vec<Brick>> {
+                match self {
+                    #(#name::#r(c) => c.borrow_children_mut()),*
                 }
             }
 
