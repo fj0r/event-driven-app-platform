@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use super::super::store::Status;
 use super::{Dynamic, Frame};
 use dioxus::prelude::*;
-use layout::{Bind, BindVariant, JsType, Layout, Settings};
+use brick::{Bind, BindVariant, JsType, Form};
 use maplit::hashmap;
 use serde::{Deserialize, Serialize};
 
@@ -86,7 +86,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
 }
 
 #[component]
-pub fn form_(layout: Layout) -> Element {
+pub fn form_(layout: Form) -> Element {
     // TODO: instant
     let _instant = layout
         .attrs
@@ -106,7 +106,7 @@ pub fn form_(layout: Layout) -> Element {
     let children = layout.clone().children.unwrap_or_else(Vec::new);
     let children = children.into_iter().map(|c| {
         rsx! {
-            Frame { component: c }
+            Frame { brick: c }
         }
     });
 
@@ -146,7 +146,7 @@ pub fn form_(layout: Layout) -> Element {
     layout.kind = "case".to_owned();
     rsx! {
         Dynamic {
-            component: layout,
+            brick: layout,
             {children}
         }
     }

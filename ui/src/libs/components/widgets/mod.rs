@@ -1,7 +1,7 @@
 pub mod button;
 pub use button::button_;
 pub mod image;
-pub use image::img_;
+pub use image::image_;
 pub mod input;
 pub use input::input_;
 pub mod select;
@@ -12,5 +12,3 @@ pub mod text;
 pub use text::text_;
 pub mod textarea;
 pub use textarea::textarea_;
-pub mod x;
-pub use x::*;

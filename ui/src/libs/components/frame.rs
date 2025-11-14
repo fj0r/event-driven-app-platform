@@ -1,26 +1,26 @@
 use super::Dynamic;
-use component::{ComponentProps, JsonComponent};
+use brick::Brick;
 use dioxus::prelude::*;
 
 #[component]
-pub fn Frame(component: JsonComponent) -> Element {
-    let children = component.get_children();
+pub fn Frame(brick: Brick) -> Element {
+    let children = brick.get_children();
     if let Some(children) = children {
         let children = children.iter().map(|c| {
             rsx! {
-                Frame { component: c.clone() }
+                Frame { brick: c.clone() }
             }
         });
 
         rsx! {
             Dynamic {
-                component: component,
+                brick: brick,
                 {children}
             }
         }
     } else {
         rsx! {
-            Dynamic { component }
+            Dynamic { brick }
         }
     }
 }

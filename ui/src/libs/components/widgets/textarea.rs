@@ -1,6 +1,6 @@
 use crate::libs::hooks::use_common_css;
 use crate::libs::hooks::{use_source, use_source_value, use_target_value};
-use component::TextArea;
+use brick::TextArea;
 use dioxus::prelude::*;
 use serde_json::to_value;
 use std::rc::Rc;

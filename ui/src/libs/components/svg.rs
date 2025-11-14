@@ -1,12 +1,12 @@
 use crate::libs::hooks::{use_common_css, use_default};
-use component::{Layout, Settings};
+use brick::{Brick, Group, Path, Svg};
 use dioxus::prelude::*;
 
 #[component]
-pub fn svg_(layout: Layout, children: Element) -> Element {
+pub fn svg_(id: Option<String>, brick: Svg, children: Element) -> Element {
     let mut css = vec!["svg"];
-    use_common_css(&mut css, &layout);
-    let style = if let Some(a) = &layout.attrs
+    use_common_css(&mut css, &brick);
+    let style = if let Some(a) = &brick.attrs
         && let Some(s) = &a.size
     {
         s.into_style()
@@ -23,12 +23,12 @@ pub fn svg_(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn group_(layout: Layout, children: Element) -> Element {
+pub fn group_(brick: Group, children: Element) -> Element {
     let mut css = vec!["group"];
-    use_common_css(&mut css, &layout);
+    use_common_css(&mut css, &brick);
 
     let mut style = String::new();
-    if let Some(x) = &layout.attrs
+    if let Some(x) = &brick.attrs
         && let Some(Settings::Svg { svg }) = &x.settings
     {
         style = svg
@@ -47,10 +47,10 @@ pub fn group_(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn path_(layout: Layout, children: Element) -> Element {
+pub fn path_(brick: Path, children: Element) -> Element {
     let mut css = vec!["path"];
-    use_common_css(&mut css, &layout);
-    if let Some(x) = use_default(&layout)
+    use_common_css(&mut css, &brick);
+    if let Some(x) = use_default(&brick)
         && let Some(d) = x.as_str()
     {
         rsx! {

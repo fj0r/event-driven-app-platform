@@ -162,8 +162,6 @@ pub struct Chart {
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttr>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub children: Option<Vec<Brick>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]

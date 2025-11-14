@@ -1,17 +1,17 @@
 use super::super::store::Status;
 use super::{Dynamic, Frame};
 use crate::libs::hooks::{use_common_css, use_source_id};
+use brick::{Brick, Rack};
 use dioxus::{CapturedError, prelude::*};
-use layout::{Layout, Settings};
 use std::collections::hash_map::HashMap;
 
 struct ItemContainer {
-    default: Option<Layout>,
-    index: HashMap<String, Layout>,
+    default: Option<Brick>,
+    index: HashMap<String, Brick>,
 }
 
-impl From<Vec<Layout>> for ItemContainer {
-    fn from(data: Vec<Layout>) -> Self {
+impl From<Vec<Brick>> for ItemContainer {
+    fn from(data: Vec<Brick>) -> Self {
         let mut default = None;
         let mut index = HashMap::new();
         for l in &data {
@@ -28,7 +28,7 @@ impl From<Vec<Layout>> for ItemContainer {
 }
 
 impl ItemContainer {
-    fn select(&self, child: &Layout) -> Option<Layout> {
+    fn select(&self, child: &Brick) -> Option<Brick> {
         if let Some(x) = &child.attrs
             && let Some(kind) = &x.kind
             && let Some(i) = self.index.get(kind)
@@ -40,15 +40,15 @@ impl ItemContainer {
 }
 
 #[component]
-pub fn rack_(id: String, layout: Layout, children: Element) -> Element {
+pub fn rack_(id: String, brick: Brick, children: Element) -> Element {
     let mut css = vec!["rack", "f"];
-    use_common_css(&mut css, &layout);
+    use_common_css(&mut css, &brick);
 
-    let item: ItemContainer = layout.item.clone().context("item")?.into();
-    let Some(source) = use_source_id(&layout) else {
+    let item: ItemContainer = brick.item.clone().context("item")?.into();
+    let Some(source) = use_source_id(&brick) else {
         return Err(RenderError::Error(CapturedError::from_display("no event")));
     };
-    let attrs = layout.attrs.as_ref().context("attrs")?;
+    let attrs = brick.attrs.as_ref().context("attrs")?;
 
     let store = use_context::<Status>();
     let c = store.list.read();
@@ -60,7 +60,7 @@ pub fn rack_(id: String, layout: Layout, children: Element) -> Element {
         if let Some(layout) = layout {
             let x = rsx! {
                 Frame {
-                    component: child.clone()
+                    brick: child.clone()
                 }
             };
             if c.len() - 1 == idx {
@@ -68,7 +68,7 @@ pub fn rack_(id: String, layout: Layout, children: Element) -> Element {
                 rsx! {
                     Dynamic {
                         key: "{key}",
-                        component: layout,
+                        brick: layout,
                         {x}
                     }
                 }
@@ -76,7 +76,7 @@ pub fn rack_(id: String, layout: Layout, children: Element) -> Element {
                 rsx! {
                     Dynamic {
                         key: "{key}",
-                        component: layout,
+                        brick: layout,
                         {x}
                     }
                 }
@@ -85,7 +85,7 @@ pub fn rack_(id: String, layout: Layout, children: Element) -> Element {
             rsx! {
                 Frame {
                     key: "{key}",
-                    component: child.clone()
+                    brick: child.clone()
                 }
             }
         }

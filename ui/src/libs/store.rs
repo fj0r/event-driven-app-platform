@@ -1,8 +1,8 @@
 use super::ws::{WebSocketHandle, use_web_socket};
 use anyhow::Result;
-use component::{
-    ComponentProps, JsonComponent,
-    merge::{ComponentOp, Concat, Delete, Replace},
+use brick::{
+    Brick, BrickProps,
+    merge::{BrickOp, Concat, Delete, Replace},
 };
 use content::{Content, Message, Method, Outflow};
 #[allow(unused_imports)]
@@ -24,9 +24,9 @@ static TMPL: LazyLock<RwLock<Environment>> = LazyLock::new(|| {
 #[derive(Clone)]
 pub struct Status {
     pub ws: WebSocketHandle,
-    pub layout: Signal<JsonComponent>,
-    pub data: Signal<HashMap<String, JsonComponent>>,
-    pub list: Signal<HashMap<String, Vec<JsonComponent>>>,
+    pub layout: Signal<Brick>,
+    pub data: Signal<HashMap<String, Brick>>,
+    pub list: Signal<HashMap<String, Vec<Brick>>>,
 }
 
 impl Status {
@@ -43,18 +43,16 @@ impl Status {
         }
     }
 
-    pub fn set(&mut self, name: impl AsRef<str>, component: JsonComponent) {
-        self.data
-            .write()
-            .insert(name.as_ref().to_string(), component);
+    pub fn set(&mut self, name: impl AsRef<str>, brick: Brick) {
+        self.data.write().insert(name.as_ref().to_string(), brick);
     }
 }
 
 fn dispatch(
-    act: Message<JsonComponent>,
-    layout: &mut Signal<JsonComponent>,
-    data: &mut Signal<HashMap<String, JsonComponent>>,
-    list: &mut Signal<HashMap<String, Vec<JsonComponent>>>,
+    act: Message<Brick>,
+    layout: &mut Signal<Brick>,
+    data: &mut Signal<HashMap<String, Brick>>,
+    list: &mut Signal<HashMap<String, Vec<Brick>>>,
 ) {
     let Message {
         sender: _,
@@ -88,7 +86,7 @@ fn dispatch(
                 x.data.render(&env);
                 let e = x.event;
                 let d = &mut x.data;
-                let vs: &dyn ComponentOp = match x.method {
+                let vs: &dyn BrickOp = match x.method {
                     Method::Replace => &Replace,
                     Method::Concat => &Concat,
                     Method::Delete => &Delete,
@@ -119,18 +117,18 @@ pub fn use_status(url: &str) -> Result<Status, JsError> {
     let ws = use_web_socket(url)?;
     let x = ws.message_texts();
 
-    let mut layout = use_signal::<JsonComponent>(|| {
-        JsonComponent::text(component::Text {
+    let mut layout = use_signal::<Brick>(|| {
+        Brick::text(brick::Text {
             ..Default::default()
         })
     });
-    let mut data = use_signal::<HashMap<String, JsonComponent>>(HashMap::new);
-    let mut list = use_signal::<HashMap<String, Vec<JsonComponent>>>(HashMap::new);
+    let mut data = use_signal::<HashMap<String, Brick>>(HashMap::new);
+    let mut list = use_signal::<HashMap<String, Vec<Brick>>>(HashMap::new);
 
     use_memo(move || {
         let act = &x();
         if !act.is_empty() {
-            match serde_json::from_str::<Message<JsonComponent>>(act) {
+            match serde_json::from_str::<Message<Brick>>(act) {
                 Ok(act) => dispatch(act, &mut layout, &mut data, &mut list),
                 Err(err) => dioxus::logger::tracing::info!(
                     "deserialize from_str error {:?}\n\n{:?}",

@@ -1,6 +1,6 @@
 use super::super::handler::{ArcShared, ChatMessage, Envelope, Sender};
 use anyhow::Result;
-use component::{Bind, BindVariant, JsonComponent as C, Text, TextAttr};
+use brick::{Bind, BindVariant, Brick, Text, TextAttr};
 use content::{Content, Influx, Method};
 use maplit::hashmap;
 use std::default::Default;
@@ -25,7 +25,7 @@ pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender
         let content = Content::Join(Influx {
             event: "chat".into(),
             channel: None,
-            data: C::text(Text {
+            data: Brick::text(Text {
                 attrs: Some(TextAttr {
                     format: Some("md".to_string()),
                     ..Default::default()

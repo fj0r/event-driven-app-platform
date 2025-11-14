@@ -1,17 +1,17 @@
 use crate::libs::hooks::use_default;
+use brick::{Bind, BindVariant, Button};
 use dioxus::prelude::*;
-use layout::{Bind, BindVariant, Layout, Settings};
 use serde_json::{Value, to_value};
 
 #[component]
-pub fn button_(layout: Layout) -> Element {
-    let t = use_default(&layout)
+pub fn button_(brick: Button) -> Element {
+    let t = use_default(&brick)
         .unwrap_or(to_value("Ok").unwrap())
         .as_str()
         .unwrap()
         .to_owned();
 
-    let oneshot = layout
+    let oneshot = brick
         .attrs
         .and_then(|x| {
             if let Some(Settings::Button { oneshot }) = x.settings {
@@ -28,7 +28,7 @@ pub fn button_(layout: Layout) -> Element {
             ..
         },
         ..
-    }) = layout.bind.and_then(|x| x.get("value").cloned())
+    }) = brick.bind.and_then(|x| x.get("value").cloned())
     {
         let v = s.read().as_bool().unwrap();
         let mut css = vec!["button", "shadow"];

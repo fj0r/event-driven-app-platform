@@ -8,7 +8,7 @@ use super::popup::popup_;
 use super::rack::rack_;
 use super::svg::*;
 use super::widgets::*;
-use component::JsonComponent;
+use brick::Brick;
 use dioxus::prelude::*;
 use ui_macro::gen_dispatch;
 
@@ -16,7 +16,7 @@ use std::sync::{LazyLock, Mutex};
 static COMPONENT_ID: LazyLock<Mutex<u64>> = LazyLock::new(|| Mutex::new(0));
 
 #[component]
-pub fn Dynamic(component: JsonComponent, children: Element) -> Element {
+pub fn Dynamic(brick: Brick, children: Element) -> Element {
     let id = if cfg!(debug_assertions) {
         let mut tc = COMPONENT_ID.lock().unwrap();
         *tc += 1;
@@ -27,9 +27,9 @@ pub fn Dynamic(component: JsonComponent, children: Element) -> Element {
 
     let c = {
         gen_dispatch! {
-            file = "./component/src/lib.rs",
-            entry = "JsonComponent",
-            object = "component"
+            file = "./brick/src/lib.rs",
+            entry = "Brick",
+            object = "brick"
         }
     };
     rsx! {

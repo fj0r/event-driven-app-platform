@@ -1,14 +1,14 @@
 use crate::libs::components::Frame;
 use crate::libs::hooks::{use_common_css, use_source_list, use_source_value, use_target_value};
 use dioxus::prelude::*;
-use layout::{Layout, classify::Classify};
+use brick::{classify::Classify, Select};
 use serde_json::{Value, to_value};
 use std::rc::Rc;
 
 #[component]
-pub fn select_(layout: Layout, children: Element) -> Element {
+pub fn select_(brick: Select, children: Element) -> Element {
     let mut css = vec!["select", "f"];
-    let layout = Rc::new(layout);
+    let layout = Rc::new(brick);
     use_common_css(&mut css, &layout);
     let option = use_source_list(&layout, "options");
     let current = use_source_value(&layout);
@@ -39,7 +39,7 @@ pub fn select_(layout: Layout, children: Element) -> Element {
                     div {
                         Frame {
                             key: "{key}",
-                            component: child
+                            brick: child
                         }
                     }
                 }
@@ -53,7 +53,7 @@ pub fn select_(layout: Layout, children: Element) -> Element {
                         onclick: mkclick(v),
                         Frame {
                             key: "{key}",
-                            component: child
+                            brick: child
                         }
                     }
                 }

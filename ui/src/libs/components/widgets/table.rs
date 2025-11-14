@@ -1,8 +1,8 @@
+use brick::{Table, Tbody, Td, Th, Thead, Tr};
 use dioxus::prelude::*;
-use layout::Layout;
 
 #[component]
-pub fn table_(layout: Layout, children: Element) -> Element {
+pub fn table_(id: Option<String>, brick: Table, children: Element) -> Element {
     rsx! {
         table {
             {children}
@@ -11,7 +11,7 @@ pub fn table_(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn thead_(layout: Layout, children: Element) -> Element {
+pub fn thead_(id: Option<String>, brick: Thead, children: Element) -> Element {
     rsx! {
         thead {
             {children}
@@ -20,7 +20,7 @@ pub fn thead_(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn tbody_(layout: Layout, children: Element) -> Element {
+pub fn tbody_(id: Option<String>, brick: Tbody, children: Element) -> Element {
     rsx! {
         tbody {
             {children}
@@ -29,7 +29,7 @@ pub fn tbody_(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn tr_(layout: Layout, children: Element) -> Element {
+pub fn tr_(id: Option<String>, brick: Tr, children: Element) -> Element {
     rsx! {
         tr {
             {children}
@@ -38,7 +38,7 @@ pub fn tr_(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn th_(layout: Layout, children: Element) -> Element {
+pub fn th_(id: Option<String>, brick: Th, children: Element) -> Element {
     rsx! {
         th {
             {children}
@@ -47,7 +47,7 @@ pub fn th_(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn td_(layout: Layout, children: Element) -> Element {
+pub fn td_(id: Option<String>, brick: Td, children: Element) -> Element {
     rsx! {
         td {
             {children}

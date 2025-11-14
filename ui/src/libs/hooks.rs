@@ -1,16 +1,16 @@
 use crate::libs::store::Status;
-use component::{Bind, BindVariant, ComponentProps, JsonComponent, classify::Classify};
+use brick::{Bind, BindVariant, BrickProps, Brick, classify::Classify};
 #[allow(unused_imports)]
 use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
 use serde_json::Value;
 
-pub fn use_common_css<'a, 'b: 'a, T>(css: &'a mut Vec<&'b str>, component: &'b T)
+pub fn use_common_css<'a, 'b: 'a, T>(css: &'a mut Vec<&'b str>, brick: &'b T)
 where
-    T: Classify + ComponentProps,
+    T: Classify + BrickProps,
 {
-    let mut v = ["box", "case", "rack", "text", "tab", "select"].contains(&component.get_type());
-    if let Some(a) = component.get_attrs() {
+    let mut v = ["box", "case", "rack", "text", "tab", "select"].contains(&brick.get_type());
+    if let Some(a) = brick.get_attrs() {
         if a.is_horizontal() {
             v = false;
         }
@@ -24,18 +24,18 @@ where
     }
 }
 
-pub fn use_default<'a>(component: &'a (impl Classify + ComponentProps)) -> Option<Value> {
-    component
+pub fn use_default<'a>(brick: &'a (impl Classify + BrickProps)) -> Option<Value> {
+    brick
         .get_bind()
         .and_then(|x| x.get("value"))
         .and_then(|x| x.default.clone())
 }
 
-pub fn use_source_id<'a>(component: &'a JsonComponent) -> Option<&'a String> {
+pub fn use_source_id<'a>(brick: &'a Brick) -> Option<&'a String> {
     if let Bind {
         variant: BindVariant::Source { source },
         ..
-    } = component.get_bind().and_then(|x| x.get("value"))?
+    } = brick.get_bind().and_then(|x| x.get("value"))?
     {
         Some(source)
     } else {
@@ -44,12 +44,12 @@ pub fn use_source_id<'a>(component: &'a JsonComponent) -> Option<&'a String> {
 }
 
 pub fn use_source_list<'a>(
-    component: &'a JsonComponent,
+    brick: &'a Brick,
     key: &'a str,
-) -> Option<Vec<JsonComponent>> {
+) -> Option<Vec<Brick>> {
     let store = use_context::<Status>();
     let s = store.list.read();
-    if let Some(x) = component.get_bind()
+    if let Some(x) = brick.get_bind()
         && let Some(Bind {
             variant: BindVariant::Source { source },
             default: _,
@@ -64,10 +64,10 @@ pub fn use_source_list<'a>(
     }
 }
 
-pub fn use_source<'a>(component: &'a JsonComponent, key: &'a str) -> Option<Value> {
+pub fn use_source<'a>(brick: &'a Brick, key: &'a str) -> Option<Value> {
     let store = use_context::<Status>();
     let s = store.data.read();
-    let value = if let Some(x) = component.get_bind()
+    let value = if let Some(x) = brick.get_bind()
         && let Some(Bind {
             variant: BindVariant::Source { source },
             default: _,
@@ -78,7 +78,7 @@ pub fn use_source<'a>(component: &'a JsonComponent, key: &'a str) -> Option<Valu
     {
         data
     } else {
-        Some(component)
+        Some(brick)
     };
     if let Some(comp) = value
         && let Some(bind) = &comp.get_bind()
@@ -90,12 +90,12 @@ pub fn use_source<'a>(component: &'a JsonComponent, key: &'a str) -> Option<Valu
     }
 }
 
-pub fn use_source_value(component: &JsonComponent) -> Option<Value> {
-    use_source(component, "value")
+pub fn use_source_value(brick: &Brick) -> Option<Value> {
+    use_source(brick, "value")
 }
 
-pub fn use_target<'a>(component: &'a JsonComponent, key: &'a str) -> Option<impl Fn(Value)> {
-    if let Some(x) = component.get_bind()
+pub fn use_target<'a>(brick: &'a Brick, key: &'a str) -> Option<impl Fn(Value)> {
+    if let Some(x) = brick.get_bind()
         && let Some(Bind {
             // TODO: variable
             variant: BindVariant::Event { event },
@@ -116,6 +116,6 @@ pub fn use_target<'a>(component: &'a JsonComponent, key: &'a str) -> Option<impl
     }
 }
 
-pub fn use_target_value(component: &JsonComponent) -> Option<impl Fn(Value)> {
-    use_target(component, "value")
+pub fn use_target_value(brick: &Brick) -> Option<impl Fn(Value)> {
+    use_target(brick, "value")
 }

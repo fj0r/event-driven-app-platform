@@ -1,11 +1,11 @@
 use crate::libs::components::Frame;
 use crate::libs::hooks::use_common_css;
 use crate::libs::store::Status;
-use component::{Bind, BindVariant, Case, CaseAttr, ComponentProps, Placeholder};
+use brick::{Bind, BindVariant, BrickProps, Case, CaseAttr, Placeholder};
 use dioxus::prelude::*;
 
 #[component]
-pub fn case_(id: Option<String>, component: Case, children: Element) -> Element {
+pub fn case_(id: Option<String>, brick: Case, children: Element) -> Element {
     let mut css = vec!["case", "f"];
     if let Some(id) = &id {
         css.push(id);
@@ -17,7 +17,7 @@ pub fn case_(id: Option<String>, component: Case, children: Element) -> Element 
         bind,
         render,
         children,
-    } = &component
+    } = &brick
     {
         let mut f = true;
         if let Some(CaseAttr {
@@ -40,7 +40,7 @@ pub fn case_(id: Option<String>, component: Case, children: Element) -> Element 
             };
         }
     };
-    use_common_css(&mut css, &component);
+    use_common_css(&mut css, &brick);
 
     rsx! {
         div {
@@ -82,7 +82,7 @@ pub fn placeholder_(id: String, component: Placeholder, children: Element) -> El
             div {
                 id: id,
                 class: css.join(" "),
-                Frame { component: data.clone() }
+                Frame { brick: data.clone() }
             }
         }
     } else {

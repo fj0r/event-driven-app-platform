@@ -1,19 +1,19 @@
 use crate::libs::hooks::use_common_css;
 use crate::libs::hooks::use_source_value;
 use dioxus::prelude::*;
-use layout::{Layout, Settings};
+use brick::{Brick, Settings, Text};
 use markdown::{Options, to_html_with_options};
 use std::sync::LazyLock;
 
 #[component]
-pub fn text_(id: Option<String>, layout: Layout) -> Element {
+pub fn text_(id: Option<String>, brick: Text) -> Element {
     let mut css = vec!["text"];
     if let Some(id) = &id {
         css.push(id);
     }
-    use_common_css(&mut css, &layout);
+    use_common_css(&mut css, &brick);
 
-    let text_content = if let Some(json_data) = use_source_value(&layout) {
+    let text_content = if let Some(json_data) = use_source_value(&brick) {
         if json_data.is_string() {
             json_data.as_str().unwrap().to_owned()
         } else {
@@ -30,7 +30,7 @@ pub fn text_(id: Option<String>, layout: Layout) -> Element {
             .collect()
     });
 
-    if let Some(attrs) = layout.clone().attrs
+    if let Some(attrs) = brick.clone().attrs
         && let Some(Settings::Text {
             format: text_format,
         }) = attrs.settings
