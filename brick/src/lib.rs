@@ -1,5 +1,3 @@
-#[cfg(feature = "props")]
-use dioxus::html::u::justify_self;
 #[cfg(feature = "dioxus")]
 use dioxus::prelude::*;
 #[cfg(feature = "schema")]

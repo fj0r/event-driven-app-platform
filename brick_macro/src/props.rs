@@ -1,4 +1,4 @@
-use crate::utils::struct_has_field;
+use crate::utils::{get_ident_from_type, struct_has_field};
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::DeriveInput;
@@ -171,15 +171,32 @@ pub fn impl_brick_wrap_variant(ast: &DeriveInput) -> syn::Result<TokenStream2> {
     if let syn::Data::Enum(d) = &ast.data {
         for i in &d.variants {
             let v = &i.ident;
-            r.push(quote! {
-                impl Wrap for Form {
-                    type Target = #name;
-                    fn wrap(self) -> Self::Target {
-                        Self::Target::#v(self)
-                    }
+            let ty = match &i.fields {
+                syn::Fields::Unnamed(f) => {
+                    let x = f
+                        .unnamed
+                        .iter()
+                        .map(|x| get_ident_from_type(&x.ty))
+                        .filter(|x| x.is_some())
+                        .map(|x| x.unwrap())
+                        .collect::<Vec<_>>();
+                    x.get(0).cloned()
                 }
-            })
+                _ => None,
+            };
+            if let Some(ty) = ty {
+                r.push(quote! {
+                    impl Wrap for #ty {
+                        type Target = #name;
+                        fn wrap(self) -> Self::Target {
+                            Self::Target::#v(self)
+                        }
+                    }
+                })
+            }
         }
     }
-    Ok(quote! {})
+    Ok(quote! {
+        #(#r)*
+    })
 }

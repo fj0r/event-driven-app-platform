@@ -1,5 +1,5 @@
 use crate::libs::store::Status;
-use brick::{Bind, BindVariant, Brick, BrickProps, classify::Classify};
+use brick::{Bind, BindVariant, Brick, BrickProps, Wrap, classify::Classify};
 #[allow(unused_imports)]
 use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
@@ -64,7 +64,10 @@ pub fn use_source_list<'a>(
     }
 }
 
-pub fn use_source<'a>(brick: &'a (impl Classify + BrickProps), key: &'a str) -> Option<Value> {
+pub fn use_source<'a>(
+    brick: &'a (impl Clone + Classify + BrickProps + Wrap<Target = Brick>),
+    key: &'a str,
+) -> Option<Value> {
     let store = use_context::<Status>();
     let s = store.data.read();
     let value = if let Some(x) = brick.get_bind()
@@ -76,10 +79,9 @@ pub fn use_source<'a>(brick: &'a (impl Classify + BrickProps), key: &'a str) -> 
         && let data = s.get(source)
         && data.is_some()
     {
-        data
+        data.cloned()
     } else {
-        // TODO:
-        Some(brick as &Brick)
+        Some(brick.clone().wrap())
     };
     if let Some(comp) = value
         && let Some(bind) = &comp.get_bind()
