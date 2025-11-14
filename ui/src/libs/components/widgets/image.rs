@@ -1,12 +1,12 @@
 use crate::libs::hooks::use_default;
-use brick::Image;
+use brick::{BrickProps, Image};
 use dioxus::prelude::*;
 
 #[component]
 pub fn image_(brick: Image, children: Element) -> Element {
     if let Some(src) = use_default(&brick)
         && let Some(src) = src.as_str()
-        && let Some(x) = brick.attrs
+        && let Some(x) = brick.get_attrs()
     {
         if let Some(Settings::Image {
             desc,

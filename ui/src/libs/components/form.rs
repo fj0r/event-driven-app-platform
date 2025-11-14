@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use super::super::store::Status;
 use super::{Dynamic, Frame};
-use brick::{Bind, BindVariant, Form, JsType};
+use brick::{Bind, BindVariant, BrickProps, Case, Form, JsType};
 use dioxus::prelude::*;
 use maplit::hashmap;
 use serde::{Deserialize, Serialize};
@@ -16,8 +16,8 @@ struct Message {
 
 type FormScope = HashMap<String, (Signal<Value>, Option<Value>)>;
 
-fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
-    match layout.bind.as_ref().and_then(|x| x.get("value")) {
+fn walk(brick: &mut Form, scope: &mut FormScope, confirm: Signal<Value>) {
+    match brick.get_bind().and_then(|x| x.get("value")) {
         Some(Bind {
             default,
             r#type: kind,
@@ -49,7 +49,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
 
             let s = use_signal(|| v);
             scope.insert(field.to_string(), (s, payload.clone()));
-            layout.bind = Some(hashmap! {
+            brick.set_bind(Some(hashmap! {
                 "value".to_owned() => Bind {
                     r#type: kind,
                     default: None,
@@ -59,14 +59,14 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
                         signal: Some(s),
                     },
                 },
-            });
+            }));
         }
         Some(Bind {
             default: _,
             r#type: _,
             variant: BindVariant::Submit { .. },
         }) => {
-            layout.bind = Some(hashmap! {
+            brick.set_bind(Some(hashmap! {
                 "value".to_owned() => Bind {
                     variant: BindVariant::Submit {
                         submit: true,
@@ -74,11 +74,11 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
                     },
                     ..Default::default()
                 },
-            });
+            }));
         }
         _ => {}
     };
-    if let Some(children) = &mut layout.children {
+    if let Some(children) = &mut brick.children {
         for c in children.iter_mut() {
             walk(c, scope, confirm);
         }
@@ -110,7 +110,7 @@ pub fn form_(id: Option<String>, brick: Form, children: Element) -> Element {
         }
     });
 
-    let lc = brick.bind.as_ref().and_then(|x| x.get("value")).cloned();
+    let lc = brick.get_bind().and_then(|x| x.get("value")).cloned();
     if let Some(Bind {
         variant: BindVariant::Event { event },
         ..
@@ -143,7 +143,7 @@ pub fn form_(id: Option<String>, brick: Form, children: Element) -> Element {
         });
     };
 
-    brick.kind = "case".to_owned();
+    let brick = Case { ..brick };
     rsx! {
         Dynamic {
             brick: brick,

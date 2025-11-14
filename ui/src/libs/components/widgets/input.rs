@@ -1,7 +1,7 @@
 use super::super::super::store::Status;
 use crate::libs::hooks::use_common_css;
+use brick::{Bind, BindVariant, BrickProps, Input, JsType, Text};
 use dioxus::prelude::*;
-use brick::{Bind, BindVariant, JsType, Brick};
 use maplit::hashmap;
 use serde_json::{Value, to_value};
 use std::ops::Deref;
@@ -14,14 +14,13 @@ fn default_option_jskind(v: &Option<JsType>) -> Value {
 }
 
 #[component]
-pub fn input_(brick: Brick) -> Element {
+pub fn input_(brick: Input) -> Element {
     let store = use_context::<Status>();
     let mut css = vec!["input", "f", "shadow"];
     use_common_css(&mut css, &brick);
 
     let (bind_type, key, kind, signal) = brick
-        .bind
-        .as_ref()
+        .get_bind()
         .and_then(|x| x.get("value"))
         .cloned()
         .and_then(|x| match x {
@@ -59,7 +58,7 @@ pub fn input_(brick: Brick) -> Element {
             "variable" => {
                 s1.set(
                     k3.deref(),
-                    Layout {
+                    Text {
                         bind: Some(hashmap! {
                             "value".to_owned() => Bind { default: Some(parsed_value), ..Default::default() }
                         }),
