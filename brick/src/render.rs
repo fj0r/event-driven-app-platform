@@ -29,7 +29,7 @@ impl Brick {
                 }
             }
         }
-        if let Some(cs) = self.get_children() {
+        if let Some(cs) = self.borrow_children_mut() {
             for c in cs {
                 c.render(env);
             }

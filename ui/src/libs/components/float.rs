@@ -1,8 +1,8 @@
 #![allow(unused_imports)]
 use crate::libs::components::Frame;
 use crate::libs::hooks::{use_common_css, use_source_value};
+use brick::{Bind, Float, JsType};
 use dioxus::prelude::*;
-use brick::{Bind, JsType, Float};
 use serde_json::{Value, to_value};
 use std::ops::Deref;
 use std::rc::Rc;
