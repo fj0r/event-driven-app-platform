@@ -133,7 +133,7 @@ pub fn impl_classify_variant(ast: &DeriveInput) -> syn::Result<TokenStream2> {
             }
             fn is_horizontal(&self) -> bool {
                 match self {
-                    #(#name::#r(c) => c.borrow_attr().unwrap().is_horizontal(),)*
+                    #(#name::#r(c) => c.borrow_attrs().unwrap().is_horizontal(),)*
                     _ => false
                 }
             }
