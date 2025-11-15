@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 use serde_json::{Value, to_value};
 
 #[component]
-pub fn button_(brick: Button) -> Element {
+pub fn button_(id: Option<String>, brick: Button) -> Element {
     let t = use_default(&brick)
         .unwrap_or(to_value("Ok").unwrap())
         .as_str()
@@ -13,7 +13,8 @@ pub fn button_(brick: Button) -> Element {
 
     let oneshot = brick
         .attrs
-        .and_then(|ButtonAttr { oneshot, .. }| Some(oneshot))
+        .as_ref()
+        .and_then(|ButtonAttr { oneshot, .. }| Some(oneshot.clone()))
         .unwrap_or(false);
 
     if let Some(Bind {

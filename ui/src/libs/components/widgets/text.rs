@@ -1,7 +1,7 @@
 use crate::libs::hooks::use_common_css;
 use crate::libs::hooks::use_source_value;
+use brick::{Text, TextAttr};
 use dioxus::prelude::*;
-use brick::{Brick, Settings, Text};
 use markdown::{Options, to_html_with_options};
 use std::sync::LazyLock;
 
@@ -30,11 +30,12 @@ pub fn text_(id: Option<String>, brick: Text) -> Element {
             .collect()
     });
 
-    if let Some(attrs) = brick.clone().attrs
-        && let Some(Settings::Text {
-            format: text_format,
-        }) = attrs.settings
-        && (*MDFMT).contains(&text_format)
+    if let Some(attrs) = &brick.attrs
+        && let TextAttr {
+            format: Some(text_format),
+            ..
+        } = attrs
+        && (*MDFMT).contains(text_format)
     {
         let v = &text_content;
         if let Ok(md_html) = to_html_with_options(v, &Options::gfm()) {

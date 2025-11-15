@@ -1,23 +1,27 @@
 use super::Frame;
 use crate::libs::hooks::{use_common_css, use_default};
-use brick::{BrickProps, Fold, FoldAttr};
+use brick::{Accordion, BrickProps, FoldAttr};
 use dioxus::{html::track::default, prelude::*};
 
 #[component]
-pub fn fold_(id: Option<String>, brick: Fold, children: Element) -> Element {
+pub fn accordion_(id: Option<String>, brick: Accordion, children: Element) -> Element {
     let mut css = vec!["g"];
     if let Some(id) = &id {
         css.push(id);
     }
     use_common_css(&mut css, &brick);
 
-    let (replace_header, _float_body) = brick.attrs.map(
-        |FoldAttr {
-             replace_header,
-             float_body,
-             ..
-         }| (replace_header.unwrap_or(false), float_body.unwrap_or(false)),
-    );
+    let (replace_header, _float_body) = brick
+        .attrs
+        .as_ref()
+        .map(
+            |FoldAttr {
+                 replace_header,
+                 float_body,
+                 ..
+             }| (replace_header.unwrap_or(false), float_body.unwrap_or(false)),
+        )
+        .unwrap();
 
     let item = brick.get_item().context("item")?[0].clone();
     let show = use_signal(|| {

@@ -8,7 +8,7 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 #[component]
-pub fn float_(brick: Float, children: Element) -> Element {
+pub fn float_(id: Option<String>, brick: Float, children: Element) -> Element {
     let mut css = vec!["float", "f"];
     use_common_css(&mut css, &brick);
     let style = if let Some(attr) = &brick.attrs

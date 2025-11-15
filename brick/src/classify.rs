@@ -38,7 +38,20 @@ impl<T: Classify + Default> Classify for Option<T> {
 }
 
 impl SizeAttr {
-    pub fn into_style(&self) -> String {
+    pub fn size_style(&self) -> String {
+        let mut s = String::new();
+        if let Some(h) = &self.height {
+            s.push_str(&format!("height: {};", h));
+        };
+        if let Some(w) = &self.width {
+            s.push_str(&format!("width: {};", w));
+        };
+        s
+    }
+}
+
+impl ImageAttr {
+    pub fn size_style(&self) -> String {
         let mut s = String::new();
         if let Some(h) = &self.height {
             s.push_str(&format!("height: {};", h));

@@ -291,7 +291,7 @@ pub struct FoldAttr {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 #[cfg_attr(feature = "props", derive(BrickProps))]
 #[cfg_attr(feature = "classify", derive(ClassifyBrick))]
-pub struct Fold {
+pub struct Accordion {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -436,9 +436,9 @@ pub struct ImageAttr {
     #[serde(default)]
     pub thumb: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    width: Option<String>,
+    pub width: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    height: Option<String>,
+    pub height: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -643,7 +643,7 @@ pub enum Brick {
     diagram(Diagram),
     float(Float),
     #[render_brick(has_id = "true")]
-    fold(Fold),
+    accordion(Accordion),
     form(Form),
     popup(Popup),
     svg(Svg),

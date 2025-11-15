@@ -1,5 +1,5 @@
 use crate::libs::hooks::{use_common_css, use_default};
-use brick::{Group, Path, SizeAttr, StyleAttr, Svg};
+use brick::{Group, Path, Svg};
 use dioxus::prelude::*;
 
 #[component]
@@ -10,7 +10,7 @@ pub fn svg_(id: Option<String>, brick: Svg, children: Element) -> Element {
     let style = brick
         .attrs
         .as_ref()
-        .map(|x| x.into_style())
+        .map(|x| x.size_style())
         .unwrap_or("".to_string());
     rsx! {
         svg {

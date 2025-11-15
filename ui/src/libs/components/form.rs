@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use super::super::store::Status;
 use super::{Dynamic, Frame};
-use brick::{Bind, BindVariant, BrickProps, Case, Form, JsType};
+use brick::{Brick, Bind, BindVariant, BrickProps, Case, Form, JsType};
 use dioxus::prelude::*;
 use maplit::hashmap;
 use serde::{Deserialize, Serialize};
