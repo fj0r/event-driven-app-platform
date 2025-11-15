@@ -9,9 +9,9 @@ use std::rc::Rc;
 pub fn select_(id: Option<String>, brick: Select, children: Element) -> Element {
     let mut css = vec!["select", "f"];
     let brick = Rc::new(brick);
-    use_common_css(&mut css, &brick);
-    let option = use_source_list(&brick, "options");
-    let current = use_source_value(&brick);
+    use_common_css(&mut css, &*brick);
+    let option = use_source_list(&*brick, "options");
+    let current = use_source_value(&*brick);
     let mut current = use_signal(|| {
         current
             .and_then(|v| v.as_str().map(String::from))
@@ -20,7 +20,7 @@ pub fn select_(id: Option<String>, brick: Select, children: Element) -> Element 
     let mkclick = |value: Value| {
         let brick = brick.clone();
         move |_: MouseEvent| {
-            let emitter = use_target_value(&brick);
+            let emitter = use_target_value(&*brick);
             emitter.map(|x| x(value.clone()));
             if let Some(v) = value.as_str() {
                 current.set(v.to_string());

@@ -10,7 +10,7 @@ where
     T: Classify + BrickProps,
 {
     let mut v = ["box", "case", "rack", "text", "tab", "select"].contains(&brick.get_type());
-    if let Some(a) = brick.get_attrs() {
+    if let Some(a) = brick.borrow_attrs() {
         if a.is_horizontal() {
             v = false;
         }

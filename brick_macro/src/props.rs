@@ -67,13 +67,19 @@ pub fn impl_brick_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
 
     let att = if struct_has_field(&ast, "attrs") {
         quote! {
-            fn get_attrs(&self) -> Option<&dyn Classify> {
+            fn borrow_attrs(&self) -> Option<&dyn Classify> {
                 Some(&self.attrs)
+            }
+            fn borrow_attrs_mut(&mut self) -> Option<&mut dyn Classify> {
+                Some(&mut self.attrs)
             }
         }
     } else {
         quote! {
-            fn get_attrs(&self) -> Option<&dyn Classify> {
+            fn borrow_attrs(&self) -> Option<&dyn Classify> {
+                None
+            }
+            fn borrow_attrs_mut(&mut self) -> Option<&mut dyn Classify> {
                 None
             }
         }
@@ -189,9 +195,15 @@ pub fn impl_brick_props_variant(ast: &DeriveInput) -> syn::Result<TokenStream2> 
                 }
             }
 
-            fn get_attrs(&self) -> Option<&dyn Classify> {
+            fn borrow_attrs(&self) -> Option<&dyn Classify> {
                 match self {
-                    #(#name::#r(c) => { c.get_attrs() }),*
+                    #(#name::#r(c) => { c.borrow_attrs() }),*
+                }
+            }
+
+            fn borrow_attrs_mut(&mut self) -> Option<&mut dyn Classify> {
+                match self {
+                    #(#name::#r(c) => { c.borrow_attrs_mut() }),*
                 }
             }
         }

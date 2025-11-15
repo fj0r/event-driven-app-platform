@@ -13,7 +13,7 @@ pub mod render;
 #[cfg(feature = "props")]
 use brick_macro::BrickProps;
 #[cfg(feature = "classify")]
-use brick_macro::{ClassifyAttrs, ClassifyBrick};
+use brick_macro::{ClassifyAttrs, ClassifyBrick, ClassifyVariant};
 
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, to_value};
@@ -26,7 +26,8 @@ pub trait BrickProps {
     fn get_children(&self) -> Option<&Vec<Brick>>;
     fn borrow_children_mut(&mut self) -> Option<&mut Vec<Brick>>;
     fn set_children(&mut self, brick: Vec<Brick>);
-    fn get_attrs(&self) -> Option<&dyn Classify>;
+    fn borrow_attrs(&self) -> Option<&dyn Classify>;
+    fn borrow_attrs_mut(&mut self) -> Option<&mut dyn Classify>;
     fn get_bind(&self) -> Option<&HashMap<String, Bind>>;
     fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>);
     fn get_item(&self) -> Option<&Vec<Brick>>;
@@ -630,6 +631,7 @@ pub struct Case {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 #[cfg_attr(feature = "props", derive(BrickProps))]
+#[cfg_attr(feature = "classify", derive(ClassifyVariant))]
 #[serde(tag = "type")]
 pub enum Brick {
     case(Case),

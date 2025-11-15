@@ -70,16 +70,16 @@ pub fn impl_classify_brick(ast: &DeriveInput) -> syn::Result<TokenStream2> {
         quote! {
             impl Classify for #name {
                 fn get_class(&self) -> &Option<Vec<String>> {
-                    self.attrs.get_class()
+                    self.borrow_attrs().unwrap().get_class()
                 }
                 fn add_class(&mut self, class: &str) {
-                    self.attrs.add_class(class);
+                    self.borrow_attrs_mut().unwrap().add_class(class);
                 }
                 fn delete_class(&mut self, class: &str) {
-                    self.attrs.delete_class(class);
+                    self.borrow_attrs_mut().unwrap().delete_class(class);
                 }
                 fn is_horizontal(&self) -> bool {
-                    self.attrs.is_horizontal()
+                    self.borrow_attrs().unwrap().is_horizontal()
                 }
             }
         }
@@ -115,25 +115,25 @@ pub fn impl_classify_variant(ast: &DeriveInput) -> syn::Result<TokenStream2> {
         impl Classify for #name {
             fn get_class(&self) -> &Option<Vec<String>> {
                 match self {
-                    #(#name::#r(c) => c.attrs.get_class()),*
+                    #(#name::#r(c) => c.borrow_attrs().get_class(),)*
                     _ => &None
                 }
             }
             fn add_class(&mut self, class: &str) {
                 match self {
-                    #(#name::#r(c) => { c.attrs.add_class(class) }),*
+                    #(#name::#r(c) => { c.borrow_attrs_mut().add_class(class) })*
                     _ => {}
                 }
             }
             fn delete_class(&mut self, class: &str) {
                 match self {
-                    #(#name::#r(c) => { c.attrs.delete_class(class) }),*
+                    #(#name::#r(c) => { c.borrow_attrs_mut().delete_class(class) })*
                     _ => {}
                 }
             }
             fn is_horizontal(&self) -> bool {
                 match self {
-                    #(#name::#r(c) => c.attrs.is_horizontal() ),*
+                    #(#name::#r(c) => c.borrow_attr().is_horizontal(),)*
                     _ => false
                 }
             }

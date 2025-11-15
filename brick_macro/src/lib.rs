@@ -89,7 +89,7 @@ mod test_macro {
 
     #[test]
     fn test_struct_hello() {
-        let _input = quote! {
+        let input = quote! {
             #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
             #[cfg_attr(feature = "dioxus", derive(Props))]
             #[cfg_attr(feature = "schema", derive(JsonSchema))]
@@ -113,7 +113,7 @@ mod test_macro {
             }
         };
 
-        let input = quote! {
+        let _input = quote! {
             #[allow(non_camel_case_types)]
             #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
             #[cfg_attr(feature = "schema", derive(JsonSchema))]
@@ -161,7 +161,7 @@ mod test_macro {
 
         //let output = impl_classify_attrs(input.clone()).unwrap();
         let ast = syn::parse2::<DeriveInput>(input).unwrap();
-        let output = impl_brick_wrap_variant(&ast).expect("Macro expansion failed");
+        let output = impl_brick_props(&ast).expect("Macro expansion failed");
 
         let _ = std::fs::write("../data/out.ast", format!("{:#?}", ast));
         let _ = std::fs::write("../data/out.rs", format!("{:#}", output.to_string()));
