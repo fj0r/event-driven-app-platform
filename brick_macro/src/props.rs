@@ -7,126 +7,82 @@ pub fn impl_brick_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
     let name = &ast.ident;
 
     let id = if struct_has_field(ast, "id") {
-        quote! {
-            fn get_id(&self) -> &Option<String> {
-                &self.id
-            }
-        }
+        quote! { &self.id }
     } else {
-        quote! {
-            fn get_id(&self) -> &Option<String> {
-                &None
-            }
-        }
+        quote! { &None }
     };
 
-    let typ = quote! {
-        fn get_type(&self) -> &str {
-            stringify!(#name)
-        }
-    };
+    let mut child_ref = quote! { None };
+    let mut child_mut = quote! { None };
+    let mut set_child = quote! {};
 
-    let child = if struct_has_field(&ast, "children") {
-        quote! {
-            fn get_children(&self) -> Option<&Vec<Brick>> {
-                self.children.as_ref()
-            }
-            fn borrow_children_mut(&mut self) -> Option<&mut Vec<Brick>> {
-                self.children.as_mut()
-            }
-            fn set_children(&mut self, brick: Vec<Brick>) {
-                self.children = Some(brick);
-            }
-        }
-    } else {
-        quote! {
-            fn get_children(&self) -> Option<&Vec<Brick>> {
-                None
-            }
-            fn borrow_children_mut(&mut self) -> Option<&mut Vec<Brick>> {
-                None
-            }
-            fn set_children(&mut self, brick: Vec<Brick>) {
-            }
-        }
+    if struct_has_field(&ast, "children") {
+        child_ref = quote! {self.children.as_ref()};
+        child_mut = quote! {self.children.as_mut()};
+        set_child = quote! {self.children = Some(brick);};
     };
 
     let item = if struct_has_field(&ast, "item") {
-        quote! {
-            fn get_item(&self) -> Option<&Vec<Brick>> {
-                self.children.as_ref()
-            }
-        }
+        quote! { self.children.as_ref() }
     } else {
-        quote! {
-            fn get_item(&self) -> Option<&Vec<Brick>> {
-                None
-            }
-        }
+        quote! { None }
     };
 
-    let att = if struct_has_field(&ast, "attrs") {
-        quote! {
-            fn borrow_attrs(&self) -> Option<&dyn Classify> {
-                Some(&self.attrs)
-            }
-            fn borrow_attrs_mut(&mut self) -> Option<&mut dyn Classify> {
-                Some(&mut self.attrs)
-            }
-        }
-    } else {
-        quote! {
-            fn borrow_attrs(&self) -> Option<&dyn Classify> {
-                None
-            }
-            fn borrow_attrs_mut(&mut self) -> Option<&mut dyn Classify> {
-                None
-            }
-        }
+    let mut attrs_ref = quote! { None };
+    let mut attrs_mut = quote! { None };
+    if struct_has_field(&ast, "attrs") {
+        attrs_ref = quote! {Some(&self.attrs)};
+        attrs_mut = quote! {Some(&mut self.attrs)};
     };
 
-    let bind = if struct_has_field(&ast, "bind") {
-        quote! {
-            fn get_bind(&self) -> Option<&HashMap<String, Bind>> {
-                self.bind.as_ref()
-            }
-            fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>) {
-                self.bind = bind;
-            }
-        }
-    } else {
-        quote! {
-            fn get_bind(&self) -> Option<&HashMap<String, Bind>> {
-                None
-            }
-            fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>) {
-            }
-        }
+    let mut get_bind = quote! { None };
+    let mut set_bind = quote! {};
+    if struct_has_field(&ast, "bind") {
+        get_bind = quote! {self.bind.as_ref()};
+        set_bind = quote! {self.bind = bind;}
     };
 
     let render = if struct_has_field(&ast, "render") {
-        quote! {
-            fn get_render(&self) -> Option<&Render> {
-                self.render.as_ref()
-            }
-        }
+        quote! { self.render.as_ref() }
     } else {
-        quote! {
-            fn get_render(&self) -> Option<&Render> {
-                None
-            }
-        }
+        quote! { None }
     };
 
     Ok(quote! {
         impl BrickProps for #name {
-            #id
-            #typ
-            #att
-            #bind
-            #item
-            #render
-            #child
+            fn get_id(&self) -> &Option<String> {
+                #id
+            }
+            fn get_type(&self) -> &str {
+                stringify!(#name)
+            }
+            fn get_children(&self) -> Option<&Vec<Brick>> {
+                #child_ref
+            }
+            fn borrow_children_mut(&mut self) -> Option<&mut Vec<Brick>> {
+                #child_mut
+            }
+            fn set_children(&mut self, brick: Vec<Brick>) {
+                #set_child
+            }
+            fn get_item(&self) -> Option<&Vec<Brick>> {
+                #item
+            }
+            fn borrow_attrs(&self) -> Option<&dyn Classify> {
+                #attrs_ref
+            }
+            fn borrow_attrs_mut(&mut self) -> Option<&mut dyn Classify> {
+                #attrs_mut
+            }
+            fn get_bind(&self) -> Option<&HashMap<String, Bind>> {
+                #get_bind
+            }
+            fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>) {
+                #set_bind
+            }
+            fn get_render(&self) -> Option<&Render> {
+                #render
+            }
         }
     })
 }
