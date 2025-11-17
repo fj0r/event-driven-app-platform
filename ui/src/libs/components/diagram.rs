@@ -4,6 +4,7 @@ use dioxus::prelude::*;
 
 #[component]
 pub fn diagram_(id: Option<String>, brick: Diagram) -> Element {
+    dioxus::logger::tracing::info!("{:#?}", brick);
     let mut css = vec!["diagram"];
     use_common_css(&mut css, &brick);
     if let Some(x) = use_default(&brick)

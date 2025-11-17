@@ -242,6 +242,8 @@ pub struct Placeholder {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
 }
 
@@ -255,6 +257,8 @@ pub struct Chart {
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttr>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -267,6 +271,8 @@ pub struct Diagram {
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttr>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -279,6 +285,8 @@ pub struct Float {
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<PositionAttr>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
 }
@@ -309,6 +317,8 @@ pub struct Fold {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<FoldAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub item: Option<Vec<Brick>>,
@@ -338,6 +348,8 @@ pub struct Form {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<FormAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
 }
 
@@ -351,6 +363,8 @@ pub struct Popup {
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<DirectionAttr>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
 }
@@ -366,6 +380,8 @@ pub struct Svg {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<SizeAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
 }
 
@@ -380,6 +396,8 @@ pub struct Group {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<StyleAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub bind: Option<HashMap<String, Bind>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
 }
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -393,7 +411,7 @@ pub struct Path {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attrs: Option<ClassAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub children: Option<Vec<Brick>>,
+    pub bind: Option<HashMap<String, Bind>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]

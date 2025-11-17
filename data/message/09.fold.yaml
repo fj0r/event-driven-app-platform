@@ -4,8 +4,8 @@ data:
   attrs:
     class: [f, col, gap, xxx, md]
   children:
-  - {}
-  - {}
+  - {type: case}
+  - {type: case}
   - attrs:
       class: [box, sm, border, warn, pointer, highlight, ease]
     children:

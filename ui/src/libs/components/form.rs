@@ -147,6 +147,7 @@ pub fn form_(id: Option<String>, brick: Form, children: Element) -> Element {
         id,
         attrs,
         children: c,
+        ..
     }) = &brick
     {
         let brick = Brick::case(Case {
