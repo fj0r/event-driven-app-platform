@@ -4,7 +4,6 @@ use crate::libs::hooks::{use_common_css, use_source_id};
 use brick::classify::Classify;
 use brick::{Brick, BrickProps, Rack, RackAttr};
 use dioxus::{CapturedError, prelude::*};
-use indoc::indoc;
 use std::collections::hash_map::HashMap;
 
 struct ItemContainer {
@@ -18,7 +17,7 @@ impl From<Vec<Brick>> for ItemContainer {
         let mut index = HashMap::new();
         for l in &data {
             if let Some(x) = l.get_selector() {
-                index.insert(selector.to_owned(), l.clone());
+                index.insert(x.to_owned(), l.clone());
             } else {
                 default = Some(l.clone());
             };
@@ -29,10 +28,7 @@ impl From<Vec<Brick>> for ItemContainer {
 
 impl ItemContainer {
     fn select(&self, child: &Brick) -> Option<Brick> {
-        if let Some(x) = child.borrow_attrs()
-            && let Some(kind) = &x.kind
-            && let Some(i) = self.index.get(kind)
-        {
+        if let Some(i) = self.index.get(child.get_type()) {
             return Some(i).cloned();
         }
         self.default.clone()
@@ -53,7 +49,7 @@ pub fn rack_(id: Option<String>, brick: Rack, children: Element) -> Element {
     let c = store.list.read();
     let c = c.get(source).cloned().unwrap_or_else(Vec::new);
     let r = c.iter().enumerate().map(|(idx, child)| {
-        let key = child.get_id().unwrap_or(idx.to_string());
+        let key = child.get_id().clone().unwrap_or(idx.to_string());
         // dioxus::logger::tracing::info!("{key:?}");
         let layout = item.select(child);
         if let Some(layout) = layout {
@@ -99,14 +95,14 @@ pub fn rack_(id: Option<String>, brick: Rack, children: Element) -> Element {
             use_effect(move || {
                 // TODO: fine-grained
                 let _ = sl.read();
-                document::eval(&format!(indoc! {
+                document::eval(&format! {
                     r#"
                     var e = document.getElementById("{id}");
                     if (Math.abs(e.scrollHeight - e.offsetHeight - e.scrollTop) < e.offsetHeight) {{
                         e.scrollTop = e.scrollHeight;
                     }}
                     "#
-                }));
+                });
             });
         }
     };
