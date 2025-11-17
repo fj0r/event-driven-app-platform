@@ -1,16 +1,19 @@
 {
-    "action": "set",
-    "event": "login",
-    "data": {
-        "type": "text",
-        "bind": {
-          "value": {
-            "default": "chat with **AI** (user: {{info.username}})"
-          }
-        },
-        "attrs": {
-            "class": "shadow nogrow",
-            "format": "md"
-        }
+  "action": "set",
+  "event": "login",
+  "data": {
+    "type": "text",
+    "bind": {
+      "value": {
+        "default": "chat with **AI** (user: {{info.username}})"
+      }
+    },
+    "attrs": {
+      "class": [
+        "shadow",
+        "nogrow"
+      ],
+      "format": "md"
     }
+  }
 }

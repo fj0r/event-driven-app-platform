@@ -9,7 +9,8 @@ pub fn use_common_css<'a, 'b: 'a, T>(css: &'a mut Vec<&'b str>, brick: &'b T)
 where
     T: Classify + BrickProps,
 {
-    let mut v = ["box", "case", "rack", "text", "tab", "select"].contains(&brick.get_type());
+    let t = brick.get_type();
+    let mut v = ["Box", "Case", "Rack", "Text", "Tab", "Select"].contains(&t);
     if let Some(a) = brick.borrow_attrs() {
         if a.is_horizontal() {
             v = false;
