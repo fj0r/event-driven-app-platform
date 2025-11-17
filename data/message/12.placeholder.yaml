@@ -3,7 +3,7 @@ event: float
 data:
   type: popup
   attrs:
-    class: --cart box border shadow primary
+    class: [--cart, box, border, shadow, primary]
     direction: U
   bind:
     value:

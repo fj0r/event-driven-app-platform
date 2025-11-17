@@ -2,7 +2,7 @@ action: create
 event: ''
 data:
   attrs:
-    class: maximize
+    class: [maximize]
   type: case
   children:
   - type: text
@@ -11,27 +11,27 @@ data:
         default: '**chat**'
         source: login
     attrs:
-      class: --header nogrow
+      class: [--header, nogrow]
       format: md
   - type: case
     attrs:
       horizontal: true
-      class: --body shrink border round
+      class: [--body, shrink, border, round]
     children:
     - type: case
       attrs:
-        class: --leftside nogrow
+        class: [--leftside, nogrow]
       children:
       - type: text
         attrs:
           format: md
-          class: box
+          class: [box]
         bind:
           value:
             default: '**channel**'
       - type: select
         attrs:
-          class: --channel ji-center nogrow
+          class: [--channel, ji-center, nogrow]
         bind:
           value:
             event: channel::select
@@ -40,13 +40,13 @@ data:
             source: channel::list
     - type: case
       attrs:
-        class: main shrink
+        class: [main, shrink]
       children:
       - type: case
         children:
         - type: rack
           attrs:
-            class: --message box ac-start gap scrolly
+            class: [--message, box, ac-start, gap, scrolly]
             scroll: true
           bind:
             value:
@@ -54,11 +54,11 @@ data:
           item:
           - type: case
             attrs:
-              class: nogrow as-end accent box border round shadow
+              class: [nogrow, as-end, accent, box, border, round, shadow]
               selector: ask
           - type: case
             attrs:
-              class: nogrow as-stretch box border round shadow
+              class: [nogrow, as-stretch, box, border, round, shadow]
         - type: float
           attrs:
             bottom: '0.2rem'
@@ -66,7 +66,7 @@ data:
           children:
           - type: popup
             attrs:
-              class: --cart box border shadow primary
+              class: [--cart, box, border, shadow, primary]
               direction: U
             bind:
               value:
@@ -91,7 +91,7 @@ data:
                     default: c
       - type: case
         attrs:
-          class: --input nogrow box
+          class: [--input, nogrow, box]
           horizontal: true
         children:
         - type: case

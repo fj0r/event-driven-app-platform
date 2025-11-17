@@ -4,14 +4,14 @@ data:
   type: case
   attrs:
     horizontal: true
-    class: box
+    class: [box]
   children:
     - type: test
     - type: case
       children:
         - type: case
           attrs:
-            class: box border shadow
+            class: [box, border, shadow]
           children:
             - type: text
               bind:
@@ -30,7 +30,7 @@ data:
       item:
           - type: case
             attrs:
-              class: box border shadow
+              class: [box, border, shadow]
     - type: case
       children:
         - type: text

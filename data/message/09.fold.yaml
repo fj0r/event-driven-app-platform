@@ -2,17 +2,17 @@ action: join
 event: chat
 data:
   attrs:
-    class: f col gap xxx md
+    class: [f, col, gap, xxx, md]
   children:
   - {}
   - {}
   - attrs:
-      class: box sm border warn pointer highlight ease
+      class: [box, sm, border, warn, pointer, highlight, ease]
     children:
     - attrs: {}
       children:
       - attrs:
-          class: txt sm hint
+          class: [txt, sm, hint]
           format: md
         type: text
         bind:
@@ -20,7 +20,7 @@ data:
             default: test
       item:
       - attrs:
-          class: txt sm hint
+          class: [txt, sm, hint]
         type: text
         bind:
           value:
