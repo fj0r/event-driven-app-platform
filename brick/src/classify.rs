@@ -3,6 +3,7 @@ use super::*;
 pub trait Classify {
     fn get_class(&self) -> &Option<Vec<String>>;
     fn add_class(&mut self, class: &str);
+    fn get_selector(&self) -> &Option<String>;
     fn delete_class(&mut self, class: &str);
     fn is_horizontal(&self) -> bool;
 }
@@ -11,6 +12,13 @@ impl<T: Classify + Default> Classify for Option<T> {
     fn get_class(&self) -> &Option<Vec<String>> {
         if let Some(attr) = self {
             attr.get_class()
+        } else {
+            &None
+        }
+    }
+    fn get_selector(&self) -> &Option<String> {
+        if let Some(attr) = self {
+            attr.get_selector()
         } else {
             &None
         }

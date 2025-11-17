@@ -1,6 +1,7 @@
 use super::super::store::Status;
 use super::{Dynamic, Frame};
 use crate::libs::hooks::{use_common_css, use_source_id};
+use brick::classify::Classify;
 use brick::{Brick, BrickProps, Rack, RackAttr};
 use dioxus::{CapturedError, prelude::*};
 use indoc::indoc;
@@ -16,9 +17,7 @@ impl From<Vec<Brick>> for ItemContainer {
         let mut default = None;
         let mut index = HashMap::new();
         for l in &data {
-            if let Some(x) = l.borrow_attrs()
-                && let Some(Settings::Item { selector }) = &x.settings
-            {
+            if let Some(x) = l.get_selector() {
                 index.insert(selector.to_owned(), l.clone());
             } else {
                 default = Some(l.clone());

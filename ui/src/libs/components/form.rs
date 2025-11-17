@@ -89,8 +89,8 @@ fn walk(brick: &mut Brick, scope: &mut FormScope, confirm: Signal<Value>) {
 pub fn form_(id: Option<String>, brick: Form, children: Element) -> Element {
     // TODO: instant
     let _instant = if let Some(FormAttr {
-        class: _,
         instant: Some(instant),
+        ..
     }) = brick.attrs
     {
         instant
@@ -151,12 +151,10 @@ pub fn form_(id: Option<String>, brick: Form, children: Element) -> Element {
     {
         let brick = Brick::case(Case {
             id: id.clone(),
-            attrs: attrs
-                .as_ref()
-                .map(|FormAttr { class, instant: _ }| CaseAttr {
-                    class: class.clone(),
-                    ..Default::default()
-                }),
+            attrs: attrs.as_ref().map(|FormAttr { class, .. }| CaseAttr {
+                class: class.clone(),
+                ..Default::default()
+            }),
             children: c.clone(),
             ..Default::default()
         });

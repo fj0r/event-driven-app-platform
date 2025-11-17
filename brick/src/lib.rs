@@ -144,6 +144,8 @@ pub struct Bind {
 pub struct ClassAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub selector: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -153,6 +155,8 @@ pub struct ClassAttr {
 pub struct SizeAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub selector: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub height: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -185,6 +189,8 @@ pub struct PositionAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub selector: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub h: Option<PosH>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub v: Option<PosV>,
@@ -207,6 +213,8 @@ pub struct DirectionAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub selector: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub direction: Option<Direction>,
 }
 
@@ -217,6 +225,8 @@ pub struct DirectionAttr {
 pub struct StyleAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub selector: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub style: Option<HashMap<String, String>>,
 }
@@ -281,6 +291,8 @@ pub struct FoldAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub selector: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub replace_header: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub float_body: Option<bool>,
@@ -309,6 +321,8 @@ pub struct Fold {
 pub struct FormAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub selector: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub instant: Option<bool>,
 }
@@ -391,6 +405,8 @@ pub struct RackAttr {
     pub scroll: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub selector: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -422,6 +438,8 @@ pub struct ButtonAttr {
     pub oneshot: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub selector: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -444,6 +462,8 @@ pub struct Button {
 pub struct ImageAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub selector: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub desc: Option<String>,
     #[serde(default)]
@@ -577,6 +597,8 @@ pub struct TextAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub selector: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub format: Option<String>,
 }
 
@@ -615,6 +637,8 @@ pub struct TextArea {
 pub struct CaseAttr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub class: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub selector: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub horizontal: Option<bool>,
     #[allow(non_camel_case_types)]
