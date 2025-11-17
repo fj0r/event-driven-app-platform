@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use super::super::store::Status;
 use super::{Dynamic, Frame};
-use brick::{Brick, Bind, BindVariant, BrickProps, Case, Form, JsType};
+use brick::{Bind, BindVariant, Brick, BrickProps, Case, CaseAttr, Form, FormAttr, JsType};
 use dioxus::prelude::*;
 use maplit::hashmap;
 use serde::{Deserialize, Serialize};
@@ -16,7 +16,7 @@ struct Message {
 
 type FormScope = HashMap<String, (Signal<Value>, Option<Value>)>;
 
-fn walk(brick: &mut Form, scope: &mut FormScope, confirm: Signal<Value>) {
+fn walk(brick: &mut Brick, scope: &mut FormScope, confirm: Signal<Value>) {
     match brick.get_bind().and_then(|x| x.get("value")) {
         Some(Bind {
             default,
@@ -78,7 +78,7 @@ fn walk(brick: &mut Form, scope: &mut FormScope, confirm: Signal<Value>) {
         }
         _ => {}
     };
-    if let Some(children) = &mut brick.children {
+    if let Some(children) = &mut brick.borrow_children_mut() {
         for c in children.iter_mut() {
             walk(c, scope, confirm);
         }
@@ -88,25 +88,25 @@ fn walk(brick: &mut Form, scope: &mut FormScope, confirm: Signal<Value>) {
 #[component]
 pub fn form_(id: Option<String>, brick: Form, children: Element) -> Element {
     // TODO: instant
-    let _instant = brick
-        .attrs
-        .clone()
-        .and_then(|x| {
-            if let Some(Settings::Form { instant }) = x.settings {
-                Some(instant)
-            } else {
-                None
-            }
-        })
-        .unwrap_or(false);
+    let _instant = if let Some(FormAttr {
+        class: _,
+        instant: Some(instant),
+    }) = brick.attrs
+    {
+        instant
+    } else {
+        false
+    };
 
     let mut data: FormScope = HashMap::new();
     let confirm = use_signal(|| Value::Bool(false));
+    let mut brick = Brick::form(brick);
     walk(&mut brick, &mut data, confirm);
-    let children = brick.clone().children.unwrap_or_else(Vec::new);
+    let v = Vec::new();
+    let children = brick.borrow_children().unwrap_or(&v);
     let children = children.into_iter().map(|c| {
         rsx! {
-            Frame { brick: c }
+            Frame { brick: c.clone() }
         }
     });
 
@@ -143,11 +143,30 @@ pub fn form_(id: Option<String>, brick: Form, children: Element) -> Element {
         });
     };
 
-    let brick = Case { ..brick };
-    rsx! {
-        Dynamic {
-            brick: brick,
-            {children}
+    if let Brick::form(Form {
+        id,
+        attrs,
+        children: c,
+    }) = &brick
+    {
+        let brick = Brick::case(Case {
+            id: id.clone(),
+            attrs: attrs
+                .as_ref()
+                .map(|FormAttr { class, instant: _ }| CaseAttr {
+                    class: class.clone(),
+                    ..Default::default()
+                }),
+            children: c.clone(),
+            ..Default::default()
+        });
+        rsx! {
+            Dynamic {
+                brick: brick,
+                {children}
+            }
         }
+    } else {
+        rsx! {}
     }
 }

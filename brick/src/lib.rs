@@ -23,7 +23,7 @@ use std::fmt::Debug;
 #[cfg(feature = "props")]
 pub trait BrickProps {
     fn get_type(&self) -> &str;
-    fn get_children(&self) -> Option<&Vec<Brick>>;
+    fn borrow_children(&self) -> Option<&Vec<Brick>>;
     fn borrow_children_mut(&mut self) -> Option<&mut Vec<Brick>>;
     fn set_children(&mut self, brick: Vec<Brick>);
     fn borrow_attrs(&self) -> Option<&dyn Classify>;
@@ -305,13 +305,24 @@ pub struct Accordion {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "dioxus", derive(Props))]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(any(feature = "props", feature = "classify"), derive(ClassifyAttrs))]
+pub struct FormAttr {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub class: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub instant: Option<bool>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 #[cfg_attr(feature = "props", derive(BrickProps))]
 #[cfg_attr(feature = "classify", derive(ClassifyBrick))]
 pub struct Form {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttr>,
+    pub attrs: Option<FormAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
 }

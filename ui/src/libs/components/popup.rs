@@ -10,7 +10,7 @@ pub fn popup_(id: Option<String>, brick: Popup, children: Element) -> Element {
 
     let style = brick.attrs.as_ref().map(|x| x.into_style());
 
-    if let Some(children) = brick.get_children()
+    if let Some(children) = brick.borrow_children()
         && let Some(placeholder) = children.get(0)
         && let Some(modal) = children.get(1)
     {

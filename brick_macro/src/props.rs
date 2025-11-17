@@ -17,9 +17,9 @@ pub fn impl_brick_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
     let mut set_child = quote! {};
 
     if struct_has_field(&ast, "children") {
-        child_ref = quote! {self.children.as_ref()};
-        child_mut = quote! {self.children.as_mut()};
-        set_child = quote! {self.children = Some(brick);};
+        child_ref = quote! { self.children.as_ref() };
+        child_mut = quote! { self.children.as_mut() };
+        set_child = quote! { self.children = Some(brick); };
     };
 
     let item = if struct_has_field(&ast, "item") {
@@ -31,15 +31,15 @@ pub fn impl_brick_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
     let mut attrs_ref = quote! { None };
     let mut attrs_mut = quote! { None };
     if struct_has_field(&ast, "attrs") {
-        attrs_ref = quote! {Some(&self.attrs)};
-        attrs_mut = quote! {Some(&mut self.attrs)};
+        attrs_ref = quote! { Some(&self.attrs) };
+        attrs_mut = quote! { Some(&mut self.attrs) };
     };
 
     let mut get_bind = quote! { None };
     let mut set_bind = quote! {};
     if struct_has_field(&ast, "bind") {
-        get_bind = quote! {self.bind.as_ref()};
-        set_bind = quote! {self.bind = bind;}
+        get_bind = quote! { self.bind.as_ref() };
+        set_bind = quote! { self.bind = bind; }
     };
 
     let render = if struct_has_field(&ast, "render") {
@@ -56,7 +56,7 @@ pub fn impl_brick_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
             fn get_type(&self) -> &str {
                 stringify!(#name)
             }
-            fn get_children(&self) -> Option<&Vec<Brick>> {
+            fn borrow_children(&self) -> Option<&Vec<Brick>> {
                 #child_ref
             }
             fn borrow_children_mut(&mut self) -> Option<&mut Vec<Brick>> {
@@ -103,9 +103,9 @@ pub fn impl_brick_props_variant(ast: &DeriveInput) -> syn::Result<TokenStream2> 
                 }
             }
 
-            fn get_children(&self) -> Option<&Vec<Brick>> {
+            fn borrow_children(&self) -> Option<&Vec<Brick>> {
                 match self {
-                    #(#name::#r(c) => c.get_children()),*
+                    #(#name::#r(c) => c.borrow_children()),*
                 }
             }
 

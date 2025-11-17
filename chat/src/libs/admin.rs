@@ -28,7 +28,7 @@ pub struct Opts {
 async fn users(_opts: Query<Opts>, State(db): State<Db>) -> HttpResult<Json<Vec<Value>>> {
     let v = db.list_account().await?;
     let v = v.iter().map(|x| json!(x.name)).collect();
-    Ok(Json(v)).into()
+    Ok(Json(v))
 }
 
 async fn user(
@@ -50,7 +50,7 @@ async fn select_chan(
     if let Some(layout) = opts.layout
         && layout
     {
-        let mut content: Vec<_> = vec!["1", "4", "5", "6"]
+        let content: Vec<_> = ["1", "4", "5", "6"]
             .iter()
             .map(|x| {
                 Content::Join(Influx {
@@ -88,7 +88,7 @@ async fn join_chan(
     Json(join): Json<JoinChan>,
 ) -> HttpResult<Json<Value>> {
     db.join_channel(&join).await?;
-    Ok(Json::default()).into()
+    Ok(Json::default())
 }
 
 async fn channel(
@@ -158,7 +158,7 @@ async fn history(
         });
         //let msg: Message = ("chat".into(), content).into();
         let r = serde_json::to_value(&content)?;
-        Ok(Json(r.into()))
+        Ok(Json(r))
     } else {
         Ok(Json(Value::Array(Vec::new())))
     }
