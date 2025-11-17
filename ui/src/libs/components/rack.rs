@@ -1,8 +1,9 @@
 use super::super::store::Status;
 use super::{Dynamic, Frame};
 use crate::libs::hooks::{use_common_css, use_source_id};
-use brick::{Brick, Rack};
+use brick::{Brick, BrickProps, Rack, RackAttr};
 use dioxus::{CapturedError, prelude::*};
+use indoc::indoc;
 use std::collections::hash_map::HashMap;
 
 struct ItemContainer {
@@ -15,7 +16,7 @@ impl From<Vec<Brick>> for ItemContainer {
         let mut default = None;
         let mut index = HashMap::new();
         for l in &data {
-            if let Some(x) = &l.attrs
+            if let Some(x) = l.borrow_attrs()
                 && let Some(Settings::Item { selector }) = &x.settings
             {
                 index.insert(selector.to_owned(), l.clone());
@@ -29,7 +30,7 @@ impl From<Vec<Brick>> for ItemContainer {
 
 impl ItemContainer {
     fn select(&self, child: &Brick) -> Option<Brick> {
-        if let Some(x) = &child.attrs
+        if let Some(x) = child.borrow_attrs()
             && let Some(kind) = &x.kind
             && let Some(i) = self.index.get(kind)
         {
@@ -48,13 +49,12 @@ pub fn rack_(id: Option<String>, brick: Rack, children: Element) -> Element {
     let Some(source) = use_source_id(&brick) else {
         return Err(RenderError::Error(CapturedError::from_display("no event")));
     };
-    let attrs = brick.attrs.as_ref().context("attrs")?;
 
     let store = use_context::<Status>();
     let c = store.list.read();
     let c = c.get(source).cloned().unwrap_or_else(Vec::new);
     let r = c.iter().enumerate().map(|(idx, child)| {
-        let key = child.id.clone().unwrap_or(idx.to_string());
+        let key = child.get_id().unwrap_or(idx.to_string());
         // dioxus::logger::tracing::info!("{key:?}");
         let layout = item.select(child);
         if let Some(layout) = layout {
@@ -91,23 +91,25 @@ pub fn rack_(id: Option<String>, brick: Rack, children: Element) -> Element {
         }
     });
 
-    if let Some(Settings::Rack { scroll: x, .. }) = attrs.settings
+    if let Some(RackAttr { scroll: x, .. }) = brick.attrs
         && x
     {
         let sl = store.list;
-        let eid = id.clone();
-        use_effect(move || {
-            // TODO: fine-grained
-            let _ = sl.read();
-            document::eval(&format!(
-                r#"
-                var e = document.getElementById("{eid}");
-                if (Math.abs(e.scrollHeight - e.offsetHeight - e.scrollTop) < e.offsetHeight) {{
-                    e.scrollTop = e.scrollHeight;
-                }}
-            "#
-            ));
-        });
+        if let Some(id) = &id {
+            let id = id.clone();
+            use_effect(move || {
+                // TODO: fine-grained
+                let _ = sl.read();
+                document::eval(&format!(indoc! {
+                    r#"
+                    var e = document.getElementById("{id}");
+                    if (Math.abs(e.scrollHeight - e.offsetHeight - e.scrollTop) < e.offsetHeight) {{
+                        e.scrollTop = e.scrollHeight;
+                    }}
+                    "#
+                }));
+            });
+        }
     };
 
     rsx! {

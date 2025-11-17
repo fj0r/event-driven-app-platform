@@ -1,7 +1,7 @@
-use super::accordion::accordion_;
 use super::chart::chart_;
 use super::container::*;
 use super::diagram::diagram_;
+use super::fold::fold_;
 use super::float::float_;
 use super::form::form_;
 use super::popup::popup_;

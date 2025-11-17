@@ -268,7 +268,7 @@ pub struct Float {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attrs: Option<ClassAttr>,
+    pub attrs: Option<PositionAttr>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
 }
@@ -291,7 +291,7 @@ pub struct FoldAttr {
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 #[cfg_attr(feature = "props", derive(BrickProps))]
 #[cfg_attr(feature = "classify", derive(ClassifyBrick))]
-pub struct Accordion {
+pub struct Fold {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -409,6 +409,8 @@ pub struct Rack {
     pub render: Option<Render>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub item: Option<Vec<Brick>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
@@ -654,7 +656,7 @@ pub enum Brick {
     diagram(Diagram),
     float(Float),
     #[render_brick(has_id = "true")]
-    accordion(Accordion),
+    fold(Fold),
     form(Form),
     popup(Popup),
     svg(Svg),

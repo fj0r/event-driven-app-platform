@@ -24,6 +24,7 @@ brick = { path = "../brick", features = ["dioxus", "classify", "merge", "render"
 content = { path = "../content" }
 ui_macro = { path = "../ui_macro" }
 maplit = "1.0.2"
+indoc = "2.0.7"
 
 [features]
 default = ["web"]

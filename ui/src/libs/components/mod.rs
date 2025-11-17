@@ -2,7 +2,7 @@ pub mod frame;
 pub use frame::Frame;
 pub mod dynamic;
 pub use dynamic::Dynamic;
-pub mod accordion;
+pub mod fold;
 pub mod chart;
 pub mod container;
 pub mod diagram;

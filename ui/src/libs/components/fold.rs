@@ -1,10 +1,10 @@
 use super::Frame;
 use crate::libs::hooks::{use_common_css, use_default};
-use brick::{Accordion, BrickProps, FoldAttr};
-use dioxus::{html::track::default, prelude::*};
+use brick::{BrickProps, Fold, FoldAttr};
+use dioxus::prelude::*;
 
 #[component]
-pub fn accordion_(id: Option<String>, brick: Accordion, children: Element) -> Element {
+pub fn fold_(id: Option<String>, brick: Fold, children: Element) -> Element {
     let mut css = vec!["g"];
     if let Some(id) = &id {
         css.push(id);

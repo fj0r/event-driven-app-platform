@@ -6469,6 +6469,7 @@ dependencies = [
  "dioxus",
  "futures",
  "gloo-net",
+ "indoc",
  "itertools",
  "js-sys",
  "maplit",

@@ -11,16 +11,14 @@ use std::rc::Rc;
 pub fn float_(id: Option<String>, brick: Float, children: Element) -> Element {
     let mut css = vec!["float", "f"];
     use_common_css(&mut css, &brick);
-    let style = if let Some(attr) = &brick.attrs
-        && let Some(pos) = &attr.position
-    {
-        pos.into_position()
-    } else {
-        "".to_owned()
-    };
+    let style = &brick
+        .attrs
+        .as_ref()
+        .map(|x| x.into_style())
+        .unwrap_or("".to_string());
     rsx! {
         div {
-            style: style,
+            style: style.clone(),
             class: css.join(" "),
             {children}
         }
