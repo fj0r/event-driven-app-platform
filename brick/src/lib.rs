@@ -190,9 +190,9 @@ pub struct PositionAttr {
     pub class: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub selector: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(flatten, skip_serializing_if = "Option::is_none")]
     pub h: Option<PosH>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(flatten, skip_serializing_if = "Option::is_none")]
     pub v: Option<PosV>,
 }
 

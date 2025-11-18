@@ -16,7 +16,6 @@ pub fn float_(id: Option<String>, brick: Float, children: Element) -> Element {
         .as_ref()
         .map(|x| x.into_style())
         .unwrap_or("".to_string());
-    crate::info!(style);
     rsx! {
         div {
             style: style.clone(),

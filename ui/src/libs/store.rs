@@ -130,7 +130,7 @@ pub fn use_status(url: &str) -> Result<Status, JsError> {
             match serde_json::from_str::<Message<Brick>>(act) {
                 Ok(act) => dispatch(act, &mut layout, &mut data, &mut list),
                 Err(err) => dioxus::logger::tracing::info!(
-                    "deserialize from_str error {:?}\n\n{:#?}",
+                    "deserialize from_str error:\n\n {:#?}\n\n{:#?}",
                     err,
                     act
                 ),

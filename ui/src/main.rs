@@ -44,7 +44,7 @@ static STATUS: GlobalSignal<Status> = Global::new(|| {
 fn main() {
     tracing_wasm::set_as_global_default_with_config(
         WASMLayerConfigBuilder::new()
-            .set_max_level(tracing::Level::INFO)
+            .set_max_level(dioxus::logger::tracing::Level::INFO)
             .build(),
     );
     dioxus::launch(App);
