@@ -17,6 +17,19 @@
   color: oklch(from var(--accent) calc(l - 0.2) c h);
 }
 
+.--tooltip {
+  background: transparent;
+
+  & * {
+    background: transparent;
+  }
+
+  &>*>* {
+    background: oklch(1 0 0 / 0.5);
+    backdrop-filter: blur(3px);
+  }
+}
+
 .--leftside {
   background-color: oklch(from var(--secondary) calc(l + 0.05) c h);
 

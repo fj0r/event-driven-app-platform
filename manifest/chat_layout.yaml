@@ -61,6 +61,7 @@ data:
               class: [nogrow, as-stretch, box, border, round, shadow]
         - type: float
           attrs:
+            class: [--tooltip]
             bottom: '0.2rem'
             left: '1rem'
           children:
@@ -70,14 +71,10 @@ data:
                 source: float
       - type: case
         attrs:
-          class: [--input, nogrow, box]
+          class: [--input, nogrow, box, --prompt]
           horizontal: true
         children:
-        - type: case
-          attrs:
-            horizontal: true
-          children:
-          - type: input
-            bind:
-              value:
-                event: message
+        - type: input
+          bind:
+            value:
+              event: message
