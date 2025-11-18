@@ -28,6 +28,7 @@ pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender
             data: Brick::text(Text {
                 attrs: Some(TextAttr {
                     format: Some("md".to_string()),
+                    selector: Some("ask".to_string()),
                     ..Default::default()
                 }),
                 bind: Some(hashmap! {

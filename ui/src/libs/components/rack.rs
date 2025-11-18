@@ -6,6 +6,7 @@ use brick::{Brick, BrickProps, Rack, RackAttr};
 use dioxus::{CapturedError, prelude::*};
 use std::collections::hash_map::HashMap;
 
+#[derive(Debug)]
 struct ItemContainer {
     default: Option<Brick>,
     index: HashMap<String, Brick>,
@@ -28,7 +29,9 @@ impl From<Vec<Brick>> for ItemContainer {
 
 impl ItemContainer {
     fn select(&self, child: &Brick) -> Option<Brick> {
-        if let Some(i) = self.index.get(child.get_type()) {
+        if let Some(s) = child.get_selector()
+            && let Some(i) = self.index.get(s)
+        {
             return Some(i).cloned();
         }
         self.default.clone()
@@ -50,9 +53,8 @@ pub fn rack_(id: Option<String>, brick: Rack, children: Element) -> Element {
     let c = c.get(source).cloned().unwrap_or_else(Vec::new);
     let r = c.iter().enumerate().map(|(idx, child)| {
         let key = child.get_id().clone().unwrap_or(idx.to_string());
-        //crate::info!(key)
-        let layout = item.select(child);
-        if let Some(layout) = layout {
+        let brick = item.select(child);
+        if let Some(brick) = brick {
             let x = rsx! {
                 Frame {
                     brick: child.clone()
@@ -63,7 +65,7 @@ pub fn rack_(id: Option<String>, brick: Rack, children: Element) -> Element {
                 rsx! {
                     Dynamic {
                         key: "{key}",
-                        brick: layout,
+                        brick: brick,
                         {x}
                     }
                 }
@@ -71,7 +73,7 @@ pub fn rack_(id: Option<String>, brick: Rack, children: Element) -> Element {
                 rsx! {
                     Dynamic {
                         key: "{key}",
-                        brick: layout,
+                        brick: brick,
                         {x}
                     }
                 }
