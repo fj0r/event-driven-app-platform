@@ -9,7 +9,7 @@ use content::{Content, Message, Method, Outflow};
 use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;
 use minijinja::Environment;
-use serde_json::{Value, to_string};
+use serde_json::{Value, from_str, to_string, to_string_pretty};
 use std::collections::HashMap;
 use std::str;
 use std::sync::{LazyLock, RwLock};
@@ -127,13 +127,19 @@ pub fn use_status(url: &str) -> Result<Status, JsError> {
     use_memo(move || {
         let act = &x();
         if !act.is_empty() {
-            match serde_json::from_str::<Message<Brick>>(act) {
+            match from_str::<Message<Brick>>(act) {
                 Ok(act) => dispatch(act, &mut layout, &mut data, &mut list),
-                Err(err) => dioxus::logger::tracing::info!(
-                    "deserialize from_str error:\n\n {:#?}\n\n{:#?}",
-                    err,
-                    act
-                ),
+                Err(err) => {
+                    if let Ok(act) = &from_str::<serde_json::Value>(act)
+                        && let Ok(act) = to_string_pretty(act)
+                    {
+                        dioxus::logger::tracing::info!(
+                            "deserialize from_str error:\n {:#?}\n{}",
+                            err,
+                            act
+                        )
+                    }
+                }
             }
         }
     });

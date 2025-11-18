@@ -7,7 +7,7 @@ data:
   - {type: case}
   - {type: case}
   - attrs:
-      class: [box, sm, border, warn, pointer, highlight, ease]
+      class: [box, sm, border, round, warn, pointer, highlight, ease]
     children:
     - attrs: {}
       children:

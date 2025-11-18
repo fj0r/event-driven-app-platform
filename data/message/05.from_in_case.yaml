@@ -3,8 +3,8 @@ data:
   children:
   #- {type: text, attrs: {class: [txt, md, hint],format: 'md'},value: ''}
   #- {type: text, attrs: {format: 'md'},value: ''}
-  - {}
-  - {}
+  - {type: case}
+  - {type: case}
   - attrs:
       class: [gap, md]
     children:
