@@ -1,7 +1,6 @@
 use crate::libs::store::Status;
 use brick::{Bind, BindVariant, Brick, BrickProps, classify::Classify};
 #[allow(unused_imports)]
-use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
 use serde_json::Value;
 

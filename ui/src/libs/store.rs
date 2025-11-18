@@ -6,7 +6,6 @@ use brick::{
 };
 use content::{Content, Message, Method, Outflow};
 #[allow(unused_imports)]
-use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;
 use minijinja::Environment;
@@ -131,7 +130,7 @@ pub fn use_status(url: &str) -> Result<Status, JsError> {
             match serde_json::from_str::<Message<Brick>>(act) {
                 Ok(act) => dispatch(act, &mut layout, &mut data, &mut list),
                 Err(err) => dioxus::logger::tracing::info!(
-                    "deserialize from_str error {:?}\n\n{:?}",
+                    "deserialize from_str error {:?}\n\n{:#?}",
                     err,
                     act
                 ),
