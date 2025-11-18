@@ -17,9 +17,10 @@ pub async fn chat<T: Debug + Default>(e: ChatMessage<T>, s: ArcShared, x: Sender
     let s = s.read().await;
     // TODO: channel id
     let users = s.db.list_channel_account(3).await;
-    dbg!(&users);
 
     if let Some(content) = content.as_object()
+        && let Some(e) = content.get("event")
+        && let Some(_event) = e.as_str()
         && let Some(d) = content.get("data")
     {
         let content = Content::Join(Influx {
