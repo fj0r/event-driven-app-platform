@@ -76,8 +76,9 @@ pub fn classify_variant(input: TokenStream) -> TokenStream {
 
 #[proc_macro_attribute]
 pub fn info(_args: TokenStream, input: TokenStream) -> TokenStream {
-    let item = parse_macro_input!(input as Item);
-    quote! {#item}.into()
+    // let item = parse_macro_input!(input as Item);
+    // quote! {#item}.into()
+    input
 }
 
 #[cfg(test)]
