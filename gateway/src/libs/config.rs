@@ -7,9 +7,9 @@ use kafka::config::Queue;
 use notify::{Event, RecursiveMode, Result as ResultN, Watcher, recommended_watcher};
 use serde::{Deserialize, Serialize};
 use serde_with::{OneOrMany, serde_as};
+use std::ops::Deref;
 use std::path::Path;
 use std::sync::{Arc, mpsc::channel};
-use std::{collections::HashMap, ops::Deref};
 use tokio::sync::Mutex;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -113,7 +113,7 @@ impl LiveConfig {
         watcher.watch(Path::new("config.toml"), RecursiveMode::Recursive)?;
         let d = self.data.clone();
         tokio::task::spawn_blocking(|| async move {
-            for res in rx {
+            while let Ok(res) = rx.recv() {
                 if res?.kind.is_modify() {
                     let n = Config::new()?;
                     dbg!("config update: {:?}", &n);

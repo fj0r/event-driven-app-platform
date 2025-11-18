@@ -1,20 +1,16 @@
 use crate::libs::components::Frame;
 use crate::libs::hooks::use_common_css;
+use brick::{BrickProps, Popup};
 use dioxus::prelude::*;
-use layout::Layout;
 
 #[component]
-pub fn Popup(layout: Layout, children: Element) -> Element {
+pub fn popup_(id: Option<String>, brick: Popup, children: Element) -> Element {
     let mut css = vec!["popup", "f"];
-    use_common_css(&mut css, &layout);
+    use_common_css(&mut css, &brick);
 
-    let style = layout
-        .attrs
-        .as_ref()
-        .and_then(|x| x.direction.as_ref())
-        .map(|x| x.into_flex());
+    let style = brick.attrs.as_ref().map(|x| x.into_style());
 
-    if let Some(children) = &layout.children
+    if let Some(children) = brick.borrow_children()
         && let Some(placeholder) = children.get(0)
         && let Some(modal) = children.get(1)
     {
@@ -25,13 +21,13 @@ pub fn Popup(layout: Layout, children: Element) -> Element {
                 div {
                     class: "f",
                     Frame {
-                        layout: placeholder.clone()
+                        brick: placeholder.clone()
                     }
                 }
                 div {
                     class: "f body",
                     Frame {
-                        layout: modal.clone()
+                        brick: modal.clone()
                     }
                 }
             }

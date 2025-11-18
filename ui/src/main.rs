@@ -1,9 +1,15 @@
 mod libs;
-use dioxus::logger::tracing;
 use dioxus::prelude::*;
 use libs::components::*;
 use libs::store::{Status, use_status};
 use tracing_wasm::WASMLayerConfigBuilder;
+
+#[allow(unused_macros)]
+macro_rules! info {
+    ($x: tt) => {
+        dioxus::logger::tracing::info!("{} = {:#?}", stringify!($x), $x)
+    };
+}
 
 static STATUS: GlobalSignal<Status> = Global::new(|| {
     let doc = web_sys::window().unwrap().document().unwrap();
@@ -38,7 +44,7 @@ static STATUS: GlobalSignal<Status> = Global::new(|| {
 fn main() {
     tracing_wasm::set_as_global_default_with_config(
         WASMLayerConfigBuilder::new()
-            .set_max_level(tracing::Level::INFO)
+            .set_max_level(dioxus::logger::tracing::Level::INFO)
             .build(),
     );
     dioxus::launch(App);
@@ -55,7 +61,7 @@ fn App() -> Element {
         // document::Script { src: asset!("/assets/apexcharts.min.js") }
         // document::Script { src: asset!("/assets/mermaid.min.js") }
         Frame {
-            layout: layout()
+            brick: layout()
         }
     }
 }

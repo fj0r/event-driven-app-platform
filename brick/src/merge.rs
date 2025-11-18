@@ -1,5 +1,5 @@
-use super::{Bind, JsonComponent};
-use crate::ComponentProps;
+use super::{Bind, Brick};
+use crate::BrickProps;
 use itertools::{
     EitherOrBoth::{Both, Left, Right},
     Itertools,
@@ -9,11 +9,11 @@ use serde_json::json;
 use std::collections::HashMap;
 use std::fmt::Debug;
 
-impl JsonComponent {
-    pub fn merge(&mut self, op: &(impl LayoutOp + Debug + ?Sized), rhs: &mut Self) {
+impl Brick {
+    pub fn merge(&mut self, op: &(impl BrickOp + Debug + ?Sized), rhs: &mut Self) {
         op.merge(self, rhs);
-        if let Some(rchildren) = rhs.get_children() {
-            if let Some(children) = &mut self.get_children() {
+        if let Some(rchildren) = rhs.borrow_children_mut() {
+            if let Some(children) = &mut self.borrow_children_mut() {
                 let children: Vec<_> = children
                     .iter_mut()
                     .zip_longest(rchildren)
@@ -34,9 +34,9 @@ impl JsonComponent {
     }
 }
 
-pub trait LayoutOp: Debug {
+pub trait BrickOp: Debug {
     fn merge_value(&self, l: &mut Value, r: &Value) -> Option<Value>;
-    fn merge(&self, lhs: &mut JsonComponent, rhs: &mut JsonComponent) {
+    fn merge(&self, lhs: &mut Brick, rhs: &mut Brick) {
         let bind = match (lhs.get_bind(), rhs.get_bind()) {
             (Some(l), Some(r)) => {
                 let nv = l
@@ -68,7 +68,7 @@ pub trait LayoutOp: Debug {
 
 #[derive(Debug)]
 pub struct Concat;
-impl LayoutOp for Concat {
+impl BrickOp for Concat {
     fn merge_value(&self, x: &mut Value, y: &Value) -> Option<Value> {
         let n = match (x, y) {
             (Value::Number(x), Value::Number(r)) => {
@@ -100,7 +100,7 @@ impl LayoutOp for Concat {
 
 #[derive(Debug)]
 pub struct Delete;
-impl LayoutOp for Delete {
+impl BrickOp for Delete {
     fn merge_value(&self, x: &mut Value, y: &Value) -> Option<Value> {
         let n = match (x, y) {
             (Value::Number(x), Value::Number(r)) => {
@@ -137,7 +137,7 @@ impl LayoutOp for Delete {
 
 #[derive(Debug)]
 pub struct Replace;
-impl LayoutOp for Replace {
+impl BrickOp for Replace {
     fn merge_value(&self, x: &mut Value, r: &Value) -> Option<Value> {
         let y = match (x, r) {
             (Value::Number(_x), Value::Number(r)) => {

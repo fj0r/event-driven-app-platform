@@ -3,7 +3,9 @@
   "event": "",
   "data": {
     "attrs": {
-      "class": "maximize"
+      "class": [
+        "maximize"
+      ]
     },
     "type": "case",
     "children": [
@@ -16,14 +18,23 @@
           }
         },
         "attrs": {
-          "class": "shadow nogrow",
+          "class": [
+            "shadow",
+            "nogrow"
+          ],
           "format": "md"
         }
       },
       {
         "type": "rack",
         "attrs": {
-          "class": "box c as gap scrolly",
+          "class": [
+            "box",
+            "c",
+            "as",
+            "gap",
+            "scrolly"
+          ],
           "scroll": true
         },
         "bind": {
@@ -35,14 +46,31 @@
           {
             "type": "case",
             "attrs": {
-              "class": "nogrow s ae accent box border round shadow",
+              "class": [
+                "nogrow",
+                "s",
+                "ae",
+                "accent",
+                "box",
+                "border",
+                "round",
+                "shadow"
+              ],
               "selector": "ask"
             }
           },
           {
             "type": "case",
             "attrs": {
-              "class": "nogrow s ax box border round shadow"
+              "class": [
+                "nogrow",
+                "s",
+                "ax",
+                "box",
+                "border",
+                "round",
+                "shadow"
+              ]
             }
           }
         ]
@@ -50,7 +78,10 @@
       {
         "type": "case",
         "attrs": {
-          "class": "nogrow box",
+          "class": [
+            "nogrow",
+            "box"
+          ],
           "horizontal": true
         },
         "children": [

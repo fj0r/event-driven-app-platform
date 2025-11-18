@@ -3,8 +3,8 @@ use std::collections::HashMap;
 
 use super::super::store::Status;
 use super::{Dynamic, Frame};
+use brick::{Bind, BindVariant, Brick, BrickProps, Case, CaseAttr, Form, FormAttr, JsType};
 use dioxus::prelude::*;
-use layout::{Bind, BindVariant, JsType, Layout, Settings};
 use maplit::hashmap;
 use serde::{Deserialize, Serialize};
 
@@ -16,8 +16,8 @@ struct Message {
 
 type FormScope = HashMap<String, (Signal<Value>, Option<Value>)>;
 
-fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
-    match layout.bind.as_ref().and_then(|x| x.get("value")) {
+fn walk(brick: &mut Brick, scope: &mut FormScope, confirm: Signal<Value>) {
+    match brick.get_bind().and_then(|x| x.get("value")) {
         Some(Bind {
             default,
             r#type: kind,
@@ -49,7 +49,7 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
 
             let s = use_signal(|| v);
             scope.insert(field.to_string(), (s, payload.clone()));
-            layout.bind = Some(hashmap! {
+            brick.set_bind(Some(hashmap! {
                 "value".to_owned() => Bind {
                     r#type: kind,
                     default: None,
@@ -59,14 +59,14 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
                         signal: Some(s),
                     },
                 },
-            });
+            }));
         }
         Some(Bind {
             default: _,
             r#type: _,
             variant: BindVariant::Submit { .. },
         }) => {
-            layout.bind = Some(hashmap! {
+            brick.set_bind(Some(hashmap! {
                 "value".to_owned() => Bind {
                     variant: BindVariant::Submit {
                         submit: true,
@@ -74,11 +74,11 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
                     },
                     ..Default::default()
                 },
-            });
+            }));
         }
         _ => {}
     };
-    if let Some(children) = &mut layout.children {
+    if let Some(children) = &mut brick.borrow_children_mut() {
         for c in children.iter_mut() {
             walk(c, scope, confirm);
         }
@@ -86,31 +86,31 @@ fn walk(layout: &mut Layout, scope: &mut FormScope, confirm: Signal<Value>) {
 }
 
 #[component]
-pub fn Form(layout: Layout) -> Element {
+pub fn form_(id: Option<String>, brick: Form, children: Element) -> Element {
     // TODO: instant
-    let _instant = layout
-        .attrs
-        .clone()
-        .and_then(|x| {
-            if let Some(Settings::Form { instant }) = x.settings {
-                Some(instant)
-            } else {
-                None
-            }
-        })
-        .unwrap_or(false);
+    let _instant = if let Some(FormAttr {
+        instant: Some(instant),
+        ..
+    }) = brick.attrs
+    {
+        instant
+    } else {
+        false
+    };
 
     let mut data: FormScope = HashMap::new();
     let confirm = use_signal(|| Value::Bool(false));
-    walk(&mut layout, &mut data, confirm);
-    let children = layout.clone().children.unwrap_or_else(Vec::new);
+    let mut brick = Brick::form(brick);
+    walk(&mut brick, &mut data, confirm);
+    let v = Vec::new();
+    let children = brick.borrow_children().unwrap_or(&v);
     let children = children.into_iter().map(|c| {
         rsx! {
-            Frame { layout: c }
+            Frame { brick: c.clone() }
         }
     });
 
-    let lc = layout.bind.as_ref().and_then(|x| x.get("value")).cloned();
+    let lc = brick.get_bind().and_then(|x| x.get("value")).cloned();
     if let Some(Bind {
         variant: BindVariant::Event { event },
         ..
@@ -143,11 +143,29 @@ pub fn Form(layout: Layout) -> Element {
         });
     };
 
-    layout.kind = "case".to_owned();
-    rsx! {
-        Dynamic {
-            layout: layout,
-            {children}
+    if let Brick::form(Form {
+        id,
+        attrs,
+        children: c,
+        ..
+    }) = &brick
+    {
+        let brick = Brick::case(Case {
+            id: id.clone(),
+            attrs: attrs.as_ref().map(|FormAttr { class, .. }| CaseAttr {
+                class: class.clone(),
+                ..Default::default()
+            }),
+            children: c.clone(),
+            ..Default::default()
+        });
+        rsx! {
+            Dynamic {
+                brick: brick,
+                {children}
+            }
         }
+    } else {
+        rsx! {}
     }
 }

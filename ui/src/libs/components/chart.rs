@@ -1,15 +1,17 @@
 use crate::libs::hooks::use_default;
+use brick::Chart;
 use dioxus::prelude::*;
-use layout::Layout;
 
 #[component]
-pub fn Chart(id: String, layout: Layout) -> Element {
-    let eid = id.clone();
-    if let Some(val) = use_default(&layout) {
+pub fn chart_(id: Option<String>, brick: Chart) -> Element {
+    if let Some(val) = use_default(&brick)
+        && let Some(id) = id
+    {
+        let id_ = id.clone();
         use_effect(move || {
             let js = format!(
                 r#"
-                var chart = new ApexCharts(document.getElementById("{eid}"), {val});
+                var chart = new ApexCharts(document.getElementById("{id_}"), {val});
                 chart.render();
             "#
             );

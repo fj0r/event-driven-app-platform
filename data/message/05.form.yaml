@@ -6,11 +6,11 @@ data:
       value:
         event: confirm
     attrs:
-        class: gap md
+        class: [gap, md]
     children:
       - type: text
         attrs:
-            class: ai-center
+            class: [ai-center]
         bind:
           value:
             default: confirm order
@@ -20,7 +20,7 @@ data:
             event: test
       - type: case
         attrs:
-            class: gap md
+            class: [gap, md]
         children:
           - type: case
             attrs:

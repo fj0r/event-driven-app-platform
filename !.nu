@@ -95,10 +95,19 @@ module rpk  {
         data
         --partition:int=0
         --topic(-t):string@"topic list"
-        --patch: record = {}
+        --patch: any
     ] {
         let c = open $CFG
-        let data = { records: ($data | merge deep $patch | wrap value | insert partition $partition) } | to json -r
+        let dp = match ($data | describe -d).type {
+            record => {{}},
+            list => [],
+            _ => {}
+        }
+        let record =  $data
+        | merge deep ($patch | default $dp)
+        | wrap value
+        | insert partition $partition
+        let data = { records: $record } | to json -r
         http post -H [
             Content-Type application/vnd.kafka.json.v2+json
         ] $"http://($c.redpanda.admin)/topics/($topic)" $data
@@ -519,7 +528,7 @@ export def send [
     file:string@cmpl-data
     --receiver(-r): list<string>@receiver = []
     --sender(-s): string = 'unknown'
-    --patch(-p): any = {}
+    --patch(-p): any
     --full
     --rpk
     --topic(-t):string@"rpk topic list" = "push"
@@ -528,10 +537,16 @@ export def send [
     let f = if $full { $file } else {
         [$WORKDIR data message $file] | path join
     }
+    let content = open $f
+    let dp = match ($content | describe -d).type {
+        record => {{}},
+        list => [],
+        _ => {}
+    }
     let data = {
         receiver: $receiver,
         sender: $sender,
-        content: (open $f | merge deep $patch)
+        content: ($content | merge deep ($patch | default $dp))
     }
     let c = open $CFG
     if $rpk {
@@ -588,10 +603,10 @@ export def clippy [dir] {
 }
 
 export def jsonschema [] {
-    cargo run --example componentschema --features=schema
+    cargo run --example brickschema --features=schema
 }
 
-export def component_test [] {
+export def brick_test [] {
     cargo run --example scratch --features="scratch"
 }
 
@@ -606,3 +621,15 @@ export def git-hooks [act ctx] {
         git add .
     }
 }
+
+module macro {
+    export def brick [] {
+        cargo test -p brick_macro test_macro
+    }
+
+    export def ui [] {
+        cargo test -p ui_macro
+    }
+}
+
+export use macro

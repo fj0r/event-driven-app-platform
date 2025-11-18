@@ -1,20 +1,22 @@
 use crate::libs::store::Status;
+use brick::{Bind, BindVariant, Brick, BrickProps, classify::Classify};
 #[allow(unused_imports)]
-use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
-use layout::{Bind, BindVariant, Layout};
 use serde_json::Value;
 
-pub fn use_common_css<'a, 'b: 'a>(css: &'a mut Vec<&'b str>, layout: &'b Layout) {
-    let mut v = ["box", "case", "rack", "text", "tab", "select"].contains(&layout.kind.as_str());
-    if let Some(a) = layout.attrs.as_ref() {
-        if let Some(h) = a.horizontal {
-            if h {
-                v = false;
-            }
+pub fn use_common_css<'a, 'b: 'a, T>(css: &'a mut Vec<&'b str>, brick: &'b T)
+where
+    T: Classify + BrickProps,
+{
+    let t = brick.get_type();
+    let mut v = ["Box", "Case", "Rack", "Text", "Tab", "Select"].contains(&t);
+    if let Some(a) = brick.borrow_attrs() {
+        if a.is_horizontal() {
+            v = false;
         }
-        if let Some(cc) = &a.class {
-            css.push(cc);
+        if let Some(cc) = a.get_class() {
+            let c = cc.iter().map(|x| &**x).collect::<Vec<_>>();
+            css.extend(c);
         }
     }
     if v {
@@ -22,19 +24,18 @@ pub fn use_common_css<'a, 'b: 'a>(css: &'a mut Vec<&'b str>, layout: &'b Layout)
     }
 }
 
-pub fn use_default<'a>(layout: &'a Layout) -> Option<Value> {
-    layout
-        .bind
-        .as_ref()
+pub fn use_default<'a>(brick: &'a impl BrickProps) -> Option<Value> {
+    brick
+        .get_bind()
         .and_then(|x| x.get("value"))
         .and_then(|x| x.default.clone())
 }
 
-pub fn use_source_id<'a>(layout: &'a Layout) -> Option<&'a String> {
+pub fn use_source_id<'a>(brick: &'a impl BrickProps) -> Option<&'a String> {
     if let Bind {
         variant: BindVariant::Source { source },
         ..
-    } = layout.bind.as_ref().and_then(|x| x.get("value"))?
+    } = brick.get_bind().and_then(|x| x.get("value"))?
     {
         Some(source)
     } else {
@@ -42,10 +43,10 @@ pub fn use_source_id<'a>(layout: &'a Layout) -> Option<&'a String> {
     }
 }
 
-pub fn use_source_list<'a>(layout: &'a Layout, key: &'a str) -> Option<Vec<Layout>> {
+pub fn use_source_list<'a>(brick: &'a impl BrickProps, key: &'a str) -> Option<Vec<Brick>> {
     let store = use_context::<Status>();
     let s = store.list.read();
-    if let Some(x) = layout.bind.as_ref()
+    if let Some(x) = brick.get_bind()
         && let Some(Bind {
             variant: BindVariant::Source { source },
             default: _,
@@ -60,10 +61,10 @@ pub fn use_source_list<'a>(layout: &'a Layout, key: &'a str) -> Option<Vec<Layou
     }
 }
 
-pub fn use_source<'a>(layout: &'a Layout, key: &'a str) -> Option<Value> {
+pub fn use_source<'a>(brick: &'a impl BrickProps, key: &'a str) -> Option<Value> {
     let store = use_context::<Status>();
     let s = store.data.read();
-    let value = if let Some(x) = layout.bind.as_ref()
+    let value = if let Some(x) = brick.get_bind()
         && let Some(Bind {
             variant: BindVariant::Source { source },
             default: _,
@@ -72,12 +73,12 @@ pub fn use_source<'a>(layout: &'a Layout, key: &'a str) -> Option<Value> {
         && let data = s.get(source)
         && data.is_some()
     {
-        data
+        data.map(|t| t as &dyn BrickProps)
     } else {
-        Some(layout)
+        Some(brick as &dyn BrickProps)
     };
-    if let Some(layout) = value
-        && let Some(bind) = &layout.bind
+    if let Some(comp) = value
+        && let Some(bind) = &comp.get_bind()
         && let Some(value) = bind.get(key)
     {
         value.default.clone()
@@ -86,12 +87,12 @@ pub fn use_source<'a>(layout: &'a Layout, key: &'a str) -> Option<Value> {
     }
 }
 
-pub fn use_source_value(layout: &Layout) -> Option<Value> {
-    use_source(layout, "value")
+pub fn use_source_value(brick: &impl BrickProps) -> Option<Value> {
+    use_source(brick, "value")
 }
 
-pub fn use_target<'a>(layout: &'a Layout, key: &'a str) -> Option<impl Fn(Value)> {
-    if let Some(x) = layout.bind.as_ref()
+pub fn use_target<'a>(brick: &'a impl BrickProps, key: &'a str) -> Option<impl Fn(Value)> {
+    if let Some(x) = brick.get_bind()
         && let Some(Bind {
             // TODO: variable
             variant: BindVariant::Event { event },
@@ -112,6 +113,6 @@ pub fn use_target<'a>(layout: &'a Layout, key: &'a str) -> Option<impl Fn(Value)
     }
 }
 
-pub fn use_target_value(layout: &Layout) -> Option<impl Fn(Value)> {
-    use_target(layout, "value")
+pub fn use_target_value(brick: &impl BrickProps) -> Option<impl Fn(Value)> {
+    use_target(brick, "value")
 }

@@ -1,18 +1,17 @@
 use crate::libs::hooks::{use_common_css, use_default};
+use brick::{Group, Path, Svg};
 use dioxus::prelude::*;
-use layout::{Layout, Settings};
 
 #[component]
-pub fn Svg(layout: Layout, children: Element) -> Element {
+pub fn svg_(id: Option<String>, brick: Svg, children: Element) -> Element {
     let mut css = vec!["svg"];
-    use_common_css(&mut css, &layout);
-    let style = if let Some(a) = &layout.attrs
-        && let Some(s) = &a.size
-    {
-        s.into_style()
-    } else {
-        "".to_owned()
-    };
+    use_common_css(&mut css, &brick);
+
+    let style = brick
+        .attrs
+        .as_ref()
+        .map(|x| x.size_style())
+        .unwrap_or("".to_string());
     rsx! {
         svg {
             style: style,
@@ -23,17 +22,17 @@ pub fn Svg(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn Group(layout: Layout, children: Element) -> Element {
+pub fn group_(id: Option<String>, brick: Group, children: Element) -> Element {
     let mut css = vec!["group"];
-    use_common_css(&mut css, &layout);
+    use_common_css(&mut css, &brick);
 
     let mut style = String::new();
-    if let Some(x) = &layout.attrs
-        && let Some(Settings::Svg { svg }) = &x.settings
+    if let Some(x) = &brick.attrs
+        && let Some(s) = &x.style
     {
-        style = svg
+        style = s
             .iter()
-            .map(|(k, v)| format!("{}: {};", k, v.as_str().unwrap()))
+            .map(|(k, v)| format!("{}: {};", k, v.as_str()))
             .collect::<Vec<String>>()
             .join("\n");
     };
@@ -47,10 +46,10 @@ pub fn Group(layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn Path(layout: Layout, children: Element) -> Element {
+pub fn path_(id: Option<String>, brick: Path, children: Element) -> Element {
     let mut css = vec!["path"];
-    use_common_css(&mut css, &layout);
-    if let Some(x) = use_default(&layout)
+    use_common_css(&mut css, &brick);
+    if let Some(x) = use_default(&brick)
         && let Some(d) = x.as_str()
     {
         rsx! {

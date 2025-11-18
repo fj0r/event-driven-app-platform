@@ -1,21 +1,21 @@
 action: join
 data:
   children:
-  #- {type: text, attrs: {class: 'txt md hint',format: 'md'},value: ''}
+  #- {type: text, attrs: {class: [txt, md, hint],format: 'md'},value: ''}
   #- {type: text, attrs: {format: 'md'},value: ''}
-  - {}
-  - {}
+  - {type: case}
+  - {type: case}
   - attrs:
-      class: gap md
+      class: [gap, md]
     children:
     - attrs:
-        class: ai-center box border
+        class: [ai-center, box, border]
       type: text
       bind:
         value:
           default: confirm order
     - attrs:
-        class: gap md
+        class: [gap, md]
       children:
       - children:
         - children:

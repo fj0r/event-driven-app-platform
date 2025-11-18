@@ -23,7 +23,7 @@ fn test4<'a, 'b: 'a>(x: &'a mut Vec<&'b str>, a: &'b str) {
 }
 
 #[allow(dead_code)]
-fn a () {
+fn a() {
     let mut x = vec![];
     test1(&mut x, "");
     test1(&mut x, "");

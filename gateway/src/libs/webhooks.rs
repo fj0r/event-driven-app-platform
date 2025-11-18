@@ -20,50 +20,54 @@ pub enum HookError {
     Disabled,
 }
 
-pub async fn handle_hook<T>(
-    hook: &Hook,
-    msg: &Map<String, Value>,
-    tmpls: Arc<Tmpls<'_>>,
-) -> Result<T, HookError>
-where
-    T: for<'de> Deserialize<'de> + Debug,
-{
-    if hook.disable {
-        return Err(HookError::Disabled);
-    }
-
-    match &hook.variant {
-        HookVariant::Path { path } => {
-            let tmpl = tmpls.get_template(path).unwrap();
-            let r = tmpl.render(msg)?;
-            let r = from_str::<T>(&r)?;
-            Ok(r)
+impl Hook {
+    pub async fn handle<T>(
+        &self,
+        msg: &Map<String, Value>,
+        tmpls: Arc<Tmpls<'_>>,
+    ) -> Result<T, HookError>
+    where
+        T: for<'de> Deserialize<'de> + Debug,
+    {
+        if self.disable {
+            return Err(HookError::Disabled);
         }
-        HookVariant::Webhook {
-            endpoint,
-            accept: _,
-        } => {
-            let client = reqwest::Client::new();
-            let r = client.post(endpoint).json(&msg).send().await?;
-            let r = r.json::<T>().await?;
-            Ok(r)
+
+        match &self.variant {
+            HookVariant::Path { path } => {
+                let tmpl = tmpls.get_template(path).unwrap();
+                let r = tmpl.render(msg)?;
+                let r = from_str::<T>(&r)?;
+                Ok(r)
+            }
+            HookVariant::Webhook {
+                endpoint,
+                accept: _,
+            } => {
+                let client = reqwest::Client::new();
+                let r = client.post(endpoint).json(msg).send().await?;
+                let r = r.json::<T>().await?;
+                Ok(r)
+            }
         }
     }
 }
 
-pub async fn webhook_post<T>(wh: &HookVariant, msg: T) -> Result<T, HookError>
-where
-    T: Debug + Serialize + for<'de> Deserialize<'de>,
-{
-    if let HookVariant::Webhook {
-        endpoint,
-        accept: _,
-    } = wh
+impl HookVariant {
+    pub async fn handle<T>(&self, msg: T) -> Result<T, HookError>
+    where
+        T: Debug + Serialize + for<'de> Deserialize<'de>,
     {
-        let client = reqwest::Client::new();
-        let r = client.post(endpoint).json(&msg).send().await?;
-        Ok(r.json::<T>().await?)
-    } else {
-        Err(HookError::NotWebhook)
+        if let HookVariant::Webhook {
+            endpoint,
+            accept: _,
+        } = self
+        {
+            let client = reqwest::Client::new();
+            let r = client.post(endpoint).json(&msg).send().await?;
+            Ok(r.json::<T>().await?)
+        } else {
+            Err(HookError::NotWebhook)
+        }
     }
 }

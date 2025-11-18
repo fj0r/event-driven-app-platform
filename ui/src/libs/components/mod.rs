@@ -10,5 +10,6 @@ pub mod fold;
 pub mod form;
 pub mod popup;
 pub mod rack;
+pub mod render;
 pub mod svg;
 pub mod widgets;

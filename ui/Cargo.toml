@@ -20,9 +20,11 @@ markdown = "1.0.0"
 web-sys = "0.3.82"
 serde = { version = "1.0.228", features = ["derive", "serde_derive"] }
 chrono = { version = "0.4.42", features = ["serde"] }
-layout = { path = "../layout", features = ["dioxus", "classify", "merge", "render"] }
-content = { path = "../content"}
+brick = { path = "../brick", features = ["dioxus", "classify", "merge", "render"] }
+content = { path = "../content" }
+ui_macro = { path = "../ui_macro" }
 maplit = "1.0.2"
+indoc = "2.0.7"
 
 [features]
 default = ["web"]
