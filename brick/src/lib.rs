@@ -32,20 +32,12 @@ pub trait BrickProps {
     fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>);
     fn get_item(&self) -> Option<&Vec<Brick>>;
     fn get_id(&self) -> &Option<String>;
-    fn get_render(&self) -> Option<&Render>;
 }
 
 #[cfg(feature = "props")]
 pub trait Wrap {
     type Target;
     fn wrap(self) -> Self::Target;
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
-#[cfg_attr(feature = "schema", derive(JsonSchema))]
-pub struct Render {
-    pub name: String,
-    pub data: Value,
 }
 
 #[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize)]
@@ -440,8 +432,6 @@ pub struct Rack {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bind: Option<HashMap<String, Bind>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub render: Option<Render>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub item: Option<Vec<Brick>>,
@@ -677,9 +667,17 @@ pub struct Case {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bind: Option<HashMap<String, Bind>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub render: Option<Render>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Brick>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "dioxus", derive(Props))]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "props", derive(BrickProps))]
+#[cfg_attr(feature = "classify", derive(ClassifyBrick))]
+pub struct Render {
+    name: String,
+    data: Map<String, Value>,
 }
 
 #[allow(non_camel_case_types)]
@@ -718,6 +716,8 @@ pub enum Brick {
     td(Td),
     text(Text),
     textarea(TextArea),
+    #[cfg(feature = "render")]
+    render(Render),
 }
 
 #[cfg(feature = "props")]

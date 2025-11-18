@@ -6,6 +6,7 @@ use super::fold::fold_;
 use super::form::form_;
 use super::popup::popup_;
 use super::rack::rack_;
+use super::render::render_;
 use super::svg::*;
 use super::widgets::*;
 use brick::Brick;

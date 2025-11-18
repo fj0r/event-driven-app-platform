@@ -9,9 +9,9 @@ data:
     value:
       source: cart
   children:
-  - render:
-      name: cart
-      data: {}
+  - type: render
+    name: cart
+    data: {}
   - type: case
     children:
     - type: text

@@ -42,12 +42,6 @@ pub fn impl_brick_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
         set_bind = quote! { self.bind = bind; }
     };
 
-    let render = if struct_has_field(&ast, "render") {
-        quote! { self.render.as_ref() }
-    } else {
-        quote! { None }
-    };
-
     Ok(quote! {
         impl BrickProps for #name {
             fn get_id(&self) -> &Option<String> {
@@ -79,9 +73,6 @@ pub fn impl_brick_props(ast: &DeriveInput) -> syn::Result<TokenStream2> {
             }
             fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>) {
                 #set_bind
-            }
-            fn get_render(&self) -> Option<&Render> {
-                #render
             }
         }
     })
@@ -136,12 +127,6 @@ pub fn impl_brick_props_variant(ast: &DeriveInput) -> syn::Result<TokenStream2> 
             fn get_item(&self) -> Option<&Vec<Brick>> {
                 match self {
                     #(#name::#r(c) => c.get_item()),*
-                }
-            }
-
-            fn get_render(&self) -> Option<&Render> {
-                match self {
-                    #(#name::#r(c) => { c.get_render() }),*
                 }
             }
 

@@ -55,7 +55,6 @@ pub fn placeholder_(id: Option<String>, brick: Placeholder, children: Element) -
         && let Some(data) = s.get(source)
         && let Some(eid) = id.clone()
     {
-        dioxus::logger::tracing::info!("{:#?}", data);
         use_effect(move || {
             let js = format!(
                 r#"
