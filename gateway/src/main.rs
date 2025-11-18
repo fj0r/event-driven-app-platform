@@ -8,11 +8,11 @@ use axum::{
 };
 use axum_extra::extract::cookie::CookieJar;
 use kafka::split_mq;
+use libs::admin::*;
 use libs::config::{ASSETS_PATH, Config, LiveConfig, LogFormat};
 use libs::shared::{Sender, StateChat};
 use libs::template::Tmpls;
 use libs::websocket::{handle_ws, send_to_ws};
-use libs::{admin::*, webhooks::handle_hook};
 use serde_json::{Map, Value};
 use std::sync::Arc;
 use tokio::sync::RwLock;
@@ -84,7 +84,7 @@ async fn main() -> Result<()> {
                         q.insert("Cookie".to_owned(), cookie);
                     }
 
-                    let Ok(a) = handle_hook(&login, &q, tmpls.clone()).await else {
+                    let Ok(a) = login.handle(&q, tmpls.clone()).await else {
                         return Response::builder()
                             .status(StatusCode::UNAUTHORIZED)
                             .body("UNAUTHORIZED".into())
@@ -92,7 +92,7 @@ async fn main() -> Result<()> {
                     };
                     ws.on_upgrade(async move |socket| {
                         handle_ws(socket, tx, state, config, tmpls.clone(), &a).await;
-                        let _ = handle_hook::<Value>(&logout, &a.into(), tmpls.clone()).await;
+                        let _ = logout.handle::<Value>(&a.into(), tmpls.clone()).await;
                     })
                 },
             ),

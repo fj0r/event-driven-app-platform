@@ -1,7 +1,6 @@
 use super::config::{Config, Hook};
 use super::shared::{Client, StateChat};
 use super::template::Tmpls;
-use super::webhooks::{handle_hook, webhook_post};
 use anyhow::{Ok as Okk, Result};
 use axum::extract::ws::WebSocket;
 use futures::{sink::SinkExt, stream::StreamExt};
@@ -41,7 +40,7 @@ async fn handle_greet<T>(
 where
     T: Event<Created> + Serialize + From<(Session, Value)>,
 {
-    let v = handle_hook(asset, context, tmpls).await?;
+    let v = asset.handle(context, tmpls).await?;
     let msg: T = (Session::default(), v).into();
     Ok(msg)
 }
@@ -160,7 +159,7 @@ pub async fn handle_ws<T>(
                     if h.disable {
                         continue;
                     }
-                    match webhook_post(&h.variant, to_value(&chat_msg)?).await {
+                    match h.variant.handle(to_value(&chat_msg)?).await {
                         Ok(r) => {
                             let _ = tx.send((sid.clone(), r).into());
                         }
