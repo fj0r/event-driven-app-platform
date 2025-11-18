@@ -1,0 +1,32 @@
+[package]
+name = "brick"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+dioxus = { version = "0.7.1", optional = true }
+itertools = "0.14.0"
+minijinja = { version = "2.12.0", features = ["loader"] }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
+schemars = { version = "1.1.0", optional = true, features = ["chrono04"] }
+regex = { version = "1", optional = true }
+maplit = { version = "1.0.2", optional = true }
+brick_macro = { path = "../brick_macro", optional = true }
+
+[features]
+dioxus = ["dep:dioxus"]
+schema = ["dep:schemars"]
+classify = ["dep:regex", "dep:brick_macro"]
+props = ["dep:brick_macro"]
+merge = ["props"]
+render = ["props"]
+scratch = ["dep:maplit"]
+
+[[example]]
+name = "brickschema"
+required-features = ["schema", "props"]
+
+[[example]]
+name = "scratch"
+required-features = ["scratch"]

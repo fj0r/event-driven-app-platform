@@ -1,38 +1,23 @@
 use crate::libs::hooks::use_default;
+use brick::{Image, ImageAttr};
 use dioxus::prelude::*;
-use layout::{Layout, Settings};
 
 #[component]
-pub fn Img(layout: Layout, children: Element) -> Element {
-    if let Some(src) = use_default(&layout)
+pub fn image_(id: Option<String>, brick: Image, children: Element) -> Element {
+    if let Some(src) = use_default(&brick)
         && let Some(src) = src.as_str()
-        && let Some(x) = layout.attrs
+        && let Some(x) = brick.attrs
     {
-        if let Some(Settings::Image {
-            desc,
-            width,
-            height,
-            thumb: _,
-        }) = x.settings
-        {
-            let mut style = Vec::new();
-            style.push(format!("width: {};", width.unwrap_or("auto".to_string())));
-            style.push(format!("height: {};", height.unwrap_or("auto".to_string())));
-            let style = style.join("\n");
-            return rsx! {
-                img {
-                    src: src,
-                    alt: desc,
-                    style: style
-                }
-            };
-        } else {
-            return rsx! {
-                img {
-                    src: src,
-                }
-            };
-        }
+        let ImageAttr { desc, .. } = &x;
+        let style = x.size_style();
+        let desc = desc.as_ref().unwrap_or(&"".to_string()).clone();
+        return rsx! {
+            img {
+                src: src,
+                alt: desc,
+                style: style
+            }
+        };
     };
     rsx!()
 }

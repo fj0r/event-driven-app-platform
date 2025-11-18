@@ -1,4 +1,4 @@
-use super::config::Settings;
+use super::config::Config;
 use axum::extract::FromRef;
 use kafka::Created;
 use message::{
@@ -15,6 +15,7 @@ use std::{
     },
     ops::Deref,
 };
+use time::OffsetDateTime;
 use tokio::sync::{RwLock, mpsc::UnboundedSender};
 
 #[derive(Clone, Debug)]
@@ -56,6 +57,10 @@ impl<T> SessionManager<T> {
     pub fn entry(&mut self, k: Session) -> Entry<'_, Session, T> {
         self.map.entry(k)
     }
+
+    pub fn keys(&self) -> Vec<&Session> {
+        self.map.keys().collect()
+    }
 }
 
 pub type Arw<T> = Arc<RwLock<T>>;
@@ -64,7 +69,7 @@ pub type Arw<T> = Arc<RwLock<T>>;
 pub struct Shared<T> {
     pub session: Arw<SessionManager<T>>,
     pub count: Arw<SessionCount>,
-    pub settings: Arw<Settings>,
+    pub config: Arw<Config>,
 }
 
 impl<T: Clone> FromRef<Shared<T>> for Arw<SessionManager<T>> {
@@ -79,18 +84,18 @@ impl<T> FromRef<Shared<T>> for Arw<SessionCount> {
     }
 }
 
-impl<T> FromRef<Shared<T>> for Arw<Settings> {
+impl<T> FromRef<Shared<T>> for Arw<Config> {
     fn from_ref(input: &Shared<T>) -> Self {
-        input.settings.clone()
+        input.config.clone()
     }
 }
 
 impl<T> Shared<T> {
-    pub fn new(settings: Arw<Settings>) -> Self {
+    pub fn new(config: Arw<Config>) -> Self {
         Shared {
             session: Arc::new(RwLock::new(SessionManager::new())),
             count: Arc::new(RwLock::new(SessionCount::default())),
-            settings,
+            config,
         }
     }
 }
@@ -100,6 +105,9 @@ pub type Info = Map<String, Value>;
 #[derive(Debug, Clone)]
 pub struct Client<T> {
     pub sender: T,
+    pub term: tokio::sync::mpsc::Sender<bool>,
+    //pub last_activity: OffsetDateTime,
+    pub created: OffsetDateTime,
     pub info: Info,
 }
 

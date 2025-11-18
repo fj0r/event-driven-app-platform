@@ -1,4 +1,5 @@
 ### gateway:
+- [ ] CBOR support
 - [x] MessageQueue separate into event and push.
   - The event queue is used for business logic.
   - The push queue is used to send messages to users
@@ -54,15 +55,15 @@
         - [ ] int/float
         - [ ] range
         - [ ] UI
-    - [ ] choice
-        - [ ] menu
+    - [x] choice
+        - [x] menu
         - [ ] redio group
-- [ ] Fold / Pop / Switch
+- [x] Fold / Pop / Switch
     - [x] foldable div
-    - [ ] Channel Support (Switch)
-    - [ ] menu (Pop)
+    - [x] Channel Support (Switch)
+    - [x] menu (Pop)
 - [x] Better markdown support (~js~)
-- [ ] Chart support (js/~Plotlars~)
+- [x] Chart support (js/~Plotlars~)
     - [x] svg
 - [x] list update strategy
     - [x] concat
@@ -73,3 +74,4 @@
     - [x] optimization
 - [x] ~Component Interactivity~
 - [x] ~Subpath~
+- [ ] tooltip on case

@@ -1,7 +1,6 @@
-use super::config::{Hook, Settings};
+use super::config::{Config, Hook};
 use super::shared::{Client, StateChat};
 use super::template::Tmpls;
-use super::webhooks::{handle_hook, webhook_post};
 use anyhow::{Ok as Okk, Result};
 use axum::extract::ws::WebSocket;
 use futures::{sink::SinkExt, stream::StreamExt};
@@ -13,8 +12,10 @@ use message::{
 use serde::{Deserialize, Serialize};
 use serde_json::to_value;
 use serde_json::{Map, Value};
+use std::collections::hash_map::Entry;
 use std::fmt::Debug;
 use std::sync::Arc;
+use time::OffsetDateTime;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::sync::{Mutex, RwLock};
 
@@ -31,24 +32,22 @@ impl<'a> AsyncIterator for GreetIter<'a> {
 }
 */
 
-async fn handle_greet<T>(
-    asset: &Hook,
-    context: &Map<String, Value>,
-    tmpls: Arc<Tmpls<'_>>,
-) -> Result<T>
-where
-    T: Event<Created> + Serialize + From<(Session, Value)>,
-{
-    let v = handle_hook(asset, context, tmpls).await?;
-    let msg: T = (Session::default(), v).into();
-    Ok(msg)
+impl Hook {
+    async fn greet<T>(&self, context: &Map<String, Value>, tmpls: Arc<Tmpls<'_>>) -> Result<T>
+    where
+        T: Event<Created> + Serialize + From<(Session, Value)>,
+    {
+        let v = self.handle(context, tmpls).await?;
+        let msg: T = (Session::default(), v).into();
+        Ok(msg)
+    }
 }
 
 pub async fn handle_ws<T>(
     socket: WebSocket,
     outgo_tx: UnboundedSender<T>,
     state: StateChat<UnboundedSender<T>>,
-    settings: Arc<RwLock<Settings>>,
+    config: Arc<RwLock<Config>>,
     tmpls: Arc<Tmpls<'static>>,
     session: &SessionInfo,
 ) where
@@ -61,19 +60,29 @@ pub async fn handle_ws<T>(
         + Send
         + 'static,
 {
-    let setting1 = settings.read().await;
+    let config_reader = config.read().await;
     let (mut sender, mut receiver) = socket.split();
 
     let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<T>();
+    let (term_tx, mut term_rx) = tokio::sync::mpsc::channel(1);
 
     let mut s = state.session.write().await;
-    s.insert(
-        session.id.clone(),
-        Client {
-            sender: tx.clone(),
-            info: session.info.clone(),
-        },
-    );
+    let new_client = Client {
+        sender: tx.clone(),
+        term: term_tx.clone(),
+        info: session.info.clone(),
+        created: OffsetDateTime::now_utc(),
+    };
+    match s.entry(session.id.clone()) {
+        Entry::Occupied(mut e) => {
+            let g = e.get_mut();
+            let _ = g.term.send(true).await;
+            *g = new_client;
+        }
+        Entry::Vacant(e) => {
+            e.insert(new_client);
+        }
+    }
     drop(s);
 
     tracing::info!("Connection opened for {}", &session.id);
@@ -82,9 +91,9 @@ pub async fn handle_ws<T>(
     context.insert("session_id".into(), session.id.clone().into());
     context.insert("info".into(), Value::Object(session.info.clone()));
 
-    if let Some(greet) = setting1.hooks.get("greet") {
+    if let Some(greet) = config_reader.hooks.get("greet") {
         for g in greet.iter() {
-            match handle_greet::<T>(g, &context, tmpls.clone()).await {
+            match g.greet::<T>(&context, tmpls.clone()).await {
                 Ok(payload) => {
                     if let Ok(text) = serde_json::to_string(&payload) {
                         let _ = sender
@@ -99,24 +108,36 @@ pub async fn handle_ws<T>(
         }
     }
 
+    let replaced = Arc::new(Mutex::new(false));
+    let r1 = replaced.clone();
     let mut send_task = tokio::spawn(async move {
-        while let Some(msg) = rx.recv().await {
-            let text = serde_json::to_string(&msg)?;
-            // to ws client
-            if sender
-                .send(axum::extract::ws::Message::Text(text.into()))
-                .await
-                .is_err()
-            {
-                break;
+        loop {
+            tokio::select! {
+                Some(msg) = rx.recv() => {
+                    let text = serde_json::to_string(&msg)?;
+                    // to ws client
+                    if sender
+                        .send(axum::extract::ws::Message::Text(text.into()))
+                        .await
+                        .is_err()
+                    {
+                        break;
+                    }
+                },
+                Some(_) = term_rx.recv() => {
+                    break;
+                },
+                else => {}
             }
         }
+        *r1.lock().await = true;
+        let _ = sender.close().await;
         Okk(())
     });
 
     let sid_cloned = session.id.clone();
-    let hooks = setting1.hooks.clone();
-    drop(setting1); // release lock
+    let hooks = config_reader.hooks.clone();
+    drop(config_reader); // release lock
     let mut recv_task = tokio::spawn(async move {
         #[allow(unused_mut)]
         let mut sid = sid_cloned;
@@ -136,7 +157,7 @@ pub async fn handle_ws<T>(
                     if h.disable {
                         continue;
                     }
-                    match webhook_post(&h.variant, to_value(&chat_msg)?).await {
+                    match h.variant.handle(to_value(&chat_msg)?).await {
                         Ok(r) => {
                             let _ = tx.send((sid.clone(), r).into());
                         }
@@ -159,13 +180,18 @@ pub async fn handle_ws<T>(
     });
 
     tokio::select! {
-        _ = &mut recv_task => recv_task.abort(),
+        _ = &mut recv_task => {
+            let _ = term_tx.send(true).await;
+        },
         _ = &mut send_task => send_task.abort(),
     };
 
     tracing::info!("Connection closed for {}", &session.id);
-    let mut s = state.session.write().await;
-    s.remove(&session.id);
+    if !*replaced.lock().await {
+        let mut s = state.session.write().await;
+        tracing::info!("Remove session: {}", &session.id);
+        s.remove(&session.id);
+    };
 }
 
 use message::{ChatMessage, Envelope};

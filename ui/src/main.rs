@@ -1,11 +1,17 @@
 mod libs;
-use dioxus::logger::tracing;
 use dioxus::prelude::*;
 use libs::components::*;
-use libs::store::{Store, use_store};
+use libs::store::{Status, use_status};
 use tracing_wasm::WASMLayerConfigBuilder;
 
-static STORE: GlobalSignal<Store> = Global::new(|| {
+#[allow(unused_macros)]
+macro_rules! info {
+    ($x: tt) => {
+        dioxus::logger::tracing::info!("{} = {:#?}", stringify!($x), $x)
+    };
+}
+
+static STATUS: GlobalSignal<Status> = Global::new(|| {
     let doc = web_sys::window().unwrap().document().unwrap();
     let loc = doc.location().unwrap();
     let mut host = "".to_owned();
@@ -32,13 +38,13 @@ static STORE: GlobalSignal<Store> = Global::new(|| {
         "".to_owned()
     };
     let url = format!("ws://{}/channel{}", host, query);
-    use_store(&url).expect("connecting failed")
+    use_status(&url).expect("connecting failed")
 });
 
 fn main() {
     tracing_wasm::set_as_global_default_with_config(
         WASMLayerConfigBuilder::new()
-            .set_max_level(tracing::Level::INFO)
+            .set_max_level(dioxus::logger::tracing::Level::INFO)
             .build(),
     );
     dioxus::launch(App);
@@ -46,8 +52,8 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-    use_context_provider(|| STORE());
-    let layout = STORE().layout;
+    use_context_provider(|| STATUS());
+    let layout = STATUS().layout;
 
     rsx! {
         document::Style { href: asset!("/assets/main.css") }
@@ -55,7 +61,7 @@ fn App() -> Element {
         // document::Script { src: asset!("/assets/apexcharts.min.js") }
         // document::Script { src: asset!("/assets/mermaid.min.js") }
         Frame {
-            layout: layout()
+            brick: layout()
         }
     }
 }

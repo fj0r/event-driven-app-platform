@@ -1,14 +1,14 @@
 action: join
 data:
   attrs:
-    class: gap md
+    class: [gap, md]
   children:
   - type: text
     bind:
       value:
         default: confirm order
   - attrs:
-      class: gap md
+      class: [gap, md]
     children:
     - children:
       - type: thead

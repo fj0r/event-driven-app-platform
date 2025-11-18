@@ -5,7 +5,7 @@ data:
   children:
     - type: case
       attrs:
-        class: box border shadow
+        class: [box, border, shadow]
       bind:
         value:
           default: 123

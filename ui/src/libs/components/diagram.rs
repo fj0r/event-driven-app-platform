@@ -1,14 +1,14 @@
 use crate::libs::hooks::{use_common_css, use_default};
+use brick::Diagram;
 use dioxus::prelude::*;
-use layout::Layout;
 
 #[component]
-pub fn Diagram(id: String, layout: Layout) -> Element {
-    let eid = id.clone();
+pub fn diagram_(id: Option<String>, brick: Diagram) -> Element {
     let mut css = vec!["diagram"];
-    use_common_css(&mut css, &layout);
-    if let Some(x) = use_default(&layout)
+    use_common_css(&mut css, &brick);
+    if let Some(x) = use_default(&brick)
         && let Some(y) = x.as_str()
+        && let Some(eid) = id.clone()
     {
         let val = y.to_string();
         use_effect(move || {

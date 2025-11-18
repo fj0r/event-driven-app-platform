@@ -1,4 +1,5 @@
-use super::{Bind, Layout};
+use super::{Bind, Brick};
+use crate::BrickProps;
 use itertools::{
     EitherOrBoth::{Both, Left, Right},
     Itertools,
@@ -8,12 +9,12 @@ use serde_json::json;
 use std::collections::HashMap;
 use std::fmt::Debug;
 
-impl Layout {
-    pub fn merge(&mut self, op: &(impl LayoutOp + Debug + ?Sized), mut rhs: Self) {
-        op.merge(self, &mut rhs);
-        if let Some(rchildren) = rhs.children {
-            if let Some(children) = &mut self.children {
-                let children = children
+impl Brick {
+    pub fn merge(&mut self, op: &(impl BrickOp + Debug + ?Sized), rhs: &mut Self) {
+        op.merge(self, rhs);
+        if let Some(rchildren) = rhs.borrow_children_mut() {
+            if let Some(children) = &mut self.borrow_children_mut() {
+                let children: Vec<_> = children
                     .iter_mut()
                     .zip_longest(rchildren)
                     .map(|x| match x {
@@ -22,21 +23,21 @@ impl Layout {
                             l.clone()
                         }
                         Left(l) => l.clone(),
-                        Right(r) => r,
+                        Right(r) => r.clone(),
                     })
                     .collect();
-                self.children = Some(children);
+                self.set_children(children);
             } else {
-                self.children = Some(rchildren);
+                self.set_children(rchildren.clone());
             }
         }
     }
 }
 
-pub trait LayoutOp: Debug {
+pub trait BrickOp: Debug {
     fn merge_value(&self, l: &mut Value, r: &Value) -> Option<Value>;
-    fn merge(&self, lhs: &mut Layout, rhs: &mut Layout) {
-        lhs.bind = match (&mut lhs.bind, &mut rhs.bind) {
+    fn merge(&self, lhs: &mut Brick, rhs: &mut Brick) {
+        let bind = match (lhs.get_bind(), rhs.get_bind()) {
             (Some(l), Some(r)) => {
                 let nv = l
                     .into_iter()
@@ -61,12 +62,13 @@ pub trait LayoutOp: Debug {
             (None, Some(y)) => Some(y.to_owned()),
             (None, None) => None,
         };
+        lhs.set_bind(bind);
     }
 }
 
 #[derive(Debug)]
 pub struct Concat;
-impl LayoutOp for Concat {
+impl BrickOp for Concat {
     fn merge_value(&self, x: &mut Value, y: &Value) -> Option<Value> {
         let n = match (x, y) {
             (Value::Number(x), Value::Number(r)) => {
@@ -98,7 +100,7 @@ impl LayoutOp for Concat {
 
 #[derive(Debug)]
 pub struct Delete;
-impl LayoutOp for Delete {
+impl BrickOp for Delete {
     fn merge_value(&self, x: &mut Value, y: &Value) -> Option<Value> {
         let n = match (x, y) {
             (Value::Number(x), Value::Number(r)) => {
@@ -135,7 +137,7 @@ impl LayoutOp for Delete {
 
 #[derive(Debug)]
 pub struct Replace;
-impl LayoutOp for Replace {
+impl BrickOp for Replace {
     fn merge_value(&self, x: &mut Value, r: &Value) -> Option<Value> {
         let y = match (x, r) {
             (Value::Number(_x), Value::Number(r)) => {

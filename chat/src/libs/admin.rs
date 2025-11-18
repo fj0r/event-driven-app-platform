@@ -8,8 +8,8 @@ use axum::{
     extract::{Path, Query, State},
     routing::{get, post},
 };
+use brick::{Bind, BindVariant, Brick, Text, TextAttr};
 use content::{Content, Influx, Method};
-use layout::{Attrs, Bind, BindVariant, Layout, Settings};
 use maplit::hashmap;
 use message::session::SessionInfo;
 use serde::Deserialize;
@@ -28,7 +28,7 @@ pub struct Opts {
 async fn users(_opts: Query<Opts>, State(db): State<Db>) -> HttpResult<Json<Vec<Value>>> {
     let v = db.list_account().await?;
     let v = v.iter().map(|x| json!(x.name)).collect();
-    Ok(Json(v)).into()
+    Ok(Json(v))
 }
 
 async fn user(
@@ -50,18 +50,17 @@ async fn select_chan(
     if let Some(layout) = opts.layout
         && layout
     {
-        let mut content: Vec<_> = vec!["1", "4", "5", "6"]
+        let content: Vec<_> = ["1", "4", "5", "6"]
             .iter()
             .map(|x| {
                 Content::Join(Influx {
                     event: "channel::list".into(),
                     channel: None,
                     method: Method::Replace,
-                    data: Layout {
-                        kind: "text".into(),
+                    data: Brick::text(Text {
                         id: Some(x.to_string()),
-                        attrs: Some(Attrs {
-                            class: Some("box".to_string()),
+                        attrs: Some(TextAttr {
+                            class: Some(vec!["box".to_string()]),
                             ..Default::default()
                         }),
                         bind: Some(hashmap! {
@@ -71,8 +70,7 @@ async fn select_chan(
                                 ..Default::default()
                             }
                         }),
-                        ..Default::default()
-                    },
+                    }),
                 })
             })
             .collect();
@@ -88,7 +86,7 @@ async fn join_chan(
     Json(join): Json<JoinChan>,
 ) -> HttpResult<Json<Value>> {
     db.join_channel(&join).await?;
-    Ok(Json::default()).into()
+    Ok(Json::default())
 }
 
 async fn channel(
@@ -107,11 +105,10 @@ async fn channel(
                     event: "channel::list".into(),
                     channel: None,
                     method: Method::Replace,
-                    data: Layout {
-                        kind: "text".into(),
+                    data: Brick::text(Text {
                         id: Some(x.to_string()),
-                        attrs: Some(Attrs {
-                            class: Some("box".to_string()),
+                        attrs: Some(TextAttr {
+                            class: Some(vec!["box".to_string()]),
                             ..Default::default()
                         }),
                         bind: Some(hashmap! {
@@ -121,8 +118,7 @@ async fn channel(
                                 ..Default::default()
                             }
                         }),
-                        ..Default::default()
-                    },
+                    }),
                 })
             })
             .collect();
@@ -144,21 +140,18 @@ async fn history(
         let content = Content::Join(Influx {
             event: "chat-history".into(),
             channel: None,
-            data: Layout {
-                kind: "text".into(),
-                attrs: Some(Attrs {
-                    settings: Some(Settings::Text {
-                        format: "md".into(),
-                    }),
+            data: Brick::text(Text {
+                attrs: Some(TextAttr {
+                    format: Some("md".to_string()),
                     ..Default::default()
                 }),
                 ..Default::default()
-            },
+            }),
             method: Method::Concat,
         });
         //let msg: Message = ("chat".into(), content).into();
         let r = serde_json::to_value(&content)?;
-        Ok(Json(r.into()))
+        Ok(Json(r))
     } else {
         Ok(Json(Value::Array(Vec::new())))
     }
@@ -191,7 +184,10 @@ async fn login(
         Cow::Owned(ShortUuid::generate().to_string())
     };
     let (id, name) = db.login(&token).await?;
-    info!("login {}: {}\n  token: {:?}", id, name, &token);
+    info!(
+        "login {}: {}\ntoken : {:?}\n{:?}",
+        id, name, &token, payload
+    );
     payload.insert("username".into(), name.into());
     Ok(Json(SessionInfo {
         id: id.as_str().into(),

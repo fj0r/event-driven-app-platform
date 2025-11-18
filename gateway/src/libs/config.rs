@@ -2,13 +2,14 @@ use figment::{
     Figment, Result,
     providers::{Env, Format, Toml},
 };
+use indexmap::IndexMap;
 use kafka::config::Queue;
 use notify::{Event, RecursiveMode, Result as ResultN, Watcher, recommended_watcher};
 use serde::{Deserialize, Serialize};
 use serde_with::{OneOrMany, serde_as};
+use std::ops::Deref;
 use std::path::Path;
 use std::sync::{Arc, mpsc::channel};
-use std::{collections::HashMap, ops::Deref};
 use tokio::sync::Mutex;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -57,7 +58,7 @@ fn default_accept() -> String {
     "application/json".to_owned()
 }
 
-pub type HookMap = HashMap<String, Hooks>;
+pub type HookMap = IndexMap<String, Hooks>;
 
 pub const ASSETS_PATH: &str = "manifest";
 
@@ -77,13 +78,14 @@ pub struct Log {
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
-pub struct Settings {
+pub struct Config {
     pub queue: Queue,
     pub hooks: HookMap,
     pub trace: Log,
+    pub login_with_cookie: bool,
 }
 
-impl Settings {
+impl Config {
     pub fn new() -> Result<Self> {
         Figment::new()
             .merge(Toml::file("gateway.toml"))
@@ -92,13 +94,13 @@ impl Settings {
     }
 }
 
-pub struct Config {
-    pub data: Arc<Mutex<Settings>>,
+pub struct LiveConfig {
+    pub data: Arc<Mutex<Config>>,
 }
 
-impl Config {
+impl LiveConfig {
     pub fn new() -> Result<Self> {
-        let x = Settings::new()?;
+        let x = Config::new()?;
         Ok(Self {
             data: Arc::new(Mutex::new(x)),
         })
@@ -111,9 +113,9 @@ impl Config {
         watcher.watch(Path::new("config.toml"), RecursiveMode::Recursive)?;
         let d = self.data.clone();
         tokio::task::spawn_blocking(|| async move {
-            for res in rx {
+            while let Ok(res) = rx.recv() {
                 if res?.kind.is_modify() {
-                    let n = Settings::new()?;
+                    let n = Config::new()?;
                     dbg!("config update: {:?}", &n);
                     let mut x = d.lock().await;
                     *x = n;

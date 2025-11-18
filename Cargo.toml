@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["agent", "chat", "content", "gateway", "kafka", "layout", "message", "proc", "proc_tests", "ui"]
+members = ["agent", "chat", "brick", "brick_macro", "content", "gateway", "kafka", "message", "ui", "ui_macro"]
 
 [profile.wasm-dev]
 inherits = "dev"

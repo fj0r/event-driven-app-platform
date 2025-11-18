@@ -5,26 +5,26 @@
   }
 }
 
-.header {
-    background-color: oklch(from var(--primary) calc(l + 0.2) c h);
+#main {
+    background-color: oklch(from var(--secondary) calc(l + 0.05) c h);
 }
 
-.leftside {
-    background-color: var(--secondary);
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+.--body {
+    margin: 0 4px;
 }
 
-.select {
-    & > * > * {
-        cursor: pointer;
-        transition: all 0.3s ease-in-out 0s;
-        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
-        &:hover {
-            background-color: var(--secondary);
-        }
+.--header {
+    color: oklch(from var(--accent) calc(l - 0.2) c h);
+}
+
+.--leftside {
+    background-color: oklch(from var(--secondary) calc(l + 0.05) c h);
+    & * {
+        background-color: transparent;
     }
-    & .selected {
-        background: var(--secondary);
-    }
+}
+
+.--cart {
+    border-radius: 2rem;
 }
 /* }}} */

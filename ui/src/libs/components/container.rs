@@ -1,31 +1,34 @@
+use crate::libs::components::Frame;
 use crate::libs::hooks::use_common_css;
+use crate::libs::store::Status;
+use brick::{Bind, BindVariant, BrickProps, Case, CaseAttr, Placeholder};
 use dioxus::prelude::*;
-use layout::{Container as Ct, Layout, Settings};
 
 #[component]
-pub fn Case(id: String, layout: Layout, children: Element) -> Element {
-    let mut css = vec!["case", &id];
+pub fn case_(id: Option<String>, brick: Case, children: Element) -> Element {
+    let mut css = vec!["case", "f"];
+    if let Some(id) = &id {
+        css.push(id);
+    }
     let mut style = String::new();
-    if let Some(a) = &layout.attrs {
-        let mut f = true;
-        if let Some(Settings::Container(c)) = &a.settings {
-            match &c {
-                Ct::grid(g) => {
-                    f = false;
-                    css.push("g");
-                    style = g
-                        .iter()
-                        .map(|(k, v)| format!("{}: {};", k, v.as_str().unwrap()))
-                        .collect::<Vec<String>>()
-                        .join("\n");
-                }
-            }
+    let Case { attrs, .. } = &brick;
+
+    let mut f = true;
+    if let Some(CaseAttr { grid, .. }) = attrs {
+        if let Some(g) = grid {
+            f = false;
+            css.push("g");
+            style = g
+                .iter()
+                .map(|(k, v)| format!("{}: {};", k, v.as_str().unwrap()))
+                .collect::<Vec<String>>()
+                .join("\n");
         };
         if f {
             css.push("f");
-        }
+        };
     };
-    use_common_css(&mut css, &layout);
+    use_common_css(&mut css, &brick);
 
     rsx! {
         div {
@@ -37,13 +40,45 @@ pub fn Case(id: String, layout: Layout, children: Element) -> Element {
 }
 
 #[component]
-pub fn Switch(layout: Layout, children: Element) -> Element {
-    let mut css = vec!["switch", "f"];
-    use_common_css(&mut css, &layout);
-    rsx! {
-        div {
-            class: css.join(" "),
-            {children}
+pub fn placeholder_(id: Option<String>, brick: Placeholder, children: Element) -> Element {
+    let mut css = vec!["placeholder", "f"];
+    use_common_css(&mut css, &brick);
+    let store = use_context::<Status>();
+    let s = store.data.read();
+
+    if let Some(x) = brick.get_bind()
+        && let Some(Bind {
+            variant: BindVariant::Source { source },
+            default: _,
+            r#type: _kind,
+        }) = x.get("value")
+        && let Some(data) = s.get(source)
+        && let Some(eid) = id.clone()
+    {
+        use_effect(move || {
+            let js = format!(
+                r#"
+                let x = document.getElementById('{eid}');
+                x.classList.add('fade-in-and-out');
+                setTimeout(() => x.classList.remove('fade-in-and-out'), 1000);
+                "#
+            );
+            document::eval(&js);
+        });
+        rsx! {
+            div {
+                id: id,
+                class: css.join(" "),
+                Frame { brick: data.clone() }
+            }
+        }
+    } else {
+        rsx! {
+            div {
+                id: id,
+                class: css.join(" "),
+                {children}
+            }
         }
     }
 }

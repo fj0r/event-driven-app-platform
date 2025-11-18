@@ -2,13 +2,12 @@ action: join
 method: concat
 event: chat
 data:
-    #type: case
-    render:
-        name: segment
-        data:
-          rank: 5
-          payload:
-            type: text
-            bind:
-              value:
-                default: who are you?
+    type: render
+    name: segment
+    data:
+      rank: 5
+      payload:
+        type: text
+        bind:
+          value:
+            default: who are you?

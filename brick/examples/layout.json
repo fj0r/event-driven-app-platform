@@ -1,0 +1,194 @@
+{
+  "attrs": {
+    "class": [
+      "maximize"
+    ]
+  },
+  "type": "case",
+  "children": [
+    {
+      "type": "text",
+      "bind": {
+        "value": {
+          "default": "**chat**",
+          "source": "login"
+        }
+      },
+      "attrs": {
+        "class": [
+          "--header",
+          "nogrow"
+        ],
+        "format": "md"
+      }
+    },
+    {
+      "type": "case",
+      "attrs": {
+        "horizontal": true,
+        "class": [
+          "--body",
+          "shrink",
+          "border",
+          "round"
+        ]
+      },
+      "children": [
+        {
+          "type": "case",
+          "attrs": {
+            "class": [
+              "--leftside",
+              "nogrow"
+            ]
+          },
+          "children": [
+            {
+              "type": "text",
+              "attrs": {
+                "format": "md",
+                "class": [
+                  "box"
+                ]
+              },
+              "bind": {
+                "value": {
+                  "default": "**channel**"
+                }
+              }
+            },
+            {
+              "type": "select",
+              "attrs": {
+                "class": [
+                  "--channel",
+                  "ji-center",
+                  "nogrow"
+                ]
+              },
+              "bind": {
+                "value": {
+                  "event": "channel::select",
+                  "default": "2"
+                },
+                "options": {
+                  "source": "channel::list"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "case",
+          "attrs": {
+            "class": [
+              "main",
+              "shrink"
+            ]
+          },
+          "children": [
+            {
+              "type": "case",
+              "children": [
+                {
+                  "type": "rack",
+                  "attrs": {
+                    "class": [
+                      "--message",
+                      "box",
+                      "ac-start",
+                      "gap",
+                      "scrolly"
+                    ],
+                    "scroll": true
+                  },
+                  "bind": {
+                    "value": {
+                      "source": "chat"
+                    }
+                  },
+                  "item": [
+                    {
+                      "type": "case",
+                      "attrs": {
+                        "class": [
+                          "nogrow",
+                          "as-end",
+                          "accent",
+                          "box",
+                          "border",
+                          "round",
+                          "shadow"
+                        ],
+                        "selector": "ask"
+                      }
+                    },
+                    {
+                      "type": "case",
+                      "attrs": {
+                        "class": [
+                          "nogrow",
+                          "as-stretch",
+                          "box",
+                          "border",
+                          "round",
+                          "shadow"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "float",
+                  "attrs": {
+                    "bottom": "0.2rem",
+                    "left": "1rem"
+                  },
+                  "children": [
+                    {
+                      "type": "placeholder",
+                      "bind": {
+                        "value": {
+                          "source": "float"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "case",
+              "attrs": {
+                "class": [
+                  "--input",
+                  "nogrow",
+                  "box"
+                ],
+                "horizontal": true
+              },
+              "children": [
+                {
+                  "type": "case",
+                  "attrs": {
+                    "horizontal": true
+                  },
+                  "children": [
+                    {
+                      "type": "input",
+                      "bind": {
+                        "value": {
+                          "event": "message"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

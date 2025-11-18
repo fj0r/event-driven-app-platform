@@ -2,13 +2,13 @@ action: create
 event: ''
 data:
   attrs:
-    class: maximize
+    class: [maximize]
   type: case
   children:
   - type: case
     attrs:
         horizontal: true
-        class: nogrow
+        class: [nogrow]
     children:
       - type: text
         bind:
@@ -16,7 +16,7 @@ data:
             default: chat with **AI**
             source: login
         attrs:
-          class: shadow nogrow
+          class: [shadow, nogrow]
           format: md
       - type: form
         bind:
@@ -30,7 +30,7 @@ data:
             submit: true
   - type: rack
     attrs:
-      class: box c as gap scrolly
+      class: [box, ac-start, gap, scrolly]
       scroll: true
     bind:
       value:
@@ -38,14 +38,14 @@ data:
     item:
     - type: case
       attrs:
-        class: box border shadow nogrow s ae accent
+        class: [box, border, shadow, nogrow, as-end, accent]
         selector: ask
     - type: case
       attrs:
-        class: box border shadow nogrow s as
+        class: [box, border, shadow, nogrow, as-start]
   - type: case
     attrs:
-      class: nogrow box
+      class: [nogrow, box]
       horizontal: true
     children:
     - type: case

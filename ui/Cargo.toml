@@ -9,20 +9,22 @@ edition = "2024"
 [dependencies]
 anyhow = "1.0.100"
 tracing-wasm = "0.2.1"
-dioxus = { version = "0.7.0-rc.3", features = ["macro", "web"] }
+dioxus = { version = "0.7.1", features = ["macro", "web"] }
 futures = "0.3.31"
 gloo-net = "0.6.0"
-js-sys = "0.3.81"
+js-sys = "0.3.82"
 serde_json = "1.0.145"
 itertools = "0.14.0"
 minijinja = { version = "2.12.0", features = ["loader"] }
 markdown = "1.0.0"
-web-sys = "0.3.81"
+web-sys = "0.3.82"
 serde = { version = "1.0.228", features = ["derive", "serde_derive"] }
 chrono = { version = "0.4.42", features = ["serde"] }
-layout = { path = "../layout", features = ["dioxus", "classify", "merge", "render"] }
-content = { path = "../content"}
+brick = { path = "../brick", features = ["dioxus", "classify", "merge", "render"] }
+content = { path = "../content" }
+ui_macro = { path = "../ui_macro" }
 maplit = "1.0.2"
+indoc = "2.0.7"
 
 [features]
 default = ["web"]

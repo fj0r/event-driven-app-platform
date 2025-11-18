@@ -1,4 +1,4 @@
-use super::config::{ASSETS_PATH, Hooks, Settings};
+use super::config::{ASSETS_PATH, Config, Hooks};
 use super::error::HttpResult;
 use super::shared::{Arw, Arwsc, Sender, StateChat};
 use axum::{
@@ -8,6 +8,7 @@ use axum::{
     response::{IntoResponse, Response},
     routing::{get, post},
 };
+use indexmap::IndexMap;
 use kafka::Created;
 use message::{
     Envelope,
@@ -15,7 +16,6 @@ use message::{
 };
 use minijinja::Environment;
 use serde_json::{Map, Value, from_str};
-use std::collections::HashMap;
 
 async fn send(
     State(session): State<Arwsc<Sender>>,
@@ -156,18 +156,18 @@ pub fn debug_router() -> Router<StateChat<Sender>> {
 }
 
 async fn list_hook(
-    State(settings): State<Arw<Settings>>,
-) -> HttpResult<(StatusCode, Json<HashMap<String, Hooks>>)> {
-    let s = settings.read().await.clone();
+    State(config): State<Arw<Config>>,
+) -> HttpResult<(StatusCode, Json<IndexMap<String, Hooks>>)> {
+    let s = config.read().await.clone();
     Ok((StatusCode::OK, Json(s.hooks)))
 }
 
 async fn update_hook(
     Path(hook): Path<String>,
-    State(settings): State<Arw<Settings>>,
+    State(config): State<Arw<Config>>,
     Json(payload): Json<Hooks>,
 ) -> HttpResult<(StatusCode, Json<bool>)> {
-    let mut s = settings.write().await;
+    let mut s = config.write().await;
     s.hooks.insert(hook, payload);
     Ok((StatusCode::OK, Json(true)))
 }

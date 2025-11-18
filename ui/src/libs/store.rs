@@ -1,16 +1,15 @@
 use super::ws::{WebSocketHandle, use_web_socket};
 use anyhow::Result;
+use brick::{
+    Brick, BrickProps,
+    merge::{BrickOp, Concat, Delete, Replace},
+};
 use content::{Content, Message, Method, Outflow};
 #[allow(unused_imports)]
-use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
 use js_sys::wasm_bindgen::JsError;
-use layout::{
-    Layout,
-    merge::{Concat, Delete, LayoutOp, Replace},
-};
 use minijinja::Environment;
-use serde_json::{Value, to_string};
+use serde_json::{Value, from_str, to_string, to_string_pretty};
 use std::collections::HashMap;
 use std::str;
 use std::sync::{LazyLock, RwLock};
@@ -22,14 +21,14 @@ static TMPL: LazyLock<RwLock<Environment>> = LazyLock::new(|| {
 });
 
 #[derive(Clone)]
-pub struct Store {
+pub struct Status {
     pub ws: WebSocketHandle,
-    pub layout: Signal<Layout>,
-    pub data: Signal<HashMap<String, Layout>>,
-    pub list: Signal<HashMap<String, Vec<Layout>>>,
+    pub layout: Signal<Brick>,
+    pub data: Signal<HashMap<String, Brick>>,
+    pub list: Signal<HashMap<String, Vec<Brick>>>,
 }
 
-impl Store {
+impl Status {
     pub async fn send(&mut self, event: impl AsRef<str>, id: Option<String>, content: Value) {
         let x = Outflow {
             event: event.as_ref().to_string(),
@@ -43,16 +42,16 @@ impl Store {
         }
     }
 
-    pub fn set(&mut self, name: impl AsRef<str>, layout: Layout) {
-        self.data.write().insert(name.as_ref().to_string(), layout);
+    pub fn set(&mut self, name: impl AsRef<str>, brick: Brick) {
+        self.data.write().insert(name.as_ref().to_string(), brick);
     }
 }
 
 fn dispatch(
-    act: Message<Layout>,
-    layout: &mut Signal<Layout>,
-    data: &mut Signal<HashMap<String, Layout>>,
-    list: &mut Signal<HashMap<String, Vec<Layout>>>,
+    act: Message<Brick>,
+    layout: &mut Signal<Brick>,
+    data: &mut Signal<HashMap<String, Brick>>,
+    list: &mut Signal<HashMap<String, Vec<Brick>>>,
 ) {
     let Message {
         sender: _,
@@ -85,20 +84,20 @@ fn dispatch(
                 let env = TMPL.read().expect("read TMPL failed");
                 x.data.render(&env);
                 let e = x.event;
-                let d = &x.data;
-                let vs: &dyn LayoutOp = match x.method {
+                let d = &mut x.data;
+                let vs: &dyn BrickOp = match x.method {
                     Method::Replace => &Replace,
                     Method::Concat => &Concat,
                     Method::Delete => &Delete,
                 };
-                if let Some(_id) = &d.id {
+                if let Some(_id) = &d.get_id() {
                     let mut l = list.write();
                     let list = l.entry(e).or_default();
                     let mut is_merge = false;
                     for i in list.iter_mut() {
                         if i.cmp_id(d) {
                             is_merge = true;
-                            i.merge(vs, d.clone());
+                            i.merge(vs, d);
                         }
                     }
                     if !is_merge {
@@ -113,29 +112,39 @@ fn dispatch(
     }
 }
 
-pub fn use_store(url: &str) -> Result<Store, JsError> {
+pub fn use_status(url: &str) -> Result<Status, JsError> {
     let ws = use_web_socket(url)?;
     let x = ws.message_texts();
 
-    let mut layout = use_signal::<Layout>(Layout::default);
-    let mut data = use_signal::<HashMap<String, Layout>>(HashMap::new);
-    let mut list = use_signal::<HashMap<String, Vec<Layout>>>(HashMap::new);
+    let mut layout = use_signal::<Brick>(|| {
+        Brick::text(brick::Text {
+            ..Default::default()
+        })
+    });
+    let mut data = use_signal::<HashMap<String, Brick>>(HashMap::new);
+    let mut list = use_signal::<HashMap<String, Vec<Brick>>>(HashMap::new);
 
     use_memo(move || {
         let act = &x();
         if !act.is_empty() {
-            match serde_json::from_str::<Message<Layout>>(act) {
+            match from_str::<Message<Brick>>(act) {
                 Ok(act) => dispatch(act, &mut layout, &mut data, &mut list),
-                Err(err) => dioxus::logger::tracing::info!(
-                    "deserialize from_str error {:?}\n\n{:?}",
-                    err,
-                    act
-                ),
+                Err(err) => {
+                    if let Ok(act) = &from_str::<serde_json::Value>(act)
+                        && let Ok(act) = to_string_pretty(act)
+                    {
+                        dioxus::logger::tracing::info!(
+                            "deserialize from_str error:\n {:#?}\n{}",
+                            err,
+                            act
+                        )
+                    }
+                }
             }
         }
     });
 
-    Ok(Store {
+    Ok(Status {
         ws,
         layout,
         data,

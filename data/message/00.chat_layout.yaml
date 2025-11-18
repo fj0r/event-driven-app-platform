@@ -2,62 +2,103 @@ action: create
 event: ''
 data:
   attrs:
-    class: maximize
+    class: [maximize]
   type: case
   children:
   - type: text
     bind:
       value:
-        default: chat ****
+        default: '**chat**'
         source: login
     attrs:
-      class: box shadow nogrow
+      class: [--header, nogrow]
       format: md
   - type: case
     attrs:
       horizontal: true
-      class: shrink
+      class: [--body, shrink, border, round]
     children:
-    - type: select
-      attrs:
-        class: --channel i jc box nogrow
-      bind:
-        value:
-          event: channel
-        options:
-          source: channel
     - type: case
       attrs:
-        class: shrink
+        class: [--leftside, nogrow]
       children:
-      - type: rack
+      - type: text
         attrs:
-          class: --message box c as gap scrolly
-          scroll: true
+          format: md
+          class: [box]
         bind:
           value:
-            source: chat
-        item:
-        - type: case
+            default: '**channel**'
+      - type: select
+        attrs:
+          class: [--channel, ji-center, nogrow]
+        bind:
+          value:
+            event: channel::select
+            default: '2'
+          options:
+            source: channel::list
+    - type: case
+      attrs:
+        class: [main, shrink]
+      children:
+      - type: case
+        children:
+        - type: rack
           attrs:
-            class: nogrow s ae accent box border shadow
-            selector: ask
-        - type: case
+            class: [--message, box, ac-start, gap, scrolly]
+            scroll: true
+          bind:
+            value:
+              source: chat
+          item:
+          - type: case
+            attrs:
+              class: [nogrow, as-end, accent, box, border, round, shadow]
+              selector: ask
+          - type: case
+            attrs:
+              class: [nogrow, as-stretch, box, border, round, shadow]
+        - type: float
           attrs:
-            class: nogrow s ax box border shadow
+            bottom: '0.2rem'
+            left: '1rem'
+          children:
+          - type: popup
+            attrs:
+              class: [--cart, box, border, shadow, primary]
+              direction: U
+            bind:
+              value:
+                source: cart
+            children:
+            - type: render
+              name: cart
+              data: {}
+            - type: case
+              children:
+              - type: text
+                bind:
+                  value:
+                    default: a
+              - type: text
+                bind:
+                  value:
+                    default: b
+              - type: text
+                bind:
+                  value:
+                    default: c
       - type: case
         attrs:
-          class: --input nogrow box
+          class: [--input, nogrow, box]
           horizontal: true
         children:
         - type: case
           attrs:
             horizontal: true
           children:
-          - type: textarea
+          - type: input
             bind:
               value:
                 event: message
-              placeholder:
-                default: send message.
-

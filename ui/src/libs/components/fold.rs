@@ -1,31 +1,31 @@
 use super::Frame;
 use crate::libs::hooks::{use_common_css, use_default};
+use brick::{BrickProps, Fold, FoldAttr};
 use dioxus::prelude::*;
-use layout::{Layout, Settings};
 
 #[component]
-pub fn Fold(id: String, layout: Layout, children: Element) -> Element {
-    let mut css = vec!["g", &id];
-    use_common_css(&mut css, &layout);
+pub fn fold_(id: Option<String>, brick: Fold, children: Element) -> Element {
+    let mut css = vec!["g"];
+    if let Some(id) = &id {
+        css.push(id);
+    }
+    use_common_css(&mut css, &brick);
 
-    let Some((replace_header, _float_body)) = layout.attrs.as_ref().map(|x| {
-        let x = if let Some(Settings::Fold {
-            replace_header,
-            float_body,
-        }) = x.settings
-        {
-            (replace_header, float_body)
-        } else {
-            (false, false)
-        };
-        x
-    }) else {
-        unreachable!()
-    };
+    let (replace_header, _float_body) = brick
+        .attrs
+        .as_ref()
+        .map(
+            |FoldAttr {
+                 replace_header,
+                 float_body,
+                 ..
+             }| (replace_header.unwrap_or(false), float_body.unwrap_or(false)),
+        )
+        .unwrap();
 
-    let item = layout.item.as_ref().context("item")?[0].clone();
+    let item = brick.get_item().context("item")?[0].clone();
     let show = use_signal(|| {
-        use_default(&layout)
+        use_default(&brick)
             .and_then(|x| x.as_bool())
             .unwrap_or_default()
     });
@@ -40,7 +40,7 @@ pub fn Fold(id: String, layout: Layout, children: Element) -> Element {
     } else {
         rsx! {
             div {
-                Frame { layout: item }
+                Frame { brick: item }
             }
         }
     };

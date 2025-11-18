@@ -35,11 +35,14 @@ endpoint = "http://localhost:3003/v1/logout?layout=true"
 accept = "application/json"
 
 [[hooks.greet]]
+path = "segment.tmpl.json"
+
+[[hooks.greet]]
 endpoint = "http://localhost:3003/v1/yaml/chat_layout.yaml"
 accept = "application/json"
 
 [[hooks.greet]]
-disable = true
+disable = false
 path = "user.json"
 
 # channel::list
@@ -52,9 +55,6 @@ accept = "application/json"
 disable = true
 endpoint = "http://localhost:3003/v1/history?layout=true"
 accept = "application/json"
-
-[[hooks.greet]]
-path = "segment.tmpl.json"
 
 [[hooks."channel::join"]]
 disable = true
