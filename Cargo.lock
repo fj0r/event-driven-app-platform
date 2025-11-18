@@ -559,7 +559,6 @@ dependencies = [
  "indexmap 2.12.0",
  "indoc",
  "kafka",
- "layout",
  "maplit",
  "message",
  "minijinja",
@@ -3121,19 +3120,6 @@ dependencies = [
  "html5ever",
  "indexmap 2.12.0",
  "selectors",
-]
-
-[[package]]
-name = "layout"
-version = "0.1.0"
-dependencies = [
- "dioxus",
- "itertools",
- "minijinja",
- "regex",
- "schemars 1.1.0",
- "serde",
- "serde_json",
 ]
 
 [[package]]

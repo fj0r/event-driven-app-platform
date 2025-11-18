@@ -8,8 +8,8 @@ use axum::{
     extract::{Path, Query, State},
     routing::{get, post},
 };
+use brick::{Bind, BindVariant, Brick, Text, TextAttr};
 use content::{Content, Influx, Method};
-use layout::{Attrs, Bind, BindVariant, Layout, Settings};
 use maplit::hashmap;
 use message::session::SessionInfo;
 use serde::Deserialize;
@@ -57,11 +57,10 @@ async fn select_chan(
                     event: "channel::list".into(),
                     channel: None,
                     method: Method::Replace,
-                    data: Layout {
-                        kind: "text".into(),
+                    data: Brick::text(Text {
                         id: Some(x.to_string()),
-                        attrs: Some(Attrs {
-                            class: Some("box".to_string()),
+                        attrs: Some(TextAttr {
+                            class: Some(vec!["box".to_string()]),
                             ..Default::default()
                         }),
                         bind: Some(hashmap! {
@@ -71,8 +70,7 @@ async fn select_chan(
                                 ..Default::default()
                             }
                         }),
-                        ..Default::default()
-                    },
+                    }),
                 })
             })
             .collect();
@@ -107,11 +105,10 @@ async fn channel(
                     event: "channel::list".into(),
                     channel: None,
                     method: Method::Replace,
-                    data: Layout {
-                        kind: "text".into(),
+                    data: Brick::text(Text {
                         id: Some(x.to_string()),
-                        attrs: Some(Attrs {
-                            class: Some("box".to_string()),
+                        attrs: Some(TextAttr {
+                            class: Some(vec!["box".to_string()]),
                             ..Default::default()
                         }),
                         bind: Some(hashmap! {
@@ -121,8 +118,7 @@ async fn channel(
                                 ..Default::default()
                             }
                         }),
-                        ..Default::default()
-                    },
+                    }),
                 })
             })
             .collect();
@@ -144,16 +140,13 @@ async fn history(
         let content = Content::Join(Influx {
             event: "chat-history".into(),
             channel: None,
-            data: Layout {
-                kind: "text".into(),
-                attrs: Some(Attrs {
-                    settings: Some(Settings::Text {
-                        format: "md".into(),
-                    }),
+            data: Brick::text(Text {
+                attrs: Some(TextAttr {
+                    format: Some("md".to_string()),
                     ..Default::default()
                 }),
                 ..Default::default()
-            },
+            }),
             method: Method::Concat,
         });
         //let msg: Message = ("chat".into(), content).into();
