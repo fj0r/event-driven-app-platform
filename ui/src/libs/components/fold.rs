@@ -1,6 +1,6 @@
 use super::Frame;
 use crate::libs::hooks::{use_common_css, use_default};
-use brick::{BrickProps, Fold, FoldAttr};
+use brick::{Fold, FoldAttr};
 use dioxus::prelude::*;
 
 #[component]
@@ -23,7 +23,7 @@ pub fn fold_(id: Option<String>, brick: Fold, children: Element) -> Element {
         )
         .unwrap();
 
-    let item = brick.get_item().context("item")?[0].clone();
+    let item = brick.item.as_ref().context("item")?[0].clone();
     let show = use_signal(|| {
         use_default(&brick)
             .and_then(|x| x.as_bool())

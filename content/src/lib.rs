@@ -74,20 +74,15 @@ pub struct InfluxTmpl {
     pub data: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Method {
     #[serde(rename = "replace")]
+    #[default]
     Replace,
     #[serde(rename = "concat")]
     Concat,
     #[serde(rename = "delete")]
     Delete,
-}
-
-impl Default for Method {
-    fn default() -> Self {
-        Self::Replace
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]

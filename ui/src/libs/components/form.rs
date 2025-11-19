@@ -104,7 +104,7 @@ pub fn form_(id: Option<String>, brick: Form, children: Element) -> Element {
     walk(&mut brick, &mut data, confirm);
     let v = Vec::new();
     let children = brick.borrow_children().unwrap_or(&v);
-    let children = children.into_iter().map(|c| {
+    let children = children.iter().map(|c| {
         rsx! {
             Frame { brick: c.clone() }
         }

@@ -83,17 +83,17 @@ impl PositionAttr {
             Some(PosV::bottom(b)) => format!("bottom: {};", b),
             None => "".to_string(),
         };
-        vec![h, v].join(" ")
+        [h, v].join(" ")
     }
 }
 
 impl DirectionAttr {
     pub fn into_style(&self) -> String {
         match &self.direction {
-            Some(Direction::D) => format!("flex-direction: column"),
-            Some(Direction::U) => format!("flex-direction: column-reverse"),
-            Some(Direction::R) => format!("flex-direction: row"),
-            Some(Direction::L) => format!("flex-direction: row-reverse"),
+            Some(Direction::D) => "flex-direction: column".to_string(),
+            Some(Direction::U) => "flex-direction: column-reverse".to_string(),
+            Some(Direction::R) => "flex-direction: row".to_string(),
+            Some(Direction::L) => "flex-direction: row-reverse".to_string(),
             None => "".to_string(),
         }
     }

@@ -57,7 +57,7 @@ pub fn gen_dispatch(input: TokenStream) -> TokenStream {
 }
 
 fn gen_match(ast: &syn::File, entry: &str, object: &str) -> syn::Result<TokenStream2> {
-    let info = walk(&ast);
+    let info = walk(ast);
     let ty = Ident::new(entry, Span::call_site());
     let ob = Ident::new(object, Span::call_site());
     let CompInfo::Enum { fields } = info

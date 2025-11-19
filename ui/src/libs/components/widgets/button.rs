@@ -14,7 +14,7 @@ pub fn button_(id: Option<String>, brick: Button) -> Element {
     let oneshot = brick
         .attrs
         .as_ref()
-        .and_then(|ButtonAttr { oneshot, .. }| Some(oneshot.clone()))
+        .map(|ButtonAttr { oneshot, .. }| *oneshot)
         .unwrap_or(false);
 
     if let Some(Bind {

@@ -47,17 +47,14 @@ pub fn walk(ast: &syn::File) -> HashMap<String, CompInfo> {
                         let kv = x
                             .attrs
                             .iter()
-                            .map(|x| {
+                            .flat_map(|x| {
                                 if let Meta::List(x) = &x.meta {
-                                    let tk = x.tokens.clone().into();
-                                    syn::parse2::<ConfigList>(tk)
-                                        .unwrap_or(ConfigList::default())
-                                        .0
+                                    let tk = x.tokens.clone();
+                                    syn::parse2::<ConfigList>(tk).unwrap_or_default().0
                                 } else {
                                     ConfigList::default().0
                                 }
                             })
-                            .flatten()
                             .collect::<HashMap<_, _>>();
                         let has_id = if let Some(h) = kv.get("has_id") {
                             h == "true"

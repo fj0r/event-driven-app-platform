@@ -6,8 +6,7 @@ use classify::{impl_classify_attrs, impl_classify_brick, impl_classify_variant};
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use props::{impl_brick_props, impl_brick_props_variant, impl_brick_wrap_variant};
-use quote::quote;
-use syn::{Data, DeriveInput, Item, parse_macro_input};
+use syn::{Data, DeriveInput, parse_macro_input};
 
 fn into_ts(result: syn::Result<TokenStream2>) -> TokenStream {
     match result {

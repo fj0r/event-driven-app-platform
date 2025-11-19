@@ -23,18 +23,18 @@ pub fn input_(id: Option<String>, brick: Input) -> Element {
         .get_bind()
         .and_then(|x| x.get("value"))
         .cloned()
-        .and_then(|x| match x {
+        .map(|x| match x {
             Bind {
                 variant: BindVariant::Field { field, signal, .. },
                 r#type: kind,
                 ..
-            } => Some(("field", field, kind, signal)),
+            } => ("field", field, kind, signal),
             Bind {
                 variant: BindVariant::Event { event },
                 r#type: kind,
                 ..
-            } => Some(("event", event, kind, None)),
-            _ => Some(("", "".to_string(), Default::default(), None)),
+            } => ("event", event, kind, None),
+            _ => ("", "".to_string(), Default::default(), None),
         })
         .unwrap();
 
@@ -125,7 +125,7 @@ pub fn input_(id: Option<String>, brick: Input) -> Element {
             rsx! {
                 input {
                     class: css.join(" "),
-                    type: JsType::input_type(&x),
+                    type: JsType::input_type(x),
                     value: v,
                     oninput: oninput,
                     onkeydown: onkeydown

@@ -10,7 +10,7 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 
 impl Brick {
-    pub fn merge(&mut self, op: &(impl BrickOp + Debug + ?Sized), rhs: &mut Self) {
+    pub fn merge(&mut self, op: &(impl BrickOp + ?Sized), rhs: &mut Self) {
         op.merge(self, rhs);
         if let Some(rchildren) = rhs.borrow_children_mut() {
             if let Some(children) = &mut self.borrow_children_mut() {
@@ -39,23 +39,20 @@ pub trait BrickOp: Debug {
     fn merge(&self, lhs: &mut Brick, rhs: &mut Brick) {
         let bind = match (lhs.get_bind(), rhs.get_bind()) {
             (Some(l), Some(r)) => {
-                let nv = l
-                    .into_iter()
-                    .chain(r)
-                    .fold(HashMap::new(), |mut m, (k, v)| {
-                        m.entry(k.to_owned())
-                            .and_modify(|old: &mut Bind| {
-                                let nd = match (&mut old.default, &v.default) {
-                                    (Some(x), Some(y)) => self.merge_value(x, y),
-                                    (Some(x), None) => Some(x.clone()),
-                                    (None, Some(y)) => Some(y.clone()),
-                                    (None, None) => None,
-                                };
-                                old.default = nd;
-                            })
-                            .or_insert(v.to_owned());
-                        m
-                    });
+                let nv = l.iter().chain(r).fold(HashMap::new(), |mut m, (k, v)| {
+                    m.entry(k.to_owned())
+                        .and_modify(|old: &mut Bind| {
+                            let nd = match (&mut old.default, &v.default) {
+                                (Some(x), Some(y)) => self.merge_value(x, y),
+                                (Some(x), None) => Some(x.clone()),
+                                (None, Some(y)) => Some(y.clone()),
+                                (None, None) => None,
+                            };
+                            old.default = nd;
+                        })
+                        .or_insert(v.to_owned());
+                    m
+                });
                 Some(nv)
             }
             (Some(l), None) => Some(l.to_owned()),
@@ -78,7 +75,7 @@ impl BrickOp for Concat {
                 json!(*x || *r)
             }
             (Value::String(x), Value::String(r)) => {
-                x.push_str(&r);
+                x.push_str(r);
                 json!(x)
             }
             (Value::Object(x), Value::Object(r)) => {

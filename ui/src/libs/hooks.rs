@@ -24,14 +24,14 @@ where
     }
 }
 
-pub fn use_default<'a>(brick: &'a impl BrickProps) -> Option<Value> {
+pub fn use_default(brick: &impl BrickProps) -> Option<Value> {
     brick
         .get_bind()
         .and_then(|x| x.get("value"))
         .and_then(|x| x.default.clone())
 }
 
-pub fn use_source_id<'a>(brick: &'a impl BrickProps) -> Option<&'a String> {
+pub fn use_source_id(brick: &impl BrickProps) -> Option<&String> {
     if let Bind {
         variant: BindVariant::Source { source },
         ..

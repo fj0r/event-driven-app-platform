@@ -18,13 +18,8 @@ impl Parse for ConfigPair {
     }
 }
 
+#[derive(Default)]
 pub struct ConfigList(pub Vec<(String, String)>);
-
-impl Default for ConfigList {
-    fn default() -> Self {
-        ConfigList(vec![])
-    }
-}
 
 impl Parse for ConfigList {
     fn parse(input: ParseStream) -> Result<Self> {

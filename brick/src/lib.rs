@@ -30,7 +30,6 @@ pub trait BrickProps {
     fn borrow_attrs_mut(&mut self) -> Option<&mut dyn Classify>;
     fn get_bind(&self) -> Option<&HashMap<String, Bind>>;
     fn set_bind(&mut self, bind: Option<HashMap<String, Bind>>);
-    fn get_item(&self) -> Option<&Vec<Brick>>;
     fn get_id(&self) -> &Option<String>;
 }
 
