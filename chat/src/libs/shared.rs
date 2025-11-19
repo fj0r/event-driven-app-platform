@@ -18,6 +18,6 @@ impl FromRef<Shared> for Db {
 
 impl Shared {
     pub fn new(db: Model) -> Self {
-        Self { db: db }
+        Self { db }
     }
 }

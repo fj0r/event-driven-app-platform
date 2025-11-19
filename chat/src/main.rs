@@ -22,7 +22,7 @@ use url::Url;
 use urlencoding::encode;
 
 async fn is_ready() -> HttpResult<Json<Value>> {
-    Ok(axum::Json("ok".into())).into()
+    Ok(axum::Json("ok".into()))
 }
 
 #[tokio::main]

@@ -98,7 +98,7 @@ async fn channel(
     if let Some(layout) = opts.layout
         && layout
     {
-        let content: Vec<_> = vec!["1", "2", "3"]
+        let content: Vec<_> = ["1", "2", "3"]
             .iter()
             .map(|x| {
                 Content::Join(Influx {

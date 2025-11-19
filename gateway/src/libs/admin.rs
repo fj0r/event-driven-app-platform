@@ -129,7 +129,7 @@ async fn inc(
 ) -> HttpResult<String> {
     let mut count = count.write().await;
     *count += 1;
-    let c = count.clone();
+    let c = *count;
     drop(count);
     if let Some(interval) = payload.get("interval").and_then(|x| x.as_u64()) {
         use tokio::time::{Duration, sleep};

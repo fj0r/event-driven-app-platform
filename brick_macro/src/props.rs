@@ -151,7 +151,7 @@ pub fn impl_brick_wrap_variant(ast: &DeriveInput) -> syn::Result<TokenStream2> {
                         .filter(|x| x.is_some())
                         .flatten()
                         .collect::<Vec<_>>();
-                    x.get(0).cloned()
+                    x.first().cloned()
                 }
                 _ => None,
             };
