@@ -24,4 +24,4 @@ COPY gateway.toml /app
 COPY manifest /app/manifest
 
 COPY --from=builder /app/target/dx/ui/release/web/public/ /app/static
-COPY --from=builder /app/ui/assets /app/static/assets
+COPY --from=builder /app/crates/ui/assets /app/static/assets
