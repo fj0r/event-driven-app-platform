@@ -4,7 +4,7 @@ WORKDIR /app
 COPY . .
 RUN cargo build --release --bin gateway
 RUN set -eux \
-  ; cd ui \
+  ; cd crates/ui \
   ; cat index.html | rg --passthru 'data-host=".+"' -r '' > index.html \
   ; dx build --web --release \
   \
