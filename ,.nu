@@ -1,5 +1,5 @@
 const WORKDIR = path self .
-const CFG = path self !.toml
+const CFG = path self ,.toml
 const GW = path self gateway.toml
 const CHAT = path self chat.toml
 
@@ -272,7 +272,7 @@ module iggy {
 module ui {
     export def up [] {
         let t = open $CFG | get dx
-        cd ui
+        cd crates/ui
         ^dx serve --port $t.port
     }
 
