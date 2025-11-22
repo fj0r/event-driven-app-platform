@@ -1,6 +1,7 @@
 use crate::configlist::ConfigList;
 use crate::utils::{get_ident_from_type, struct_has_field};
 use std::collections::HashMap;
+use std::io::Write;
 use syn::Meta;
 
 #[derive(Debug)]
@@ -17,6 +18,12 @@ pub enum CompInfo {
 }
 
 pub fn walk(ast: &syn::File) -> HashMap<String, CompInfo> {
+    #[cfg(test)]
+    let mut lf = std::fs::OpenOptions::new()
+        .append(true)
+        .create(true)
+        .open("../../data/walklog.rs")
+        .unwrap();
     ast.items.iter().fold(HashMap::new(), |mut acc, x| {
         match x {
             syn::Item::Struct(x) => {
@@ -50,12 +57,15 @@ pub fn walk(ast: &syn::File) -> HashMap<String, CompInfo> {
                             .flat_map(|x| {
                                 if let Meta::List(x) = &x.meta {
                                     let tk = x.tokens.clone();
+                                    #[cfg(test)]
+                                    let _ = write!(lf, "{:#?}\n", tk);
                                     syn::parse2::<ConfigList>(tk).unwrap_or_default().0
                                 } else {
                                     ConfigList::default().0
                                 }
                             })
                             .collect::<HashMap<_, _>>();
+
                         let has_id = if let Some(h) = kv.get("has_id") {
                             h == "true"
                         } else {

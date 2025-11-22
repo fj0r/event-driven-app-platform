@@ -687,21 +687,21 @@ pub struct Render {
 #[serde(tag = "type")]
 pub enum Brick {
     case(Case),
-    #[cfg_attr(feature = "props", render_brick(has_id = "true"))]
+    #[render_brick(has_id = "true")]
     placeholder(Placeholder),
-    #[cfg_attr(feature = "props", render_brick(has_id = "true"))]
+    #[render_brick(has_id = "true")]
     chart(Chart),
-    #[cfg_attr(feature = "props", render_brick(has_id = "true"))]
+    #[render_brick(has_id = "true")]
     diagram(Diagram),
     float(Float),
-    #[cfg_attr(feature = "props", render_brick(has_id = "true"))]
+    #[render_brick(has_id = "true")]
     fold(Fold),
     form(Form),
     popup(Popup),
     svg(Svg),
     group(Group),
     path(Path),
-    #[cfg_attr(feature = "props", render_brick(has_id = "true"))]
+    #[render_brick(has_id = "true")]
     rack(Rack),
     button(Button),
     image(Image),
