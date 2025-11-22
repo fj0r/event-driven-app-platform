@@ -522,6 +522,8 @@ def cmpl-external [] {
     ] | str join '\s*')
     | get src
     | uniq
+    | prepend ['host.docker.internal' 'host.containers.internal']
+    | { completions: $in, options: { sort: false } }
 }
 
 export def send [
